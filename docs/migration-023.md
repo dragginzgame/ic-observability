@@ -1,8 +1,8 @@
-# Stable Wire identities in the pending 0.23 contract
+# Stable Wire identities in the released 0.23 contract
 
-Metrics native metadata now implements Wire core 0.12's trait, selecting published
+Metrics 0.23 native metadata implements Wire core 0.12's trait, selecting published
 Wire/Derive 0.12.1. Wire 0.11 and earlier traits have a different dependency
-identity. After a matching Metrics release is published, select one Metrics/Wire
+identity. Metrics 0.23.2 is published with this integration. Select one Metrics/Wire
 identity across libraries composing these values:
 
 ```toml
@@ -29,10 +29,9 @@ has no endpoint consumer and adds no endpoint package or Platform runtime.
 
 The [identity qualification receipt](evidence/wire-stable-identities-0121/README.md)
 distinguishes published Wire/Types/Platform dependencies from the temporary source
-copy used to qualify this unpublished Metrics selection. Own package metadata
-remains 0.22.0; these notes do not establish publication of Metrics 0.23.
+copy used for the original pre-publication qualification. That historical receipt
+retains its own 0.22.0 source identity; it does not qualify later dependency lines.
 
-Native schema users need a published `ic-metrics` containing this integration.
-`ic-logging` needs no publication for Wire compatibility. Tooling's existing
-arithmetic-only Metrics 0.22 use can remain unchanged while its owning Wire
-callers adopt core 0.12; native metadata consumers need the new Metrics release.
+The [pending 0.24 migration](../releases/metrics/0.24.md) adopts Wire 0.13 and Types
+0.15. Arithmetic-only users can retain their existing compatible Metrics version;
+Logging has no Wire publication prerequisite.

@@ -1,67 +1,72 @@
 # Current handoff — 2026-10-31
 
-The maintainer explicitly delegated GitHub delivery and crates.io publication.
-Both independent groups are now released and published at 0.23.2. Source changes
-were committed as ecb4ee2, followed by the standard direct release for each group:
+The current task adopts newly published Wire 0.13 for Metrics. The incoming
+checkout was clean at 0c933601abe19497f814f092b6381104fadb070a, after the verified
+Metrics/Logging 0.23.2 deployment. The maintainer has now explicitly delegated
+deployment of the Wire adoption. Metrics is selected for a standard 0.24.0 minor
+release and crates.io publication; Logging remains 0.23.2. Deployment records
+are retained under target/audits/deploy-wire013-20261031/. The qualification
+below describes the source candidate before release; completion is established
+by the standard journal, remote refs and registry receipts. No sibling is selected.
 
-| Group | Tag | Release commit | Registry |
-| --- | --- | --- | --- |
-| metrics | metrics-v0.23.2 | 06020376352355deb068f5d8978813ef5405cedd | [ic-metrics 0.23.2](https://crates.io/crates/ic-metrics/0.23.2) |
-| logging | logging-v0.23.2 | 52b14d5cc422daf76a657d2477ca412029295ed3 | [ic-logging 0.23.2](https://crates.io/crates/ic-logging/0.23.2) |
+## Selected identity and scope
 
-Each branch/tag push was atomic. Both real journals are complete, and the two
-Cargo publication receipts report success. Official registry index records
-confirm non-yanked versions; downloaded registry archives match those checksums
-and identify the exact clean release commits above. A final handoff-only commit
-records these outcomes after the tagged releases; it changes no package payload.
+Official registry records select Wire/Derive 0.13.0, Rust floor 1.91; lockfile
+checksums match. The Wire archive identifies release commit
+65d1b91600d64a1e4255774f6bfc8ad9752a63cb. Only these two package records change
+in Cargo.lock. Root Metrics still selects optional native Wire/typescript;
+minimal/recording and Wasm graphs exclude Wire, and every product profile excludes
+Platform, Types and Endpoint. Logging remains dependency-free and unchanged.
+No measurement arithmetic, typed errors or Rust schema implementation changed.
 
-## Release layout
+The native trait identity changes from Wire 0.12 to 0.13. The Metrics ledger now
+has pending 0.24.0 notes, classified minor at Metrics' exposed native schema
+boundary. Both own manifest versions remain 0.23.2. No Logging pending entry was
+created. [Migration](../../releases/metrics/0.24.md), READMEs and compiled application
+prose describe the candidate. [The 0.23 guide](../migration-023.md) is historical
+Wire 0.12 guidance for the already published release.
 
-Both versions are literal package.version values. Root Cargo.toml has shared
-metadata/catalog/lints/compiler policy, with no aggregate version. The canonical
-ledgers are under releases/metrics and releases/logging, with dated 0.23.2 entries.
-Root CHANGELOG.md is an index; coordinated history through 0.23.0 lives once in
-releases/history.md. Former crate-local ledgers are short navigation pointers.
-The owning change is [#104 — Independent release groups](https://github.com/dragginzgame/ic-observability/issues/104).
+## Qualification and published/source distinction
 
-Release, resume, publication and group metadata commands require explicit
-RELEASE_GROUP=metrics or logging from the command line/environment. Missing,
-empty and unknown selections refuse before setup, Cargo, validation or mutation;
-PACKAGE never infers a group. [The guide](../independent-releases.md) records
-commands and source-bound recovery. Publication eligibility resolves after
-admission through the shared adapter; unrelated Make checks need no group.
+[The current receipt](../evidence/wire-0130/README.md) and manifest snapshot bind
+published suppliers and the reused canonical identity probe. Raw inputs/logs,
+Node baseline/candidate artifacts and the isolated workspace remain at
+`target/audits/wire-update-20261031/`:
 
-Shared Tooling is committed revision 99d04d1b6b7cf4ed060e9b72a139196d32c35954,
-snapshot version 0.27.17, adopted via its canonical exporter. The source commit
-subject says 0.27.18; the sibling's uncommitted VERSION edit was not adopted.
-Common catalogs/helpers and the managed Build 0.73.0 editor selection are unchanged.
+- Selected Metrics lib/tests/all-feature Clippy passes with warnings denied.
+  Eight native transport/schema tests and 15 doctests pass on Rust 1.91.
+- The actual five-report Node conformance check passes before and after the
+  update. Rust/TypeScript vectors, generated reports.ts and wire-runtime.ts are
+  byte-identical to the fresh Wire 0.12.1 baseline.
+- Four dependency profiles and four minimal Serde tests pass. The actual
+  allocator-free Wasm example links at Rust 1.91 without std or an allocator.
+- Three real Principal/Account tests pass at Rust 1.91 against published
+  canonical Types 0.15.1 and facade 0.15.2. All four Metrics schemas compose;
+  identity equality, exact subaccount bytes and typed malformed/limit refusals pass.
+- The identity consumer passes strict Clippy and Rust 1.91 Wasm compilation.
+  Its graph has one Core/Types identity, facade principal only, and no endpoint,
+  runtime guard, CDK or IC0. Its copied Metrics Rust source matches the root.
 
-## Validation and evidence
+The temporary workspace owns copied libraries and probe; external dependencies
+are published registry packages. Metrics source still carries numeric 0.23.2,
+but this is unpublished source alignment, not registry Metrics 0.23.2 supplying
+Wire 0.13. Root lock/product graphs do not acquire probe-only Platform/Types.
+A transient disk-full interruption during probe preparation resolved without
+this agent deleting any retained artifacts; successful checks ran afterward.
+No full local ci/msrv, hosted/macOS, browser or installed IC qualification ran;
+Node executes generated TypeScript, not a browser or static TypeScript checker.
 
-Current deployment evidence is under target/audits/deploy-0232-20261031/:
+## Consumers, delivery and preserved evidence
 
-- Metrics full ci/msrv passed (117s/1s); Logging full ci/msrv passed (136s/3s).
-  Both standard flows verified prepared package archives before commit/tag/push.
-- Each publication passed its native/Wasm Clippy gate and real Cargo dry run,
-  then completed its separately selected crates.io upload.
-- Registry downloads/checksums/VCS identities and remote refs are recorded in
-  registry-verification.txt and remote-after.txt. The authoritative payloads are
-  the files ending .registry.crate. artifact-provenance.txt distinguishes an
-  earlier local package-check candidate from the actual Metrics registry bytes.
-- Successful upload records remain at target/publication/publish.selection.8pz58O
-  (Metrics) and target/publication/publish.selection.O8hPBk (Logging).
-- Actual journals, validated/prepared receipts and previous failures remain under
-  .git/release-state. No evidence, old tags or previous attempts were cleaned.
+Affected owner contracts were reviewed read-only under the extraction guide,
+including Scheduling's former Timers role. No complete sibling application graph
+was qualified. Native schema consumers need a published Metrics 0.24 supplying
+Wire 0.13; Logging and arithmetic-only users need no paired upgrade. Persistence
+adapters retain their separate integration/release owner. Wire #36 owns supplier
+identity/hosted acceptance; Tooling #274's older completed scope must not reopen.
 
-Earlier focused adoption/peer-layout evidence retains its original scope under
-shared-layout-20261031, peer-release-metadata-20261031 and independent-groups-104
-in target/audits. History was preserved apart from rebased relative links and the
-moved Metrics ledger's final empty separator. Library Rust sources, dependency
-selections, encoded contracts and feature boundaries did not change. Only the
-selected package versions and corresponding local lock identities advanced.
-
-Hosted native CI is asynchronous; local gate success does not establish a hosted
-macOS result or installed IC qualification. No sibling checkout or sibling
-release was touched. Persistence adapters retain independent ownership, and
-Canic follow-ups #712/#100 remain separate. Future implementation/release work
-still needs its normal task authority; no further version bump is pending here.
+Shared Tooling remains snapshot 0.27.17 at 99d04d1; Build stays 0.73.0. No tooling
+adoption is bundled. Canonical group ledgers and explicit RELEASE_GROUP policy
+remain intact. Prior 0.23.2 deployment evidence/journals under
+`target/audits/deploy-0232-20261031/` and .git/release-state are retained, along
+with older identity/evidence receipts. Canic #712/#100 remain separate work.

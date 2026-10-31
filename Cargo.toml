@@ -17,7 +17,7 @@ authors = ["borovan <84897664+borovan@users.noreply.github.com>"]
 
 [workspace.dependencies]
 # Production dependencies
-ic-wire = { version = "0.12.1", default-features = false, features = ["typescript"] }
+ic-wire = { version = "0.13.0", default-features = false, features = ["typescript"] }
 serde = { version = "1.0", default-features = false, features = ["derive"] }
 
 # Tests and tooling only

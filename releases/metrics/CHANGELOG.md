@@ -5,6 +5,16 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.24.0]
+
+### ⚠️ Breaking
+
+- Adopt Wire/Derive 0.13.0 for native metadata and align composed Principal/Account
+  schemas with canonical Platform Types 0.15. Native schema consumers must select
+  matching Metrics/Wire identities. Arithmetic, typed errors, schema shapes and
+  encoded bytes are unchanged; minimal arithmetic and Wasm stay independent of
+  Wire, Platform and endpoints. See [migration](0.24.md).
+
 ## [0.23.2] - 2026-10-31
 
 ### 🔧 Changed
