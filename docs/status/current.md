@@ -1,74 +1,64 @@
 # Current handoff — 2026-10-31
 
-The maintainer requested the latest Shared Tooling adoption and a PR, then asked
-for the 0.27.22 update. Continue existing [PR #106](https://github.com/dragginzgame/ic-observability/pull/106)
-on chore/shared-tooling-0.27.21, based on
-1da20a84a6c44144ca86c340351790b984036f39 (Metrics 0.24 registry delivery).
-Scoped commits and topic pushes are authorized. Merge, main push, own version
-bumps, release, publication, cleanup and sibling edits are outside this PR scope.
+The maintainer authorized deployment with release notes after
+[PR #106](https://github.com/dragginzgame/ic-observability/pull/106) merged at
+745f4081a9df1e368c9629b8e08c686af92fe199. Local main is fast-forwarded to that
+commit. Deliver Metrics 0.24.1, then Logging 0.23.3 with the existing direct
+release and separate crates.io publication commands. Both are compatible
+patches; only maintained tooling/governance and release metadata changed.
+Scoped preparation commits, standard release gates, versions, tags, main pushes
+and uploads are authorized. No sibling edits or artifact cleanup are included.
 
-## Adopted source and release identity
+## Release plan and observations
 
-Canonical export selected Shared commit 143a9abb9ae81feae9400ff3844b03b1ddfdd75a,
-titled 0.27.22 and verified against remote main. It changes governance and
-manifest presentation; no runtime, installer, tool pin or release script changes
-from the preceding 0.27.21 adoption. The source was cloned into an isolated
-/tmp checkout because the sibling has an uncommitted VERSION edit; it remains
-untouched. Exporter-owned payloads and ownership records were not hand-edited.
+The current package versions are Metrics 0.24.0 and Logging 0.23.2. Their pending
+ledgers already select 0.24.1 and 0.23.3; this delivery clarifies those entries
+and lets the standard runner finalize each heading and UTC release date.
+The root changelog remains an index. No aggregate workspace version is added.
+Use explicit RELEASE_GROUP=metrics or logging for every group command.
 
-Upstream's committed VERSION still says 0.27.21, although its commit and changelog
-say 0.27.22. The snapshot correctly retains that committed display version with
-the new full revision; AGENTS.md explains the distinction. The maintainer confirmed
-that this exact revision is the intended selection; no source-selection question
-remains. A later committed release identity can be refreshed through the exporter;
-never relabel snapshot provenance by hand.
+The official sparse index confirms both current versions are non-yanked and
+both candidates absent. The crates.io API returned HTTP 403, so no absence claim
+is derived from that API response. Remote main is the merged commit; neither
+candidate release tag exists. Initial observations and all delivery logs belong
+under target/deploy/shared-tooling-02722-20261031/.
 
-## Catalog and release behavior
+All five PR CI jobs passed on head 0710dac5d74e02582ab95eceed203252452371ab:
+TypeScript, Rust 1.91 MSRV, Linux, Intel macOS and Apple Silicon macOS. This is
+source qualification; the standard release still runs its own complete local
+ci/msrv gates and archive verification. Publication retains its own Clippy gate,
+exact source/package selection, dry-run and upload receipts.
 
-Every member has a root workspace dependency alias with its owned path and full
-current version: Metrics 0.24.0 and Logging 0.23.2. Each alias belongs to its
-release group's dependencies roster. These unused declarations add no library
-dependency edges. Root comments now present each group once in a contiguous
-block, with short titles and separate changelog comments. The duplicate header
-map is removed; grouped formatting preserves the blocks. External dependencies
-retain production/test roles and relevant native/feature restrictions.
+## Adopted source and catalog
 
-The combined PR also carries 0.27.21 complete-catalog admission, delegated-delivery
-and explicit cleanup rules. Release preparation advances only the selected root
-requirement and preserves other groups. There is no aggregate workspace version.
-Plain cargo clean keeps its default whole-target scope; no cleanup ran.
+Canonical export selected Shared 143a9abb9ae81feae9400ff3844b03b1ddfdd75a,
+with commit/changelog titled 0.27.22 and committed VERSION still 0.27.21. The
+maintainer explicitly confirmed that exact revision. Snapshot provenance retains
+the committed display version and full revision; no relabeling is needed.
+The clean source was isolated from the sibling's uncommitted VERSION edit.
+Exporter-owned payloads and ownership records remain untouched after export.
 
-## Qualification
+Every member has a root workspace dependency alias with its path and full current
+version, registered to its release group's dependencies roster. These unused
+catalog declarations add no library dependency edges. Each group appears once
+in a contiguous block with a short title and separate changelog comment. Release
+preparation updates only the selected group's root requirement and rejects
+stale aliases even when unused or owned by another group.
 
-Incremental evidence: target/audits/shared-02722-20261031/.
+## Evidence and retained boundaries
 
-- Canonical impact/export receipts bind the reviewed upstream revision. Only four
-  selected governance documents changed from 0.27.21; common executable payloads
-  and catalogs remain identical.
-- make fmt preserves the group blocks. Full locked offline Cargo metadata is
-  exactly equal before/after the layout change; Cargo.lock is byte-identical.
-- Both actual group plans pass. The named release-admission fixture passes in
-  both directions with the new manifest layout, covering selected catalog edits,
-  exact staging/commits, rollback, receipts/resume, retained consumers and
-  publication selection. Actual shared editor/runner and disposable Git remotes
-  are used; broad gates, archive compilation and registry uploads are substituted.
-- Snapshot integrity, pins, documentation links and both pending-ledger checks
-  pass. The retained release fixture is target/observability-release-groups.LMBIHI/.
-
-Prior complete make release-tools-check, selected ShellCheck and custody checks
-passed for the unchanged executable inputs. Those receipts remain at
+Incremental adoption receipts: target/audits/shared-02722-20261031/.
+Formatting, snapshot integrity, pins, docs links and pending-ledger checks passed.
+Both actual plans and the named release fixture passed with the new layout;
+locked Cargo metadata was exactly equal before/after, and Cargo.lock identical.
+Prior complete release-tools-check evidence remains at
 target/audits/shared-02721-20261031/ and
 target/evidence/native-ci/fixture-retention.djSfl5/.
-No full local ci/msrv or new hosted/native matrix is required for this governance
-and presentation update. Hosted PR checks remain asynchronous.
 
-## Versions and retained evidence
-
-Metrics remains published 0.24.0 with Wire/Derive 0.13; Logging remains 0.23.2.
-Pending tooling notes remain Metrics 0.24.1 and Logging 0.23.3. No own package
-version, library source, dependency selection or lockfile changed.
-The prior [Wire receipt](../evidence/wire-0130/README.md) retains registry-only
-Principal/Account qualification with Types 0.15.1/facade 0.15.2, Rust 1.91/Wasm
-and exact byte/schema checks. Prior deployment receipts and all Git-owned release
-journals remain retained. Canic #712/#100 and downstream integration ownership
-remain separate; this change makes no new runtime or IC performance claim.
+Metrics keeps Wire/Derive 0.13 and the optional native metadata boundary. Logging
+keeps its dependency-free heap engine. Arithmetic, Serde fields, schemas, encoded
+bytes, typed errors and retained log contracts are unchanged. The prior
+[Wire receipt](../evidence/wire-0130/README.md) retains registry-only Principal/
+Account qualification with Types 0.15.1/facade 0.15.2 and Rust 1.91/Wasm checks.
+All prior release journals, archives and deployment receipts remain retained.
+Canic #712/#100 and downstream integration ownership remain separate.

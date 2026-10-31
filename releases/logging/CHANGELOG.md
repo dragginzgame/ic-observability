@@ -10,10 +10,12 @@ belong here.
 
 ### 🔧 Changed
 
-- Qualify Logging's independent release flow and root catalog updates against
-  Shared Tooling's complete member-catalog admission, 0.27.22 single-block layout
-  and [delivery policy](../../rules/contributions.md#delegated-delivery).
-  Logging's dependency-free engine and public contracts are unchanged.
+- Adopt Shared Tooling's complete member-catalog admission and 0.27.22 catalog
+  layout. Logging release preparation updates its root requirement while
+  preserving Metrics' version, requirement and release notes.
+- Clarify [delivery policy](../../rules/contributions.md#delegated-delivery) and
+  explicit Cargo cleanup scope. Logging's dependency-free engine, compiler floor
+  and public contracts are unchanged.
 
 ## [0.23.2] - 2026-10-31
 
