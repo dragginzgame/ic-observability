@@ -43,7 +43,7 @@ separate maintainer action and selects only the chosen group's package:
 
 ```sh
 make publish-check RELEASE_GROUP=metrics
-# After reviewing the dry runs and authorizing the uploads:
+# After reviewing the dry run, upload within the authorized delivery scope:
 make publish RELEASE_GROUP=metrics
 # Logging:
 make publish-check RELEASE_GROUP=logging

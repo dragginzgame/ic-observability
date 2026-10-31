@@ -15,8 +15,11 @@ converted to a literal version; Metrics followed at its released 0.23.1 version.
 Neither conversion changes a package's numeric identity.
 Earlier coordinated releases remain once in [shared history](../releases/history.md), through 0.23.0;
 both group ledgers link to that history. Existing tags and receipts are retained.
-There are no private workspace members or internal dependency requirements today.
-The policy's empty dependency lists explicitly reflect that fact.
+There are no private workspace members today. Each public member has a root
+catalog entry with its local path and full current version, registered in its
+group's dependency roster. These unused catalog aliases provide a readable
+version map without adding dependencies between the libraries. Only member
+dependency declarations create edges.
 
 Both groups own their versions and active release notes at the same level. The
 root has no `workspace.package.version`; it supplies common metadata, dependency
@@ -47,7 +50,9 @@ RELEASE_GROUP on the command line or in the environment. Missing, empty and
 unknown selections refuse before setup, Cargo, validation or mutation. PACKAGE
 never supplies an implicit group. Workspace-wide read-only checks need no group.
 
-Release and publication remain separate maintainer actions. Publication selects
+Release and publication retain separate commands and evidence. A scoped
+[ship/deploy request](../rules/contributions.md#delegated-delivery) can authorize
+both; ordinary implementation does not. Publication selects
 the chosen group's public package. A PACKAGE override must belong to that
 group; cross-group selections refuse before lint or Cargo publication. No group
 change republishes an existing package version. Select a new numbered candidate
@@ -66,9 +71,9 @@ adapter supplies group policy, existing tool preparation, full validation and
 source/receipt admission. There is no second release implementation.
 
 Plans always include Cargo.toml and Cargo.lock. Each group additionally selects
-its own literal-version manifest and ledger. The unchanged root manifest is
-still admitted for both groups but need not appear in the committed
-diff. Other groups' versions, manifests, requirements and pending notes must be
+its own literal-version manifest and ledger. The root manifest updates only the
+selected group's catalog requirements, preserving their operators. Other groups'
+versions, manifests, requirements and pending notes must be
 preserved. Future shared consumer metadata needs an explicit shared_metadata_files
 declaration plus selective rendering/qualification; none is needed for this split.
 
@@ -95,7 +100,7 @@ encoded bytes and Logging's retained-data contract do not change in this split.
 `make release-tools-check` exercises the actual adapter, shared runner/editor and
 local Git remotes in disposable repositories. It checks both group directions,
 missing/empty/unknown group refusal, unrelated versions/requirements/ledgers,
-unchanged root/history inputs, exact changed files, rollback, receipts, resume
+selected root catalog updates, unchanged index/history inputs, exact changed files, rollback, receipts, resume
 and publication selection. Setup, broad gates, archive compilation and
 registry effects are substituted. Unchanged-group consumers use workspace-owned
 source copies pinned to their prior compatible identities; this is source-level

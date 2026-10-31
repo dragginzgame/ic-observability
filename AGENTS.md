@@ -1,7 +1,7 @@
 # IC Observability Agent Rules
 
 Read [DRAGGINZGAME.md](DRAGGINZGAME.md) first. The reviewed Shared Tooling revision
-`99d04d1b6b7cf4ed060e9b72a139196d32c35954` (snapshot version 0.27.17)
+`3279d9b1a4b68178f3c4187be394de003e4ee010` (snapshot version 0.27.21)
 and file digests are recorded in
 [.shared-tooling.snapshot](.shared-tooling.snapshot). This is the local overlay;
 there are no baseline exceptions. Read [the current handoff](docs/status/current.md)
@@ -16,6 +16,9 @@ consumer-contract or persistence-boundary changes.
   releases/metrics or releases/logging. The root has shared metadata and changelog
   navigation, with no aggregate version. Coordinated history is in releases/history.md.
   Membership is explicit in ci/cargo-release-groups.json and root Cargo comments.
+  The root dependency catalog lists both members with full current versions and
+  paths; each alias belongs to its group's dependency roster. Catalog entries
+  alone add no dependency edge between the libraries.
   Release, resume and publication require an explicit RELEASE_GROUP; no default
   group or PACKAGE inference is permitted.
 - Logging owns a dependency-free `no_std` + `alloc` heap engine with explicit

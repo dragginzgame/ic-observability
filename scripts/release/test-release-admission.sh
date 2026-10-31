@@ -110,7 +110,6 @@ git commit -qm 'Disposable group baseline'
 git init -q --bare "$fixture/remote.git"
 git remote add origin "$fixture/remote.git"
 git push -q -u origin main
-cp Cargo.toml "$fixture/root-manifest"
 cp CHANGELOG.md "$fixture/root-history-index"
 cp releases/history.md "$fixture/shared-history"
 # Public release/publication and metadata CLI entries refuse invalid group
@@ -139,6 +138,9 @@ freeze_consumer() {
     cp -R "crates/ic-$supplier/src" "crates/ic-$supplier/Cargo.toml" \
         "crates/ic-$supplier/README.md" "crates/ic-$supplier/LICENSE" "$consumer/supplier/"
     perl -pi -e 's/^members = .*/members = ["supplier", "client"]/; s/^default-members = .*/default-members = ["client"]/' "$consumer/Cargo.toml"
+    # This standalone client owns only the retained supplier, not the product
+    # workspace's complete local member catalog or release policy.
+    perl -ni -e 'print unless /^ic-(?:metrics|logging) = /' "$consumer/Cargo.toml"
     SUPPLIER="$supplier" SUPPLIER_VERSION="$version" perl -0pi -e \
         's/\[workspace.dependencies\]/[workspace.dependencies]\nic-$ENV{SUPPLIER} = { path = "supplier", version = "=$ENV{SUPPLIER_VERSION}", default-features = false }/' "$consumer/Cargo.toml"
     printf '[package]\nname = "retained-consumer"\nversion = "0.0.0"\nedition.workspace = true\n[dependencies]\nic-%s.workspace = true\n' "$supplier" > "$consumer/client/Cargo.toml"
@@ -177,6 +179,14 @@ for group in metrics logging; do
     [[ "$group" != logging ]] || { other=metrics; kind=minor; }
     previous="$(make --no-print-directory -s release-version)"
     candidate="$(perl scripts/ci/validate-release-inputs.pl next-version "$previous" "$kind")"
+    cp Cargo.toml "$fixture/$group-root-before"
+    FIXTURE_GROUP="$group" FIXTURE_PREVIOUS="$previous" FIXTURE_NEXT="$candidate" perl -pe '
+        if (/^ic-\Q$ENV{FIXTURE_GROUP}\E = /) {
+            s/version = "\Q$ENV{FIXTURE_PREVIOUS}\E"/version = "$ENV{FIXTURE_NEXT}"/ or die "missing selected catalog version\n";
+            $found++;
+        }
+        END { die "expected one selected catalog alias\n" unless $found == 1 }
+    ' "$fixture/$group-root-before" > "$fixture/$group-root-expected"
     other_version="$(RELEASE_GROUP="$other" make --no-print-directory -s release-version)"
     other_ledger="$(RELEASE_GROUP="$other" bash scripts/release/metadata.sh plan | jq -er .changelog)"
     cp "$other_ledger" "$fixture/$group-other-ledger"
@@ -184,6 +194,15 @@ for group in metrics logging; do
     freeze_consumer "$group" "$other" "$other_version"
     cargo metadata --locked --offline --format-version 1 > "$fixture/$group-before.json"
     source="$(git rev-parse HEAD)"
+    # Cargo accepts an unused alias with a stale version. The actual group
+    # adapter must still reject it, even when that alias belongs to the other group.
+    FIXTURE_OTHER="$other" perl -pi -e '
+        if (/^ic-\Q$ENV{FIXTURE_OTHER}\E = /) { s/version = "[^"]+"/version = "0.0.0"/ or die }
+    ' Cargo.toml
+    cargo metadata --locked --offline --format-version 1 > "$fixture/$group-unused-catalog-metadata.json"
+    if bash scripts/release/metadata.sh plan > "$fixture/$group-unused-catalog-refusal.log" 2>&1; then exit 1; fi
+    cp "$fixture/$group-root-before" Cargo.toml
+    [[ -z "$(git status --porcelain)" ]]
     # Invalid source and tool setup refuse before validation or version mutation.
     printf '\nfixture edit\n' >> README.md
     if make "release-$kind" > "$fixture/$group-dirty.log" 2>&1; then exit 1; fi
@@ -244,7 +263,7 @@ for group in metrics logging; do
     [[ "$(git --git-dir="$fixture/remote.git" rev-parse "refs/tags/$group-v$candidate^{}")" == "$commit" ]]
     [[ "$(git --git-dir="$fixture/remote.git" rev-parse refs/heads/main)" == "$commit" ]]
     [[ -z "$(git status --porcelain)" ]]
-    cmp Cargo.toml "$fixture/root-manifest"
+    cmp Cargo.toml "$fixture/$group-root-expected"
     cmp CHANGELOG.md "$fixture/root-history-index"
     cmp releases/history.md "$fixture/shared-history"
     cmp "$other_ledger" "$fixture/$group-other-ledger"
@@ -258,9 +277,9 @@ for group in metrics logging; do
     jq -n -e --arg name "ic-$other" --slurpfile before "$fixture/$group-before.json" --slurpfile after "$fixture/$group-after.json" '
         def identity($m): $m.packages[] | select(.name==$name) | {id,version,dependencies};
         identity($before[0]) == identity($after[0])' >/dev/null
-    # The admitted plan includes unchanged Cargo.toml for literal-version groups;
-    # the committed diff contains exactly the files whose bytes actually changed.
-    printf '%s\n' Cargo.lock "releases/$group/CHANGELOG.md" "crates/ic-$group/Cargo.toml" > "$fixture/expected-changed"
+    # The root catalog changes only the selected alias's numeric requirement.
+    # Exact byte comparison above preserves the other group and all external pins.
+    printf '%s\n' Cargo.toml Cargo.lock "releases/$group/CHANGELOG.md" "crates/ic-$group/Cargo.toml" > "$fixture/expected-changed"
     git diff-tree --no-commit-id --name-only -r HEAD | LC_ALL=C sort > "$fixture/changed"
     LC_ALL=C sort "$fixture/expected-changed" > "$fixture/expected-sorted"
     cmp "$fixture/expected-sorted" "$fixture/changed"

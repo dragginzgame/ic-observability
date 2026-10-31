@@ -1,70 +1,71 @@
 # Current handoff — 2026-10-31
 
-The maintainer delegated deployment of the Wire 0.13 adoption. Only Metrics uses
-Wire here, so Metrics 0.24.0 was released and published; Logging remains 0.23.2.
-Source preparation is commit 6e770c7a380778375dce484dc3dc076ee08d2a31.
-The standard minor release created metrics-v0.24.0 at
-2a18f93a8d2e80d60279fe29ad626dc0ea5810f1 and atomically pushed main/tag to GitHub.
-No sibling checkout or sibling release was touched.
+The maintainer requested the latest Shared Tooling adoption and a PR. The topic
+branch is chore/shared-tooling-0.27.21, based on
+1da20a84a6c44144ca86c340351790b984036f39 (Metrics 0.24 registry delivery).
+The PR covers the complete pending adoption from the base's Shared 0.27.17 to
+0.27.21. Its scoped commit and topic push are authorized; no main-branch push,
+merge, version bump, release, publication, cleanup or sibling edit is included.
 
-## Delivered identity
+## Adopted contract and catalog
 
-[Published Metrics 0.24.0](https://crates.io/crates/ic-metrics/0.24.0) supplies
-Wire/Derive 0.13 native schemas. Official index/archive checksum is
-`70544c4dc1ae7697e22f2a3dd23a96de8fbcd722e7c320d72fda0c7760c2b9c6`;
-the archive's clean VCS identity matches the release tag. Both upload status
-records are zero under target/publication/publish.selection.pcrdC2. The real
-metrics-0.24.0 journal is complete with validated/prepared receipts retained.
+Canonical export selected clean committed Shared Tooling 0.27.21 at
+3279d9b1a4b68178f3c4187be394de003e4ee010, verified against remote main. Snapshot
+payloads remain untouched after export. AGENTS.md records that exact revision.
+Impact/export receipts remain at target/audits/shared-02721-20261031/.
 
-[Migration](../../releases/metrics/0.24.md) explains the native trait identity cut
-from Wire 0.12 to 0.13. Principal/Account schema consumers align canonical Types
-0.15 identities; tested suppliers are Types 0.15.1 and facade 0.15.2 principal only.
-Published Metrics 0.23.2 continues to supply the old Wire 0.12 pairing. Logging
-and arithmetic-only consumers need no paired upgrade.
+Every member now has a root workspace dependency alias with its owned path and
+full current version: Metrics 0.24.0 and Logging 0.23.2. The alias is registered
+in its owning group's dependencies roster, including unused entries. These are
+catalog declarations only; neither library adds a dependency on the other.
+Root comments label group ledgers and local/external production/test roles.
+There is no aggregate workspace version or generated numeric summary.
 
-Root Metrics still selects optional native Wire/typescript, with no Types,
-Platform, Endpoint or runtime integration dependency. Minimal/recording and Wasm
-profiles exclude Wire. Logging remains dependency-free. Arithmetic, typed errors,
-schema shapes, encoded bytes and feature boundaries are unchanged. Only Wire/
-Derive and the selected Metrics version/lock identity advanced in this adoption.
+Shared admission checks coverage, full versions, alias rosters and actual member
+paths, including unused aliases in unselected groups. Release preparation updates
+the selected root requirement through the existing transaction/editor. Fixtures
+compare the entire expected root manifest, preserving the other group and all
+external selections, and verify four exact staged/committed release paths.
+Standalone retained-consumer workspaces select only their own supplier catalog.
 
-## Validation and delivery evidence
+The adoption also carries canonical delegated-delivery and explicit cleanup
+clarifications. A ship/deploy request may cover release and publication, with
+separate commands/receipts. Ordinary implementation and PR scope remain narrower.
+Plain cargo clean retains its default whole-target behavior; the host guide
+explains that retained target evidence is included, while managed tool stores
+and Git-owned journals are outside that scope. No cleanup ran.
 
-The [qualification receipt](../evidence/wire-0130/README.md) distinguishes the
-original source-aligned probe from subsequent registry-only acceptance.
-Deployment evidence is under target/audits/deploy-wire013-20261031/:
+## Qualification
 
-- Standard release full local ci/msrv gates passed (116s/2s), followed by prepared
-  archive verification, exact staging/commit/tag and atomic GitHub delivery.
-- Publication native/Wasm Clippy and real Cargo dry run passed; the selected
-  ic-metrics 0.24.0 upload completed successfully. Logging was not uploaded.
-- Official index, downloaded registry crate, checksum/VCS verification and refs
-  remain in metrics-after.jsonl, ic-metrics-0.24.0.registry.crate,
-  registry-verification.txt and remote-after.txt.
-- A separate registry-only consumer selects Metrics 0.24.0, Core 0.13.0,
-  Types 0.15.1 and facade 0.15.2. All three identity/composition tests pass on
-  Rust 1.91, with strict Clippy and a Rust 1.91 Wasm check. Its locked graph
-  contains one of each supplier and no Endpoint, runtime guard, CDK or IC0.
-  It uses no copied Metrics source or external path supplier.
+Current evidence is under target/audits/shared-02721-20261031/:
 
-Earlier focused source evidence at target/audits/wire-update-20261031/ retains
-its original scope: eight transport/schema tests, 15 doctests, four production
-profiles, four minimal Serde tests, allocator-free Rust 1.91 Wasm linking and
-exact before/after five-report Rust/TypeScript vectors/generated code. The earlier
-transient disk-full interruption recovered without agent cleanup of artifacts.
-All previous release/failure/evidence records remain retained.
+- make fmt, selected ShellCheck, snapshot integrity, check-pins, documentation
+  links and both actual pending-ledger checks pass. Both group plans are admitted.
+- The complete make release-tools-check gate passes, exercising actual shared
+  admission, editor/runner and disposable Git remotes. It covers selected catalog
+  updates, unchanged unrelated manifests/requirements/pending notes, exact stage/
+  commit paths, rollback, validated/prepared receipts, resume, publication selection
+  and unaffected consumers. Broad gates/archive verification and uploads are
+  substituted; successful inputs remain at
+  target/evidence/native-ci/fixture-retention.djSfl5/.
+- A stale unused alias in the other group remains acceptable to Cargo metadata
+  but is rejected by the actual group adapter in both release directions.
+- Full locked Cargo metadata exactly matches the pre-catalog result, and
+  Cargo.lock is byte-identical. This confirms no added package/feature edges.
+  No library source, package manifest version or dependency selection changed.
 
-## Ownership and remaining scope
+Common tool catalogs/installers and Build 0.73.0 are unchanged. Prepared-tool
+admission from the preceding 0.27.20 qualification remains applicable, and the
+actual installed editor is admitted by the current release fixture. Generic
+Shared producer matrices were reviewed rather than replayed. No full local
+ci/msrv or new hosted/native matrix ran; PR CI supplies its asynchronous checks.
 
-Canonical release ledgers remain under releases/<group>; root changelog is an
-index and root Cargo has no version. Explicit RELEASE_GROUP is required for
-release/resume/publication. Shared Tooling stays snapshot 0.27.17 at 99d04d1,
-and Build stays 0.73.0; no tooling update was bundled.
+## Current versions and preserved evidence
 
-This deployment completes the requested publication prerequisite for native
-Wire 0.13 consumers. Downstream applications and persistence adapters retain
-complete integration acceptance. Wire #36 keeps its separate hosted acceptance;
-Tooling #274's older completed scope must not reopen. Hosted native CI remains
-asynchronous, and no installed IC/browser qualification is inferred from local
-results. A final documentation-only commit records delivery without changing
-package payloads. No further numeric bump or sibling effect is pending here.
+Metrics remains published 0.24.0 with Wire/Derive 0.13; Logging remains 0.23.2.
+Compatible pending tooling notes remain Metrics 0.24.1 and Logging 0.23.3.
+The prior [Wire receipt](../evidence/wire-0130/README.md) retains real registry-only
+Principal/Account tests with Types 0.15.1/facade 0.15.2, Rust 1.91/Wasm and exact
+byte/schema checks. Prior deployment/evidence records and all .git/release-state
+journals remain retained. No new runtime, installed IC or performance claim is
+made; Canic #712/#100 and downstream integration ownership remain separate.
