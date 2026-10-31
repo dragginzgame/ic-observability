@@ -18,10 +18,10 @@ untouched. Exporter-owned payloads and ownership records were not hand-edited.
 
 Upstream's committed VERSION still says 0.27.21, although its commit and changelog
 say 0.27.22. The snapshot correctly retains that committed display version with
-the new full revision; AGENTS.md explains the distinction. The maintainer has
-been asked whether release preparation is still finishing or another published
-revision is intended. A later committed release identity can be refreshed through
-the exporter; never relabel snapshot provenance by hand.
+the new full revision; AGENTS.md explains the distinction. The maintainer confirmed
+that this exact revision is the intended selection; no source-selection question
+remains. A later committed release identity can be refreshed through the exporter;
+never relabel snapshot provenance by hand.
 
 ## Catalog and release behavior
 
