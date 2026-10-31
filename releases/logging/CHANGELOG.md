@@ -6,6 +6,15 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.23.3]
+
+### 🔧 Changed
+
+- Qualify Logging's independent release flow and root catalog updates against
+  Shared Tooling's complete member-catalog admission, 0.27.22 single-block layout
+  and [delivery policy](../../rules/contributions.md#delegated-delivery).
+  Logging's dependency-free engine and public contracts are unchanged.
+
 ## [0.23.2] - 2026-10-31
 
 ### 🔧 Changed

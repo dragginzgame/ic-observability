@@ -283,8 +283,10 @@ Inspection and documentation-only work use narrower
 checks. [AGENTS.md](../AGENTS.md) retains product constraints and separate release
 and publication authority.
 
-Release/publication are separate maintainer actions under
-[the release contract](releases.md). Normal release commands start fresh from
+Release and publication use separate commands under
+[the release contract](releases.md). A scoped ship/deploy request can authorize
+both through [delegated delivery](../rules/contributions.md#delegated-delivery).
+Normal release commands start fresh from
 clean committed metadata without scanning or replaying historical plans.
 Select `RELEASE_GROUP=metrics` or `RELEASE_GROUP=logging` explicitly; see
 [independent releases](independent-releases.md) for the version/ledger map.
@@ -297,13 +299,19 @@ bind the selected release commit rather than newer working-tree metadata.
 Late metadata checks use Shared's `--manifest-order-grouped` option to check ordering
 in that same selected source; literal version preparation never sorts it.
 Neither validation nor release performs artifact cleanup.
+With no operator overrides or filters, plain `cargo clean` removes this workspace's
+entire `target/`, including nested build outputs and retained evidence. Evidence
+that must survive an explicit clean belongs outside `target/`. Managed `.tools`
+selections, separate tool stores and Git-owned release journals are outside that
+Cargo cleanup scope. The repository does not redirect Cargo's default target.
 The [shared publication Make adapter](cargo-publication.md#opt-in-make-adapter)
 owns `make publish` and `make publish-check`. This consumer includes that adapter
 directly, declares `crates-io` and `clippy`, and projects the selected group's
 public roster only after group admission. Unrelated Make commands do not resolve
 publication eligibility. The same native/Wasm Clippy gate runs before Cargo packaging or
-registry effects, including under parallel Make. Publication remains separately
-authorized; selection and attempt evidence stays under `target/publication`.
+registry effects, including under parallel Make. Publication retains its own
+command and receipts; established delivery authority does not require repeated
+per-command confirmation. Selection and attempt evidence stays under `target/publication`.
 Both commands require an explicit group; missing, empty and unknown selections
 refuse before setup, validation or mutation. A `PACKAGE` override must belong to
 that group and never selects it implicitly. Group release tags advance only

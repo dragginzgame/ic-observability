@@ -5,6 +5,15 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.24.1]
+
+### 🔧 Changed
+
+- Adopt Shared Tooling's complete root member catalog and group-owned version
+  requirements, with the 0.27.22 single-block catalog layout.
+  Clarify delegated delivery and explicit Cargo cleanup scope. Metrics' API,
+  compiler floor and Wire 0.13 pairing are unchanged.
+
 ## [0.24.0] - 2026-10-31
 
 ### ⚠️ Breaking

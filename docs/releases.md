@@ -10,12 +10,13 @@ a publishable package, must provide these Make targets:
 | `make release-minor` | Increment minor; reset patch | `0.2.0` |
 | `make release-major` | Increment major; reset minor and patch | `1.0.0` |
 
-These are user-operated commands. Preparing code or notes for a named release
-does not authorize an agent to invoke them, their recovery target or mutating
-adapters, or to perform their staging, commit, version or tag effects manually.
-Follow the [user-owned Git and release boundary](../rules/contributions.md#user-owned-git-and-release-flow)
-and any approved local maintainer-only restriction. Only an express delegation
-of execution permits an agent to run a release within that policy.
+Users or delegated agents operate these commands. A request to release, ship or
+deploy the scoped changes authorizes the corresponding workflow under
+[delegated delivery](../rules/contributions.md#delegated-delivery). The agent may
+select affected approved groups, semantic-version increments and dependency order,
+and execute necessary preparation and delivery without per-command confirmation.
+Preparing code/notes, asking how to deploy or checking readiness does not itself
+authorize execution. Preserve explicit target restrictions and required protections.
 
 The names, version arithmetic and recovery contract are shared across repositories.
 Each repository supplies its canonical version source, metadata file set,
@@ -84,8 +85,10 @@ The default `RELEASE_DELIVERY=direct` workflow is:
 
 These commands finish with the branch and tag on GitHub. They do not implicitly
 publish packages, create GitHub Release objects, deploy products, bump to another
-development version or clean build/evidence directories. Those actions require
-their own explicit commands and authority. Keep the finalized release at the
+development version or clean build/evidence directories. Those actions retain
+their own commands; a scoped ship/deploy request may already authorize publication
+or deployment, so do not request separate approval again. Cleanup and unrelated
+effects remain outside that scope. Keep the finalized release at the
 top of the changelog until subsequent work needs a new numbered, undated pending
 entry under the [automatic next-version rules](../rules/changelogs.md).
 
@@ -454,7 +457,8 @@ status **75** (GNU Make reports a failed recipe/status 2), with its URL and retr
 instructions. This is pending review, not release completion: a chained
 `&& make publish` cannot proceed.
 
-After the separately authorized merge, run `make release-resume VERSION=X.Y.Z`
+After an authorized merge (covered by a full delivery request or a separate merge
+instruction), run `make release-resume VERSION=X.Y.Z`
 with the same PR delivery policy.
 Merge, squash and rebase merges are accepted when GitHub's recorded merged commit
 is in the selected remote base history and its tree exactly equals the saved
@@ -616,19 +620,21 @@ not a deletion target. Existing adoption work is tracked in
 
 ### Authorized release effects
 
-The maintainer owns execution. Where local policy permits delegation, they may
-explicitly ask an agent to run the selected release for the identified repository
-and destination. Naming a version, preparing a release, completing validation or
-asking for push readiness is not that delegation. An explicit execution request
-covers the documented complete gate, version preparation, release commit, tag
+The maintainer may execute delivery or delegate its outcome to an agent under
+[delegated delivery](../rules/contributions.md#delegated-delivery). The agent then
+selects the affected groups and commands for the scoped repository and established
+destination. Naming a version, preparing notes, completing validation or asking
+for push readiness alone is not that delegation. A delivery request covers the
+documented complete gate, version preparation, release commit, tag
 and selected delivery effects. Direct delivery includes the atomic branch/tag
-push; PR delivery includes its branch/PR, fresh validation after an independently
-authorized merge, and exact tag push. Permission to fix code, create a commit, open a PR,
+push; PR delivery includes its branch/PR, fresh validation after an authorized
+merge, and exact tag push. Permission to fix code, create a commit, open a PR,
 push a topic branch or change a version alone is not permission to run this flow.
 Agents may inspect release state and prepare source, dependencies and changelog
 notes within existing scope. Mutating version preparation, staging and saved
-release recovery require their own explicit execution authority; calling a
-helper directly does not bypass the boundary.
+release recovery require execution authority, which a scoped delivery request
+supplies for its necessary substeps; calling a helper directly does not bypass
+that boundary.
 
 Ordinary contributions follow the [PR rules](../rules/contributions.md). The
 runner defaults to direct delivery and supports explicit PR delivery under
@@ -852,7 +858,7 @@ Ordinary coordinated workspaces need no configuration or invocation changes.
 Keep related packages in their existing workspace; separate release identities
 do not require package moves or another lockfile. Make the declared groups easy
 to inspect using the root
-[`Cargo.toml` comment map](../rules/rust-workspaces.md#visible-release-group-map-in-cargotoml).
+[`Cargo.toml` group catalog](../rules/rust-workspaces.md#visible-release-group-map-in-cargotoml).
 Use [one changelog per group and retained shared history](../rules/changelogs.md#release-group-changelogs-and-shared-history);
 all ledgers live at `releases/<group>/CHANGELOG.md`. Root `CHANGELOG.md` is an
 index, and root `Cargo.toml` has no `workspace.package.version`. Comments, the
@@ -978,6 +984,27 @@ versions, declared local requirements and selected ledger are rendered; existing
 transaction mechanics restore all selected files on failure. Failed checks retain
 Cargo output/statuses, policy/root inputs and preparation evidence. Source, index,
 receipt custody and the complete gate remain consumer-owned.
+
+The root dependency catalog also provides readable version information. Every
+workspace member must have a `[workspace.dependencies]` entry with its local path
+and full current package version, optionally prefixed by `=`, `^` or `~`. Include
+private members and unused aliases, and register every alias in its owning
+group's `dependencies` roster. Unused catalog entries add no dependency edges.
+Admission checks all groups, even when releasing only one; the existing
+`check-dependency-pins.sh --cargo-inheritance` path uses this same admission.
+It rejects missing catalog entries, missing paths/versions, paths pointing at
+other packages and incomplete group alias rosters, including unused entries that
+Cargo itself does not resolve.
+For example, `0.73` and `0.73.0` both fail for a local package at `0.73.1`, even
+though Cargo accepts them as compatible requirements. External dependencies
+retain their existing policies. Preparation updates
+selected local requirements and preserves their operators within the existing
+transaction; no generated numeric comment summary or second version catalog is
+maintained. Before adopting this check, complete the member catalog and group
+alias rosters, expand abbreviated local requirements and align stale ones without
+changing the packages' own versions. Label local groups/ledgers and external
+production, build and test dependencies under the
+[visible catalog convention](../rules/rust-workspaces.md#visible-release-group-map-in-cargotoml).
 
 Group preparation requires an IC Build editor supplying `group-manifest` with
 the existing bounded input contract. Its selection JSON explicitly names a
