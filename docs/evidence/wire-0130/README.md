@@ -14,7 +14,7 @@ Cargo.lock. The supplying Wire archive identifies release commit
 
 [Metrics 0.24 migration](../../../releases/metrics/0.24.md) describes the exposed
 native trait identity change. No own version bump, staging, commit, release or
-publication ran for this task. Logging is unchanged. Metrics' actual product
+publication ran for this source-adoption phase. Logging is unchanged. Metrics' actual product
 graph selects no Types, Platform, endpoint or runtime integration dependency.
 
 ## Checks and preserved behavior
@@ -73,4 +73,25 @@ Only a new ic-metrics publication can supply these Wire 0.13 implementations to
 native schema consumers. Published Metrics 0.23.2 still uses Wire 0.12.1. Logging
 and arithmetic-only consumers need no paired release. Downstream owners were
 reviewed read-only; no full sibling application graph, endpoint, hosted/macOS,
-installed IC, full local CI or full MSRV suite was qualified in this task.
+installed IC, full local CI or full MSRV suite was qualified in that source-adoption phase.
+
+## Registry delivery and consumer acceptance
+
+The maintainer subsequently delegated deployment. Metrics 0.24.0 is now published,
+with tag metrics-v0.24.0 at commit 2a18f93a8d2e80d60279fe29ad626dc0ea5810f1.
+The official index and downloaded archive agree on SHA-256
+`70544c4dc1ae7697e22f2a3dd23a96de8fbcd722e7c320d72fda0c7760c2b9c6`;
+the archive's clean VCS identity matches that tag. Full local ci/msrv passed,
+followed by the publication Clippy gate, real dry run and successful upload.
+
+A separate registry-only consumer uses the
+[published Metrics manifest](Cargo.registry.toml.snapshot) and the same probe
+source. All three tests pass on Rust 1.91, as do strict Clippy and the Rust 1.91
+Wasm check. Its graph contains registry Metrics 0.24.0, Core 0.13.0, Types 0.15.1
+and facade 0.15.2, with no endpoint, runtime guard, CDK or IC0. No copied Metrics
+supplier or external path dependency is used for this delivery check.
+
+Actual release/upload records, registry downloads and consumer logs are retained
+under `target/audits/deploy-wire013-20261031/`. Logging remains published 0.23.2;
+no Logging release was performed for this Wire adoption. Hosted/native/macOS and
+installed IC acceptance remain separate from these local delivery results.
