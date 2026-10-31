@@ -1,9 +1,4 @@
 [workspace]
-# Release groups (all workspace members):
-# metrics: ic-metrics; version: crates/ic-metrics/Cargo.toml package.version.
-#   changelog: releases/metrics/CHANGELOG.md.
-# logging: ic-logging; version: crates/ic-logging/Cargo.toml package.version.
-#   changelog: releases/logging/CHANGELOG.md.
 members = ["crates/ic-logging", "crates/ic-metrics"]
 default-members = ["crates/ic-logging", "crates/ic-metrics"]
 resolver = "3"
@@ -16,10 +11,12 @@ repository = "https://github.com/dragginzgame/ic-observability"
 authors = ["borovan <84897664+borovan@users.noreply.github.com>"]
 
 [workspace.dependencies]
-# Local logging group catalog; ledger: releases/logging/CHANGELOG.md.
+# Logging
+# Changelog : releases/logging/CHANGELOG.md
 ic-logging = { path = "crates/ic-logging", version = "0.23.2" }
 
-# Local metrics group catalog; ledger: releases/metrics/CHANGELOG.md.
+# Metrics
+# Changelog : releases/metrics/CHANGELOG.md
 ic-metrics = { path = "crates/ic-metrics", version = "0.24.0" }
 
 # Production dependencies

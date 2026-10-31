@@ -1,7 +1,8 @@
 # IC Observability Agent Rules
 
 Read [DRAGGINZGAME.md](DRAGGINZGAME.md) first. The reviewed Shared Tooling revision
-`3279d9b1a4b68178f3c4187be394de003e4ee010` (snapshot version 0.27.21)
+`143a9abb9ae81feae9400ff3844b03b1ddfdd75a` (snapshot version 0.27.21;
+upstream commit titled 0.27.22)
 and file digests are recorded in
 [.shared-tooling.snapshot](.shared-tooling.snapshot). This is the local overlay;
 there are no baseline exceptions. Read [the current handoff](docs/status/current.md)

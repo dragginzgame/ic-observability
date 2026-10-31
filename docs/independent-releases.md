@@ -3,7 +3,7 @@
 The two libraries remain in one development workspace and share the catalog,
 lockfile, compiler policy and complete release validation. They have no dependency
 on one another. [The declared policy](../ci/cargo-release-groups.json) and root
-Cargo.toml comments identify every member:
+Cargo.toml dependency catalog identify every member:
 
 | Group | Members | Version owner | Canonical ledger |
 | --- | --- | --- | --- |
@@ -18,8 +18,10 @@ both group ledgers link to that history. Existing tags and receipts are retained
 There are no private workspace members today. Each public member has a root
 catalog entry with its local path and full current version, registered in its
 group's dependency roster. These unused catalog aliases provide a readable
-version map without adding dependencies between the libraries. Only member
-dependency declarations create edges.
+version map without adding dependencies between the libraries. Each group appears
+once in a contiguous catalog block with a short title and separate changelog
+comment; grouped formatting preserves these blocks. Only member dependency
+declarations create edges.
 
 Both groups own their versions and active release notes at the same level. The
 root has no `workspace.package.version`; it supplies common metadata, dependency

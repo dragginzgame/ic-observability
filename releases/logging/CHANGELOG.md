@@ -11,8 +11,8 @@ belong here.
 ### 🔧 Changed
 
 - Qualify Logging's independent release flow and root catalog updates against
-  Shared Tooling 0.27.21
-  admission and [delivery policy](../../rules/contributions.md#delegated-delivery).
+  Shared Tooling's complete member-catalog admission, 0.27.22 single-block layout
+  and [delivery policy](../../rules/contributions.md#delegated-delivery).
   Logging's dependency-free engine and public contracts are unchanged.
 
 ## [0.23.2] - 2026-10-31

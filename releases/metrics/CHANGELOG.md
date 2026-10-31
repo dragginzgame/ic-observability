@@ -9,8 +9,8 @@ Metrics and Logging each own their package version and release notes.
 
 ### 🔧 Changed
 
-- Adopt Shared Tooling 0.27.21 for Metrics release and dependency admission,
-  with a complete root member catalog and group-owned version requirements.
+- Adopt Shared Tooling's complete root member catalog and group-owned version
+  requirements, with the 0.27.22 single-block catalog layout.
   Clarify delegated delivery and explicit Cargo cleanup scope. Metrics' API,
   compiler floor and Wire 0.13 pairing are unchanged.
 
