@@ -6,6 +6,14 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.23.3]
+
+### 🔧 Changed
+
+- Show Logging's full version, release group and changelog in the root Cargo
+  catalog. Release preparation maintains its catalog requirement; Logging remains
+  dependency-free and independently versioned.
+
 ## [0.23.2] - 2026-10-31
 
 ### 🔧 Changed

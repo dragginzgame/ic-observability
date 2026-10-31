@@ -4,8 +4,12 @@
 #   changelog: releases/metrics/CHANGELOG.md.
 # logging: ic-logging; version: crates/ic-logging/Cargo.toml package.version.
 #   changelog: releases/logging/CHANGELOG.md.
-members = ["crates/ic-logging", "crates/ic-metrics"]
-default-members = ["crates/ic-logging", "crates/ic-metrics"]
+members = [
+    # Public library; logging group
+    "crates/ic-logging",
+    # Public library; metrics group
+    "crates/ic-metrics",
+]
 resolver = "3"
 
 [workspace.package]
@@ -16,12 +20,25 @@ repository = "https://github.com/dragginzgame/ic-observability"
 authors = ["borovan <84897664+borovan@users.noreply.github.com>"]
 
 [workspace.dependencies]
-# Production dependencies
-ic-wire = { version = "0.13.0", default-features = false, features = ["typescript"] }
+# Local crates — logging group
+# Changelog: releases/logging/CHANGELOG.md
+ic-logging = { version = "0.23.2", path = "crates/ic-logging" }
+
+# Local crates — metrics group
+# Changelog: releases/metrics/CHANGELOG.md
+ic-metrics = { version = "0.24.0", path = "crates/ic-metrics" }
+
+# External production dependencies — Metrics (Logging has none)
 serde = { version = "1.0", default-features = false, features = ["derive"] }
 
-# Tests and tooling only
+# Native production/schema — Metrics native-wire feature
+# Enabled by default on native targets; excluded from Wasm.
+ic-wire = { version = "0.13.0", default-features = false, features = ["typescript"] }
+
+# Tests only — Metrics
 num-bigint = { version = "0.5.1", default-features = false }
+
+# Native tests only — Metrics
 serde_json = "1.0"
 
 [workspace.lints.rust]

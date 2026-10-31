@@ -15,8 +15,13 @@ converted to a literal version; Metrics followed at its released 0.23.1 version.
 Neither conversion changes a package's numeric identity.
 Earlier coordinated releases remain once in [shared history](../releases/history.md), through 0.23.0;
 both group ledgers link to that history. Existing tags and receipts are retained.
-There are no private workspace members or internal dependency requirements today.
-The policy's empty dependency lists explicitly reflect that fact.
+There are no private workspace members or internal dependency edges today.
+Root `[workspace.dependencies]` catalogs both libraries with their full current
+versions and local paths, grouped beside their ledger locations. These unused
+entries add no edges; members inherit only the dependencies they use. Each
+group's policy lists its catalog alias so release preparation updates the visible
+requirement alongside its package version. External dependencies are labelled by
+production/test use and native feature restrictions.
 
 Both groups own their versions and active release notes at the same level. The
 root has no `workspace.package.version`; it supplies common metadata, dependency
@@ -66,9 +71,9 @@ adapter supplies group policy, existing tool preparation, full validation and
 source/receipt admission. There is no second release implementation.
 
 Plans always include Cargo.toml and Cargo.lock. Each group additionally selects
-its own literal-version manifest and ledger. The unchanged root manifest is
-still admitted for both groups but need not appear in the committed
-diff. Other groups' versions, manifests, requirements and pending notes must be
+its own literal-version manifest and ledger. The selected group's root catalog
+requirement advances with its member version. Other groups' versions, manifests,
+requirements and pending notes must be
 preserved. Future shared consumer metadata needs an explicit shared_metadata_files
 declaration plus selective rendering/qualification; none is needed for this split.
 
@@ -95,7 +100,7 @@ encoded bytes and Logging's retained-data contract do not change in this split.
 `make release-tools-check` exercises the actual adapter, shared runner/editor and
 local Git remotes in disposable repositories. It checks both group directions,
 missing/empty/unknown group refusal, unrelated versions/requirements/ledgers,
-unchanged root/history inputs, exact changed files, rollback, receipts, resume
+preserved unrelated root/history inputs, exact changed files, rollback, receipts, resume
 and publication selection. Setup, broad gates, archive compilation and
 registry effects are substituted. Unchanged-group consumers use workspace-owned
 source copies pinned to their prior compatible identities; this is source-level

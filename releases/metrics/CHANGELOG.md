@@ -5,6 +5,15 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.24.1]
+
+### 🔧 Changed
+
+- Show Metrics' full version, release group and changelog in the root Cargo
+  catalog. Label production, native schema and test dependencies by their actual
+  use; release preparation maintains the catalog requirement without adding a
+  library dependency or changing feature selection.
+
 ## [0.24.0] - 2026-10-31
 
 ### ⚠️ Breaking
