@@ -37,11 +37,11 @@ struct History {
 }
 
 impl History {
-    fn attempt(&mut self, actual: &mut Log, action: Action, step: usize) {
+    fn attempt(&mut self, actual: &mut Log, action: Action, step: usize, message: &str) {
         let time = self.time.unwrap_or(10);
         let mut entry = input(
             time + u64::from(!matches!(action, Action::SameTime)),
-            "é中🙂 diagnostic",
+            message,
         );
         entry.level = if step.is_multiple_of(3) {
             Level::Warn
@@ -248,6 +248,13 @@ impl History {
 }
 
 fn check_schedules(operations: &(impl Iterator<Item = Action> + Clone)) {
+    check_schedules_with_message(operations, "é中🙂 diagnostic");
+}
+
+fn check_schedules_with_message(
+    operations: &(impl Iterator<Item = Action> + Clone),
+    message: &str,
+) {
     // Include exhausted identities, UTF-8/suffix boundaries and one-row capacity.
     for start in [0, u64::MAX - 2] {
         for capacity in [1, 2, 5] {
@@ -284,7 +291,7 @@ fn check_schedules(operations: &(impl Iterator<Item = Action> + Clone)) {
                     let time = model.time.unwrap_or(10);
                     match operation {
                         Append | SameTime | SourceTooLong | TopicTooLong | RegressedTime => {
-                            model.attempt(&mut actual, operation, step);
+                            model.attempt(&mut actual, operation, step, message);
                         }
                         PruneOne | PruneNone | PruneAll => {
                             let (age, limit) = match operation {
@@ -396,5 +403,41 @@ fn seeded_operations_match_independent_event_history() {
                 .take(256)
                 .map(|state| ACTIONS[usize::try_from((state >> 32) % 10).unwrap()]),
         );
+    }
+}
+
+#[test]
+#[ignore = "explicit extended model exploration; ordinary CI retains the fixed short histories"]
+fn long_utf8_histories_match_independent_event_history() {
+    const ACTIONS: [Action; 10] = [
+        Append,
+        SameTime,
+        SourceTooLong,
+        TopicTooLong,
+        RegressedTime,
+        PruneOne,
+        PruneNone,
+        PruneAll,
+        MoveRestore,
+        CopyRestore,
+    ];
+    for seed in [1_u64, 42, 0xdead_beef, u64::MAX] {
+        for text in ["", "\0", "e\u{301}", "é中🙂", "\u{10ffff}\n"] {
+            std::eprintln!("extended logging seed={seed}, text={text:?}");
+            let states = core::iter::successors(Some(seed), |state| {
+                Some(
+                    state
+                        .wrapping_mul(6_364_136_223_846_793_005)
+                        .wrapping_add(1),
+                )
+            });
+            check_schedules_with_message(
+                &states
+                    .skip(1)
+                    .take(2048)
+                    .map(|state| ACTIONS[usize::try_from((state >> 32) % 10).unwrap()]),
+                &text.repeat(32),
+            );
+        }
     }
 }

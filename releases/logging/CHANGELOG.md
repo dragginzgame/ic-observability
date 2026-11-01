@@ -6,6 +6,26 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.23.5]
+
+### 🔧 Changed
+
+- Verify maintained package contents against the retrieved release source during
+  publication readback. Admit consumer Make routing and declared Node/npm setup
+  before release validation; run Make checks early on the native CI hosts.
+
+### 🩹 Fixed
+
+- Preserve failed npm/Node observations before admission or dependent setup,
+  even when they print expected values. Record the Make smoke step's explicit
+  outcome in native diagnostic and recovery evidence.
+
+### 🧪 Testing
+
+- Exercise independently corrupted UTF-8 checkpoints and add opt-in long seeded
+  operation histories over the existing independent event model. The heap engine,
+  public API, retained-data format and dependency-free contract are unchanged.
+
 ## [0.23.4] - 2026-11-01
 
 ### 🔧 Changed

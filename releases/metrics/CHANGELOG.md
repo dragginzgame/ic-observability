@@ -5,6 +5,33 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.24.4]
+
+### 🔧 Changed
+
+- Verify every maintained package file against the retrieved release source
+  during publication readback, including source roster and original manifest.
+  Reject altered, missing, extra, duplicate and symlinked archive members.
+- Check consumer Make publication-mode routing and declared Node/npm versions
+  during release preflight; run Make admission before native tool setup.
+
+### 🩹 Fixed
+
+- Preserve failed npm/Node observations before admission or dependent setup,
+  even when they print expected values. Record the Make smoke step's explicit
+  outcome in native diagnostic and recovery evidence.
+
+- Require an explicit expected Metrics version for registry-only identity
+  acceptance; reject stale catalogs before Cargo effects and verify the resolved
+  registry version against the requested intent.
+
+### 🧪 Testing
+
+- Add an independently locked registry-only Principal/Account consumer for
+  published Metrics 0.24.3, reusing the source probe assertions without a local
+  Metrics copy. Keep Platform and endpoint integrations outside the core graph.
+  Package APIs, schemas, encoded bytes and production dependencies are unchanged.
+
 ## [0.24.3] - 2026-11-01
 
 ### 🩹 Fixed

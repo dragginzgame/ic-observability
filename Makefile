@@ -78,6 +78,17 @@ release-files:
 .PHONY: ci-selection-check package-doc-links-check
 .PHONY: metrics-profiles-check
 .PHONY: install-release-editor release-editor-check
+.PHONY: setup-smoke-check typescript-setup-check published-identities-check
+
+setup-smoke-check:
+	bash scripts/ci/check-setup-smoke.sh "$(MAKE_COMMAND)"
+
+typescript-setup-check:
+	bash scripts/ci/check-typescript-setup.sh
+	bash scripts/ci/test-typescript-setup.sh
+
+published-identities-check:
+	+bash scripts/ci/check-wire-identities.sh --published "$(EXPECTED_METRICS_VERSION)"
 
 install-release-editor:
 	+@bash scripts/dev/release-editor.sh install
@@ -113,6 +124,8 @@ help:
 	@echo "Link Metrics arithmetic without an allocator: allocation-free-check"
 	@echo "Execute Metrics Rust/TypeScript codec conformance (prepared Node): typescript-check"
 	@echo "Identity composition: wire-identities-check; docs: ci-selection-check package-doc-links-check"
+	@echo "Registry-only acceptance: published-identities-check EXPECTED_METRICS_VERSION=X.Y.Z (explicit post-publication check)"
+	@echo "Early setup: setup-smoke-check, typescript-setup-check (read-only tool admission)"
 	@echo "Minimal Serde execution and native/Wasm dependency graphs: metrics-profiles-check"
 	@echo "Tooling fixtures: hook-check, release-tools-check (no release Git effects)"
 	@echo "CI evidence fixture: ci-evidence-check (substitute action results and Make effects, no hosted run)"
@@ -206,6 +219,7 @@ allocation-free-check:
 release-tools-check:
 	bash scripts/release/test-fixture-retention.sh
 	bash scripts/release/test-publication-policy.sh
+	bash scripts/ci/test-published-identities-selection.sh
 
 # Keep order explicit: stop on a failed gate, including any Clippy warning.
 # Clippy checks all native targets and Wasm libraries; standalone checks stay focused.

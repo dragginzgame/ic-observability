@@ -1,4 +1,4 @@
-//! Qualification consumer of published Wire/Types and the current Metrics source.
+//! Qualification consumer of Metrics with canonical published Wire and Types.
 
 use ic_metrics::{
     MeasurementAggregate, MeasurementCounter, MeasurementHistogram, MeasurementSummary,

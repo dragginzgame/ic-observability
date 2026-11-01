@@ -1,6 +1,7 @@
 use super::*;
 use alloc::format;
 
+mod adversarial;
 mod contract;
 mod mixed;
 

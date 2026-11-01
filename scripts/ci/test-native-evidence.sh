@@ -29,6 +29,8 @@ mkdir -p "$fixture/commands" "$fixture/bin" "$fixture/source"
 # shellcheck disable=SC2016 # jq syntax and GitHub expressions must stay literal.
 "$jq" -e '
     (map(.id) | index("checkout")) < (map(.id) | index("native_inputs")) and
+    (map(.id) | index("native_inputs")) < (map(.id) | index("setup_smoke")) and
+    (map(.id) | index("setup_smoke")) < (map(.id) | index("native_host")) and
     (map(.id) | index("native_inputs")) < (map(.id) | index("native_host")) and
     (map(.id) | index("native_inputs")) < (map(.id) | index("toolchain")) and
     (map(.id) | index("toolchain")) < (map(.id) | index("tools")) and
@@ -48,6 +50,7 @@ mkdir -p "$fixture/commands" "$fixture/bin" "$fixture/source"
     (map(select(.id == "native_artifacts"))[0].env == {
         "APPLICATION_OUTCOME": "${{ steps.application_sources.outcome }}",
         "NATIVE_OUTCOME": "${{ steps.native_ci.outcome }}",
+        "SETUP_OUTCOME": "${{ steps.setup_smoke.outcome }}",
         "INPUT_OUTCOME": "${{ steps.native_inputs.outcome }}",
         "TOOLS_OUTCOME": "${{ steps.tools.outcome }}",
         "HOST_OUTCOME": "${{ steps.native_host.outcome }}",
@@ -59,10 +62,13 @@ mkdir -p "$fixture/commands" "$fixture/bin" "$fixture/source"
     (map(select(.uses != null and .with.name == "native-${{ matrix.runner }}-${{ github.run_attempt }}"))[0].if ==
         "env.CI_SCOPE != '\''docs'\'' && (always() && steps.checkout.outcome == '\''success'\'')")
 ' "$fixture/steps.json" > /dev/null
-for step in native_host host_tools toolchain tool_inputs application_sources native_ci; do
+for step in setup_smoke native_host host_tools toolchain tool_inputs application_sources native_ci; do
     PATH="${jq%/*}:$PATH" bash "$root/scripts/ci/extract-workflow-step.sh" \
         "$fixture/steps.json" "$step" > "$fixture/commands/$step.sh"
 done
+# Matrix values are action inputs; execute the Linux body with substituted Make
+# effects below rather than pretending this fixture is native macOS evidence.
+perl -pi -e 's/\$\{\{ matrix\.os \}\}/Linux/g' "$fixture/commands/setup_smoke.sh"
 # Shared owns the action body, Make aggregate, leaf ordering and PATH admission.
 # Supply only its public outcomes/logs to the actual Metrics collector below.
 cat > "$fixture/commands/tools.sh" <<'TOOLS'
@@ -190,6 +196,13 @@ real_bash="$(command -v bash)"
 printf '#!%s\n' "$real_bash" > "$fixture/bin/bash"
 cat >> "$fixture/bin/bash" <<'BASH'
 set -euo pipefail
+if [[ "$1" == scripts/ci/check-setup-smoke.sh ]]; then
+    printf 'setup-smoke\n' >> "$FIXTURE_COMMANDS"
+    printf 'setup smoke stdout\n'
+    printf 'setup smoke stderr\n' >&2
+    [[ "$FIXTURE_FAILURE" != setup-smoke ]] || exit 43
+    exit 0
+fi
 if [[ "$1" == scripts/dev/install-host-tools.sh ]]; then
     printf 'host-tools\n' >> "$FIXTURE_COMMANDS"
     printf 'host setup stdout\n'
@@ -239,6 +252,9 @@ select_scenario() {
     failed_log=native-ci.log
     case "$1" in
         success|skipped-setup) expected_pipeline_status=0 ;;
+        setup-smoke)
+            FIXTURE_FAILURE=setup-smoke; failed_log=setup-smoke.log
+            HOST_OUTCOME=skipped; TOOLCHAIN_OUTCOME=skipped; PREREQUISITES_OUTCOME=skipped ;;
         host-tools) FIXTURE_FAILURE=host-tools; TOOLCHAIN_OUTCOME=skipped ;;
         tool-inputs) FIXTURE_FAILURE=tool-inputs; failed_log=tool-versions.txt ;;
         application-sources) FIXTURE_FAILURE=application-sources; failed_log=application-sources.log ;;
@@ -273,7 +289,7 @@ check_retained_recovery_inputs() {
 }
 
 # Keep this workflow's action-result projection and Git/evidence custody.
-for scenario in success skipped-setup host-tools tool-inputs application-sources tools-install tools-check native formatting collection-partial collection-failure native-archive-failure collection-archive-failure; do (
+for scenario in success skipped-setup setup-smoke host-tools tool-inputs application-sources tools-install tools-check native formatting collection-partial collection-failure native-archive-failure collection-archive-failure; do (
     worktree="$fixture/$scenario"
     mkdir -p "$worktree"
     cp -R "$fixture/source/." "$worktree/"
@@ -297,6 +313,7 @@ for scenario in success skipped-setup host-tools tool-inputs application-sources
     export PATH="$fixture/bin:$root/.tools/rust/common/bin:$root/.tools/host/bin:$PATH"
     export INPUT_OUTCOME=success HOST_OUTCOME=success TOOLCHAIN_OUTCOME=success PREREQUISITES_OUTCOME=success
     export HOST_TOOLS_OUTCOME=skipped
+    export SETUP_OUTCOME=skipped
     export APPLICATION_OUTCOME=skipped
     export TOOLS_OUTCOME=skipped TOOL_INPUT_OUTCOME=skipped NATIVE_OUTCOME=skipped
     select_scenario "$scenario"
@@ -310,13 +327,13 @@ for scenario in success skipped-setup host-tools tool-inputs application-sources
     fi
     status=0
     if [[ "$scenario" == skipped-setup ]]; then
-        HOST_OUTCOME=failure
+        INPUT_OUTCOME=failure HOST_OUTCOME=skipped TOOLCHAIN_OUTCOME=skipped PREREQUISITES_OUTCOME=skipped
         printf 'unrelated log\n' > "$RUNNER_TEMP/tools-install.log"
         printf 'unrelated log\n' > "$RUNNER_TEMP/tools-check.log"
         : > commands.log
     else
         # This fixture models this workflow's step order and outcome projection.
-        for step in host_tools:HOST_TOOLS_OUTCOME tools:TOOLS_OUTCOME \
+        for step in setup_smoke:SETUP_OUTCOME host_tools:HOST_TOOLS_OUTCOME tools:TOOLS_OUTCOME \
             tool_inputs:TOOL_INPUT_OUTCOME application_sources:APPLICATION_OUTCOME \
             native_ci:NATIVE_OUTCOME; do
             if "$real_bash" --noprofile --norc -e -o pipefail \
@@ -334,6 +351,9 @@ for scenario in success skipped-setup host-tools tool-inputs application-sources
     # No later application/native effect can follow a failed action or fetch.
     : > expected-commands
     if [[ "$scenario" != skipped-setup ]]; then
+        printf 'setup-smoke\n' >> expected-commands
+    fi
+    if [[ "$SETUP_OUTCOME" == success ]]; then
         printf 'host-tools\n' >> expected-commands
     fi
     if [[ "$HOST_TOOLS_OUTCOME" == success ]]; then
@@ -399,16 +419,23 @@ for scenario in success skipped-setup host-tools tool-inputs application-sources
     else
         [[ ! -f unpacked/target/evidence/native-ci/formatting-logs.tar.gz ]] || exit 1
     fi
-    expected="$(printf 'native=%s\ninputs=%s\ntools=%s\nhost=%s\ntoolchain=%s\nprerequisites=%s\nhost_tools=%s\ntool_inputs=%s\napplication_sources=%s' \
+    expected="$(printf 'native=%s\ninputs=%s\ntools=%s\nhost=%s\ntoolchain=%s\nprerequisites=%s\nhost_tools=%s\ntool_inputs=%s\napplication_sources=%s\nsetup_smoke=%s' \
         "$NATIVE_OUTCOME" "$INPUT_OUTCOME" "$TOOLS_OUTCOME" "$HOST_OUTCOME" "$TOOLCHAIN_OUTCOME" \
-        "$PREREQUISITES_OUTCOME" "$HOST_TOOLS_OUTCOME" "$TOOL_INPUT_OUTCOME" "$APPLICATION_OUTCOME")"
+        "$PREREQUISITES_OUTCOME" "$HOST_TOOLS_OUTCOME" "$TOOL_INPUT_OUTCOME" "$APPLICATION_OUTCOME" "$SETUP_OUTCOME")"
     [[ "$(cat unpacked/target/evidence/native-ci/outcome.txt)" == "$expected" ]] || exit 1
     if [[ "$scenario" == success ]]; then
+        [[ "$SETUP_OUTCOME" == success ]] || exit 1
         [[ -s unpacked/target/evidence/native-ci/tool-versions.txt ]] || exit 1
         [[ ! -f unpacked/target/evidence/native-ci/tool-candidates.tar.gz ]] || exit 1
     elif [[ "$scenario" == skipped-setup ]]; then
+        [[ "$SETUP_OUTCOME" == skipped && ! -e diagnostic-readback/setup-smoke.log ]] || exit 1
         [[ ! -e diagnostic-readback/tools-setup.log && ! -e diagnostic-readback/tools-check.log ]] || exit 1
         [[ ! -e unpacked/target/evidence/native-ci/tools-setup.log && ! -e unpacked/target/evidence/native-ci/tools-check.log ]] || exit 1
+    elif [[ "$scenario" == setup-smoke ]]; then
+        [[ "$SETUP_OUTCOME" == failure && "$HOST_OUTCOME" == skipped && "$HOST_TOOLS_OUTCOME" == skipped ]] || exit 1
+        grep -Fx 'setup smoke stdout' diagnostic-readback/setup-smoke.log > /dev/null
+        grep -Fx 'setup smoke stderr' diagnostic-readback/setup-smoke.log > /dev/null
+        cmp diagnostic-readback/setup-smoke.log unpacked/target/evidence/native-ci/setup-smoke.log
     elif [[ "$scenario" == host-tools ]]; then
         grep -Fx 'host setup stdout' diagnostic-readback/host-tools.log > /dev/null
         grep -Fx 'host setup stderr' diagnostic-readback/host-tools.log > /dev/null

@@ -52,5 +52,8 @@ checksum="$(bash scripts/ci/verify-file-checksum.sh --print sha256 "$archive")"
 [[ "$checksum" == "$(jq -er .checksum "$attempt/observation.json")" ]]
 bash scripts/ci/check-cargo-package-provenance.sh "$attempt/provenance" "$attempt/archives" \
     "$repository" "$source" --package "$package@$version" "$path"
+perl scripts/release/check-package-content.pl "$archive" "$attempt/provenance/source.git" \
+    "$source" "$package@$version" "$path" > "$attempt/content-verified"
+cat "$attempt/content-verified"
 printf '%s\n' "$package@$version $source $checksum" > "$attempt/verified"
 cat "$attempt/verified"

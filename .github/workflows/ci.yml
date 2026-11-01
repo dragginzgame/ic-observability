@@ -67,8 +67,8 @@ jobs:
       - name: Prepare locked TypeScript compiler
         if: env.CI_SCOPE != 'docs'
         run: |
-          npm install --global "$(node -p "require('./ci/typescript/package.json').packageManager")" --ignore-scripts --no-audit --no-fund
-          npm ci --prefix ci/typescript --ignore-scripts --no-audit --no-fund
+          bash scripts/dev/prepare-typescript.sh
+          make typescript-setup-check
       - name: Prepare identity qualification sources
         if: env.CI_SCOPE != 'docs'
         run: |
@@ -138,6 +138,15 @@ jobs:
         id: native_inputs
         run: |
           bash scripts/ci/record-native-inputs.sh
+      - name: Check consumer Make setup before tool installation
+        if: env.CI_SCOPE != 'docs'
+        id: setup_smoke
+        run: |
+          if [[ "${{ matrix.os }}" == Darwin ]]; then
+            bash scripts/ci/check-setup-smoke.sh /usr/bin/make
+          else
+            bash scripts/ci/check-setup-smoke.sh
+          fi 2>&1 | tee target/evidence/native-ci/setup-smoke.log
       - name: Verify native host
         if: env.CI_SCOPE != 'docs'
         id: native_host
@@ -206,6 +215,7 @@ jobs:
         env:
           APPLICATION_OUTCOME: ${{ steps.application_sources.outcome }}
           NATIVE_OUTCOME: ${{ steps.native_ci.outcome }}
+          SETUP_OUTCOME: ${{ steps.setup_smoke.outcome }}
           INPUT_OUTCOME: ${{ steps.native_inputs.outcome }}
           TOOLS_OUTCOME: ${{ steps.tools.outcome }}
           HOST_OUTCOME: ${{ steps.native_host.outcome }}
