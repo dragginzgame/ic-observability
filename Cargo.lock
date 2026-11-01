@@ -41,7 +41,7 @@ version = "0.23.5"
 
 [[package]]
 name = "ic-metrics"
-version = "0.24.4"
+version = "0.24.5"
 dependencies = [
  "ic-wire",
  "num-bigint",

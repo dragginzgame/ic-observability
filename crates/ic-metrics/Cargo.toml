@@ -2,7 +2,7 @@
 name = "ic-metrics"
 edition.workspace = true
 rust-version.workspace = true
-version = "0.24.4"
+version = "0.24.5"
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
