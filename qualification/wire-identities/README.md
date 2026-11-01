@@ -28,3 +28,8 @@ lock diff, then prepare and run the check again. That explicit operation updates
 only this fixture lock. Ordinary checks use --locked --offline and refuse stale
 inputs. All generated sources, metadata and compiler outputs remain beneath
 this repository's target/; no sibling source or path dependency is selected.
+
+The separate [published consumer](../wire-published/README.md) reuses these
+assertions with an exact registry Metrics dependency and its own lock. Use that
+post-publication proof when registry acceptance, rather than source alignment,
+is required.

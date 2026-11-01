@@ -156,19 +156,16 @@ The separate TypeScript CI job runs on Linux. Prepare the exact Node version in
 `ci/node-version.txt` explicitly (for example, `nvm install` and `nvm use` with that
 version), then run `make typescript-check` with locked Cargo sources already
 available. Validation checks the prepared Node version and never installs it.
-Prepare the pinned compiler explicitly with
-`npm ci --prefix ci/typescript --ignore-scripts --no-audit --no-fund`.
-Select the package manager declared in ci/typescript/package.json first; CI
-installs that exact npm version before the locked install. Node's bundled npm
-can differ from that selection.
-The independent npm lock owns TypeScript 7.0.2; it adds no Rust dependency.
-The check type-checks the generated runtime and a consumer of all four Metrics
-report shapes, including rejected number/option/incomplete-report assignments.
-Node's `--experimental-transform-types` then executes the codecs and verifies
-byte parity. This is native tooling evidence, not a browser/IC runtime. Inputs,
-compiler diagnostics, generated code and outputs remain in
-`target/typescript-conformance/`. The Node-dependent test is explicitly ignored
-by ordinary Rust library tests and MSRV checks; CI invokes it separately.
+Prepare npm and the pinned compiler explicitly with
+`bash scripts/dev/prepare-typescript.sh`. That command installs the package
+manager declared in ci/typescript/package.json, checks the exact Node/npm
+selection, then runs the locked npm install. `make typescript-setup-check` only
+checks the prepared tools and runs the setup failure fixture; it never installs
+anything. The fixture substitutes global npm effects and checks rejection of
+Node/npm mismatches before the locked install. Failed npm version observation
+and Node package-manager selection retain their failure status, even if they
+print the expected output; no dependent install/admission follows. TypeScript compilation runs the
+maintained typed consumer before the five Rust/TypeScript runtime report cases.
 
 `make wire-identities-check` runs the independently locked
 [identity consumer](../qualification/wire-identities/README.md) on Rust 1.91,
@@ -177,6 +174,23 @@ including its Wasm build. Prepare its sources with
 Metrics source into a disposable owning workspace; it is source alignment rather
 than registry Metrics acceptance. Its additional Platform suppliers never enter
 the root Cargo lock or feature graph. CI invokes it in the TypeScript job.
+
+`make published-identities-check EXPECTED_METRICS_VERSION=0.24.3` is separate post-publication acceptance against
+exact registry Metrics, with its own [catalog/lock](../qualification/wire-published/README.md).
+Prepare it explicitly with
+`bash scripts/ci/check-wire-identities.sh --published 0.24.3 --prepare`. It reuses the
+same identity assertions but copies no Metrics source. The recorded registry
+version must match the explicitly requested expected version. Missing, malformed
+or stale intent refuses before Cargo effects. The catalog/lock must be
+deliberately advanced after publication; ordinary source CI
+never selects a new registry version or updates the lock.
+
+For Logging's extended model exploration, run
+`cargo test -p ic-logging --lib --locked --offline log::tests::mixed::long_utf8_histories_match_independent_event_history -- --ignored --exact`.
+Fixed short histories and generated snapshot corruption cases remain in normal
+Logging tests. The extended test is deterministic and reports its seed/text for
+replay; it adds no dependency or performance measurement.
+
 
 The exact prose allowlist in ci/docs-only-paths.txt enables Shared's conservative
 classifier. Existing product job names remain stable; eligible prose runs real
@@ -317,7 +331,16 @@ Select `RELEASE_GROUP=metrics` or `RELEASE_GROUP=logging` explicitly; see
 [independent releases](independent-releases.md) for the version/ledger map.
 Use `make release-resume RELEASE_GROUP=logging VERSION=X.Y.Z` for recovery of a
 specific saved Logging attempt.
-Standard release preflight prepares the
+Standard release preflight first runs `setup-smoke-check` and
+`typescript-setup-check`. Prepare the declared Node/npm tools explicitly before
+releasing either group; Rust library tests and native `make ci` remain Node-free.
+The Make smoke parses the actual consumer and tests exported publication-mode
+overrides, then deliberately stops before metadata, compiler or upload recipes.
+Native CI runs it before tool installation on all three declared hosts, including
+macOS's system Make. To qualify another already prepared Make binary directly,
+run `bash scripts/ci/check-setup-smoke.sh /absolute/path/to/make`; this does not
+install or select another workspace tool. A Linux parser check does not establish
+native macOS execution. Standard preflight otherwise prepares the
 locked dependency cache, common Cargo tools and the selected release editor before offline validation;
 standalone preflight only fetches/checks offline. Preparation and late checks
 bind the selected release commit rather than newer working-tree metadata.
@@ -337,6 +360,15 @@ publication eligibility. The same native/Wasm Clippy gate runs before Cargo pack
 registry effects, including under parallel Make. Publication retains its own
 command and receipts; established delivery authority does not require repeated
 per-command confirmation. Selection and attempt evidence stays under `target/publication`.
+Readback also compares the complete maintained package roster and file contents,
+including Cargo.toml.orig, against the freshly retrieved release commit. Cargo's
+generated Cargo.toml, Cargo.lock and provenance JSON retain their existing
+packaging/provenance checks; they are explicitly outside that byte comparison.
+Verification never extracts the remote archive into a filesystem. Unexpected,
+duplicate or non-regular members refuse, and a failed readback never retries an
+upload. The local archive-content policy requires all tracked package files to
+be shipped; deliberate future Cargo exclusions must update that policy explicitly.
+
 Both commands require an explicit group; missing, empty and unknown selections
 refuse before setup, validation or mutation. A `PACKAGE` override must belong to
 that group and never selects it implicitly. Group release tags advance only
@@ -354,6 +386,9 @@ local PATH changes; the portable fixture does not establish native macOS support
 
 The workflow captures exact source inputs and host/compiler identities before
 setup, records setup/check/native outcomes and keeps stdout/stderr on failures.
+The Make smoke step has its own setup_smoke outcome in both diagnostic and
+recovery archives, including success, failure and skipped states. A failed smoke
+keeps its stdout/stderr log and prevents later setup/compiler steps.
 Tool candidate selection preserves admitted failed inputs and diagnostics;
 collection failure remains nonzero. Formatter logs outside the fixture scratch
 root are included. Uploads retain `native-ci.tar.gz` and its checksum for 30 days,

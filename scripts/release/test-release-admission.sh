@@ -52,6 +52,8 @@ include fixture-gates.mk
 MAKE
 cat > fixture-gates.mk <<'MAKE'
 .PHONY: install-rust-tools rust-tools-check install-release-editor release-editor-check ci msrv package-check clippy
+typescript-setup-check:
+	@true
 install-rust-tools rust-tools-check install-release-editor:
 	@test ! -e .git/fail-tools
 release-editor-check:
