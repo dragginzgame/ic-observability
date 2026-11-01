@@ -8,6 +8,17 @@ publish each clean release-tag checkout before advancing to the other group.
 Issue #107 is the only open owning issue found; close it when integrated.
 No sibling edits or artifact cleanup are authorized or needed.
 
+PR #108 merged at 4a85f31d2f13d2a9edd3e68579b4f0c4f2f030c7 and closed #107.
+The first Metrics release validation stopped before version mutation on native
+evidence assertions expecting the old artifact condition. Both native/MSRV
+fixtures are corrected and pass their actual IO/status scenarios. A focused
+follow-up PR will integrate this repair before restarting complete release gates.
+The root lock at delivery entry already resolved Wire/derive 0.13.2. The root
+minimum and isolated lock now align to that verified published patch; the
+[delivery qualification](../evidence/wire-0132.md) records exact supplier identities
+and passing native/TypeScript/identity/Wasm checks. Earlier 0.13.1 evidence remains
+historical. No library implementation or public API change is introduced.
+
 The latest request adds published Wire/Derive 0.13.1 to the existing local batch.
 The root requirement and isolated identity lock now select that patch. The root
 lock already selected it at task entry and was preserved; all unrelated dependency
@@ -87,7 +98,7 @@ Focused evidence is retained at target/improvements/20261031/:
 
 Pending compatible notes are Metrics 0.24.2 and Logging 0.23.4; published package
 versions remain 0.24.1 and 0.23.3 before release preparation. Issue #107 remains
-open pending integration. Full local ci/msrv gates will run through each standard
+closed by PR #108. Full local ci/msrv gates will run through each standard
 release command. Hosted workflow execution remains asynchronous and distinct
 from the focused local evidence already recorded.
 The existing [release receipt](../evidence/shared-tooling-02722-delivery.md)

@@ -9,7 +9,7 @@ Metrics and Logging each own their package version and release notes.
 
 ### 🔧 Changed
 
-- Adopt published Wire/Derive 0.13.1 for optional native metadata, keeping the
+- Adopt published Wire/Derive 0.13.2 for optional native metadata, keeping the
   canonical Types 0.15 pairing, Rust 1.91 floor, schemas, bytes and arithmetic-only
   feature isolation unchanged. Existing Wire 0.13 consumers remain compatible;
   no endpoint integration is added. See [the pairing guide](0.24.md).

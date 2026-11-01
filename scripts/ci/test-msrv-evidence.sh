@@ -24,7 +24,7 @@ jq="$root/.tools/host/bin/jq"
     (map(.id) | index("toolchain")) < (map(.id) | index("application_sources")) and
     (map(.id) | index("application_sources")) < (map(.id) | index("check")) and
     (map(.id) | index("check")) < (map(.id) | index("artifacts")) and
-    (map(select(.id == "artifacts"))[0].if == "always() && steps.checkout.outcome == '\''success'\''") and
+    (map(select(.id == "artifacts"))[0].if == "env.CI_SCOPE != '\''docs'\'' && (always() && steps.checkout.outcome == '\''success'\'')") and
     (map(select(.id == "artifacts"))[0].env == {
         "INPUT_OUTCOME": "${{ steps.inputs.outcome }}",
         "HOST_TOOLS_OUTCOME": "${{ steps.host_tools.outcome }}",
@@ -39,7 +39,7 @@ jq="$root/.tools/host/bin/jq"
         "TMPDIR": "${{ github.workspace }}/target/evidence/msrv-ci/scratch"
     }) and
     (map(select(.uses != null and .with.name == "msrv-${{ github.run_attempt }}"))[0] |
-        .if == "always() && steps.checkout.outcome == '\''success'\''" and
+        .if == "env.CI_SCOPE != '\''docs'\'' && (always() && steps.checkout.outcome == '\''success'\'')" and
         .with.path == "target/evidence/msrv-ci.tar.gz\ntarget/evidence/msrv-ci.tar.gz.sha256\n" and
         .with["retention-days"] == 30 and .with["if-no-files-found"] == "error")
 ' "$fixture/steps.json" > /dev/null

@@ -42,7 +42,7 @@ mkdir -p "$fixture/commands" "$fixture/bin" "$fixture/source"
         "bash scripts/ci/record-native-inputs.sh\n") and
     (map(select(.id == "tools"))[0].uses == "./.github/actions/prepare-common-tools") and
     (map(select(.id == "native_artifacts"))[0].if ==
-        "always() && steps.checkout.outcome == '\''success'\''") and
+        "env.CI_SCOPE != '\''docs'\'' && (always() && steps.checkout.outcome == '\''success'\'')") and
     (map(select(.id == "native_artifacts"))[0].run ==
         "bash scripts/ci/collect-native-evidence.sh\n") and
     (map(select(.id == "native_artifacts"))[0].env == {
@@ -57,7 +57,7 @@ mkdir -p "$fixture/commands" "$fixture/bin" "$fixture/source"
         "TOOL_INPUT_OUTCOME": "${{ steps.tool_inputs.outcome }}"
     }) and
     (map(select(.uses != null and .with.name == "native-${{ matrix.runner }}-${{ github.run_attempt }}"))[0].if ==
-        "always() && steps.checkout.outcome == '\''success'\''")
+        "env.CI_SCOPE != '\''docs'\'' && (always() && steps.checkout.outcome == '\''success'\'')")
 ' "$fixture/steps.json" > /dev/null
 for step in native_host host_tools toolchain tool_inputs application_sources native_ci; do
     PATH="${jq%/*}:$PATH" bash "$root/scripts/ci/extract-workflow-step.sh" \
