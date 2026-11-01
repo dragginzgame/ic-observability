@@ -12,6 +12,7 @@ use Action::{
     SourceTooLong, TopicTooLong,
 };
 use alloc::{string::String, vec::Vec};
+use std::ops::ControlFlow;
 
 #[derive(Clone, Copy)]
 enum Action {
@@ -53,7 +54,11 @@ impl History {
         } else {
             "other"
         };
-        entry.topic = (!step.is_multiple_of(5)).then_some("delivery");
+        entry.topic = match step % 5 {
+            0 => None,
+            1 => Some(""),
+            _ => Some("delivery"),
+        };
         let expected = match action {
             Action::SourceTooLong => {
                 entry.source = "source-over-limit";
@@ -243,6 +248,37 @@ impl History {
             page.entries,
             matches.iter().map(|(_, entry)| **entry).collect::<Vec<_>>()
         );
+        // A visitor may stop before either page ceiling, consuming the row
+        // returning Break. Derive its progress from the journal's candidate
+        // positions, independently of the engine's cursor search/scan loop.
+        for stop_after in [1, 2, results] {
+            let expected: Vec<_> = matches
+                .iter()
+                .take(stop_after)
+                .map(|(_, entry)| **entry)
+                .collect();
+            let consumed = if matches.len() >= stop_after {
+                matches[stop_after - 1].0 + 1
+            } else {
+                consumed
+            };
+            let mut visited = Vec::new();
+            let scan = log.visit_page(filter, request(before, results, scanned), |entry| {
+                visited.push(entry);
+                if visited.len() == stop_after {
+                    ControlFlow::Break(())
+                } else {
+                    ControlFlow::Continue(())
+                }
+            });
+            assert_eq!(visited, expected);
+            assert_eq!(scan.matched, expected.len());
+            assert_eq!(scan.scanned, consumed);
+            assert_eq!(
+                scan.next_before,
+                (consumed < candidates.len()).then(|| candidates[consumed - 1].sequence)
+            );
+        }
         next
     }
 }
@@ -286,7 +322,7 @@ fn check_schedules_with_message(
                     })
                     .unwrap();
                 }
-                let mut cursors = [None, None];
+                let mut cursors = [None; 4];
                 for (step, operation) in (*operations).clone().enumerate() {
                     let time = model.time.unwrap_or(10);
                     match operation {
@@ -314,6 +350,14 @@ fn check_schedules_with_message(
                             source: Some("worker"),
                             topic: TopicMatch::Exact("delivery"),
                             min_level: Some(Level::Warn),
+                        },
+                        Filter {
+                            topic: TopicMatch::Absent,
+                            ..Filter::default()
+                        },
+                        Filter {
+                            topic: TopicMatch::Exact(""),
+                            ..Filter::default()
                         },
                     ]
                     .into_iter()

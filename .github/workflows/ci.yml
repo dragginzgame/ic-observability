@@ -98,6 +98,11 @@ jobs:
             target/qualification/wire-identities.*/catalog.json
             target/qualification/wire-identities.*/metadata.json
             target/qualification/wire-identities.*/probe/
+            target/qualification/wire-published.*/Cargo.toml
+            target/qualification/wire-published.*/Cargo.lock
+            target/qualification/wire-published.*/expected-package
+            target/qualification/wire-published.*/metadata.json
+            target/qualification/wire-published.*/probe/
           if-no-files-found: ignore
           retention-days: 30
 

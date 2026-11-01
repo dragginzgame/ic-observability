@@ -6,6 +6,14 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.23.7]
+
+### 🧪 Testing
+
+- Extend the independent operation-history model to visitor early stops and
+  absent versus present-empty topic filters across append refusals, retention,
+  restoration and cursor continuation. Retain the engine's existing semantics.
+
 ## [0.23.6] - 2026-11-01
 
 ### 📚 Documentation
