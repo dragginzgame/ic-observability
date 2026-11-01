@@ -1,19 +1,19 @@
 # Published identity consumer
 
-This post-publication check selects exact registry Metrics 0.24.6, published Wire
+This post-publication check selects exact registry Metrics 0.25.0, published Wire
 and canonical Types/facade identities. It reuses the maintained Principal/Account
 assertions from [the source probe](../wire-identities/README.md), with no copied
 Metrics source, patch, replacement or external path dependency. Only the probe
 is a workspace member. Its recorded lock owns the registry graph independently
 of the arithmetic workspace and the source-alignment qualification.
 
-Explicit preparation: `bash scripts/ci/check-wire-identities.sh --published 0.24.6 --prepare`.
-Acceptance: `make published-identities-check EXPECTED_METRICS_VERSION=0.24.6`. Checks use locked offline sources,
+Explicit preparation: `bash scripts/ci/check-wire-identities.sh --published 0.25.0 --prepare`.
+Acceptance: `make published-identities-check EXPECTED_METRICS_VERSION=0.25.0`. Checks use locked offline sources,
 strict Clippy, three real schema/byte tests on the Rust floor and a Wasm check.
 Preparation fetches dependencies; checks never update them or install tools.
-The lock selects Wire/Derive 0.13.5 with canonical Types 0.15.1/facade 0.15.2.
+The lock selects Wire/Derive 0.14.0 with canonical Types 0.16.0/facade 0.17.0.
 This catalog owns those Wire and identity selections as well as Metrics/Logging;
-current source adoption cannot silently change this historical registry graph.
+current source adoption cannot silently change this frozen registry graph.
 CI retains this consumer's manifest, lock, expected-package intent, resolved
 metadata and probe sources alongside its acceptance log, including on failure.
 
@@ -35,7 +35,7 @@ selection rejection fixture (Cargo effects are substituted).
 
 
 The [observability host example](examples/observability-host.rs) composes exact
-published Metrics 0.24.6 and Logging 0.23.7. Logging is a development dependency
+published Metrics 0.25.0 and Logging 0.23.7. Logging is a development dependency
 of this private consumer only. Its counters track log admission, truncation,
 eviction and refusal; a host-selected metrics-window reset preserves the log's
 identity. These are diagnostic events rather than authoritative application outcomes.

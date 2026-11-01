@@ -179,10 +179,10 @@ Metrics source into a disposable owning workspace; it is source alignment rather
 than registry Metrics acceptance. Its additional Platform suppliers never enter
 the root Cargo lock or feature graph. CI invokes it in the TypeScript job.
 
-`make published-identities-check EXPECTED_METRICS_VERSION=0.24.6` is separate post-publication acceptance against
+`make published-identities-check EXPECTED_METRICS_VERSION=0.25.0` is separate post-publication acceptance against
 exact registry Metrics, with its own [catalog/lock](../qualification/wire-published/README.md).
 Prepare it explicitly with
-`bash scripts/ci/check-wire-identities.sh --published 0.24.6 --prepare`. It reuses the
+`bash scripts/ci/check-wire-identities.sh --published 0.25.0 --prepare`. It reuses the
 same identity assertions but copies no Metrics source. It also runs the compiled
 Metrics/Logging composition example on the Rust floor. Logging is a registry
 development dependency of the private consumer only, never a dependency of
