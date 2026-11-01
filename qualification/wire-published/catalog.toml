@@ -2,4 +2,4 @@ ic-metrics = { version = "=0.25.0", default-features = false }
 ic-logging = { version = "=0.23.7", default-features = false }
 ic-platform = { version = "=0.17.0", default-features = false }
 ic-platform-types = { version = "=0.16.0", default-features = false }
-ic-wire = { version = "=0.14.0", default-features = false, features = ["typescript"] }
+ic-wire = { version = "=0.14.2", default-features = false, features = ["typescript"] }
