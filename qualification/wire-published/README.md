@@ -12,10 +12,13 @@ Acceptance: `make published-identities-check EXPECTED_METRICS_VERSION=0.24.6`. C
 strict Clippy, three real schema/byte tests on the Rust floor and a Wasm check.
 Preparation fetches dependencies; checks never update them or install tools.
 The lock selects Wire/Derive 0.13.5 with canonical Types 0.15.1/facade 0.15.2.
+This catalog owns those Wire and identity selections as well as Metrics/Logging;
+current source adoption cannot silently change this historical registry graph.
 CI retains this consumer's manifest, lock, expected-package intent, resolved
 metadata and probe sources alongside its acceptance log, including on failure.
 
-After publishing a new Metrics version, deliberately update this catalog and run
+After publishing a new Metrics version, deliberately align this catalog's Metrics,
+Wire and identity selections and run
 `bash scripts/ci/check-wire-identities.sh --published X.Y.Z --update-lockfile`, reviewing
 the resulting lock before preparation/acceptance. This is a separate read-only
 registry-consumer acceptance step after `publish-verified`; a failed check never

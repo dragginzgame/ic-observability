@@ -5,6 +5,22 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.25.0] - Unreleased
+
+### ⚠️ Breaking
+
+- Adopt Wire 0.14 for native measurement metadata. Schema consumers must align
+  their Wire trait identity; numeric shapes, encoded bytes, Serde admission and
+  arithmetic APIs remain unchanged. See the [migration notes](0.25.md).
+  Fix native schema composition for
+  [#120 — Align native Metrics schemas with published Wire 0.14](https://github.com/dragginzgame/ic-observability/issues/120).
+
+### 🧪 Testing
+
+- Qualify source composition with canonical Types 0.16/Platform 0.17, keeping
+  the existing Metrics 0.24.6 registry consumer on its independent Wire 0.13
+  catalog until a new publication is explicitly selected.
+
 ## [0.24.6] - 2026-11-01
 
 ### 🧪 Testing

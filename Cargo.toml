@@ -21,7 +21,7 @@ ic-metrics = { path = "crates/ic-metrics", version = "0.24.6" }
 
 # Production dependencies
 # External, also used by tests: Wire is optional/native-only; Serde is standard.
-ic-wire = { version = "0.13.2", default-features = false, features = ["typescript"] }
+ic-wire = { version = "0.14.0", default-features = false, features = ["typescript"] }
 serde = { version = "1.0", default-features = false, features = ["derive"] }
 
 # Tests and tooling only
