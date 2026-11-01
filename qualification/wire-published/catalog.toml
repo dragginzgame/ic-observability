@@ -1,1 +1,1 @@
-ic-metrics = { version = "=0.24.3", default-features = false }
+ic-metrics = { version = "=0.24.4", default-features = false }

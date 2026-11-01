@@ -1,14 +1,14 @@
 # Published identity consumer
 
-This post-publication check selects exact registry Metrics 0.24.3, published Wire
+This post-publication check selects exact registry Metrics 0.24.4, published Wire
 and canonical Types/facade identities. It reuses the maintained Principal/Account
 assertions from [the source probe](../wire-identities/README.md), with no copied
 Metrics source, patch, replacement or external path dependency. Only the probe
 is a workspace member. Its recorded lock owns the registry graph independently
 of the arithmetic workspace and the source-alignment qualification.
 
-Explicit preparation: `bash scripts/ci/check-wire-identities.sh --published 0.24.3 --prepare`.
-Acceptance: `make published-identities-check EXPECTED_METRICS_VERSION=0.24.3`. Checks use locked offline sources,
+Explicit preparation: `bash scripts/ci/check-wire-identities.sh --published 0.24.4 --prepare`.
+Acceptance: `make published-identities-check EXPECTED_METRICS_VERSION=0.24.4`. Checks use locked offline sources,
 strict Clippy, three real schema/byte tests on the Rust floor and a Wasm check.
 Preparation fetches dependencies; checks never update them or install tools.
 
