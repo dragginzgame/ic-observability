@@ -5,6 +5,17 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.24.6]
+
+### 🧪 Testing
+
+- Extend the independent histogram restoration oracle to every subset of its
+  small observation domain, with zero through four finite bounds.
+- Qualify Wire/Derive 0.13.5 in both isolated identity consumers alongside the
+  root lock selection, retaining the 0.13.2 minimum and existing canonical
+  identity pairing. Preserve generated client schemas and encoded vectors.
+  Retain published-consumer inputs and metadata in CI failure artifacts.
+
 ## [0.24.5] - 2026-11-01
 
 ### 🧪 Testing

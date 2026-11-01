@@ -9,8 +9,10 @@ Run `bash scripts/ci/check-wire-identities.sh --prepare` to fetch the independen
 locked sources, then `make wire-identities-check`. Validation uses the root Rust
 floor on native and Wasm, preceded by strict Clippy on the prepared development
 compiler, with no implicit installation or dependency updates.
-The integration catalog selects the previously qualified Types 0.15.1/facade
-0.15.2 pair; it is not a claim that these are the newest published suppliers.
+The lock selects Wire/Derive 0.13.5 and the integration catalog retains the
+previously qualified Types 0.15.1/facade 0.15.2 pair. This is not a claim that
+these are the newest published suppliers. The root Wire requirement remains
+0.13.2; the lock records the qualified patch without raising that minimum.
 
 The script projects the root catalog and a verbatim Metrics source copy into a
 fresh workspace under target/qualification. Both local packages are members of

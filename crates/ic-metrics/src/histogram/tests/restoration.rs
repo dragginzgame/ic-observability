@@ -182,13 +182,29 @@ fn check_histogram_restoration<const N: usize>(bounds: [u64; N]) {
 
 #[test]
 fn histogram_restoration_matches_independent_bounded_sequences() {
-    check_histogram_restoration([]);
-    check_histogram_restoration([0]);
+    // Every strictly increasing subset of the small observation domain,
+    // including all arities and adjacent/empty/singleton bucket combinations.
+    check_histogram_bound_sets::<0>();
+    check_histogram_bound_sets::<1>();
+    check_histogram_bound_sets::<2>();
+    check_histogram_bound_sets::<3>();
+    check_histogram_bound_sets::<4>();
+    // Closed maximum buckets remain a separate full-width boundary.
     check_histogram_restoration([u64::MAX]);
-    check_histogram_restoration([0, 1]);
-    check_histogram_restoration([1, 2]);
-    check_histogram_restoration([0, 3]);
     check_histogram_restoration([0, u64::MAX]);
+}
+
+fn check_histogram_bound_sets<const N: usize>() {
+    for mut encoded in 0..4_u64.pow(u32::try_from(N).unwrap()) {
+        let bounds: [u64; N] = core::array::from_fn(|_| {
+            let value = encoded % 4;
+            encoded /= 4;
+            value
+        });
+        if bounds.windows(2).all(|pair| pair[0] < pair[1]) {
+            check_histogram_restoration(bounds);
+        }
+    }
 }
 
 fn check_weighted_histogram_merges<const N: usize>(bounds: [u64; N]) {

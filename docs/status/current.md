@@ -1,47 +1,60 @@
 # Current handoff — 2026-11-01
 
-The authorized consumer-recipes deployment is complete. [PR #114](https://github.com/dragginzgame/ic-observability/pull/114)
-and [PR #115](https://github.com/dragginzgame/ic-observability/pull/115) are merged.
-Metrics **0.24.5** and Logging **0.23.6** are Git-released, crates.io published and
-verified against registry metadata, checksums, clean source provenance and exact
-maintained package contents. The [delivery receipt](../evidence/consumer-recipes-delivery-20261101.md)
-records tags, commits, validation, failure recovery and retained evidence.
+Deployment of the accepted improvement batch is now authorized: integrate
+published-consumer CI artifact retention, Wire 0.13.5 qualification,
+Logging visitor/topic model extensions and exhaustive histogram bound-set
+coverage. [Evidence and limitations](../evidence/qualification-models-20261101.md)
+record exact dependencies, checks and retained failures.
 
-The final private consumer now selects exact registry Metrics 0.24.5 and Logging
-0.23.6; CI's PUBLISHED_METRICS_VERSION intent is 0.24.5. Only their version/checksum
-records changed in its lock. Strict Clippy, three Principal/Account tests,
-composition execution on Rust 1.91 and Wasm checks pass against these published
-packages. The source probe stays separate. Logging is a dev dependency only of
-the private consumer; the two libraries retain independent production graphs.
+The incoming root Wire/Derive 0.13.5 lock update is preserved byte-for-byte.
+Both independent qualification locks now select that published patch too; only
+their two version/checksum records change. Official metadata and archive hashes
+agree and report non-yanked versions. All other dependencies and package versions
+remain unchanged: Metrics 0.24.5, Logging 0.23.6, Wire minimum 0.13.2, canonical
+Types 0.15.1/facade 0.15.2. No endpoint or runtime enters Metrics' production graph.
 
-Delivered examples cover application-owned log-admission counters and independent
-metrics-window/log lifetimes, plus byte-budgeted export with continuation from
-the last emitted row. Oversized first rows are typed errors, empty filtered scans
-advance normally, and temporary allocations/envelopes remain host-owned. Logging's
-example has test=true and runs its four regressions in ordinary Cargo tests.
-Recording's independent journal model checks mixed UTF-8 identities, budgets,
-omissions, clears and window resets; all nine recording tests pass on Rust 1.91.
-No public API, library implementation, schema, encoded format or Rust floor changed.
+Both identity probes pass strict Clippy, three Principal/Account schema/byte/error
+tests on Rust 1.91 and Wasm compilation. The published probe composes actual
+registry Metrics 0.24.5/Logging 0.23.6 and runs that application on the Rust floor;
+the separate source probe remains workspace-owned Metrics 0.0.0 alignment.
+Generated TypeScript/runtime, Rust/TypeScript vectors and consumer inputs match
+an executed 0.13.3 baseline byte-for-byte. Production graph profiles, minimal
+Serde tests and the Rust 1.91 allocation-free Wasm link pass.
 
-The first Metrics release gate stopped before mutation on a missing copied
-example target in retained-consumer qualification. PR #115 repaired the fixture;
-both group directions passed and fresh full CI/MSRV gates then passed for each
-release. Both standard publication dry runs and uploads passed native/Wasm Clippy
-and archive verification. Both exact uploads/readbacks completed; do not replay.
+The earlier recommendation overlooked existing independent models. This batch
+extends those owners: Logging checks visitor Break progress and absent versus
+empty topics during mixed admission/retention/restoration histories; histogram
+restoration enumerates all 16 bound subsets of the 0..=3 observation domain.
+Strict selected Clippy, both short Logging model tests and all seven histogram
+restoration tests pass. The ignored long Logging exploration remains unrun.
+No production Rust implementation, public API, schema, bytes or Rust floor changed.
 
-Hosted repaired-source Linux, Apple Silicon, MSRV and TypeScript passed; Intel
-macOS remains asynchronous at the receipt's observation. New private catalog/CI
-intent changes have focused local acceptance; later hosted runs retain their own
-identity. Shared stays reviewed 0.27.23 at
-619d194875369e0f72b45477b66adb430acbf6b7. Wire/Derive remains 0.13.3 with the
-0.13.2 minimum; canonical Types 0.15.1/facade 0.15.2 remain private integration
-suppliers. No endpoint or Platform runtime enters the core.
+The workflow retains published fixture manifests/locks, expected identity,
+metadata and probe sources alongside logs, including on failure. Actual path
+expansion, Actionlint and the existing CI selection fixture pass. These are local
+checks; no fresh hosted upload/native macOS result is claimed. The first Metrics
+lint failure and incomplete baseline compiler attempt remain retained alongside
+their corrected successful checks under target/improvements/qualification-models-20261101/.
 
-Deployment logs remain under target/deploy/consumer-recipes-20261101/;
-publication receipts are target/publication/verification.FEdTU9 and
-target/publication/verification.OqQFpY. Plans and failures remain under
-.git/release-state/. No artifact cleanup, sibling edit or history rewrite ran.
-Prior [Wire qualification](../evidence/wire-0133.md) and
-[delivery history](../evidence/delivery-confidence-20261101.md) remain intact.
-Metrics 0.24.2 stays Git-only and unuploaded. Canic stays separately owned.
-No further product release is needed for this qualification/receipt update.
+Pending notes reserve Metrics 0.24.6 and Logging 0.23.7; own versions have not
+advanced yet. Deliver the source PR, then run each group's standard patch release,
+publication dry run and verified upload. Complete full CI/MSRV at each release;
+then advance and execute the separate registry consumer against the new pair.
+Neither selected candidate exists on crates.io at pre-deployment observation.
+Retain deployment logs under target/deploy/qualification-models-20261101/.
+No new owning issue or unresolved product defect was found; cleanup stays excluded.
+
+The previous authorized deployment remains complete: [PR #114](https://github.com/dragginzgame/ic-observability/pull/114),
+[PR #115](https://github.com/dragginzgame/ic-observability/pull/115) and
+[PR #116](https://github.com/dragginzgame/ic-observability/pull/116) are merged.
+Metrics 0.24.5 and Logging 0.23.6 are Git-released, crates.io published and
+verified; [the delivery receipt](../evidence/consumer-recipes-delivery-20261101.md)
+retains exact source/checksum evidence and hosted status at its observation.
+Do not replay those uploads. Standard journals, original failed release logs
+and publication readbacks remain under .git/release-state/ and target/ as recorded
+there. Metrics 0.24.2 stays Git-only and unuploaded; Canic stays separately owned.
+
+Shared stays reviewed 0.27.23 at 619d194875369e0f72b45477b66adb430acbf6b7.
+No sibling checkout was modified. No Observability publication is required solely
+for the compatible Wire patch; already-published Metrics permits it. Retained
+historical [Wire evidence](../evidence/wire-0133.md) keeps its original scope.
