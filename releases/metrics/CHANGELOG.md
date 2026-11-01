@@ -5,6 +5,15 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.25.1]
+
+### 🧪 Testing
+
+- Qualify published Wire/Derive 0.14.2 for native metadata and both independent
+  identity consumers. Preserve the Wire 0.14.0 minimum, canonical Types 0.16.0 /
+  Platform 0.17.0 pairing, schemas, encoded bytes and arithmetic-only isolation.
+  See [patch qualification](../../docs/evidence/wire-0142.md).
+
 ## [0.25.0] - 2026-11-01
 
 ### ⚠️ Breaking

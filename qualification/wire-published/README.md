@@ -11,7 +11,7 @@ Explicit preparation: `bash scripts/ci/check-wire-identities.sh --published 0.25
 Acceptance: `make published-identities-check EXPECTED_METRICS_VERSION=0.25.0`. Checks use locked offline sources,
 strict Clippy, three real schema/byte tests on the Rust floor and a Wasm check.
 Preparation fetches dependencies; checks never update them or install tools.
-The lock selects Wire/Derive 0.14.0 with canonical Types 0.16.0/facade 0.17.0.
+The lock selects Wire/Derive 0.14.2 with canonical Types 0.16.0/facade 0.17.0.
 This catalog owns those Wire and identity selections as well as Metrics/Logging;
 current source adoption cannot silently change this frozen registry graph.
 CI retains this consumer's manifest, lock, expected-package intent, resolved
