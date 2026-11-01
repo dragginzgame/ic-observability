@@ -15,8 +15,9 @@ override CARGO_PUBLISH_PACKAGES :=
 publish publish-check: override CARGO_PUBLISH_PACKAGES = $(shell RELEASE_GROUP='$(subst ','"'"',$(RELEASE_GROUP))' bash scripts/release/metadata.sh packages)
 CARGO_PUBLISH_REGISTRY := crates-io
 CARGO_PUBLISH_VERIFY_TARGETS := publication-source-check clippy
-publish: override export OBSERVABILITY_PUBLICATION_MODE := publish
-publish-check: override export OBSERVABILITY_PUBLICATION_MODE := check
+export OBSERVABILITY_PUBLICATION_MODE
+publish: override OBSERVABILITY_PUBLICATION_MODE := publish
+publish-check: override OBSERVABILITY_PUBLICATION_MODE := check
 FORMAT_RUST_ARGS := --rustfmt-source qualification/wire-identities/src/lib.rs --rustfmt-edition 2024
 
 # These frozen manifests use archive-directory paths; retain their original bytes.

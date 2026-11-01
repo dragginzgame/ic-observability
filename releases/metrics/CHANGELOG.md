@@ -5,6 +5,14 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.24.3]
+
+### 🩹 Fixed
+
+- Keep publication-mode assignment compatible with macOS's older GNU Make.
+  Prepare the declared npm version before installing the locked TypeScript tools
+  in CI. Library APIs, dependency selections and encoded representations are unchanged.
+
 ## [0.24.2] - 2026-11-01
 
 ### 🔧 Changed

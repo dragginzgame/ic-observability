@@ -17,6 +17,8 @@ belong here.
   checksum and source provenance without retrying uploads.
 - Document published installation and check packaged links without relying on
   repository-only files. The heap engine and dependency-free contract are unchanged.
+- Keep the publication Make entrypoint compatible with the older GNU Make
+  supplied by supported macOS hosts.
 
 ## [0.23.3] - 2026-10-31
 
