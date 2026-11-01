@@ -12,7 +12,7 @@ compiler, with no implicit installation or dependency updates.
 The lock selects Wire/Derive 0.14.2 and the integration catalog selects the
 matching Types 0.16.0/facade 0.17.0 pair. The root Wire requirement is 0.14.0.
 The independently catalogued published consumer selects released Metrics
-0.25.0/Wire 0.14.2/Types 0.16.0/facade 0.17.0. Its graph remains frozen until
+0.25.1/Wire 0.14.2/Types 0.16.0/facade 0.17.0. Its graph remains frozen until
 another published pairing is deliberately selected there.
 
 The script projects the root catalog and a verbatim Metrics source copy into a
