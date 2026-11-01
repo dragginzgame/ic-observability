@@ -47,8 +47,8 @@ TOML
 fi
 export IDENTITY_CATALOG="$root/qualification/wire-identities/catalog.toml"
 export IDENTITY_PUBLISHED="$published" IDENTITY_REGISTRY_CATALOG="$root/qualification/wire-published/catalog.toml"
-# Project the maintained root selections into the isolated fixture. Preserve
-# their bytes rather than maintaining another copy of the Metrics/Wire catalog.
+# Source qualification projects current root selections. Published qualification
+# retains its independently owned registry catalog, including Wire/identity pins.
 perl -pe '
   if (/^members = /) {
     $_ = $ENV{IDENTITY_PUBLISHED} eq "true" ? "members = [\"probe\"]\n" : "members = [\"crates/ic-metrics\", \"probe\"]\n";
@@ -56,6 +56,7 @@ perl -pe '
   }
   if (/^default-members = /) { $_ = "default-members = [\"probe\"]\n"; $defaults++ }
   if (/^ic-logging = /) { $_ = ""; $logging++ }
+  if (/^ic-wire = / && $ENV{IDENTITY_PUBLISHED} eq "true") { $_ = ""; $wire++ }
   if (/^ic-metrics = /) {
     if ($ENV{IDENTITY_PUBLISHED} eq "true") {
       open my $catalog, "<", $ENV{IDENTITY_REGISTRY_CATALOG} or die;
@@ -67,14 +68,14 @@ perl -pe '
     }
     $metrics++;
   }
-  if (/^\[workspace.dependencies\]/) {
+  if (/^\[workspace.dependencies\]/ && $ENV{IDENTITY_PUBLISHED} ne "true") {
     print;
     open my $catalog, "<", $ENV{IDENTITY_CATALOG} or die;
     print while <$catalog>;
     close $catalog or die;
     $_ = "";
   }
-  END { die "unexpected root manifest shape\n" unless $members == 1 && $defaults == 1 && $logging == 1 && $metrics == 1 }
+  END { die "unexpected root manifest shape\n" unless $members == 1 && $defaults == 1 && $logging == 1 && $metrics == 1 && ($ENV{IDENTITY_PUBLISHED} ne "true" || $wire == 1) }
 ' "$root/Cargo.toml" > "$fixture/Cargo.toml"
 if [[ "$published" != true ]]; then
     perl -pi -e 's/^version = "[^"]+"/version = "0.0.0"/' "$fixture/crates/ic-metrics/Cargo.toml"
