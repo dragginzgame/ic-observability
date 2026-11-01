@@ -40,6 +40,8 @@ jobs:
     if: ${{ always() && !cancelled() }}
     env:
       CI_SCOPE: ${{ needs.changes.result == 'success' && needs.changes.outputs.scope == 'docs' && 'docs' || 'full' }}
+      # Frozen registry acceptance intent; advance with the published catalog/lock.
+      PUBLISHED_METRICS_VERSION: '0.24.4'
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
@@ -75,11 +77,14 @@ jobs:
           PATH="$PWD/.tools/host/bin:$PATH" bash scripts/dev/prepare-rust-toolchain.sh \
             --workspace-manifest Cargo.toml --target wasm32-unknown-unknown
           bash scripts/ci/check-wire-identities.sh --prepare
+          bash scripts/ci/check-wire-identities.sh --published "$PUBLISHED_METRICS_VERSION" --prepare
       - name: Execute Rust and TypeScript report codecs
         if: env.CI_SCOPE != 'docs'
         run: |
           mkdir -p target/typescript-conformance
           make typescript-check wire-identities-check 2>&1 | tee target/typescript-conformance/check.log
+          make published-identities-check EXPECTED_METRICS_VERSION="$PUBLISHED_METRICS_VERSION" \
+            2>&1 | tee target/typescript-conformance/published-check.log
       # actions/upload-artifact v7
       - name: Retain conformance inputs and outputs
         if: env.CI_SCOPE != 'docs' && (always())

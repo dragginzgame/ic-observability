@@ -56,7 +56,7 @@ for selection in default direct; do
         scripts/ci/check-make-execution.sh scripts/ci/check-release-delivery.sh \
         ci/release-delivery.txt scripts/ci/run-formatting.sh \
         scripts/release/metadata.sh ci/cargo-release-groups.json \
-        qualification/wire-identities/src/lib.rs > "$fixture/output" 2>&1
+        qualification/wire-identities/src/lib.rs qualification/wire-published/examples/observability-host.rs > "$fixture/output" 2>&1
 done
 
 # Keep one real-consumer include-admission check. Shared Tooling owns the

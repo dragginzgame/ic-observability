@@ -9,6 +9,11 @@ Metrics and Logging each own their package version and release notes.
 
 ### 🧪 Testing
 
+- Extend bounded recording qualification with an independent event-journal
+  model across UTF-8/key/count/byte pressure, repeated keys, omissions, clear
+  operations and host window resets. Add a compiled application example that
+  composes published Metrics and Logging without a dependency between libraries.
+  Exercise that consumer in CI and on the Rust floor.
 - Qualify published Wire/Derive 0.13.3 in the root and both independently locked
   identity consumers. Preserve the declared Wire 0.13.2 minimum, canonical Types
   0.15.1/facade 0.15.2 pairing, schemas, bytes and arithmetic-only isolation.

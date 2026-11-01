@@ -67,3 +67,19 @@ The [publication guide](../README.md#release-and-package-publication) distinguis
 workspace release from explicit publication of each package. The
 [current handoff](status/current.md) records observed release/adoption state and
 source-bound qualification, rather than maintaining another version roster here.
+
+
+## Consumer recipes
+
+The [byte-budgeted export example](../crates/ic-logging/examples/byte-budgeted-export.rs)
+implements a caller-owned text format and body ceiling. Its tests cover exact
+UTF-8 byte limits, oversized-first-row errors, filtered empty scans and bounded
+continuation without losing a row. No new logging cursor or codec API is added.
+
+The [composition example](../qualification/wire-published/examples/observability-host.rs)
+uses published Metrics and Logging from an application-owned qualification
+workspace. It counts log admission, truncations, count/byte evictions and refusals
+with scalar Metrics counters, without either library depending on the other.
+Resetting the host's metrics window leaves log sequence/time watermarks intact.
+Append receipts describe log admission only; they do not establish business or
+paid-effect success. Refusals are counted without recursively appending more logs.

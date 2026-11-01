@@ -10,5 +10,9 @@ description = "Bounded application logs with explicit retention and scan limits"
 readme = "README.md"
 publish = true
 
+[[example]]
+name = "byte-budgeted-export"
+test = true
+
 [lints]
 workspace = true

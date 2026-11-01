@@ -17,6 +17,10 @@ Add `features = ["recording"]` for bounded heap recording, or `native-wire` for
 native schema generation. Default features select `native-wire`; Wasm still
 excludes that dependency. Neither feature adds persistence or endpoint integration.
 
+The compiled [observability host example](https://github.com/dragginzgame/ic-observability/blob/main/qualification/wire-published/examples/observability-host.rs)
+uses Metrics counters for Logging admission, truncation, eviction and refusal.
+The application owns both instances and their reset policy; the libraries remain independent.
+
 IC Metrics is a standalone application capability alongside IC Timers, IC Jobs
 and IC Auth. Applications and Canic compose these packages through explicit
 dependencies. Metrics owns measurement arithmetic and optional bounded retention;

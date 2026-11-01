@@ -6,6 +6,22 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.23.6]
+
+### 📚 Documentation
+
+- Add a compiled byte-budgeted text export recipe with typed oversized-row
+  errors and continuation from the last emitted row. Explain that the stopping
+  candidate counts as scanned, while transport/envelope limits remain host-owned.
+- Demonstrate application-owned Metrics counters for log admission, truncation,
+  eviction and refusal, with independent metrics-window and log lifetimes.
+
+### 🧪 Testing
+
+- Run the export example's UTF-8, first-row error, empty-filter and bounded-scan
+  tests in ordinary Cargo tests. The heap engine, cursor API, dependency-free
+  library and retained-data contract are unchanged.
+
 ## [0.23.5] - 2026-11-01
 
 ### 🔧 Changed

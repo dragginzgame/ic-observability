@@ -18,7 +18,7 @@ CARGO_PUBLISH_VERIFY_TARGETS := publication-source-check clippy
 export OBSERVABILITY_PUBLICATION_MODE
 publish: override OBSERVABILITY_PUBLICATION_MODE := publish
 publish-check: override OBSERVABILITY_PUBLICATION_MODE := check
-FORMAT_RUST_ARGS := --rustfmt-source qualification/wire-identities/src/lib.rs --rustfmt-edition 2024
+FORMAT_RUST_ARGS := --rustfmt-source qualification/wire-identities/src/lib.rs --rustfmt-source qualification/wire-published/examples/observability-host.rs --rustfmt-edition 2024
 
 # These frozen manifests use archive-directory paths; retain their original bytes.
 # All other maintained checksum manifests use repository-root paths.

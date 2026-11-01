@@ -36,6 +36,15 @@ if [[ "$published" != true ]]; then
 fi
 cp "$root/qualification/wire-identities/Cargo.toml.in" "$fixture/probe/Cargo.toml"
 cp "$root/qualification/wire-identities/src/lib.rs" "$fixture/probe/src/"
+if [[ "$published" == true ]]; then
+    mkdir -p "$fixture/probe/examples"
+    cp "$root/qualification/wire-published/examples/observability-host.rs" "$fixture/probe/examples/"
+    cat >> "$fixture/probe/Cargo.toml" <<'TOML'
+
+[dev-dependencies]
+ic-logging.workspace = true
+TOML
+fi
 export IDENTITY_CATALOG="$root/qualification/wire-identities/catalog.toml"
 export IDENTITY_PUBLISHED="$published" IDENTITY_REGISTRY_CATALOG="$root/qualification/wire-published/catalog.toml"
 # Project the maintained root selections into the isolated fixture. Preserve
@@ -105,7 +114,12 @@ jq -e '
   . as $m | all(.packages[]; .source != null or (.id as $id | $m.workspace_members | index($id))) and
   all(.packages[]; .name != "ic-wire-endpoint" and .name != "ic-cdk" and .name != "ic0")
 ' "$fixture/metadata.json" > /dev/null
-cargo clippy --locked --offline --manifest-path "$fixture/Cargo.toml" -p wire-identity-probe --lib --tests -- -D warnings
+targets=(--lib --tests)
+if [[ "$published" == true ]]; then targets+=(--examples); fi
+cargo clippy --locked --offline --manifest-path "$fixture/Cargo.toml" -p wire-identity-probe "${targets[@]}" -- -D warnings
 cargo "+$minimum" test --locked --offline --manifest-path "$fixture/Cargo.toml" -p wire-identity-probe --lib
+if [[ "$published" == true ]]; then
+    cargo "+$minimum" run --locked --offline --manifest-path "$fixture/Cargo.toml" -p wire-identity-probe --example observability-host
+fi
 cargo "+$minimum" check --locked --offline --manifest-path "$fixture/Cargo.toml" -p wire-identity-probe --target wasm32-unknown-unknown
 if [[ "$published" == true ]]; then printf 'Registry consumer accepted: ic-metrics@%s\n' "$expected_version"; fi
