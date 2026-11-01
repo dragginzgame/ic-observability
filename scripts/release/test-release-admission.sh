@@ -137,7 +137,7 @@ freeze_consumer() {
     consumer="$fixture/$group-consumer"
     mkdir -p "$consumer/supplier" "$consumer/client/src"
     cp Cargo.toml Cargo.lock rust-toolchain.toml "$consumer/"
-    cp -R "crates/ic-$supplier/src" "crates/ic-$supplier/Cargo.toml" \
+    cp -R "crates/ic-$supplier/src" "crates/ic-$supplier/examples" "crates/ic-$supplier/Cargo.toml" \
         "crates/ic-$supplier/README.md" "crates/ic-$supplier/LICENSE" "$consumer/supplier/"
     perl -pi -e 's/^members = .*/members = ["supplier", "client"]/; s/^default-members = .*/default-members = ["client"]/' "$consumer/Cargo.toml"
     # This standalone client owns only the retained supplier, not the product

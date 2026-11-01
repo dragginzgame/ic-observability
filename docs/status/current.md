@@ -69,3 +69,13 @@ plus PUBLISHED_METRICS_VERSION in the TypeScript workflow. Preserve all other
 supplier records. Run explicit-version identity/composition acceptance against
 those registry releases, then deliver its scoped qualification/receipt update.
 Readback failures must never replay an uncertain upload. No cleanup is needed.
+
+
+PR #114 merged at 4439079c5c6f1b9bb9ec1c69e053715104c90a9b. The first Metrics
+release gate stopped before version/tag/upload mutation because the retained
+consumer fixture copied a declared example target's manifest without its examples
+directory. The fix copies both suppliers' declared examples; both actual group
+admission directions now pass. Retained failure evidence is under
+.git/release-state/validation-failures/20261101T124338Z-106473* and
+target/deploy/consumer-recipes-20261101/fixture-fix/. Restart full standard release
+gates after integrating this scoped repair; do not bypass or reuse the failed gate.
