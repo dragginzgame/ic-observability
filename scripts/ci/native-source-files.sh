@@ -9,6 +9,7 @@ root="$(cd -P "${root%/*}/../.." && printf '%s/.' "$PWD")"
 root="${root%/.}"
 git -C "$root" ls-files --cached --others --exclude-standard -z -- \
     README.md Cargo.toml Cargo.lock Makefile rust-toolchain.toml .shared-tooling.snapshot \
-    make crates ci scripts .githooks .github \
+    make crates ci scripts qualification .githooks .github \
+    ':(glob,exclude)**/node_modules/**' \
     ':(glob,exclude)**/target/**' ':(glob,exclude)**/.tools/**' \
     ':(glob,exclude)**/.private-evidence/**'

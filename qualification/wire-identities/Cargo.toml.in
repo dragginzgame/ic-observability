@@ -1,0 +1,18 @@
+[package]
+name = "wire-identity-probe"
+version = "0.0.0"
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+ic-metrics = { workspace = true, default-features = false, features = ["native-wire"] }
+ic-platform = { workspace = true, features = ["principal"] }
+ic-platform-types.workspace = true
+serde.workspace = true
+
+[target.'cfg(not(target_family = "wasm"))'.dependencies]
+ic-wire = { workspace = true, features = ["platform-types"] }
+
+[target.'cfg(not(target_family = "wasm"))'.dev-dependencies]
+serde_json.workspace = true

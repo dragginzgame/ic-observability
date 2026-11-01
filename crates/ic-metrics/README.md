@@ -1,10 +1,21 @@
 # ic-metrics
 
-Metrics owns its version and [changelog](../../releases/metrics/CHANGELOG.md), alongside Logging's
-independent version and ledger. See [release groups](../../docs/independent-releases.md)
+Metrics owns its version and [changelog](https://github.com/dragginzgame/ic-observability/blob/main/releases/metrics/CHANGELOG.md), alongside Logging's
+independent version and ledger. See [release groups](https://github.com/dragginzgame/ic-observability/blob/main/docs/independent-releases.md)
 for maintainer commands.
 
 Measurement arithmetic with standard numeric transport and optional bounded heap recording.
+
+For allocation-free arithmetic and Serde without native Wire metadata:
+
+```toml
+[dependencies]
+ic-metrics = { version = "0.24", default-features = false }
+```
+
+Add `features = ["recording"]` for bounded heap recording, or `native-wire` for
+native schema generation. Default features select `native-wire`; Wasm still
+excludes that dependency. Neither feature adds persistence or endpoint integration.
 
 IC Metrics is a standalone application capability alongside IC Timers, IC Jobs
 and IC Auth. Applications and Canic compose these packages through explicit
@@ -140,24 +151,24 @@ separately. Shared arithmetic allocates nothing; registry lookups, labels,
 encoding and stable writes are separate consumer costs. Build profiles belong
 to each application, and native timing is not IC measurement evidence.
 
-The [tracked-recording comparison](../../docs/evidence/tracked-080.md),
-[quantile comparison](../../docs/evidence/quantile-cost-062.md) and
-[durable-store experiment](../../docs/evidence/stable-cost-072.md) retain reproducible
+The [tracked-recording comparison](https://github.com/dragginzgame/ic-observability/blob/main/docs/evidence/tracked-080.md),
+[quantile comparison](https://github.com/dragginzgame/ic-observability/blob/main/docs/evidence/quantile-cost-062.md) and
+[durable-store experiment](https://github.com/dragginzgame/ic-observability/blob/main/docs/evidence/stable-cost-072.md) retain reproducible
 sources, locked graphs, Wasms and raw IC readings. The separate
-[frozen durability receipt](../../docs/evidence/stable-current-0146.md) qualifies its
+[frozen durability receipt](https://github.com/dragginzgame/ic-observability/blob/main/docs/evidence/stable-current-0146.md) qualifies its
 recorded Memory/Storage integration without rewriting those historical inputs.
-The separate [Memory 0.49 comparison](../../docs/evidence/memory-0147.md) records retained
+The separate [Memory 0.49 comparison](https://github.com/dragginzgame/ic-observability/blob/main/docs/evidence/memory-0147.md) records retained
 upgrade behavior and the measured size/instruction/cycle tradeoffs of that adoption.
 Their bounded workloads do
 not establish whole-application or mainnet savings. Original reader, histogram
 and consumer-lookup evidence remains unchanged under `docs/evidence`; the
-[cleanup receipt](../../docs/evidence/cleanup-082.md) retains the previous guide text.
+[cleanup receipt](https://github.com/dragginzgame/ic-observability/blob/main/docs/evidence/cleanup-082.md) retains the previous guide text.
 Compute distribution queries during reporting when possible.
 
 ## Development
 
 Common contributor commands use the reviewed [Shared Tooling Make
-interface](../../docs/make-interface.md). Product builds, compiler floors, validation,
+interface](https://github.com/dragginzgame/ic-observability/blob/main/docs/make-interface.md). Product builds, compiler floors, validation,
 publication and release metadata remain owned here.
 
 Use rustup with the pinned Rust 1.99.1 toolchain, Git, GNU Make and Bash 3.2 or

@@ -5,6 +5,29 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.24.2]
+
+### 🔧 Changed
+
+- Adopt published Wire/Derive 0.13.1 for optional native metadata, keeping the
+  canonical Types 0.15 pairing, Rust 1.91 floor, schemas, bytes and arithmetic-only
+  feature isolation unchanged. Existing Wire 0.13 consumers remain compatible;
+  no endpoint integration is added. See [the pairing guide](0.24.md).
+- Use conservative documentation-only CI while retaining stable check names and
+  complete release gates ([#107 — Adopt conservative documentation-only CI selection](https://github.com/dragginzgame/ic-observability/issues/107)).
+  The required Shared helpers are adopted from committed 0.27.23.
+- Require uploads from the clean, remotely tagged group release. Add verified
+  publication and readback-only commands using Shared's registry/provenance
+  helpers; failed verification never repeats an upload.
+- Clarify published installation options and make packaged documentation links
+  independent of the repository layout.
+
+### 🧪 Testing
+
+- Maintain an independently locked Principal/Account schema and byte-compatibility
+  consumer with native/Wasm floor checks, outside the arithmetic graph. Type-check
+  generated Metrics clients alongside the existing runtime byte conformance.
+
 ## [0.24.1] - 2026-10-31
 
 ### 🔧 Changed

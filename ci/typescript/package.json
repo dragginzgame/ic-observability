@@ -1,0 +1,8 @@
+{
+  "name": "ic-observability-typescript-qualification",
+  "private": true,
+  "type": "module",
+  "packageManager": "npm@12.2.0",
+  "engines": { "node": "24.21.0", "npm": "12.2.0" },
+  "devDependencies": { "typescript": "7.0.2" }
+}

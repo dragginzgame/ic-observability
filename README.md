@@ -20,13 +20,22 @@ Applications own attribution, labels, clocks, authorization, lifecycle and
 endpoints. Logging supplies no global recorder, timer or IC exports. The
 [independent worker example](crates/ic-logging/examples/worker.rs) demonstrates
 logging without Canic.
+For a published arithmetic-only consumer and separately selected heap logs:
+
+```toml
+[dependencies]
+ic-metrics = { version = "0.24", default-features = false }
+ic-logging = "0.23"
+```
+
+Enable `recording` for bounded Metrics retention, or `native-wire` for native
+metadata. These features do not select persistence or endpoints.
 The [0.24 native metadata contract](releases/metrics/0.24.md) selects Wire
-0.13 and requires matching native report dependencies. Release availability and
-consumer qualification remain separate from these source changes.
+0.13 and requires matching native report dependencies.
 The [0.18 migration guide](docs/migration-018.md) covers combined Logging
 text budgets, append receipts, explicit topic matching, borrowed checkpoints,
-visitor paging and validated summary/histogram transport. Resolve a published
-package containing those APIs before adopting them in consumer dependencies.
+visitor paging and validated summary/histogram transport, available in the
+published 0.24 Metrics and 0.23 Logging lines.
 
 [IC Persistence](https://github.com/dragginzgame/ic-persistence) continues to own
 governed Memory/Storage integration, `ic-metrics-stable` and the separately selected
@@ -44,7 +53,7 @@ separate maintainer action and selects only the chosen group's package:
 ```sh
 make publish-check RELEASE_GROUP=metrics
 # After reviewing the dry run, upload within the authorized delivery scope:
-make publish RELEASE_GROUP=metrics
+make publish-verified RELEASE_GROUP=metrics
 # Logging:
 make publish-check RELEASE_GROUP=logging
 ```
@@ -62,6 +71,12 @@ packages are refused. Selection and attempt evidence is retained under
 registry before selecting another upload after a failure.
 Consumers needing a new Logging API must select a version actually available in
 the registry; a merged PR or workspace release tag alone does not supply it.
+Uploads require a clean checkout of the selected group's annotated release tag,
+with that exact tag already present in the declared GitHub repository.
+`publish-verified` delegates to the existing publisher, then verifies non-yanked
+registry metadata, the downloaded archive checksum and its clean source provenance.
+`make verify-publication RELEASE_GROUP=metrics` repeats readback only. A failed
+readback never retries the upload; retain and reconcile the separate receipts.
 
 ## Development
 
@@ -82,7 +97,7 @@ Use `-p ic-metrics` for Metrics checks and select `--features recording` for its
 optional recorder. The [host guide](docs/hosts.md) owns focused commands and
 evidence limits. Aggregate Make checks and full release gates cover both members
 and retain their explicit validation authority. Registry publication remains a
-separately selected maintainer action per package; this batch performs none.
+separately selected action per package.
 
 [Ownership](docs/extraction.md) · [Logging boundary](docs/logging.md) ·
 [Changelogs](CHANGELOG.md) · [Current handoff](docs/status/current.md) ·

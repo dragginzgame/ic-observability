@@ -45,6 +45,7 @@ fn generated_codecs_round_trip_between_rust_and_typescript() {
     )
     .unwrap();
     fs::write(directory.join("reports.ts"), generated).unwrap();
+    check_types(&directory);
     fs::write(
         directory.join("check.mjs"),
         include_str!("browser/check.mjs"),
@@ -90,4 +91,38 @@ fn generated_codecs_round_trip_between_rust_and_typescript() {
         );
         assert_eq!(bytes, native::encode(report, LIMITS).unwrap(), "{name}");
     }
+}
+
+// Qualify the generated public client separately from runtime byte conformance.
+fn check_types(directory: &Path) {
+    let compiler = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../ci/typescript/node_modules/typescript/bin/tsc");
+    assert!(
+        compiler.is_file(),
+        "prepare the locked TypeScript tools with npm ci --prefix ci/typescript"
+    );
+    fs::write(
+        directory.join("consumer.ts"),
+        include_str!("browser/consumer.ts"),
+    )
+    .unwrap();
+    fs::write(
+        directory.join("tsconfig.json"),
+        include_str!("browser/tsconfig.json"),
+    )
+    .unwrap();
+    let checked = Command::new("node")
+        .arg(compiler)
+        .arg("--project")
+        .arg(directory.join("tsconfig.json"))
+        .output()
+        .unwrap();
+    fs::write(directory.join("tsc.stdout"), &checked.stdout).unwrap();
+    fs::write(directory.join("tsc.stderr"), &checked.stderr).unwrap();
+    assert!(
+        checked.status.success(),
+        "generated Metrics client type check failed: {}\n{}",
+        String::from_utf8_lossy(&checked.stdout),
+        String::from_utf8_lossy(&checked.stderr)
+    );
 }

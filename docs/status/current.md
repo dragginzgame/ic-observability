@@ -1,62 +1,95 @@
-# Current handoff — 2026-10-31
+# Current handoff — 2026-11-01
 
-The maintainer-authorized Shared Tooling deployment is complete. Metrics 0.24.1
-and Logging 0.23.3 are tagged on GitHub and published, non-yanked, on crates.io.
-The [delivery receipt](../evidence/shared-tooling-02722-delivery.md) records exact
-commits, checksums, validation scope and retained evidence. No deployment blocker
-remains. No further version bump, publication, sibling work or cleanup is pending.
+The maintainer now authorizes PR delivery/integration, standard patch releases,
+crates.io publication and closure of resolved owning issues. Deliver the prepared
+batch through chore/verification-wire-0131 against main, then release Metrics
+0.24.2 and Logging 0.23.4 separately. Use the direct group release workflow and
+publish each clean release-tag checkout before advancing to the other group.
+Issue #107 is the only open owning issue found; close it when integrated.
+No sibling edits or artifact cleanup are authorized or needed.
 
-## Delivered identities and notes
+The latest request adds published Wire/Derive 0.13.1 to the existing local batch.
+The root requirement and isolated identity lock now select that patch. The root
+lock already selected it at task entry and was preserved; all unrelated dependency
+records are unchanged. The [Wire patch receipt](../evidence/wire-0131.md) records
+registry identities and current native/TypeScript/identity/Wasm/graph checks.
+It stays within pending Metrics 0.24.2; Logging needs no paired Wire release.
 
-[PR #106](https://github.com/dragginzgame/ic-observability/pull/106) merged at
-745f4081a9df1e368c9629b8e08c686af92fe199. Release-note preparation was committed
-at f16e93f. Standard direct releases then delivered:
+The maintainer previously accepted five improvements: prose-only CI, publication
+verification, maintained Principal/Account qualification, TypeScript static
+checking, and consumer/package docs. Implementation is in the working tree on
+main at base 03b2bd7 (the prior delivery receipt).
+No sibling checkout or own package version was changed. The earlier improvements
+remain intact and are included in the authorized delivery.
 
-- Metrics 0.24.1: metrics-v0.24.1 peels to
-  1e7193f77107a528cd99492b40df6750ddd445b5.
-- Logging 0.23.3: logging-v0.23.3 peels to
-  064ee4963f38db34d4e4b9ac931177364dbbfd65.
+## Implemented changes
 
-Both group ledgers are finalized with UTC date 2026-10-31. The root changelog
-remains an index, and the root Cargo manifest has no aggregate version. Do not
-create another pending heading until subsequent meaningful work needs it.
-Every group release/publication still requires explicit RELEASE_GROUP.
+- Shared 0.27.23 at 619d194875369e0f72b45477b66adb430acbf6b7 was reviewed and
+  canonically exported from an isolated clean checkout, including the existing
+  classifier, registry observer and package-provenance helpers. No snapshot
+  payload was patched. No root VERSION/pending-file mode was introduced.
+- [#107 — Adopt conservative documentation-only CI selection](https://github.com/dragginzgame/ic-observability/issues/107)
+  has a local implementation. The exact allowlist excludes packaged/embedded/
+  companion-controlled Markdown. Exact PR/push identities use complete history.
+  Existing native/MSRV/TypeScript job names stay stable; prose runs Linux docs/
+  snapshot checks and explicit scope summaries. Unknown/mixed/policy/missing-history
+  inputs select full checks. Classifier job failure also runs full checks and
+  remains visibly failed. Full release gates never use the shortcut.
+- Publication admission now precedes Clippy and requires a clean exact group-tag
+  checkout plus matching annotated tag on the declared repository. Dry runs keep
+  their prior preparation role. publish-verified calls the existing publisher,
+  then verify-publication for non-yanked metadata, archive checksum and clean
+  source provenance through Shared helpers. Readback failures never replay an
+  upload; verify-publication is independently repeatable and read-only remotely.
+- qualification/wire-identities contains a probe template, integration catalog
+  and independent lock. Its generated workspace owns the verbatim Metrics copy
+  at version 0.0.0 and the probe; no external source-less path package is used.
+  Root Wire/Serde selections are projected rather than duplicated. Wire/derive
+  now resolve to published 0.13.1 in both locks; Types 0.15.1
+  and facade 0.15.2 are the retained qualified pairing. Strict development Clippy,
+  three real identity/schema/byte tests on Rust 1.91 and a Wasm check are maintained.
+  This is source alignment, not registry acceptance of the working-tree changes.
+- The pinned TypeScript 7.0.2 tool uses an independent npm lock. Generated
+  runtime/report code and a typed consumer now compile before the existing five
+  runtime report cases. Rejection checks cover number/bigint, option wrappers,
+  missing report shapes and decoded totals. Ordinary Rust tests remain Node-free.
+- Installation docs now select published package lines; crate-local README and
+  changelog links no longer require files outside the archive. Cargo's actual
+  file selection is staged for local-link checks. Native input hashing includes
+  qualification inputs and excludes installed node_modules. Standalone probe
+  Rust formatting is wired through Shared's existing formatter interface.
 
-## Qualification and registry readback
+## Evidence and remaining delivery
 
-Both releases passed complete local ci/msrv gates and prepared archive checks.
-Both publish-check dry runs and actual uploads passed their standard native/Wasm
-Clippy and Cargo package-verification gates. All five original PR CI jobs also
-passed: TypeScript, MSRV, Linux, Intel macOS and Apple Silicon macOS. Hosted main
-runs remain asynchronous; no new installed IC or performance claim is made.
+Focused evidence is retained at target/improvements/20261031/:
 
-Official sparse-index reads and static archive downloads independently verify
-non-yanked versions, checksums, clean Git provenance, package paths, maintained
-source rosters and source bytes. Registry dependencies, features and compiler
-floors match the preceding versions. The initial crates.io API HTTP 403 did not
-establish absence; successful index observations supplied that fact instead.
-The workspace lock changed only its two local package-version records.
+- Selected Metrics Clippy, TypeScript static/runtime conformance, three identity
+  tests plus Wasm, and four root feature/dependency profiles pass. The arithmetic
+  graph and dependency-free Logging contract are unchanged.
+  These affected checks were rerun for Wire 0.13.1 under
+  target/audits/wire-0131-20261031/, including eight native metadata tests on
+  Rust 1.91 and exact comparison with retained pre-update schema/byte outputs.
+- Actual CI-selector fixtures cover prose, code, mixed, policy, absent history,
+  tag refs and classifier failure. Actionlint and selected ShellCheck pass.
+- Publication fixtures cover untagged/dirty/staged/later source, absent remote
+  tags, 403 versus 404, yanked versions, corrupt archives and real local Git
+  provenance. The actual Make wrapper proves no second upload after readback
+  failure. Both real group-admission directions and standard Make adapter pass;
+  broad gates/uploads are substituted in those fixtures.
+- Live readback-only qualification succeeds for already-published Metrics 0.24.1
+  and Logging 0.23.3, matching their existing release commits and registry checksums.
+  No upload ran. Receipts: target/publication/verification.0bJGaM and
+  target/publication/verification.rkTKcK.
+- Snapshot integrity, dependency pins, current/package-shaped docs links and both
+  pending-ledger checks pass. The actual formatting-hook/custody fixture passes
+  with the standalone probe source selected. Initial fixture assembly/manifest and lint failures
+  were corrected; failed logs remain alongside the passing attempts.
 
-Actual logs/readbacks: target/deploy/shared-tooling-02722-20261031/.
-Publication intent, source selection and command statuses: target/publication/.
-Exact release plans and validated/prepared receipts: .git/release-state/.
-All earlier archives and journals remain retained; no cleanup or sibling edit ran.
-
-## Adopted source and retained boundaries
-
-Shared revision 143a9abb9ae81feae9400ff3844b03b1ddfdd75a is the maintainer-confirmed
-selection. Its commit/changelog say 0.27.22 while committed VERSION says 0.27.21;
-the exporter-owned snapshot correctly preserves that label with the exact revision.
-The clean source was isolated from the sibling's uncommitted VERSION change.
-
-The complete root catalog now lists current Metrics 0.24.1 and Logging 0.23.3
-paths/requirements in separate contiguous blocks. Each alias belongs to its
-group's dependency roster. Unused catalog entries add no library dependency edge.
-Release preparation updates only its selected group and rejects stale aliases.
-
-Metrics keeps Wire/Derive 0.13 and optional native metadata. Logging keeps its
-dependency-free heap engine. Arithmetic, Serde fields, schemas, encoded bytes,
-typed errors, feature isolation and retained log contracts are unchanged. The
-prior [Wire receipt](../evidence/wire-0130/README.md) retains registry-only
-Principal/Account checks with Types 0.15.1/facade 0.15.2 and Rust 1.91/Wasm.
-Canic #712/#100 and downstream integration ownership remain separate.
+Pending compatible notes are Metrics 0.24.2 and Logging 0.23.4; published package
+versions remain 0.24.1 and 0.23.3 before release preparation. Issue #107 remains
+open pending integration. Full local ci/msrv gates will run through each standard
+release command. Hosted workflow execution remains asynchronous and distinct
+from the focused local evidence already recorded.
+The existing [release receipt](../evidence/shared-tooling-02722-delivery.md)
+retains the completed previous deployment. All journals/artifacts remain intact.
+Canic #712/#100 and downstream adoption retain their separate ownership.
