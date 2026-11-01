@@ -158,6 +158,9 @@ version), then run `make typescript-check` with locked Cargo sources already
 available. Validation checks the prepared Node version and never installs it.
 Prepare the pinned compiler explicitly with
 `npm ci --prefix ci/typescript --ignore-scripts --no-audit --no-fund`.
+Select the package manager declared in ci/typescript/package.json first; CI
+installs that exact npm version before the locked install. Node's bundled npm
+can differ from that selection.
 The independent npm lock owns TypeScript 7.0.2; it adds no Rust dependency.
 The check type-checks the generated runtime and a consumer of all four Metrics
 report shapes, including rejected number/option/incomplete-report assignments.
