@@ -1,49 +1,55 @@
 # Current handoff — 2026-11-01
 
-The maintainer authorized latest Wire adoption and deployment. Official sparse
-registry metadata identifies **Wire/Derive 0.14.2** as the latest stable release.
-Metrics **0.25.1** is selected for the compatible patch; Logging stays 0.23.7.
-No Metrics 0.25.1 exists on crates.io at pre-deployment observation. Integrate the
-scoped source PR, run the standard Metrics patch release with complete CI/MSRV,
-then publication dry run and verified upload from its exact clean group tag.
+The latest Wire adoption and deployment is complete. [PR #122](https://github.com/dragginzgame/ic-observability/pull/122)
+is merged. **Metrics 0.25.1** is Git-released, crates.io published and independently
+verified with **Wire/Derive 0.14.2**. The official sparse index identified that
+Wire patch as latest stable at selection. The [delivery receipt](../evidence/wire-0142-delivery-20261101.md)
+records source, tags, checksum, full gates and retained evidence.
 
-The incoming root lock already selected Wire 0.14.2 and remains byte-identical.
-Both independent locks and the published Wire catalog pin now select 0.14.2 too.
-Only Wire/Derive version/checksum records change relative to committed locks;
-all other records remain unchanged. Root minimum stays 0.14.0, canonical Types
-0.16.0/Platform 0.17.0 stay isolated integration suppliers, and own versions are
-still Metrics 0.25.0/Logging 0.23.7 until the standard release prepares metadata.
+Release commit is 961183ae94ad9e1109ad18fa95798dc370b513dc, annotated tag
+metrics-v0.25.1. Standard complete CI/MSRV passed in 149/3 seconds, including
+archive checks, before version preparation and atomic main/tag push. Standard
+publication dry run and actual upload passed native/Wasm Clippy and Cargo
+verification. One upload ran from the clean exact annotated release checkout.
+Official non-yanked metadata, archive checksum, clean provenance, fresh source
+retrieval and all 38 maintained files match. Readback receipt is
+target/publication/verification.kOdFqa. Do not replay the upload; verification-only
+recovery remains independent. Plan/journal remains under .git/release-state/metrics-0.25.1*.
 
-[Qualification evidence](../evidence/wire-0142.md) records non-yanked metadata,
-archive checksums and identical source payloads versus published 0.14.0 (22 Core,
-three Derive files). All three graph manifests pass locked metadata; each probe
-selects one expected Wire/Types identity, with only workspace-owned source-less
-packages and no endpoint/runtime/CDK/IC0 packages. Selected Metrics/root and both
-probe Clippy checks pass. Both three-test identity probes, the existing registry
-composition and both Wasm checks pass on Rust 1.91. Node/TypeScript executes all
-five report cases. The full release gate remains mandatory after integration.
+All three locks select Wire/Derive 0.14.2. The root minimum remains 0.14.0 and
+canonical Types 0.16.0/Platform 0.17.0 remain isolated integration suppliers.
+Only Metrics advanced. Logging remains dependency-free at 0.23.7, its manifest
+and ledger unchanged; no Logging release or upload ran. No library implementation,
+API, numeric schema, encoded/retained byte, error or Rust floor changed.
 
-Source alignment uses copied Metrics 0.0.0; the separate registry check still
-uses actual Metrics 0.25.0 and Logging 0.23.7 with Wire 0.14.2. After publishing
-0.25.1, advance the independent catalog/lock and frozen CI intent to that exact
-Metrics version and execute registry acceptance again. No source-copy or earlier
-published identity is proof of that future release. No upload may be replayed
-for a readback failure; use verification-only recovery.
+The independent registry consumer and frozen CI intent now select Metrics 0.25.1,
+Wire/Derive 0.14.2, Types 0.16.0, Platform 0.17.0 and Logging 0.23.7. Only the
+Metrics version/checksum record changed in the post-publication lock update.
+Strict Clippy, three real Principal/Account schema/byte/refusal tests, composition
+execution on Rust 1.91 and Wasm compilation pass. Both libraries are registry
+dependencies. Absent/malformed/stale intent refuses before Cargo effects.
+The source-copy and earlier registry checks remain distinct evidence.
 
-No production Rust implementation, numeric schema, bytes, error or Rust floor
-changed. Arithmetic-only and recording-only graph isolation retain their owners;
-all-feature Wasm excludes native metadata. The complete release gate rechecks
-these boundaries. Logging remains dependency-free; no Logging release is selected.
-[Migration guidance](../../releases/metrics/0.25.md) still requires Metrics ^0.25 /
-Wire ^0.14 and Types ^0.16 or Platform ^0.17 for canonical identity composition.
+The complete release gate rechecked arithmetic-only/recording-only isolation,
+all-feature Wasm exclusion of native metadata, and the allocator-free link.
+The [adoption receipt](../evidence/wire-0142.md) retains locked metadata, source
+and registry identity checks, TypeScript cases and identical full src payloads
+versus Wire 0.14.0 (22 Core, three Derive files). The earlier [0.14.1 receipt](../evidence/wire-0141.md)
+retains its original scope. No endpoint/runtime supplier entered Metrics' graph.
 
-Raw adoption proof remains under target/adoptions/wire-0142-20261101/; deployment
-logs under target/deploy/wire-0142-20261101/. Earlier [0.14.1 evidence](../evidence/wire-0141.md)
-retains its original source/graph scope. No cleanup, history rewrite or sibling
-edit is authorized. No open issue or existing competing adoption PR was found.
+Hosted PR-source MSRV and TypeScript have passed; all three native jobs remain
+asynchronous at the receipt's observation. Pending jobs are not passes and are
+separate from completed local release gates and exact published acceptance.
+Final acceptance/migration/receipt updates need no additional product release.
+Docs, pins, Actionlint and CI selection checks pass. Raw deployment logs and
+new registry proof remain under target/deploy/wire-0142-20261101/; adoption/index/
+archive comparisons under target/adoptions/wire-0142-20261101/. No cleanup ran.
 
+[Migration guidance](../../releases/metrics/0.25.md) continues to require Metrics
+^0.25 / Wire ^0.14 for schemas and Types ^0.16 or Platform ^0.17 for identities.
 Prior [Wire 0.14 delivery](../evidence/wire-0140-delivery-20261101.md) remains
-complete: Metrics 0.25.0 was uploaded once and verified, PRs #119/#121 merged,
-and issue #120 closed. Do not replay that upload. Historical Metrics 0.24.2
-remains Git-only/unuploaded. Canic stays separately owned. Shared stays reviewed
-0.27.23 at 619d194875369e0f72b45477b66adb430acbf6b7.
+complete: Metrics 0.25.0 was uploaded once, PRs #119/#121 merged and issue #120
+closed. Do not replay earlier uploads. Historical Metrics 0.24.2 is Git-only /
+unuploaded. Canic stays separately owned. No sibling checkout, history or tag
+was rewritten. Shared stays reviewed 0.27.23 at
+619d194875369e0f72b45477b66adb430acbf6b7. No new owning issue was required.
