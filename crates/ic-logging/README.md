@@ -3,9 +3,14 @@
 Bounded, caller-owned heap logs without a framework or IC runtime dependency.
 The library is `no_std` with `alloc`; it has no dependency on Metrics or any other crate.
 
-Logging has its own version and [changelog](../../releases/logging/CHANGELOG.md). Maintainers select
+```toml
+[dependencies]
+ic-logging = "0.23"
+```
+
+Logging has its own version and [changelog](https://github.com/dragginzgame/ic-observability/blob/main/releases/logging/CHANGELOG.md). Maintainers select
 `RELEASE_GROUP=logging` for release and publication; see
-[independent releases](../../docs/independent-releases.md).
+[independent releases](https://github.com/dragginzgame/ic-observability/blob/main/docs/independent-releases.md).
 
 ```rust
 use ic_logging::{EntryInput, Filter, Level, Limits, Log, PageRequest};

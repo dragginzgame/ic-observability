@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  },
+  "files": ["reports.ts", "wire-runtime.ts", "consumer.ts"]
+}

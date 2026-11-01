@@ -14,7 +14,10 @@ IC_TOOLS :=
 override CARGO_PUBLISH_PACKAGES :=
 publish publish-check: override CARGO_PUBLISH_PACKAGES = $(shell RELEASE_GROUP='$(subst ','"'"',$(RELEASE_GROUP))' bash scripts/release/metadata.sh packages)
 CARGO_PUBLISH_REGISTRY := crates-io
-CARGO_PUBLISH_VERIFY_TARGETS := clippy
+CARGO_PUBLISH_VERIFY_TARGETS := publication-source-check clippy
+publish: override export OBSERVABILITY_PUBLICATION_MODE := publish
+publish-check: override export OBSERVABILITY_PUBLICATION_MODE := check
+FORMAT_RUST_ARGS := --rustfmt-source qualification/wire-identities/src/lib.rs --rustfmt-edition 2024
 
 # These frozen manifests use archive-directory paths; retain their original bytes.
 # All other maintained checksum manifests use repository-root paths.
@@ -70,6 +73,8 @@ release-files:
 .PHONY: production-dependencies-check
 .PHONY: allocation-free-check
 .PHONY: typescript-check
+.PHONY: wire-identities-check publication-source-check verify-publication publish-verified
+.PHONY: ci-selection-check package-doc-links-check
 .PHONY: metrics-profiles-check
 .PHONY: install-release-editor release-editor-check
 
@@ -79,6 +84,17 @@ install-release-editor:
 release-editor-check:
 	+@bash scripts/dev/release-editor.sh check
 
+publication-source-check:
+	@bash scripts/release/publication.sh admit
+
+# Retain a separate upload receipt; a failed readback must never replay an upload.
+publish-verified:
+	+$(MAKE) --no-print-directory publish
+	+$(MAKE) --no-print-directory verify-publication
+
+verify-publication:
+	@bash scripts/release/publication.sh verify
+
 help:
 	@echo "Local setup: install-tools; offline verification: tools-check"
 	@echo "Reports: cloc (this workspace); fleet reports run in Shared Tooling"
@@ -86,6 +102,7 @@ help:
 	@echo "Normal releases start fresh from committed metadata; exact recovery requires VERSION and RELEASE_GROUP"
 	@echo "Release/publication selection required: RELEASE_GROUP=metrics or logging (no default)"
 	@echo "Registry: publish-check (dry run), publish (upload the selected group only)"
+	@echo "Verified delivery: publish-verified (upload then readback); verify-publication (readback only)"
 	@echo "Package overrides must belong to the selected group; release does not publish."
 	@echo "Rust setup: install-rust-tools; offline verification: rust-tools-check"
 	@echo "Release editor (also in install-tools/tools-check): install-release-editor, release-editor-check"
@@ -94,6 +111,7 @@ help:
 	@echo "Dependency declarations and boundary fixtures: production-dependencies-check"
 	@echo "Link Metrics arithmetic without an allocator: allocation-free-check"
 	@echo "Execute Metrics Rust/TypeScript codec conformance (prepared Node): typescript-check"
+	@echo "Identity composition: wire-identities-check; docs: ci-selection-check package-doc-links-check"
 	@echo "Minimal Serde execution and native/Wasm dependency graphs: metrics-profiles-check"
 	@echo "Tooling fixtures: hook-check, release-tools-check (no release Git effects)"
 	@echo "CI evidence fixture: ci-evidence-check (substitute action results and Make effects, no hosted run)"
@@ -142,7 +160,8 @@ docs-check:
 check-doc-links:
 	perl scripts/ci/check-documentation-links.pl --root "$(CURDIR)" \
 		README.md AGENTS.md DRAGGINZGAME.md CHANGELOG.md releases/*/*.md releases/history.md docs/*.md \
-		docs/principles/*.md docs/evidence/*.md docs/status/*.md rules/*.md audits/*.md tasks/*.md
+		docs/principles/*.md docs/evidence/*.md docs/status/*.md rules/*.md audits/*.md tasks/*.md \
+		qualification/*/README.md
 	perl scripts/ci/check-documentation-links.pl --root "$(CURDIR)" \
 		crates/ic-metrics/src/application.md crates/ic-metrics/README.md crates/ic-metrics/CHANGELOG.md \
 		crates/ic-logging/README.md crates/ic-logging/CHANGELOG.md
@@ -155,6 +174,15 @@ typescript-check:
 	+IC_METRICS_NODE_VERSION="$$(cat ci/node-version.txt)" \
 		cargo test -p ic-metrics --lib --no-default-features --features native-wire --locked --offline \
 		wire::tests::browser::generated_codecs_round_trip_between_rust_and_typescript -- --ignored --exact
+
+wire-identities-check:
+	+bash scripts/ci/check-wire-identities.sh
+
+ci-selection-check:
+	bash scripts/ci/test-ci-selection.sh
+
+package-doc-links-check:
+	perl scripts/ci/check-package-doc-links.pl
 
 metrics-profiles-check:
 	perl scripts/ci/check-metrics-profiles.pl
@@ -176,12 +204,14 @@ allocation-free-check:
 # Retention runs the full release and hook fixtures, plus failure/custody cases.
 release-tools-check:
 	bash scripts/release/test-fixture-retention.sh
+	bash scripts/release/test-publication-policy.sh
 
 # Keep order explicit: stop on a failed gate, including any Clippy warning.
 # Clippy checks all native targets and Wasm libraries; standalone checks stay focused.
 ci:
 	+$(MAKE) --no-print-directory shared-tooling-check
 	+$(MAKE) --no-print-directory check-doc-links
+	+$(MAKE) --no-print-directory ci-selection-check
 	+$(MAKE) --no-print-directory evidence-check
 	+$(MAKE) --no-print-directory tools-check
 	+$(MAKE) --no-print-directory check-pins
@@ -195,3 +225,4 @@ ci:
 	+$(MAKE) --no-print-directory docs-check
 	+$(MAKE) --no-print-directory test
 	+$(MAKE) --no-print-directory package-check
+	+$(MAKE) --no-print-directory package-doc-links-check

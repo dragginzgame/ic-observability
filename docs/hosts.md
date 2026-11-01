@@ -156,12 +156,34 @@ The separate TypeScript CI job runs on Linux. Prepare the exact Node version in
 `ci/node-version.txt` explicitly (for example, `nvm install` and `nvm use` with that
 version), then run `make typescript-check` with locked Cargo sources already
 available. Validation checks the prepared Node version and never installs it.
-No npm packages are required: Node's `--experimental-transform-types` executes
-the generated TypeScript and runtime exported by the locked Wire crate. This
-checks execution and byte parity, not TypeScript static type checking or a
-browser/IC runtime. Inputs, generated code and outputs remain in
+Prepare the pinned compiler explicitly with
+`npm ci --prefix ci/typescript --ignore-scripts --no-audit --no-fund`.
+The independent npm lock owns TypeScript 7.0.2; it adds no Rust dependency.
+The check type-checks the generated runtime and a consumer of all four Metrics
+report shapes, including rejected number/option/incomplete-report assignments.
+Node's `--experimental-transform-types` then executes the codecs and verifies
+byte parity. This is native tooling evidence, not a browser/IC runtime. Inputs,
+compiler diagnostics, generated code and outputs remain in
 `target/typescript-conformance/`. The Node-dependent test is explicitly ignored
 by ordinary Rust library tests and MSRV checks; CI invokes it separately.
+
+`make wire-identities-check` runs the independently locked
+[identity consumer](../qualification/wire-identities/README.md) on Rust 1.91,
+including its Wasm build. Prepare its sources with
+`bash scripts/ci/check-wire-identities.sh --prepare`. The probe copies the current
+Metrics source into a disposable owning workspace; it is source alignment rather
+than registry Metrics acceptance. Its additional Platform suppliers never enter
+the root Cargo lock or feature graph. CI invokes it in the TypeScript job.
+
+The exact prose allowlist in ci/docs-only-paths.txt enables Shared's conservative
+classifier. Existing product job names remain stable; eligible prose runs real
+Linux docs/snapshot checks and records skipped native, MSRV and TypeScript scope.
+Unknown, mixed, policy/workflow and missing-history inputs run full qualification.
+A failed classifier job falls back to full product checks and remains visibly
+failed. Packaged READMEs, embedded docs, companion declarations and new paths
+remain full CI. No release gate uses the shortcut. Focused routing validation is
+`make ci-selection-check`; `make package-doc-links-check` checks Cargo's actual
+package file selection in staging that cannot borrow repository-only link targets.
 
 `make allocation-free-check` links the runtime-input arithmetic example for
 `wasm32-unknown-unknown`, with no standard library or global allocator. Linker

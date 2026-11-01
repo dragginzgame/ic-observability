@@ -1,0 +1,2 @@
+ic-platform = { version = "=0.15.2", default-features = false }
+ic-platform-types = { version = "=0.15.1", default-features = false }

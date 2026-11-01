@@ -55,7 +55,8 @@ for selection in default direct; do
         make/consumer.mk make/tools.mk make/release.mk make/rust-format.mk make/execution.mk \
         scripts/ci/check-make-execution.sh scripts/ci/check-release-delivery.sh \
         ci/release-delivery.txt scripts/ci/run-formatting.sh \
-        scripts/release/metadata.sh ci/cargo-release-groups.json > "$fixture/output" 2>&1
+        scripts/release/metadata.sh ci/cargo-release-groups.json \
+        qualification/wire-identities/src/lib.rs > "$fixture/output" 2>&1
 done
 
 # Keep one real-consumer include-admission check. Shared Tooling owns the
@@ -208,6 +209,9 @@ GIT
     cat >> "$fixture/bin/bash" <<'BASH'
 set -euo pipefail
 case "${1:-}" in
+    scripts/release/publication.sh)
+        printf 'publication-admission %s\n' "$OBSERVABILITY_PUBLICATION_MODE" >> "$EVENTS"
+        exit 0 ;;
     scripts/release/metadata.sh)
         if [[ "$2" == selection ]]; then exit 0; fi
         [[ "$2" == packages ]] || exit 99
@@ -291,9 +295,9 @@ for fail in 0 1; do
     FAIL_CI_CLIPPY="$fail" "$real_make" "${parallel[@]}" --no-print-directory \
         -f "$root/Makefile" ci "MAKE=$fixture/gate-make" > "$fixture/output" 2>&1 || status=$?
     if [[ "$fail" == 0 ]]; then [[ "$status" == 0 ]] || exit 1; else [[ "$status" == 2 ]] || exit 1; fi
-    printf '%s\n' shared-tooling-check check-doc-links evidence-check tools-check check-pins fmt-check clippy > "$fixture/expected"
+    printf '%s\n' shared-tooling-check check-doc-links ci-selection-check evidence-check tools-check check-pins fmt-check clippy > "$fixture/expected"
     if [[ "$fail" == 0 ]]; then
-        printf '%s\n' production-dependencies-check metrics-profiles-check allocation-free-check ci-evidence-check release-tools-check docs-check test package-check >> "$fixture/expected"
+        printf '%s\n' production-dependencies-check metrics-profiles-check allocation-free-check ci-evidence-check release-tools-check docs-check test package-check package-doc-links-check >> "$fixture/expected"
     fi
     cmp "$fixture/expected" "$EVENTS"
 done
@@ -323,7 +327,8 @@ done
 # Independent expected Cargo trace; never derived from the Make recipe.
 write_expected_lints() {
     local destination="$1" last_phase="$2"
-    printf '%s\n' clippy --workspace --all-targets --all-features --locked -- -D warnings > "$destination"
+    printf 'publication-admission %s\n' "$mode" > "$destination"
+    printf '%s\n' clippy --workspace --all-targets --all-features --locked -- -D warnings >> "$destination"
     case "$last_phase" in
         native) ;;
         wasm) printf '%s\n' clippy --workspace --lib --all-features --locked --target wasm32-unknown-unknown -- -D warnings >> "$destination" ;;
@@ -345,9 +350,9 @@ for selection in default ic-logging; do
         : > "$EVENTS"
         PATH="$fixture/bin:$PATH" "$real_make" --no-print-directory \
             -f "$root/Makefile" "$target" ${package_args[@]+"${package_args[@]}"} > "$fixture/output" 2>&1
-        write_expected_lints "$fixture/expected" wasm
         mode=publish
         [[ "$target" != publish-check ]] || mode=check
+        write_expected_lints "$fixture/expected" wasm
         printf '%s\n' publication "$mode" crates-io "${selectors[@]}" >> "$fixture/expected"
         if [[ "$assertion_fault" == 1 ]]; then
             echo 'FIXTURE_RETENTION_INJECTED_FAILURE' >&2
@@ -367,5 +372,28 @@ for selection in default ic-logging; do
     done
 done
 
+# Exercise the actual verified-publication recipe, substituting only its two
+# existing public children. A failed readback must not dispatch another upload.
+cat > Makefile <<'MAKE'
+.PHONY: publish verify-publication
+publish:
+	@printf 'upload\n' >> "$$EVENTS"
+	@exit "$${WRAPPER_UPLOAD_STATUS:-0}"
+verify-publication:
+	@printf 'readback\n' >> "$$EVENTS"
+	@exit "$${WRAPPER_READBACK_STATUS:-0}"
+MAKE
+for failure in none upload readback; do
+    : > "$EVENTS"
+    upload_status=0 readback_status=0 status=0
+    [[ "$failure" != upload ]] || upload_status=37
+    [[ "$failure" != readback ]] || readback_status=38
+    WRAPPER_UPLOAD_STATUS="$upload_status" WRAPPER_READBACK_STATUS="$readback_status" \
+        "$real_make" --no-print-directory -f "$root/Makefile" publish-verified > "$fixture/output" 2>&1 || status=$?
+    if [[ "$failure" == none ]]; then [[ "$status" == 0 ]]; else [[ "$status" != 0 ]]; fi
+    printf 'upload\n' > "$fixture/expected"
+    [[ "$failure" == upload ]] || printf 'readback\n' >> "$fixture/expected"
+    cmp "$fixture/expected" "$EVENTS"
+done
 echo 'release and publication Make adapters passed (command stubs; no Git or registry effects)'
 fixture_complete=true

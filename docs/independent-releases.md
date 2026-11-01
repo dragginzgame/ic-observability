@@ -44,7 +44,8 @@ make release-patch RELEASE_GROUP=metrics     # Metrics release
 make release-patch RELEASE_GROUP=logging
 make release-resume RELEASE_GROUP=logging VERSION=X.Y.Z
 make publish-check RELEASE_GROUP=logging
-make publish RELEASE_GROUP=logging
+make publish-verified RELEASE_GROUP=logging
+make verify-publication RELEASE_GROUP=logging  # Readback only; never uploads
 ```
 
 Every release, resume, publication and group metadata command requires an explicit
@@ -59,6 +60,15 @@ the chosen group's public package. A PACKAGE override must belong to that
 group; cross-group selections refuse before lint or Cargo publication. No group
 change republishes an existing package version. Select a new numbered candidate
 through the maintainer release flow when publishing changed package metadata.
+
+Upload from the clean checkout of the selected group's annotated release tag,
+after its exact tag has reached the declared repository. Publish each group
+immediately after its release, or explicitly check out its tag before uploading.
+The shared publisher retains the upload command and status; `publish-verified`
+then checks the non-yanked registry entry, archive checksum and clean source
+identity through Shared's observation/provenance helpers. If readback fails, use
+`verify-publication` to reconcile without repeating the upload. No automatic
+retry, release or version change is part of either verification command.
 
 Every group still runs the complete `ci` and `msrv` release gates. Metrics remains
 arithmetic-only without defaults, optionally adds native-wire and recording, and

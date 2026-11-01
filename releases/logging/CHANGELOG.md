@@ -6,6 +6,18 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.23.4]
+
+### 🔧 Changed
+
+- Retain Logging's native check names while routing reviewed prose changes to
+  documentation checks ([#107 — Adopt conservative documentation-only CI selection](https://github.com/dragginzgame/ic-observability/issues/107)); full release gates remain unchanged.
+- Require a clean, remotely tagged Logging release before upload. Add verified
+  publication and readback-only commands that check registry state, archive
+  checksum and source provenance without retrying uploads.
+- Document published installation and check packaged links without relying on
+  repository-only files. The heap engine and dependency-free contract are unchanged.
+
 ## [0.23.3] - 2026-10-31
 
 ### 🔧 Changed

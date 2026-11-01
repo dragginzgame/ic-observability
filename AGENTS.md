@@ -1,8 +1,7 @@
 # IC Observability Agent Rules
 
 Read [DRAGGINZGAME.md](DRAGGINZGAME.md) first. The reviewed Shared Tooling revision
-`143a9abb9ae81feae9400ff3844b03b1ddfdd75a` (snapshot version 0.27.21;
-upstream commit titled 0.27.22)
+`619d194875369e0f72b45477b66adb430acbf6b7` (snapshot version 0.27.23)
 and file digests are recorded in
 [.shared-tooling.snapshot](.shared-tooling.snapshot). This is the local overlay;
 there are no baseline exceptions. Read [the current handoff](docs/status/current.md)
@@ -20,6 +19,11 @@ consumer-contract or persistence-boundary changes.
   The root dependency catalog lists both members with full current versions and
   paths; each alias belongs to its group's dependency roster. Catalog entries
   alone add no dependency edge between the libraries.
+  The independently locked qualification inputs under qualification/wire-identities
+  generate a workspace-owned copy of Metrics at version 0.0.0 beneath target/.
+  Its Platform pairing tests integration without changing the core catalog,
+  lockfile, feature resolution or release-group membership. That fixture root
+  owns its additional integration dependencies; it never publishes the copy.
   Release, resume and publication require an explicit RELEASE_GROUP; no default
   group or PACKAGE inference is permitted.
 - Logging owns a dependency-free `no_std` + `alloc` heap engine with explicit
