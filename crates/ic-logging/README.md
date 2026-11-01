@@ -83,6 +83,18 @@ callback returns `ControlFlow::Continue(())` or stops with `Break(())`; the
 stopping row counts as delivered and the returned `PageScan` resumes before it.
 The callback owns any allocation or encoding work it performs.
 
+For a response byte ceiling, see the compiled
+[byte-budgeted export example](examples/byte-budgeted-export.rs). It bounds the
+returned UTF-8 body and keeps the next un-emitted row available when a candidate
+does not fit. The callback's `Break` consumes that candidate in the engine, so
+this recipe resumes from the last **emitted** sequence instead of blindly using
+`PageScan::next_before`. A first matching row larger than the entire body budget
+returns a typed `EntryTooLarge` error; callers can enlarge the budget or apply
+an explicit policy. Empty filtered scans still follow the engine cursor.
+The scan count includes an examined row that was not emitted. Temporary encoding
+allocations and any transport envelope need their own host-selected limits.
+
+
 `Log::checkpoint()` borrows the complete oldest-first entry iterator and both
 watermarks without allocation, copying text or consuming the log. Its immutable
 borrow keeps them fixed during encoding. The host still chooses codec limits,
@@ -116,3 +128,7 @@ adapter, its durable format and governed Memory/Storage integration. Hosts own
 checkpoint cadence, lifecycle, retention scheduling and stable identity; linking
 the heap crate selects no persistence. Diagnostic logs must not be treated as
 evidence that a paid effect completed.
+
+The compiled [observability host example](https://github.com/dragginzgame/ic-observability/blob/main/qualification/wire-published/examples/observability-host.rs)
+shows an application counting Logging receipts and refusals with Metrics while
+keeping the libraries and their reset lifetimes independent.

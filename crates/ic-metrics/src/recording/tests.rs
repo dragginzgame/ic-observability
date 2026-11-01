@@ -1,5 +1,7 @@
 use super::*;
 
+mod model;
+
 fn table() -> BoundedMeasurementTable {
     BoundedMeasurementTable::new(MeasurementTableLimits {
         entries: 2,

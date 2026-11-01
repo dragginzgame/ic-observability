@@ -137,6 +137,8 @@ libraries; select direct Cargo commands when only one package or test is affecte
 | Numeric transport and native metadata | `cargo test -p ic-metrics --lib --no-default-features --features native-wire --locked wire::tests` |
 | Arithmetic without native Wire | `cargo test -p ic-metrics --lib --no-default-features --locked ratio::tests`; inspect native/Wasm normal/build graphs with defaults disabled |
 | Minimal Serde and feature graphs | `make metrics-profiles-check`; runs Serde round trips/refusals without Wire and checks resolved normal/build closures for native minimal, recording, default and all-feature Wasm profiles |
+| Log export recipe | `cargo test -p ic-logging --example byte-budgeted-export --locked --offline`; execute the walkthrough with `cargo run -p ic-logging --example byte-budgeted-export --locked --offline` |
+| Recording model | `cargo test -p ic-metrics --lib --no-default-features --features recording --locked --offline recording::tests::model` |
 | Rust/TypeScript report conformance | `make typescript-check`; requires prepared Node from `ci/node-version.txt`, executes five report cases and malformed-input checks |
 | Allocator-free arithmetic link | `make allocation-free-check`; minimum compiler only: `bash scripts/ci/check-allocation-free.sh 1.91.0` |
 | Recording library checks | `cargo check -p ic-metrics --lib --features recording --locked`; Wasm: `cargo check -p ic-metrics --lib --features recording --locked --target wasm32-unknown-unknown`; lint: `cargo clippy -p ic-metrics --lib --tests --features recording --locked -- -D warnings` |
@@ -179,7 +181,12 @@ the root Cargo lock or feature graph. CI invokes it in the TypeScript job.
 exact registry Metrics, with its own [catalog/lock](../qualification/wire-published/README.md).
 Prepare it explicitly with
 `bash scripts/ci/check-wire-identities.sh --published 0.24.4 --prepare`. It reuses the
-same identity assertions but copies no Metrics source. The recorded registry
+same identity assertions but copies no Metrics source. It also runs the compiled
+Metrics/Logging composition example on the Rust floor. Logging is a registry
+development dependency of the private consumer only, never a dependency of
+Metrics. CI's TypeScript job exercises this frozen published consumer in addition
+to the current-source probe; its explicit version intent is not acceptance of a
+future unpublished package. The recorded registry
 version must match the explicitly requested expected version. Missing, malformed
 or stale intent refuses before Cargo effects. The catalog/lock must be
 deliberately advanced after publication; ordinary source CI

@@ -26,3 +26,19 @@ checks never silently fall back to the catalog's historical version. The retaine
 fixture records expected-package and reports its accepted registry identity.
 Use `bash scripts/ci/test-published-identities-selection.sh` for the focused
 selection rejection fixture (Cargo effects are substituted).
+
+
+The [observability host example](examples/observability-host.rs) composes exact
+published Metrics 0.24.4 and Logging 0.23.5. Logging is a development dependency
+of this private consumer only. Its counters track log admission, truncation,
+eviction and refusal; a host-selected metrics-window reset preserves the log's
+identity. These are diagnostic events rather than authoritative application outcomes.
+
+The existing acceptance command also lints, compiles and executes that example
+on the Rust floor. The surrounding identity probe explicitly selects native-wire
+for its schema tests; the example itself uses only arithmetic APIs. Root feature
+checks separately prove arithmetic-only consumers can omit Wire. The source-copy
+probe is unchanged and does not select Logging. The TypeScript CI job prepares
+and executes both consumers against its explicitly recorded historical registry
+intent. Advance that CI intent with the catalog/lock after deliberately selecting
+a different published Metrics version.
