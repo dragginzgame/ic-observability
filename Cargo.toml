@@ -17,7 +17,7 @@ ic-logging = { path = "crates/ic-logging", version = "0.23.7" }
 
 # Metrics
 # Changelog : releases/metrics/CHANGELOG.md
-ic-metrics = { path = "crates/ic-metrics", version = "0.24.6" }
+ic-metrics = { path = "crates/ic-metrics", version = "0.25.0" }
 
 # Production dependencies
 # External, also used by tests: Wire is optional/native-only; Serde is standard.
