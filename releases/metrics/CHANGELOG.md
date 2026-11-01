@@ -5,6 +5,17 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.24.5]
+
+### 🧪 Testing
+
+- Qualify published Wire/Derive 0.13.3 in the root and both independently locked
+  identity consumers. Preserve the declared Wire 0.13.2 minimum, canonical Types
+  0.15.1/facade 0.15.2 pairing, schemas, bytes and arithmetic-only isolation.
+  Compare generated TypeScript and vectors against an executed 0.13.2 baseline;
+  leave the new fixed-byte-array representation opt-in and unselected.
+  See [qualification evidence](../../docs/evidence/wire-0133.md).
+
 ## [0.24.4] - 2026-11-01
 
 ### 🔧 Changed
