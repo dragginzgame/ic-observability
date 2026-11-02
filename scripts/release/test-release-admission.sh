@@ -54,6 +54,9 @@ cat > fixture-gates.mk <<'MAKE'
 .PHONY: install-rust-tools rust-tools-check install-release-editor release-editor-check ci msrv package-check clippy
 typescript-setup-check:
 	@true
+typescript-setup-policy-check:
+	@test ! -e .git/fail-typescript-policy
+	@printf 'typescript-policy\n' >> .git/gates
 install-rust-tools rust-tools-check install-release-editor:
 	@test ! -e .git/fail-tools
 release-editor-check:
@@ -221,6 +224,12 @@ for group in metrics logging; do
     if make "release-$kind" > "$fixture/$group-tools.log" 2>&1; then exit 1; fi
     rm .git/fail-tools
     [[ "$(make -s release-version)" == "$previous" && "$(git rev-parse HEAD)" == "$source" ]]
+    # Setup admission is separate from its fixtures; policy failure stops CI.
+    : > .git/gates
+    touch .git/fail-typescript-policy
+    if make "release-$kind" > "$fixture/$group-typescript-policy.log" 2>&1; then exit 1; fi
+    rm .git/fail-typescript-policy
+    [[ ! -s .git/gates && ! -e ".git/release-state/$group-$candidate/validated" ]]
     # Failing validation retains its actual logger evidence without preparation.
     touch .git/fail-validation
     if make "release-$kind" > "$fixture/$group-validation.log" 2>&1; then exit 1; fi
@@ -236,7 +245,7 @@ for group in metrics logging; do
     touch .git/drift-input
     if make "release-$kind" > "$fixture/$group-input-drift.log" 2>&1; then exit 1; fi
     rm .git/drift-input
-    printf 'ci\n' > "$fixture/$group-drift-expected"
+    printf 'typescript-policy\nci\n' > "$fixture/$group-drift-expected"
     cmp .git/gates "$fixture/$group-drift-expected"
     [[ ! -e ".git/release-state/$group-$candidate/validated" ]]
     git restore Cargo.lock

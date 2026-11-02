@@ -45,8 +45,10 @@ for mode in source published; do
     destination="$fixture/$mode"
     mkdir -p "$destination/crates/ic-metrics"
     catalog=catalog
-    [[ "$mode" != source ]] || catalog=source
-    perl "$root/scripts/ci/render-wire-fixture.pl" "$fixture/root.json" "$fixture/$catalog.json" "$fixture/metrics.json" "$destination" "$mode"
+    metrics_input=()
+    if [[ "$mode" == source ]]; then catalog=source; metrics_input=("$fixture/metrics.json"); fi
+    perl "$root/scripts/ci/render-wire-fixture.pl" "$fixture/root.json" "$fixture/$catalog.json" \
+        "$destination" "$mode" ${metrics_input[@]+"${metrics_input[@]}"}
     yq -p toml -o json '.' "$destination/Cargo.toml" > "$destination/root.json"
     jq -e --slurpfile original "$fixture/root.json" '.workspace.package == $original[0].workspace.package and .workspace.dependencies.serde == $original[0].workspace.dependencies.serde' "$destination/root.json" > /dev/null
     if [[ "$mode" == source ]]; then
@@ -59,7 +61,7 @@ for mode in source published; do
 done
 mkdir -p "$fixture/collision/crates/ic-metrics"
 # A source catalog must not silently replace a root-owned dependency selection.
-if perl "$root/scripts/ci/render-wire-fixture.pl" "$fixture/root.json" "$fixture/catalog.json" "$fixture/metrics.json" "$fixture/collision" source > "$fixture/collision.log" 2>&1; then exit 1; fi
+if perl "$root/scripts/ci/render-wire-fixture.pl" "$fixture/root.json" "$fixture/catalog.json" "$fixture/collision" source "$fixture/metrics.json" > "$fixture/collision.log" 2>&1; then exit 1; fi
 [[ ! -e "$fixture/collision/Cargo.toml" ]] || exit 1
 fixture_complete=true
 printf 'Wire fixture rendering preserves parsed fields and independent graph selection.\n'

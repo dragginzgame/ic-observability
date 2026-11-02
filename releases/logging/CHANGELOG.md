@@ -6,6 +6,14 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.24.2]
+
+### 🧹 Cleanup
+
+- Share retained-text component accounting across append, eviction and checkpoint
+  admission, preserving byte ceilings and independent validation. Simplify setup
+  qualification and native evidence test flows without changing the Logging API.
+
 ## [0.24.1] - 2026-11-02
 
 ### 🔧 Changed

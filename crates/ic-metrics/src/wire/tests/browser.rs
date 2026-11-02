@@ -68,18 +68,13 @@ fn generated_codecs_round_trip_between_rust_and_typescript() {
     if output.exists() {
         fs::remove_file(&output).unwrap();
     }
-    let result = Command::new("node")
-        .args(["--experimental-transform-types", "check.mjs"])
-        .current_dir(&directory)
-        .output()
-        .unwrap();
-    fs::write(directory.join("node.stdout"), &result.stdout).unwrap();
-    fs::write(directory.join("node.stderr"), &result.stderr).unwrap();
-    assert!(
-        result.status.success(),
-        "TypeScript conformance failed: {}\n{}",
-        String::from_utf8_lossy(&result.stdout),
-        String::from_utf8_lossy(&result.stderr)
+    run_logged(
+        Command::new("node")
+            .args(["--experimental-transform-types", "check.mjs"])
+            .current_dir(&directory),
+        &directory,
+        "node",
+        "TypeScript conformance",
     );
     let encoded: Vec<Vec<u8>> = serde_json::from_slice(&fs::read(output).unwrap()).unwrap();
     assert_eq!(encoded.len(), reports.len());
@@ -111,17 +106,32 @@ fn check_types(directory: &Path) {
         include_str!("browser/tsconfig.json"),
     )
     .unwrap();
-    let checked = Command::new("node")
-        .arg(compiler)
-        .arg("--project")
-        .arg(directory.join("tsconfig.json"))
-        .output()
-        .unwrap();
-    fs::write(directory.join("tsc.stdout"), &checked.stdout).unwrap();
-    fs::write(directory.join("tsc.stderr"), &checked.stderr).unwrap();
+    run_logged(
+        Command::new("node")
+            .arg(compiler)
+            .arg("--project")
+            .arg(directory.join("tsconfig.json")),
+        directory,
+        "tsc",
+        "generated Metrics client type check",
+    );
+}
+
+fn run_logged(command: &mut Command, directory: &Path, name: &str, description: &str) {
+    let checked = command.output().unwrap();
+    fs::write(
+        directory.join(std::format!("{name}.stdout")),
+        &checked.stdout,
+    )
+    .unwrap();
+    fs::write(
+        directory.join(std::format!("{name}.stderr")),
+        &checked.stderr,
+    )
+    .unwrap();
     assert!(
         checked.status.success(),
-        "generated Metrics client type check failed: {}\n{}",
+        "{description} failed: {}\n{}",
         String::from_utf8_lossy(&checked.stdout),
         String::from_utf8_lossy(&checked.stderr)
     );

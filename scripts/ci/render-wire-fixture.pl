@@ -4,9 +4,9 @@ use warnings;
 use JSON::PP qw(decode_json encode_json);
 
 # Render disposable Cargo inputs from parsed documents, never source line layout.
-@ARGV == 5 or die "usage: render-wire-fixture.pl ROOT.json CATALOG.json METRICS.json DEST source|published\n";
-my ($root_file,$catalog_file,$metrics_file,$destination,$mode)=@ARGV;
-$mode eq 'source' || $mode eq 'published' or die "invalid fixture mode\n";
+my ($root_file,$catalog_file,$destination,$mode,$metrics_file)=@ARGV;
+defined($mode) && (($mode eq 'source' && @ARGV == 5) || ($mode eq 'published' && @ARGV == 4))
+    or die "usage: render-wire-fixture.pl ROOT.json CATALOG.json DEST source METRICS.json | ROOT.json CATALOG.json DEST published\n";
 sub read_json {
     open my $file,'<',shift or die "cannot read fixture input: $!\n";
     local $/; my $value=decode_json(<$file>); close $file or die "cannot close fixture input\n";

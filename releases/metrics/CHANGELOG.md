@@ -5,6 +5,15 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.27.1]
+
+### 🧹 Cleanup
+
+- Separate TypeScript tool admission from setup regression fixtures while keeping
+  them in release validation and TypeScript CI. Simplify registry/source fixture
+  selection, native evidence collection and browser-test diagnostics without
+  changing report schemas, bytes or dependency selections.
+
 ## [0.27.0] - 2026-11-02
 
 ### ⚠️ Breaking

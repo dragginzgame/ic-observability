@@ -60,7 +60,10 @@ retained in each probe's `report/compiler.txt`; registry packages retain their p
 metadata and are not rewritten to claim this new support floor.
 
 Fixture manifests are rendered from parsed TOML fields; formatting does not
-control selection. Each attempt's `report/` contains the explicit catalog,
+control selection. Registry rendering takes the root metadata and frozen catalog,
+without parsing the current Metrics package manifest as a rendering input.
+Source rendering separately supplies its normalized local package manifest.
+Each attempt's `report/` contains the explicit catalog,
 generated manifest/lock, probe sources, compiler observation and metadata when
 available. CI uploads that curated directory; Cargo build caches remain outside
 it. Source-copy and frozen-registry consumers retain separate attempts and locks.

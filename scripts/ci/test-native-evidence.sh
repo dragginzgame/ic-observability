@@ -321,12 +321,12 @@ while IFS='|' read -r scenario FIXTURE_FAILURE FIXTURE_FORMATTING \
     printf 'retained index\n' > target/evidence/native-ci/scratch/release/.git/index
     printf 'retained intent\n' > target/evidence/native-ci/scratch/release/.git/release-state/fixture.plan
     check_retained_recovery_inputs
+    collection_status=0
+    "$real_bash" scripts/ci/collect-native-evidence.sh > archive.log 2>&1 || collection_status=$?
+    [[ "$collection_status" == "$expected_collector_status" ]] || exit 1
+    check_diagnostic_checksum
     # Diagnostics remain readable even when complete evidence collection fails.
     if [[ "$scenario" == native-archive-failure || "$scenario" == collection-archive-failure ]]; then
-        archive_status=0
-        "$real_bash" scripts/ci/collect-native-evidence.sh > archive.log 2>&1 || archive_status=$?
-        [[ "$archive_status" == "$expected_collector_status" ]] || exit 1
-        check_diagnostic_checksum
         [[ ! -e target/evidence/native-ci.tar.gz && ! -e target/evidence/native-ci.tar.gz.sha256 ]] || exit 1
         grep -Fx 'outer archive stdout' archive.log > /dev/null
         grep -Fx 'outer archive stderr' archive.log > /dev/null
@@ -336,10 +336,6 @@ while IFS='|' read -r scenario FIXTURE_FAILURE FIXTURE_FORMATTING \
         fi
         exit 0
     fi
-    collection_status=0
-    "$real_bash" scripts/ci/collect-native-evidence.sh > archive.log 2>&1 || collection_status=$?
-    [[ "$collection_status" == "$expected_collector_status" ]] || exit 1
-    check_diagnostic_checksum
     mkdir diagnostic-readback
     tar -xzf target/evidence/native-diagnostics.tar.gz -C diagnostic-readback
     for file in diagnostic-readback/*; do

@@ -77,13 +77,15 @@ release-files:
 .PHONY: ci-selection-check package-doc-links-check
 .PHONY: metrics-profiles-check
 .PHONY: install-release-editor release-editor-check
-.PHONY: setup-smoke-check typescript-setup-check published-identities-check
+.PHONY: setup-smoke-check typescript-setup-check typescript-setup-policy-check published-identities-check
 
 setup-smoke-check:
 	bash scripts/ci/check-setup-smoke.sh "$(MAKE_COMMAND)"
 
 typescript-setup-check:
 	bash scripts/ci/check-typescript-setup.sh
+
+typescript-setup-policy-check:
 	bash scripts/ci/test-typescript-setup.sh
 
 published-identities-check:
@@ -125,6 +127,7 @@ help:
 	@echo "Identity composition: wire-identities-check; docs: ci-selection-check package-doc-links-check"
 	@echo "Registry-only acceptance: published-identities-check EXPECTED_METRICS_VERSION=X.Y.Z (explicit post-publication check)"
 	@echo "Early setup: setup-smoke-check, typescript-setup-check (read-only tool admission)"
+	@echo "TypeScript setup refusal fixtures: typescript-setup-policy-check (Node required)"
 	@echo "Minimal Serde execution and native/Wasm dependency graphs: metrics-profiles-check"
 	@echo "Tooling fixtures: hook-check, release-tools-check (no release Git effects)"
 	@echo "CI evidence fixture: ci-evidence-check (substitute action results and Make effects, no hosted run)"

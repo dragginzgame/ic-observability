@@ -162,8 +162,10 @@ Prepare npm and the pinned compiler explicitly with
 `bash scripts/dev/prepare-typescript.sh`. That command installs the package
 manager declared in ci/typescript/package.json, checks the exact Node/npm
 selection, then runs the locked npm install. `make typescript-setup-check` only
-checks the prepared tools and runs the setup failure fixture; it never installs
-anything. The fixture substitutes global npm effects and checks rejection of
+admits the prepared tools; it never installs anything or runs fixtures.
+`make typescript-setup-policy-check` separately runs the setup failure fixture in
+TypeScript CI and standard release validation. The fixture substitutes global
+npm effects and checks rejection of
 Node/npm mismatches before the locked install. Failed npm version observation
 and Node package-manager selection retain their failure status, even if they
 print the expected output; no dependent install/admission follows. TypeScript compilation runs the
@@ -356,8 +358,10 @@ Select `RELEASE_GROUP=metrics` or `RELEASE_GROUP=logging` explicitly; see
 Use `make release-resume RELEASE_GROUP=logging VERSION=X.Y.Z` for recovery of a
 specific saved Logging attempt.
 Standard release preflight first runs `setup-smoke-check` and
-`typescript-setup-check`. Prepare the declared Node/npm tools explicitly before
-releasing either group; Rust library tests and native `make ci` remain Node-free.
+`typescript-setup-check`. Release validation runs `typescript-setup-policy-check`
+once before the unchanged complete `ci msrv` gates. Prepare the declared Node/npm
+tools explicitly before releasing either group; Rust library tests and native
+`make ci` remain Node-free.
 The Make smoke parses the actual consumer and tests exported publication-mode
 overrides, then deliberately stops before metadata, compiler or upload recipes.
 Native CI runs it before tool installation on all three declared hosts, including

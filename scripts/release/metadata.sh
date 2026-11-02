@@ -70,7 +70,7 @@ case "$operation" in
         release_receipt_archive "$state/previous-attempt.XXXXXX" "$state/validated" "$state/prepared"
         VALIDATION_FAILURE_LOG_DIR="$(git rev-parse --git-path release-state)/validation-failures" \
             CARGO_NET_OFFLINE=true bash "$root/scripts/ci/run-validation-targets.sh" \
-            --fail-fast --input Cargo.toml --input Cargo.lock ci msrv
+            --fail-fast --input Cargo.toml --input Cargo.lock typescript-setup-policy-check ci msrv
         bash "$root/scripts/ci/check-release-source.sh"
         release_receipt_write "$state/validated" release_receipt_identity
         ;;

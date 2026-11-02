@@ -1,5 +1,18 @@
 # Current handoff — 2026-11-02
 
+The five accepted flow simplifications are implemented locally, pending delivery.
+[Focused evidence](../evidence/flow-cleanup-20261102.md) records separated tool
+admission/setup fixtures, converged native evidence collection, shared Logging
+text components, source-only renderer inputs and browser subprocess diagnostics.
+Setup fixtures remain in explicit TypeScript CI and standard release validation;
+the complete CI/MSRV gates remain unchanged. Selected strict native/Wasm Clippy,
+Logging tests, browser runtime, both identity consumers, native evidence and
+actual disposable grouped release/recovery qualification pass. The matched
+Logging Wasm probe is 19 bytes smaller in both total/code sizes; no runtime cost
+claim follows. Drafts select Metrics 0.27.1 / Logging 0.24.2, with actual versions,
+all locks and dependency selections unchanged. No commit, release or publication
+ran for this batch. The existing README edits remain intact.
+
 **Metrics 0.27.0 is released on GitHub and published on crates.io**, with native
 metadata selecting Wire/derive **0.15.0**. Real identity integration selects
 canonical Types **0.17.0 / Platform 0.18.0**. Logging remains **0.24.1**, unchanged
@@ -25,7 +38,7 @@ pass on Rust 1.99.1. This proves actual published packages independently of the
 [source-copy qualification](../evidence/wire-0150.md). Current qualification
 guides and the [Metrics 0.27 migration](../../releases/metrics/0.27.md) agree.
 
-Native schema consumers, including Tooling, can now adopt Metrics 0.27 with
+Native schema consumers can now adopt Metrics 0.27 with
 Wire 0.15 and qualify their own report graphs. No further Observability package
 publication is needed for this pairing. Arithmetic-only consumers need no Wire
 trait coordination. Public arithmetic, typed refusals, schemas, encoded bytes,

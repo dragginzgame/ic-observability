@@ -70,7 +70,10 @@ identity through Shared's observation/provenance helpers. If readback fails, use
 `verify-publication` to reconcile without repeating the upload. No automatic
 retry, release or version change is part of either verification command.
 
-Every group still runs the complete `ci` and `msrv` release gates. Metrics remains
+Preflight admits the prepared Node/npm tools without running setup fixtures.
+Release validation runs `typescript-setup-policy-check`, then the complete `ci`
+and `msrv` gates. TypeScript CI also selects the setup fixtures explicitly.
+Metrics remains
 arithmetic-only without defaults, optionally adds native-wire and recording, and
 excludes native metadata on Wasm. Logging remains dependency-free. Group selection
 does not narrow these obligations or establish native/IC runtime acceptance.

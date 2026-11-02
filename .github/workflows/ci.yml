@@ -72,7 +72,7 @@ jobs:
         if: env.CI_SCOPE != 'docs'
         run: |
           bash scripts/dev/prepare-typescript.sh
-          make typescript-setup-check
+          make typescript-setup-policy-check
       - name: Prepare identity qualification sources
         if: env.CI_SCOPE != 'docs'
         run: |

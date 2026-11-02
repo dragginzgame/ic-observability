@@ -444,10 +444,11 @@ impl Log {
         }
         let sequence = self.next_sequence.ok_or(AppendError::SequenceExhausted)?;
         let (prefix, suffix) = message_parts(input.message, self.limits.max_message_bytes);
-        let required_bytes = input.source.len() as u128
-            + input.topic.map_or(0, str::len) as u128
-            + prefix.len() as u128
-            + suffix.len() as u128;
+        // Message parts together fit the configured usize-sized message limit.
+        let required_bytes = text_lengths(input.source, input.topic, prefix.len() + suffix.len())
+            .into_iter()
+            .map(|bytes| bytes as u128)
+            .sum();
         let text_bytes = usize::try_from(required_bytes)
             .ok()
             .filter(|bytes| *bytes <= self.limits.max_text_bytes)
@@ -595,11 +596,16 @@ impl Log {
             return false;
         };
         // Each component was admitted into the cached sum before insertion.
-        self.retained_text_bytes -= entry.source.len();
-        self.retained_text_bytes -= entry.topic.as_ref().map_or(0, String::len);
-        self.retained_text_bytes -= entry.message.len();
+        for bytes in text_lengths(&entry.source, entry.topic.as_deref(), entry.message.len()) {
+            self.retained_text_bytes -= bytes;
+        }
         true
     }
+}
+
+// One retained-text definition; each caller keeps its own overflow/admission boundary.
+fn text_lengths(source: &str, topic: Option<&str>, message_bytes: usize) -> [usize; 3] {
+    [source.len(), topic.map_or(0, str::len), message_bytes]
 }
 
 fn validate_snapshot(snapshot: &LogSnapshot) -> Result<usize, RestoreError> {
@@ -633,11 +639,7 @@ fn validate_snapshot(snapshot: &LogSnapshot) -> Result<usize, RestoreError> {
         {
             return Err(RestoreError::InvalidEntry);
         }
-        for bytes in [
-            entry.source.len(),
-            entry.topic.as_ref().map_or(0, String::len),
-            entry.message.len(),
-        ] {
+        for bytes in text_lengths(&entry.source, entry.topic.as_deref(), entry.message.len()) {
             retained_text_bytes = retained_text_bytes
                 .checked_add(bytes)
                 .filter(|total| *total <= limits.max_text_bytes)
