@@ -5,6 +5,18 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.26.1]
+
+### 🔧 Changed
+
+- Adopt the committed Shared Tooling 0.27.26 snapshot: canonical Rust 1.99.1
+  policy, narrower native Cargo-tool fingerprints and managed tool-build scratch.
+  Preserve package dependencies, release-group isolation and retained evidence.
+- Simplify native metadata and qualification: group optional Wire implementations,
+  render fixture manifests from parsed fields, use Shared graph checks and retain
+  curated reports. Separate release/publication fixture flows and remove duplicate
+  compiler observations without changing schemas, encoded bytes or arithmetic.
+
 ## [0.26.0] - 2026-11-02
 
 ### ⚠️ Breaking

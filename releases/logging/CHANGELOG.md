@@ -6,6 +6,17 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.24.1]
+
+### 🔧 Changed
+
+- Adopt the committed Shared Tooling 0.27.26 snapshot: canonical Rust 1.99.1
+  policy, narrower native Cargo-tool fingerprints and managed tool-build scratch.
+  Preserve package dependencies, release-group isolation and retained evidence.
+- Derive visitor continuation from the consumed cursor instead of storing a
+  second scan watermark. Preserve paging, early-stop and retention semantics.
+  Keep release/publication and evidence qualification in focused fixture flows.
+
 ## [0.24.0] - 2026-11-02
 
 ### ⚠️ Breaking

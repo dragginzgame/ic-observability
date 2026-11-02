@@ -52,16 +52,3 @@ impl<'de, T: Deserialize<'de> + Copy + Default, const N: usize> Deserialize<'de>
         deserializer.deserialize_tuple(N, ArrayVisitor(PhantomData))
     }
 }
-
-#[cfg(all(feature = "native-wire", not(target_family = "wasm")))]
-impl<T: ic_wire::typescript::Wire, const N: usize> ic_wire::typescript::Wire for FixedArray<T, N> {
-    fn native_schema(
-        context: &mut ic_wire::typescript::SchemaContext,
-    ) -> Result<ic_wire::__private::serde_json::Value, ic_wire::typescript::GenerationError> {
-        // Same tuple encoding/schema as Wire's built-in [T; N], without Serde's
-        // built-in array-trait length restriction.
-        Ok(
-            ic_wire::__private::serde_json::json!({"k":"array", "max":N, "item":context.describe::<T>()?}),
-        )
-    }
-}

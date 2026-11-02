@@ -36,3 +36,9 @@ The separate [published consumer](../wire-published/README.md) reuses these
 assertions with an exact registry Metrics dependency and its own lock. Use that
 post-publication proof when registry acceptance, rather than source alignment,
 is required.
+
+Fixture manifests are rendered from parsed TOML fields; formatting does not
+control selection. Each attempt's `report/` contains the explicit catalog,
+generated manifest/lock, probe sources, compiler observation and metadata when
+available. CI uploads that curated directory; Cargo build caches remain outside
+it. Source-copy and frozen-registry consumers retain separate attempts and locks.

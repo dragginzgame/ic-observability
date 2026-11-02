@@ -20,33 +20,12 @@ cleanup() {
     fixture_finish "$status" "$fixture" "failed standard release fixture retained"
 }
 trap cleanup EXIT
-assertion_fault="${METRICS_FIXTURE_ASSERTION_FAILURE:-0}"
-unset METRICS_FIXTURE_ASSERTION_FAILURE
-[[ "$assertion_fault" == 0 || "$assertion_fault" == 1 ]] || exit 2
 # shellcheck source=scripts/ci/make-adapter-probes.sh
 source "$root/scripts/ci/make-adapter-probes.sh"
-mkdir -p "$fixture/bin"
-bash "$root/scripts/ci/prepare-script-fixture.sh" "$root" "$fixture" make/consumer.mk
-# Recursive consumer gates must resolve the same actual recipe in this checkout.
-cp "$root/Makefile" "$fixture/Makefile"
-mkdir -p "$fixture/ci"
-cp "$root/ci/release-delivery.txt" "$fixture/ci/"
-cp "$root/ci/cargo-release-groups.json" "$fixture/ci/"
-mkdir -p "$fixture/scripts/release"
-cp "$root/scripts/release/metadata.sh" "$fixture/scripts/release/"
-# Compiler admission is qualified separately; retain Make's jobserver boundary here.
-cat > "$fixture/scripts/ci/check-rust-compiler.sh" <<'COMPILER'
-set -euo pipefail
-if [[ "${REQUIRE_JOBSERVER:-0}" == 1 ]]; then perl "$JOBSERVER_PROBE"; fi
-COMPILER
-cat > "$fixture/scripts/ci/check-allocation-free.sh" <<'ALLOCATOR'
-set -euo pipefail
-if [[ "${REQUIRE_JOBSERVER:-0}" == 1 ]]; then perl "$JOBSERVER_PROBE"; fi
-printf 'allocation-free-link\n' >> "$EVENTS"
-ALLOCATOR
-real_bash="$(command -v bash)"
-export STANDARD_RELEASE_REAL_BASH="$real_bash"
-export EVENTS="$fixture/events"
+# shellcheck source=scripts/release/fixtures/prepare-make.sh
+source "$root/scripts/release/fixtures/prepare-make.sh"
+prepare_make_fixture "$root" "$fixture"
+real_bash="$STANDARD_RELEASE_REAL_BASH"
 cd "$fixture"
 real_make="$(command -v make)"
 # The actual Make entry projects the metadata owner's NUL-delimited roster.
@@ -78,29 +57,7 @@ EXTERNAL
 
 # Unsupported inherited and command-line policies must fail before runner or
 # metadata dispatch. The parse-time Make execution probe remains real.
-printf '#!%s\n' "$real_bash" > "$fixture/bin/bash"
-cat >> "$fixture/bin/bash" <<'BASH'
-case "${1:-}" in
-    */scripts/ci/check-make-execution.sh|*/scripts/ci/check-release-delivery.sh) exec "$STANDARD_RELEASE_REAL_BASH" "$@" ;;
-    scripts/ci/check-rust-compiler.sh) exec "$STANDARD_RELEASE_REAL_BASH" "$@" ;;
-    scripts/release/metadata.sh)
-        if [[ "$2" == selection ]]; then exit 0; fi
-        if [[ "$2" == packages ]]; then printf 'ic-%s\n' "$RELEASE_GROUP"; exit 0; fi
-        if [[ "${REQUIRE_RUST_CATALOG:-0}" == 1 ]]; then
-            [[ "$2" == preflight && "$RUST_TOOL_VERSIONS" == "$EXPECTED_RUST_CATALOG" ]] || exit 1
-            printf '%s\n' "$RUST_TOOL_VERSIONS" >> "$EVENTS"
-            exit 0
-        fi
-        if [[ "${REQUIRE_JOBSERVER:-0}" == 1 ]]; then
-            perl "$JOBSERVER_PROBE" || exit $?
-            printf 'metadata %s\n' "$2" >> "$EVENTS"
-            exit "${FAIL_METADATA:-0}"
-        fi ;;
-esac
-printf 'unexpected dispatch\n' >> "$EVENTS"
-exit 0
-BASH
-chmod +x "$fixture/bin/bash"
+export STANDARD_RELEASE_PHASE=metadata
 # Preflight binds the same independently selected Rust catalog as installation;
 # a host-only override must not change it. Exercise actual Make child routing.
 selected_rust="$fixture/selected Rust pins.env"
@@ -136,8 +93,7 @@ for policy in pr invalid ''; do
         > "$fixture/output" 2>&1; then exit 1; fi
     [[ ! -s "$EVENTS" ]] || exit 1
 done
-cp "$fixture/bin/bash" "$fixture/mode-bash"
-rm "$fixture/bin/bash"
+export STANDARD_RELEASE_PHASE=real
 
 # Every standard entry selects preparation, retaining explicit caller offline mode.
 mkdir -p scripts/ci
@@ -184,77 +140,22 @@ cmp "$fixture/cache-entry-expected" "$EVENTS"
 export JOBSERVER_PROBE="$root/scripts/ci/check-pipe-jobserver.pl"
 parallel=(-j4)
 if "$real_make" --help | grep -q -- --jobserver-style; then parallel+=(--jobserver-style=pipe); fi
-printf '#!%s\n' "$real_bash" > "$fixture/bin/cargo"
-cat >> "$fixture/bin/cargo" <<'CARGO'
-set -euo pipefail
-if [[ "${REQUIRE_JOBSERVER:-0}" == 1 ]]; then
-    perl "$JOBSERVER_PROBE"
-fi
-if [[ "$*" == 'metadata --no-deps --locked --offline --format-version 1' ]]; then
-    cat "${EVENTS%/*}/publication-metadata.json"
-    exit 0
-fi
-printf '%s\n' "$@" >> "$EVENTS"
-case "$1:${CLIPPY_FAILURE:-}" in
-    clippy:native) exit 37 ;;
-    clippy:wasm) [[ "$*" != *' --target wasm32-unknown-unknown '* ]] || exit 37 ;;
-esac
-[[ "$1" != package || "${FAIL_PACKAGE:-0}" == 0 ]] || exit 38
-CARGO
-chmod +x "$fixture/bin/cargo"
-STANDARD_RELEASE_REAL_GIT="$(command -v git)"
-export STANDARD_RELEASE_REAL_GIT
-install_publication_boundary() {
-    printf '#!%s\n' "$real_bash" > "$fixture/bin/git"
-    cat >> "$fixture/bin/git" <<'GIT'
-if [[ "$*" == 'rev-parse --verify HEAD' ]]; then printf '%040d\n' 1;
-else exec "$STANDARD_RELEASE_REAL_GIT" "$@"; fi
-GIT
-    printf '#!%s\n' "$real_bash" > "$fixture/bin/bash"
-    cat >> "$fixture/bin/bash" <<'BASH'
-set -euo pipefail
-case "${1:-}" in
-    scripts/release/publication.sh)
-        printf 'publication-admission %s\n' "$OBSERVABILITY_PUBLICATION_MODE" >> "$EVENTS"
-        exit 0 ;;
-    scripts/release/metadata.sh)
-        if [[ "$2" == selection ]]; then exit 0; fi
-        [[ "$2" == packages ]] || exit 99
-        printf 'ic-%s\n' "$RELEASE_GROUP"
-        exit 0 ;;
-    */scripts/ci/run-cargo-publication.sh)
-        # The producer owns upload/status/recovery mechanics. Check only this
-        # consumer's admitted selection and validation hook before delegation.
-        if [[ "${REQUIRE_JOBSERVER:-0}" == 1 ]]; then perl "$JOBSERVER_PROBE"; fi
-        printf '%s\n' publication "$2" "$5" "${@:6}" >> "$EVENTS"
-        exit 0 ;;
-    *) exec "$STANDARD_RELEASE_REAL_BASH" "$@" ;;
-esac
-BASH
-    chmod +x "$fixture/bin/git" "$fixture/bin/bash"
-}
-printf '#!%s\nexit 0\n' "$real_bash" > "$fixture/bin/rustc"
-chmod +x "$fixture/bin/rustc"
-cargo_targets=(package-check publish publish-check check check-wasm clippy docs-check test allocation-free-check)
+cargo_targets=(package-check check check-wasm clippy docs-check test allocation-free-check)
 metadata_targets=(release-preflight release-prepare-version release-commit-check release-prepared-check release-committed-check release-tagged-check release-push-check)
-cp "$fixture/mode-bash" "$fixture/bin/bash"
+export STANDARD_RELEASE_PHASE=metadata
 # Shared Tooling owns flag aliases and inheritance permutations. Keep all actual
 # consumer targets under each unsafe behavior, without repeating that matrix.
 PATH="$fixture/bin:$PATH" make_probe_target_admission "$real_make" "$root/Makefile" "$fixture" "$EVENTS" \
     release-patch release-minor release-major release-resume fmt fmt-check compiler-check msrv \
     "${cargo_targets[@]}" "${metadata_targets[@]}"
-rm "$fixture/bin/bash"
+export STANDARD_RELEASE_PHASE=real
 
-cat > "$fixture/publication-metadata.json" <<'JSON'
-{"version":1,"workspace_members":["metrics","logging"],"packages":[{"id":"metrics","name":"ic-metrics","version":"0.1.0","source":null,"publish":null},{"id":"logging","name":"ic-logging","version":"0.1.0","source":null,"publish":null}]}
-JSON
-install_publication_boundary
 # The real consumer Makefile must leave both pipe descriptors open at every
 # owned Cargo boundary. Cargo effects are substituted; Make admission is real.
 PATH="$fixture/bin:$PATH" REQUIRE_JOBSERVER=1 \
     make_probe_parallel_dispatch "$real_make" "$root/Makefile" "$fixture" "$EVENTS" "${cargo_targets[@]}"
 # Metadata also dispatches Cargo, so its Bash entry must retain the descriptors.
-cp "$fixture/mode-bash" "$fixture/bin/bash"
+export STANDARD_RELEASE_PHASE=metadata
 PATH="$fixture/bin:$PATH" REQUIRE_JOBSERVER=1 make_probe_parallel_dispatch "$real_make" "$root/Makefile" "$fixture" "$EVENTS" "${metadata_targets[@]}"
 # Prepared metadata must precede archive verification; either failure stops release.
 for failure in none metadata package; do
@@ -274,7 +175,7 @@ for failure in none metadata package; do
     fi
     cmp "$fixture/expected" "$EVENTS"
 done
-rm "$fixture/bin/bash"
+export STANDARD_RELEASE_PHASE=real
 # A failure in a multi-command gate stops before any later Cargo command.
 : > "$EVENTS"
 status=0
@@ -329,76 +230,5 @@ for fail in 0 1; do
     cmp "$fixture/expected" "$EVENTS"
 done
 
-# Independent expected Cargo trace; never derived from the Make recipe.
-write_expected_lints() {
-    local destination="$1" last_phase="$2"
-    printf 'publication-admission %s\n' "$mode" > "$destination"
-    printf '%s\n' clippy --workspace --all-targets --all-features --locked -- -D warnings >> "$destination"
-    case "$last_phase" in
-        native) ;;
-        wasm) printf '%s\n' clippy --workspace --lib --all-features --locked --target wasm32-unknown-unknown -- -D warnings >> "$destination" ;;
-        *) return 2 ;;
-    esac
-}
-
-# Shared owns selection/error permutations and actual Cargo dispatch. Retain
-# this consumer's two-package roster, one override and both exact lint boundaries.
-install_publication_boundary
-for selection in default ic-logging; do
-    selectors=(--package ic-metrics@0.1.0)
-    package_args=()
-    if [[ "$selection" != default ]]; then
-        selectors=(--package ic-logging@0.1.0)
-        package_args=("RELEASE_GROUP=logging" "PACKAGE=$selection")
-    fi
-    for target in publish publish-check; do
-        : > "$EVENTS"
-        PATH="$fixture/bin:$PATH" "$real_make" --no-print-directory \
-            -f "$root/Makefile" "$target" ${package_args[@]+"${package_args[@]}"} > "$fixture/output" 2>&1
-        mode=publish
-        [[ "$target" != publish-check ]] || mode=check
-        write_expected_lints "$fixture/expected" wasm
-        printf '%s\n' publication "$mode" crates-io "${selectors[@]}" >> "$fixture/expected"
-        if [[ "$assertion_fault" == 1 ]]; then
-            echo 'FIXTURE_RETENTION_INJECTED_FAILURE' >&2
-            printf 'injected mismatched expectation\n' >> "$fixture/expected"
-            shasum -a 256 expected events output bin/cargo bin/bash bin/git publication-metadata.json > retention-inputs.sha256
-        fi
-        cmp "$fixture/expected" "$EVENTS"
-        for failure in native wasm; do
-            : > "$EVENTS"
-            status=0
-            PATH="$fixture/bin:$PATH" REQUIRE_JOBSERVER=1 CLIPPY_FAILURE="$failure" "$real_make" "${parallel[@]}" --no-print-directory \
-                -f "$root/Makefile" "$target" ${package_args[@]+"${package_args[@]}"} > "$fixture/output" 2>&1 || status=$?
-            [[ "$status" == 2 ]] || exit 1
-            write_expected_lints "$fixture/expected" "$failure"
-            cmp "$fixture/expected" "$EVENTS"
-        done
-    done
-done
-
-# Exercise the actual verified-publication recipe, substituting only its two
-# existing public children. A failed readback must not dispatch another upload.
-cat > Makefile <<'MAKE'
-.PHONY: publish verify-publication
-publish:
-	@printf 'upload\n' >> "$$EVENTS"
-	@exit "$${WRAPPER_UPLOAD_STATUS:-0}"
-verify-publication:
-	@printf 'readback\n' >> "$$EVENTS"
-	@exit "$${WRAPPER_READBACK_STATUS:-0}"
-MAKE
-for failure in none upload readback; do
-    : > "$EVENTS"
-    upload_status=0 readback_status=0 status=0
-    [[ "$failure" != upload ]] || upload_status=37
-    [[ "$failure" != readback ]] || readback_status=38
-    WRAPPER_UPLOAD_STATUS="$upload_status" WRAPPER_READBACK_STATUS="$readback_status" \
-        "$real_make" --no-print-directory -f "$root/Makefile" publish-verified > "$fixture/output" 2>&1 || status=$?
-    if [[ "$failure" == none ]]; then [[ "$status" == 0 ]]; else [[ "$status" != 0 ]]; fi
-    printf 'upload\n' > "$fixture/expected"
-    [[ "$failure" == upload ]] || printf 'readback\n' >> "$fixture/expected"
-    cmp "$fixture/expected" "$EVENTS"
-done
-echo 'release and publication Make adapters passed (command stubs; no Git or registry effects)'
+echo 'Release Make adapters passed (command stubs; no Git effects)'
 fixture_complete=true

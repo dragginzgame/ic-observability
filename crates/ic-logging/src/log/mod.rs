@@ -546,7 +546,6 @@ impl Log {
         });
         let mut matched = 0;
         let mut scanned = 0;
-        let mut last_scanned = None;
         while cursor > 0
             && scanned < request.max_scanned.get()
             && matched < request.max_results.get()
@@ -554,7 +553,6 @@ impl Log {
             cursor -= 1;
             let entry = &self.entries[cursor];
             scanned += 1;
-            last_scanned = Some(entry.sequence);
             if filter.matches(entry) {
                 matched += 1;
                 if visit(entry).is_break() {
@@ -565,7 +563,13 @@ impl Log {
         PageScan {
             matched,
             scanned,
-            next_before: if cursor > 0 { last_scanned } else { None },
+            // Nonzero limits guarantee a visit whenever the initial cursor is nonzero.
+            // The cursor now identifies the last consumed candidate.
+            next_before: if cursor > 0 {
+                self.entries.get(cursor).map(|entry| entry.sequence)
+            } else {
+                None
+            },
         }
     }
 

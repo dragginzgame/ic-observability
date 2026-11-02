@@ -1,5 +1,24 @@
 # Current handoff — 2026-11-02
 
+The accepted ten complexity reductions are implemented locally, pending delivery.
+[Cleanup evidence](../evidence/complexity-cleanup-20261102.md) maps every item to
+its implementation and focused checks. Parsed Wire fixtures and Shared graph
+checks replace local rewriting/traversal; publication, retention and CI fixtures
+have explicit smaller flows; native metadata and cursor state are simplified.
+Source and registry identity checks, TypeScript runtime, native/Wasm Clippy,
+allocation-free linking and failure/recovery fixtures pass. Package versions and
+all locks remain unchanged. Existing README edits are preserved. No actual
+commit, release, publication or sibling mutation ran for this cleanup.
+
+Shared Tooling 0.27.26 is adopted locally at committed revision
+fd9390ef797bfad8aaa05fdba8fcddec753b572c, pending delivery. Its producer ledger
+still marks the version Unreleased; this is an exact-commit snapshot, not a claim
+of a tagged upstream release. [Adoption evidence](../evidence/shared-tooling-02726.md)
+records the impact review, focused caller checks and tool preparation. Existing
+README edits remain separate; AGENTS.md now uses the installed baseline while
+retaining the pre-existing product ownership changes. No commit, package-version
+bump, release, publication or store reclamation is part of this adoption.
+
 The Rust 1.99.1 adoption in [#124](https://github.com/dragginzgame/ic-observability/issues/124)
 is released and crates.io published as **Metrics 0.26.0** and **Logging 0.24.0**.
 Both declare Rust 1.99.1 on native and Wasm, matching the pinned development/release
@@ -44,9 +63,9 @@ its `.git/release-state/`. Readback receipts inside it are
 `target/publication/verification.aA3Fhf` and `verification.yoqaAG`. No cleanup ran.
 The post-publication catalog/CI/receipt update needs no further product release.
 
-Executable Shared Tooling remains reviewed 0.27.23 at
-619d194875369e0f72b45477b66adb430acbf6b7. This delivery does not adopt a new
-executable snapshot or include concurrent policy-reference edits.
+The completed Rust/compiler delivery used Shared Tooling 0.27.23 at
+619d194875369e0f72b45477b66adb430acbf6b7. Its receipts retain that original
+snapshot identity; the newer local adoption above does not relabel them.
 
 The earlier [Wire 0.14.2 delivery](../evidence/wire-0142-delivery-20261101.md)
 remains complete at Metrics 0.25.1. Earlier 0.25.0, PRs #119/#121 and issue #120

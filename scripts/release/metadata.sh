@@ -27,19 +27,21 @@ if [[ "$operation" == preflight || "$operation" == verify ]]; then
     bash "$root/scripts/ci/check-release-source.sh"
 fi
 if [[ "$operation" == packages ]]; then unset RELEASE_COMMIT; fi
+case "$operation" in
+    version|files|plan)
+        exec bash "$root/scripts/ci/cargo-release-group.sh" "$operation" "$RELEASE_GROUP" ;;
+esac
 plan="$(bash "$root/scripts/ci/cargo-release-group.sh" plan "$RELEASE_GROUP")"
+if [[ "$operation" == packages ]]; then
+    printf '%s' "$plan" | jq -er '.members | join(" ")'
+    exit
+fi
 primary="$(printf '%s' "$plan" | jq -er .primary)"
 changelog="$(printf '%s' "$plan" | jq -er .changelog)"
 files=()
 while IFS= read -r -d '' path; do files+=("$path"); done < <(printf '%s' "$plan" | jq -jr '.files[] | . + "\u0000"')
 source_arguments=()
 for path in "${files[@]}"; do source_arguments+=(--allow "$path"); done
-case "$operation" in
-    plan) printf '%s\n' "$plan"; exit ;;
-    packages) printf '%s' "$plan" | jq -er '.members | join(" ")'; exit ;;
-    files) printf '%s\0' "${files[@]}"; exit ;;
-    version) printf '%s' "$plan" | jq -er .previous; exit ;;
-esac
 # shellcheck source=scripts/ci/release-receipts.sh
 source "$root/scripts/ci/release-receipts.sh"
 perl "$root/scripts/ci/validate-release-inputs.pl" version "${RELEASE_VERSION:?}" > /dev/null

@@ -26,8 +26,10 @@ mkdir -p "$root/target/qualification"
 qualification=wire-identities
 [[ "$published" != true ]] || qualification=wire-published
 fixture="$(mktemp -d "$root/target/qualification/$qualification.XXXXXX")"
+report="$fixture/report"
+mkdir "$report"
 printf 'Identity qualification retained: %s\n' "$fixture"
-if [[ "$published" == true ]]; then printf 'ic-metrics@%s\n' "$expected_version" > "$fixture/expected-package"; fi
+if [[ "$published" == true ]]; then printf 'ic-metrics@%s\n' "$expected_version" > "$report/expected-package"; fi
 mkdir -p "$fixture/probe/src"
 if [[ "$published" != true ]]; then
     mkdir -p "$fixture/crates/ic-metrics"
@@ -45,77 +47,54 @@ if [[ "$published" == true ]]; then
 ic-logging.workspace = true
 TOML
 fi
-export IDENTITY_CATALOG="$root/qualification/wire-identities/catalog.toml"
-export IDENTITY_PUBLISHED="$published" IDENTITY_REGISTRY_CATALOG="$root/qualification/wire-published/catalog.toml"
-# Source qualification projects current root selections. Published qualification
-# retains its independently owned registry catalog, including Wire/identity pins.
-perl -pe '
-  if (/^members = /) {
-    $_ = $ENV{IDENTITY_PUBLISHED} eq "true" ? "members = [\"probe\"]\n" : "members = [\"crates/ic-metrics\", \"probe\"]\n";
-    $members++;
-  }
-  if (/^default-members = /) { $_ = "default-members = [\"probe\"]\n"; $defaults++ }
-  if (/^ic-logging = /) { $_ = ""; $logging++ }
-  if (/^ic-wire = / && $ENV{IDENTITY_PUBLISHED} eq "true") { $_ = ""; $wire++ }
-  if (/^ic-metrics = /) {
-    if ($ENV{IDENTITY_PUBLISHED} eq "true") {
-      open my $catalog, "<", $ENV{IDENTITY_REGISTRY_CATALOG} or die;
-      local $/; $_ = <$catalog>;
-      close $catalog or die;
-    } else {
-      s/version = "[^"]+"/version = "0.0.0"/ or die;
-      s/ }$/, default-features = false }/ or die;
-    }
-    $metrics++;
-  }
-  if (/^\[workspace.dependencies\]/ && $ENV{IDENTITY_PUBLISHED} ne "true") {
-    print;
-    open my $catalog, "<", $ENV{IDENTITY_CATALOG} or die;
-    print while <$catalog>;
-    close $catalog or die;
-    $_ = "";
-  }
-  END { die "unexpected root manifest shape\n" unless $members == 1 && $defaults == 1 && $logging == 1 && $metrics == 1 && ($ENV{IDENTITY_PUBLISHED} ne "true" || $wire == 1) }
-' "$root/Cargo.toml" > "$fixture/Cargo.toml"
-if [[ "$published" != true ]]; then
-    perl -pi -e 's/^version = "[^"]+"/version = "0.0.0"/' "$fixture/crates/ic-metrics/Cargo.toml"
-fi
+# Each mode projects parsed root fields plus its independently owned catalog.
+mode=source
+[[ "$published" != true ]] || mode=published
+yq -p toml -o json '.' "$root/Cargo.toml" > "$fixture/root.json"
+yq -p toml -o json '.' "$root/qualification/$qualification/catalog.toml" > "$report/catalog.json"
+yq -p toml -o json '.' "$root/crates/ic-metrics/Cargo.toml" > "$fixture/metrics.json"
+perl "$root/scripts/ci/render-wire-fixture.pl" "$fixture/root.json" "$report/catalog.json" \
+    "$fixture/metrics.json" "$fixture" "$mode"
 if [[ -f "$root/qualification/$qualification/Cargo.lock" ]]; then
     cp "$root/qualification/$qualification/Cargo.lock" "$fixture/Cargo.lock"
 else
     [[ "${1:-}" == --update-lockfile ]] || exit 2
     cp "$root/Cargo.lock" "$fixture/Cargo.lock"
 fi
+# Only this curated report directory is published; build caches remain siblings.
+cp "$fixture/"{Cargo.toml,Cargo.lock} "$report/"
+cp -R "$fixture/probe" "$report/probe"
 export CARGO_TARGET_DIR="$root/target/qualification/$qualification-cargo"
-bash "$root/scripts/ci/check-rust-compiler.sh" > "$fixture/compiler.txt" 2>&1
+bash "$root/scripts/ci/check-rust-compiler.sh" > "$report/compiler.txt" 2>&1
 minimum="$(bash "$root/scripts/ci/read-cargo-workspace-rust-version.sh" "$root/Cargo.toml")"
 if [[ "${1:-}" == --update-lockfile ]]; then
-    cargo "+$minimum" metadata --manifest-path "$fixture/Cargo.toml" --format-version 1 > "$fixture/metadata.json"
+    cargo "+$minimum" metadata --manifest-path "$fixture/Cargo.toml" --format-version 1 > "$report/metadata.json"
     cp "$fixture/Cargo.lock" "$root/qualification/$qualification/Cargo.lock"
+    cp "$fixture/Cargo.lock" "$report/Cargo.lock"
     exit
 fi
 if [[ "${1:-}" == --prepare ]]; then
     cargo "+$minimum" fetch --locked --manifest-path "$fixture/Cargo.toml"
     exit
 fi
-cargo "+$minimum" metadata --locked --offline --manifest-path "$fixture/Cargo.toml" --format-version 1 > "$fixture/metadata.json"
+cargo "+$minimum" metadata --locked --offline --manifest-path "$fixture/Cargo.toml" --format-version 1 > "$report/metadata.json"
 if [[ "$published" == true ]]; then
     jq -e --arg version "$expected_version" '
       ([.packages[] | select(.name == "ic-metrics")] | length == 1 and
         all(.[]; .version == $version and (.source | startswith("registry+")))) and
       (.workspace_members | length == 1)
-    ' "$fixture/metadata.json" > /dev/null
+    ' "$report/metadata.json" > /dev/null
 fi
 jq -e '
   [.packages[] | select(.name == "ic-wire")] | length == 1
-' "$fixture/metadata.json" > /dev/null
+' "$report/metadata.json" > /dev/null
 jq -e '
   [.packages[] | select(.name == "ic-platform-types")] | length == 1
-' "$fixture/metadata.json" > /dev/null
+' "$report/metadata.json" > /dev/null
 jq -e '
   . as $m | all(.packages[]; .source != null or (.id as $id | $m.workspace_members | index($id))) and
   all(.packages[]; .name != "ic-wire-endpoint" and .name != "ic-cdk" and .name != "ic0")
-' "$fixture/metadata.json" > /dev/null
+' "$report/metadata.json" > /dev/null
 targets=(--lib --tests)
 if [[ "$published" == true ]]; then targets+=(--examples); fi
 cargo "+$minimum" clippy --locked --offline --manifest-path "$fixture/Cargo.toml" -p wire-identity-probe "${targets[@]}" -- -D warnings

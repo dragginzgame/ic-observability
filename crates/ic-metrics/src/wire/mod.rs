@@ -150,35 +150,7 @@ impl<'de, const N: usize> Deserialize<'de> for MeasurementHistogram<N> {
 }
 
 #[cfg(all(feature = "native-wire", not(target_family = "wasm")))]
-impl<const N: usize> ic_wire::typescript::Wire for MeasurementHistogram<N> {
-    fn native_schema(
-        context: &mut ic_wire::typescript::SchemaContext,
-    ) -> Result<ic_wire::__private::serde_json::Value, ic_wire::typescript::GenerationError> {
-        context.describe::<HistogramFields<N>>()
-    }
-}
-
-// Metadata follows the exact private Serde records, never the arithmetic fields.
-// The records are fixed-size scalars; this adds no unbounded decoding work.
-#[cfg(all(feature = "native-wire", not(target_family = "wasm")))]
-macro_rules! metadata {
-    ($value:ty, $fields:ty) => {
-        impl ic_wire::typescript::Wire for $value {
-            fn native_schema(
-                context: &mut ic_wire::typescript::SchemaContext,
-            ) -> Result<ic_wire::__private::serde_json::Value, ic_wire::typescript::GenerationError>
-            {
-                context.describe::<$fields>()
-            }
-        }
-    };
-}
-#[cfg(all(feature = "native-wire", not(target_family = "wasm")))]
-metadata!(MeasurementAggregate, AggregateFields);
-#[cfg(all(feature = "native-wire", not(target_family = "wasm")))]
-metadata!(MeasurementCounter, CounterFields);
-#[cfg(all(feature = "native-wire", not(target_family = "wasm")))]
-metadata!(MeasurementSummary, SummaryFields);
+mod native;
 
 #[cfg(all(test, feature = "native-wire", not(target_family = "wasm")))]
 mod tests;

@@ -51,5 +51,11 @@ a different published Metrics version.
 
 The probe inherits the current workspace Rust 1.99.1 floor and uses the same
 exact compiler for Clippy, runtime tests and Wasm checks. Compiler admission is
-retained in each probe's `compiler.txt`; registry packages retain their published
+retained in each probe's `report/compiler.txt`; registry packages retain their published
 metadata and are not rewritten to claim this new support floor.
+
+Fixture manifests are rendered from parsed TOML fields; formatting does not
+control selection. Each attempt's `report/` contains the explicit catalog,
+generated manifest/lock, probe sources, compiler observation and metadata when
+available. CI uploads that curated directory; Cargo build caches remain outside
+it. Source-copy and frozen-registry consumers retain separate attempts and locks.

@@ -197,6 +197,7 @@ package-doc-links-check:
 	perl scripts/ci/check-package-doc-links.pl
 
 metrics-profiles-check:
+	bash scripts/ci/test-wire-fixture.sh
 	perl scripts/ci/check-metrics-profiles.pl
 	+cargo test -p ic-metrics --lib --no-default-features --locked --offline wire::serde_tests
 
@@ -219,7 +220,7 @@ production-dependencies-check:
 allocation-free-check:
 	+bash scripts/ci/check-allocation-free.sh
 
-# Retention runs the full release and hook fixtures, plus failure/custody cases.
+# Retention owns the separate release/publication/hook bodies and custody cases.
 release-tools-check:
 	bash scripts/release/test-fixture-retention.sh
 	bash scripts/release/test-publication-policy.sh
@@ -248,6 +249,6 @@ ci:
 	+$(MAKE) --no-print-directory package-check
 	+$(MAKE) --no-print-directory package-doc-links-check
 
-# Admit the selected compiler before product Cargo effects.
-# Published intent must be admitted first; its helper checks the compiler next.
-check check-wasm clippy docs-check test package-check typescript-check metrics-profiles-check allocation-free-check wire-identities-check production-dependencies-check publication-source-check: | compiler-check
+# Make admits Cargo recipes; script entrypoints own their compiler admission.
+# Published intent is checked before the helper observes its compiler.
+check check-wasm clippy docs-check test package-check typescript-check metrics-profiles-check production-dependencies-check publication-source-check: | compiler-check

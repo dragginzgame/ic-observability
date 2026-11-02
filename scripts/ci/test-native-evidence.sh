@@ -238,43 +238,6 @@ BASH
 chmod +x "$fixture/bin/bash"
 FIXTURE_REAL_BASH="$real_bash"
 export FIXTURE_REAL_BASH
-# Scenario inputs and expected boundary results have one local owner.
-select_scenario() {
-    FIXTURE_FAILURE=""
-    FIXTURE_FORMATTING=no
-    FIXTURE_COLLECTION_STATUS=0
-    FIXTURE_ARCHIVE_STATUS=0
-    expected_pipeline_status=43
-    expected_collector_status=0
-    failed_log=native-ci.log
-    case "$1" in
-        success|skipped-setup) expected_pipeline_status=0 ;;
-        setup-smoke)
-            FIXTURE_FAILURE=setup-smoke; failed_log=setup-smoke.log
-            HOST_OUTCOME=skipped; TOOLCHAIN_OUTCOME=skipped; PREREQUISITES_OUTCOME=skipped ;;
-        host-tools) FIXTURE_FAILURE=host-tools; TOOLCHAIN_OUTCOME=skipped ;;
-        compiler) FIXTURE_FAILURE=compiler; failed_log=compiler.txt ;;
-        tool-inputs) FIXTURE_FAILURE=tool-inputs; failed_log=tool-versions.txt ;;
-        application-sources) FIXTURE_FAILURE=application-sources; failed_log=application-sources.log ;;
-        tools-install) FIXTURE_FAILURE=tools-install; failed_log=tools-setup.log ;;
-        tools-check) FIXTURE_FAILURE=tools-check; failed_log=tools-check.log ;;
-        native) FIXTURE_FAILURE=ci ;;
-        formatting) FIXTURE_FAILURE=ci; FIXTURE_FORMATTING=yes ;;
-        collection-partial)
-            FIXTURE_FAILURE=tools-install; failed_log=tools-setup.log
-            FIXTURE_COLLECTION_STATUS=1; expected_collector_status=1 ;;
-        collection-failure)
-            FIXTURE_FAILURE=tools-install; failed_log=tools-setup.log
-            FIXTURE_COLLECTION_STATUS=2; expected_collector_status=2 ;;
-        native-archive-failure)
-            expected_pipeline_status=0; FIXTURE_ARCHIVE_STATUS=23; expected_collector_status=23 ;;
-        collection-archive-failure)
-            FIXTURE_FAILURE=tools-install; failed_log=tools-setup.log
-            FIXTURE_COLLECTION_STATUS=2; FIXTURE_ARCHIVE_STATUS=23; expected_collector_status=2 ;;
-        *) return 2 ;;
-    esac
-}
-
 check_diagnostic_checksum() {
     bash "$root/scripts/ci/verify-file-checksum.sh" sha256 \
         "$(cat target/evidence/native-diagnostics.tar.gz.sha256)" \
@@ -287,7 +250,10 @@ check_retained_recovery_inputs() {
 }
 
 # Keep this workflow's action-result projection and Git/evidence custody.
-for scenario in success skipped-setup setup-smoke host-tools compiler tool-inputs application-sources tools-install tools-check native formatting collection-partial collection-failure native-archive-failure collection-archive-failure; do (
+# Scenario data supplies expectations independently of observed step outcomes.
+while IFS='|' read -r scenario FIXTURE_FAILURE FIXTURE_FORMATTING \
+    FIXTURE_COLLECTION_STATUS FIXTURE_ARCHIVE_STATUS expected_pipeline_status \
+    expected_collector_status failed_log expected_trace HOST_OUTCOME TOOLCHAIN_OUTCOME PREREQUISITES_OUTCOME; do (
     worktree="$fixture/$scenario"
     mkdir -p "$worktree"
     cp -R "$fixture/source/." "$worktree/"
@@ -305,16 +271,14 @@ for scenario in success skipped-setup setup-smoke host-tools compiler tool-input
     export SHARED_TOOLING_STORE="$worktree/shared-store"
     export RUNNER_TEMP="$worktree/runner temp"
     mkdir -p "$RUNNER_TEMP" "$TMPDIR"
-    export FIXTURE_COMMANDS="$worktree/commands.log" FIXTURE_FAILURE=""
-    export FIXTURE_FORMATTING=no
-    export FIXTURE_COLLECTION_STATUS=0 FIXTURE_ARCHIVE_STATUS=0
+    export FIXTURE_COMMANDS="$worktree/commands.log" FIXTURE_FAILURE FIXTURE_FORMATTING
+    export FIXTURE_COLLECTION_STATUS FIXTURE_ARCHIVE_STATUS
     export PATH="$fixture/bin:$root/.tools/rust/common/bin:$root/.tools/host/bin:$PATH"
-    export INPUT_OUTCOME=success HOST_OUTCOME=success TOOLCHAIN_OUTCOME=success PREREQUISITES_OUTCOME=success
+    export INPUT_OUTCOME=success HOST_OUTCOME TOOLCHAIN_OUTCOME PREREQUISITES_OUTCOME
     export COMPILER_OUTCOME=skipped HOST_TOOLS_OUTCOME=skipped
     export SETUP_OUTCOME=skipped
     export APPLICATION_OUTCOME=skipped
     export TOOLS_OUTCOME=skipped TOOL_INPUT_OUTCOME=skipped NATIVE_OUTCOME=skipped
-    select_scenario "$scenario"
     "$real_bash" scripts/ci/record-native-inputs.sh > source.log 2>&1
     shasum -a 256 -c target/evidence/native-ci/source-sha256.txt > source-check.log
     if [[ "$scenario" == success ]]; then
@@ -346,23 +310,10 @@ for scenario in success skipped-setup setup-smoke host-tools compiler tool-input
     fi
     printf '%s\n' "$status" > status.txt
     [[ "$status" == "$expected_pipeline_status" ]] || exit 1
-    # No later application/native effect can follow a failed action or fetch.
+    # Expected traces are explicit case data, never derived from actual outcomes.
     : > expected-commands
-    if [[ "$scenario" != skipped-setup ]]; then
-        printf 'setup-smoke\n' >> expected-commands
-    fi
-    if [[ "$SETUP_OUTCOME" == success ]]; then
-        printf 'host-tools\n' >> expected-commands
-    fi
-    if [[ "$HOST_TOOLS_OUTCOME" == success ]]; then
-        printf 'compiler\n' >> expected-commands
-    fi
-    if [[ "$COMPILER_OUTCOME" == success ]]; then
-        printf 'tools\n' >> expected-commands
-        if [[ "$TOOLS_OUTCOME" == success && "$TOOL_INPUT_OUTCOME" == success ]]; then
-            printf 'application-sources\n' >> expected-commands
-            if [[ "$APPLICATION_OUTCOME" == success ]]; then printf 'ci\n' >> expected-commands; fi
-        fi
+    if [[ -n "$expected_trace" ]]; then
+        printf '%s\n' "$expected_trace" | tr ',' '\n' > expected-commands
     fi
     cmp expected-commands commands.log
     # The outer archive owns full failed-release evidence, including Git state.
@@ -484,6 +435,22 @@ for scenario in success skipped-setup setup-smoke host-tools compiler tool-input
             cmp .tools/rust/failure:payload recovered-candidates/.tools/rust/failure:payload
         fi
     fi
-) done
+) done <<'SCENARIOS'
+success||no|0|0|0|0|native-ci.log|setup-smoke,host-tools,compiler,tools,application-sources,ci|success|success|success
+skipped-setup||no|0|0|0|0|native-ci.log||skipped|skipped|skipped
+setup-smoke|setup-smoke|no|0|0|43|0|setup-smoke.log|setup-smoke|skipped|skipped|skipped
+host-tools|host-tools|no|0|0|43|0|native-ci.log|setup-smoke,host-tools|success|skipped|success
+compiler|compiler|no|0|0|43|0|compiler.txt|setup-smoke,host-tools,compiler|success|success|success
+tool-inputs|tool-inputs|no|0|0|43|0|tool-versions.txt|setup-smoke,host-tools,compiler,tools|success|success|success
+application-sources|application-sources|no|0|0|43|0|application-sources.log|setup-smoke,host-tools,compiler,tools,application-sources|success|success|success
+tools-install|tools-install|no|0|0|43|0|tools-setup.log|setup-smoke,host-tools,compiler,tools|success|success|success
+tools-check|tools-check|no|0|0|43|0|tools-check.log|setup-smoke,host-tools,compiler,tools|success|success|success
+native|ci|no|0|0|43|0|native-ci.log|setup-smoke,host-tools,compiler,tools,application-sources,ci|success|success|success
+formatting|ci|yes|0|0|43|0|native-ci.log|setup-smoke,host-tools,compiler,tools,application-sources,ci|success|success|success
+collection-partial|tools-install|no|1|0|43|1|tools-setup.log|setup-smoke,host-tools,compiler,tools|success|success|success
+collection-failure|tools-install|no|2|0|43|2|tools-setup.log|setup-smoke,host-tools,compiler,tools|success|success|success
+native-archive-failure||no|0|23|0|23|native-ci.log|setup-smoke,host-tools,compiler,tools,application-sources,ci|success|success|success
+collection-archive-failure|tools-install|no|2|23|43|2|tools-setup.log|setup-smoke,host-tools,compiler,tools|success|success|success
+SCENARIOS
 echo 'Native evidence source/setup/archive cases passed (action results and Make effects substituted; no hosted CI claim)'
 fixture_complete=true

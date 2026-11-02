@@ -93,18 +93,8 @@ jobs:
           name: typescript-conformance-${{ github.run_attempt }}
           path: |
             target/typescript-conformance/
-            target/qualification/wire-identities.*/compiler.txt
-            target/qualification/wire-identities.*/Cargo.toml
-            target/qualification/wire-identities.*/Cargo.lock
-            target/qualification/wire-identities.*/catalog.json
-            target/qualification/wire-identities.*/metadata.json
-            target/qualification/wire-identities.*/probe/
-            target/qualification/wire-published.*/compiler.txt
-            target/qualification/wire-published.*/Cargo.toml
-            target/qualification/wire-published.*/Cargo.lock
-            target/qualification/wire-published.*/expected-package
-            target/qualification/wire-published.*/metadata.json
-            target/qualification/wire-published.*/probe/
+            target/qualification/wire-identities.*/report/
+            target/qualification/wire-published.*/report/
           if-no-files-found: ignore
           retention-days: 30
 

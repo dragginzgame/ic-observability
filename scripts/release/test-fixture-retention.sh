@@ -68,14 +68,15 @@ MAKE
     esac
 }
 
-for kind in standard hook; do
+for kind in standard publication hook; do
     case "$kind" in
         standard) script=scripts/release/test-standard-release.sh; prefix=standard-release-entry; child=bash ;;
+        publication) script=scripts/release/test-publication-make.sh; prefix=publication-make-entry; child='make' ;;
         hook) script=scripts/dev/test-format-hook.sh; prefix=metrics-format-hook; child='make' ;;
     esac
     cp "$root/$script" "$evidence/$kind-source.sh"
     scenarios=(success child)
-    if [[ "$kind" == standard ]]; then scenarios+=(publication-child publication-assertion); fi
+    if [[ "$kind" == publication ]]; then scenarios=(success publication-child publication-assertion); fi
     if [[ "$kind" == hook ]]; then scenarios=(success baseline); fi
     for scenario in "${scenarios[@]}"; do
         run="$evidence/$kind-$scenario"
@@ -126,7 +127,7 @@ FAIL
             continue
         fi
         case "$kind" in
-            standard)
+            standard|publication)
                 [[ -f "$retained/output" ]] || exit 1
                 if [[ "$scenario" == publication-* ]]; then
                     [[ -f "$retained/events" && -f "$retained/bin/cargo" ]] || exit 1
@@ -162,6 +163,7 @@ echo 'Group admission fixture preserves inherited parent logs and summary; its r
 # Probe actual initialization/cleanup prefixes through the shared owner.
 # Consumer rosters and successful diagnostic retention remain explicit here.
 for script in scripts/release/test-standard-release.sh \
+    scripts/release/test-publication-make.sh \
     scripts/dev/test-format-hook.sh \
     scripts/release/test-release-admission.sh \
     scripts/ci/test-native-evidence.sh scripts/release/test-fixture-retention.sh; do

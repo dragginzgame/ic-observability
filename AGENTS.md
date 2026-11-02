@@ -1,14 +1,11 @@
 # IC Observability Agent Rules
 
-Read [DRAGGINZGAME.md](DRAGGINZGAME.md) first. The reviewed Shared Tooling revision
-`619d194875369e0f72b45477b66adb430acbf6b7` (snapshot version 0.27.23)
-and file digests are recorded in
-[.shared-tooling.snapshot](.shared-tooling.snapshot). This is the local overlay;
-the maintainer-approved [compiler policy exception](https://github.com/dragginzgame/ic-observability/issues/124)
-sets Rust 1.99.1 as both the supported minimum and exact development/release
-compiler, superseding the adopted baseline's lowest-floor/separate-lane policy.
-The corresponding Shared Tooling policy is not yet adopted. Read [the current handoff](docs/status/current.md)
-at startup and [the extraction contract](docs/extraction.md) before arithmetic,
+Read [DRAGGINZGAME.md](DRAGGINZGAME.md) first, then
+[the current handoff](docs/status/current.md). The
+[snapshot manifest](.shared-tooling.snapshot) records the reviewed Shared Tooling
+files and exact revision. This is the local overlay; there are no baseline
+exceptions. Product-specific safeguards and scoped permissions below remain binding.
+Read [the extraction contract](docs/extraction.md) before arithmetic,
 consumer-contract or persistence-boundary changes.
 
 ## Ownership
@@ -51,7 +48,7 @@ consumer-contract or persistence-boundary changes.
   checkpoints and canonical restoration, including sequence/time watermarks after
   complete retention. Keep its heap engine dependency-free; hosts select durable
   identity, allocation, lifecycle and checkpoint cadence.
-- IC Host owns the published `ic-host-wasm-inspect` CLI, its installation guide
+- IC Tooling owns the published `ic-host-wasm-inspect` CLI, its installation guide
   and Rust floor. Optional evidence experiments select their own qualified tool
   identity; Metrics owns no inspector wrapper, pin or workspace dependency.
   Source-less lock packages must be workspace-owned; external path dependencies
@@ -114,7 +111,7 @@ consumer-contract or persistence-boundary changes.
   never a dependency of the arithmetic library.
 - `make check-pins` requires prepared Git, jq and Mike Farah yq. Checks never
   install tools or unlock dependency graphs. Select product CLI adapters through
-  the shared managed installer; keep application compiler policy local.
+  the shared managed installer; local selectors implement the approved compiler policy.
 - Shared structural reviews use [the common methods](audits/README.md), with
   this overlay's allocation, units, counter identity and ownership constraints.
   Source scope includes `crates/ic-metrics`, `crates/ic-logging`, owning

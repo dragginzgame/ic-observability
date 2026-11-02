@@ -37,13 +37,19 @@ collection or turn a failed check into a successful one.
 
 ## Prerequisites and focused checks
 
-After adopting Shared Tooling 0.26.8, rerun `make install-tools`, then
+After adopting Shared Tooling 0.27.26, rerun `make install-tools`, then
 `make tools-check`: the changed build-helper policy participates in tool identity.
+Linux fingerprints retain native tool/header/library providers while excluding
+unrelated applications. Successful tool compilation scratch is discarded after
+admission; selected executables, source archives and receipts remain. Retiring
+old executable generations is explicit owner-operated maintenance under the
+[shared guide](tool-store-maintenance.md), with quiescence and custody checks.
+No store reclamation or application-artifact cleanup is part of this adoption.
 Explicit Cargo setup waits up to 60 seconds per occupied admitted slot, while
-offline checks remain immediate. The shared [setup guide](local-setup.md#standard-cargo-tool-build-environment)
-owns the wait-budget override and lock admission. Previous generations remain
-retained. Metrics' release editor selects the required `cli` feature through the
-managed installer, without adding a library dependency.
+offline checks remain immediate. The shared
+[setup guide](local-setup.md#standard-cargo-tool-build-environment) owns the
+wait-budget override and lock admission. The release editor retains its existing
+`cli` feature without adding a library dependency.
 
 Rust 1.99.1 is both the supported minimum and exact development/release compiler,
 as approved in [#124](https://github.com/dragginzgame/ic-observability/issues/124).
@@ -66,9 +72,9 @@ Make targets do not parse Cargo to choose a compiler.
 
 `make msrv` remains a compatibility alias for compiler admission. `make ci`
 provides the compilation proof once on this same compiler; see the coverage map
-below. Both Metrics and Logging require Rust 1.99.1 on native and Wasm. This local
-owner decision supersedes the older Shared Tooling floor policy; the recorded
-snapshot has not been advanced.
+below. Both Metrics and Logging require Rust 1.99.1 on native and Wasm. The adopted
+Shared Tooling baseline now owns this same compiler policy;
+no local exception or temporary policy-reference override is needed.
 
 Use Git, GNU Make, Bash 3.2 or newer and standard Unix utilities. The
 [local setup guide](local-setup.md#bootstrap-prerequisites) owns system bootstrap,
@@ -315,6 +321,13 @@ are reviewed for the no-symlink rule; managed tool-selection pointers and isolat
 rejection fixtures retain their narrow exceptions. Frozen evidence keeps its
 original source and dependency identities.
 
+The Metrics profile matrix delegates resolved normal/build graph mechanics to
+Shared's `scripts/ci/check-cargo-graph.pl`. Local code owns the four target/feature
+profiles and package-count/exclusion rules; declaration admission remains a
+separate guard. `bash scripts/ci/test-wire-fixture.sh` verifies parsed Cargo
+projection across multiline manifests, quoted strings, source normalization and
+independent registry selections, including source-catalog overlap refusal.
+
 ## Full release validation
 
 Focused checks for changed behavior and directly affected callers are sufficient
@@ -383,8 +396,8 @@ be shipped; deliberate future Cargo exclusions must update that policy explicitl
 Both commands require an explicit group; missing, empty and unknown selections
 refuse before setup, validation or mutation. A `PACKAGE` override must belong to
 that group and never selects it implicitly. Group release tags advance only
-the selected version, without uploading either package. The standard-release
-fixture checks explicitly selected Metrics and Logging rosters and
+the selected version, without uploading either package. The focused publication
+Make fixture checks explicitly selected Metrics and Logging rosters and
 both exact lint-failure boundaries before delegation. Shared Tooling owns generic
 selection, metadata, upload-status and retained-attempt fixtures. Local effects
 are substituted and do not publish packages.
@@ -420,17 +433,18 @@ actual callers; it does not replay those generic matrices in its own gates.
 
 | Local entrypoint | Metrics-owned qualification |
 | --- | --- |
-| `make release-tools-check` | Standard Make dispatch, grouped release admission, hook and failure/custody fixtures. The actual group adapter, renderer and runner exercise local Git releases, exact staging/commits, rollback, receipts/resume, publication selection and consumers pinned to the unaffected identity. Broad gates and registry uploads are substituted. |
+| `make release-tools-check` | Separate release/publication Make dispatch, grouped release admission, hook and failure/custody fixtures. The actual group adapter, renderer and runner exercise local Git releases, exact staging/commits, rollback, receipts/resume, publication selection and consumers pinned to the unaffected identity. Broad gates and registry uploads are substituted. |
 | `make hook-check` | Standalone hook adoption; the actual baseline formatter failure must retain and replay its diagnostic log. |
 | `make ci-evidence-check` | Source selection/hash inputs, actual workflow setup bodies, collector wiring and direct collector/recovery-packager execution with substituted external effects. |
 
-Retention is the single CI entry for release and hook bodies; they are not run
-again as separate gates. The admission fixture isolates inherited parent
+Retention is the single CI entry for release, publication and hook bodies. Each
+full success route runs once; publication-specific child/assertion failures run
+only its focused fixture, keeping unrelated release checks out of those probes. The admission fixture isolates inherited parent
 validation/failure logs and summaries. Each group checks source and tool refusal,
 failed validation, transactional rollback, wrong-group/altered receipts and
 resumption after a real disposable commit/tag. Successful grouped inputs and
 receipts remain retained alongside failed inputs under caller-selected `TMPDIR`,
-defaulting to native CI evidence. The standard fixture owns its assertion-failure
+defaulting to native CI evidence. The publication fixture owns its assertion-failure
 case and retained-input checksum manifest; the parent verifies both. External
 command failures and nested hook logs remain separately checked. These fixtures
 perform no release in the maintained checkout or registry publication and do not
@@ -471,7 +485,7 @@ before managed-tool preparation or application compilation. Its outcome is
 included in diagnostic and recovery archives, including partial output on failure.
 The allocator-free Wasm is retained inside the full native recovery archive after
 a successful link. The TypeScript job also retains its compiler record; independent
-source and registry probes retain their own `compiler.txt`. Existing historical
+source and registry probes retain their own `report/compiler.txt`. Existing historical
 `msrv-ci` evidence is preserved; new runs no longer produce a duplicate archive.
 
 `make compiler-policy-check` exercises policy mismatches, failed executable
