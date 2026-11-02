@@ -52,15 +52,15 @@ checksum = "edd0f118536f44f5ccd48bcb8b111bdc3de888b58c74639dfb034a357d0f206d"
 
 [[package]]
 name = "ic-logging"
-version = "0.24.2"
+version = "0.24.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c2c39b9656c998f08d2f5da3fc936ea394c809bc631b373d15df1e762ed0aad0"
+checksum = "2987abc85007425acc12528f8ad9d72cde96b6dfa33e8ac77d7339848aeb4863"
 
 [[package]]
 name = "ic-metrics"
-version = "0.27.1"
+version = "0.27.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1301c37815b711164dbef141437570f737abb63dd0f9531586067a4649411b86"
+checksum = "8482465cfed77a0abb17c9b527ae6b1595b44570eebdd97f25368bc2b4208785"
 dependencies = [
  "ic-wire",
  "serde",

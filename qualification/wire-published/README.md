@@ -1,14 +1,14 @@
 # Published identity consumer
 
-This post-publication check selects exact registry Metrics 0.27.1, published Wire
+This post-publication check selects exact registry Metrics 0.27.2, published Wire
 and canonical Types/facade identities. It reuses the maintained Principal/Account
 assertions from [the source probe](../wire-identities/README.md), with no copied
 Metrics source, patch, replacement or external path dependency. Only the probe
 is a workspace member. Its recorded lock owns the registry graph independently
 of the arithmetic workspace and the source-alignment qualification.
 
-Explicit preparation: `bash scripts/ci/check-wire-identities.sh --published 0.27.1 --prepare`.
-Acceptance: `make published-identities-check EXPECTED_METRICS_VERSION=0.27.1`. Checks use locked offline sources,
+Explicit preparation: `bash scripts/ci/check-wire-identities.sh --published 0.27.2 --prepare`.
+Acceptance: `make published-identities-check EXPECTED_METRICS_VERSION=0.27.2`. Checks use locked offline sources,
 strict Clippy, three real schema/byte tests on the Rust floor and a Wasm check.
 Preparation fetches dependencies; checks never update them or install tools.
 The lock selects Wire/Derive 0.15.0 with canonical Types 0.17.0/facade 0.18.0.
@@ -25,7 +25,7 @@ registry-consumer acceptance step after `publish-verified`; a failed check never
 repeats an upload. The frozen exact version prevents ordinary source CI from
 silently qualifying an unrelated registry release or resolving latest versions.
 
-Metrics 0.27.1 is published with Wire 0.15 metadata; this registry consumer now
+Metrics 0.27.2 is published with Wire 0.15 metadata; this registry consumer now
 qualifies that pairing independently of the current-source fixture. Older
 Metrics 0.26.1 supplies Wire 0.14 metadata, so native consumers must update the
 pair together. See the [migration guide](../../releases/metrics/0.27.md).
@@ -40,7 +40,7 @@ selection rejection fixture (Cargo effects are substituted).
 
 
 The [observability host example](examples/observability-host.rs) composes exact
-published Metrics 0.27.1 and Logging 0.24.2. Logging is a development dependency
+published Metrics 0.27.2 and Logging 0.24.3. Logging is a development dependency
 of this private consumer only. Its counters track log admission, truncation,
 eviction and refusal; a host-selected metrics-window reset preserves the log's
 identity. These are diagnostic events rather than authoritative application outcomes.
