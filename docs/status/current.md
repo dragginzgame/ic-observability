@@ -1,71 +1,55 @@
 # Current handoff — 2026-11-02
 
-[#124](https://github.com/dragginzgame/ic-observability/issues/124) is implemented
-locally, pending review and delivery. Rust 1.99.1 is both the workspace floor and
-exact pinned compiler. Duplicate minimum-compiler CI/setup is removed; all three
-native hosts, Wasm libraries, allocator-free linking, doctests, package archives
-and independent consumer checks remain on that same compiler. `make msrv` now
-admits the compiler only; `make ci` supplies compilation once.
+The Rust 1.99.1 adoption in [#124](https://github.com/dragginzgame/ic-observability/issues/124)
+is released and crates.io published as **Metrics 0.26.0** and **Logging 0.24.0**.
+Both declare Rust 1.99.1 on native and Wasm, matching the pinned development/release
+compiler. [Delivery evidence](../evidence/rust-1991-delivery-20261102.md) records
+exact source/tag identities, complete gates, checksums and retained receipts.
 
-The [qualification record](../evidence/rust-1991-issue-124.md) maps retained
-proofs and records focused Linux checks. No new hosted pass is claimed. Both
-groups have independent breaking pending notes: Metrics 0.26.0 and Logging
-0.24.0. Package versions and all three locks remain unchanged; no real-checkout
-staging, commit, release, publication or sibling mutation ran. The approved local
-policy exception in AGENTS.md does not advance Shared Tooling 0.27.23.
+[PR #125](https://github.com/dragginzgame/ic-observability/pull/125) merged the
+compiler adoption. [PR #126](https://github.com/dragginzgame/ic-observability/pull/126)
+corrected published-consumer admission ordering caught by the full gate. Invalid
+version intent rejects before Cargo observation; valid intent still enforces the
+exact compiler through the existing helper. Both are merged.
 
-## Last completed delivery — 2026-11-01
+Metrics release commit: 1b6dab1d07ad92f58843ae68990e530cc572ee1f,
+annotated tag metrics-v0.26.0. Logging release commit:
+287a35d412e17252a470a8f94c6b4adb61d794d4, tag logging-v0.24.0.
+Each standard minor release completed full `ci msrv` validation (147/0 s and
+139/0 s), metadata/archive checks and atomic main/tag push. Each package passed
+the publication dry run, uploaded once from its clean exact tag and passed
+independent registry/archive/source-content verification. Do not replay uploads;
+verification-only recovery remains separate.
 
-The latest Wire adoption and deployment is complete. [PR #122](https://github.com/dragginzgame/ic-observability/pull/122)
-is merged. **Metrics 0.25.1** is Git-released, crates.io published and independently
-verified with **Wire/Derive 0.14.2**. The official sparse index identified that
-Wire patch as latest stable at selection. The [delivery receipt](../evidence/wire-0142-delivery-20261101.md)
-records source, tags, checksum, full gates and retained evidence.
+The frozen published consumer and CI intent now select Metrics 0.26.0 and Logging
+0.24.0 with unchanged Wire/Derive 0.14.2, Types 0.16.0 and Platform 0.17.0.
+Only the two published version/checksum entries changed in that lock. Strict
+Clippy, real identity compatibility tests, executable composition and Wasm checks
+pass on Rust 1.99.1. Both libraries are actual registry dependencies. Source-copy
+alignment remains separate evidence. The new [Metrics](../../releases/metrics/0.26.md)
+and [Logging](../../releases/logging/0.24.md) migration guides record the higher
+compiler requirement. No arithmetic, schema, encoded-byte or Logging contract
+changed.
 
-Release commit is 961183ae94ad9e1109ad18fa95798dc370b513dc, annotated tag
-metrics-v0.25.1. Standard complete CI/MSRV passed in 149/3 seconds, including
-archive checks, before version preparation and atomic main/tag push. Standard
-publication dry run and actual upload passed native/Wasm Clippy and Cargo
-verification. One upload ran from the clean exact annotated release checkout.
-Official non-yanked metadata, archive checksum, clean provenance, fresh source
-retrieval and all 38 maintained files match. Readback receipt is
-target/publication/verification.kOdFqa. Do not replay the upload; verification-only
-recovery remains independent. Plan/journal remains under .git/release-state/metrics-0.25.1*.
+PR #126's [hosted run](https://github.com/dragginzgame/ic-observability/actions/runs/41422023809)
+passes Linux, Intel macOS, Apple Silicon macOS and TypeScript. Those are
+API-observed PR-source results, separate from exact release-source local gates
+and verified published payloads. Later main runs are asynchronous.
 
-All three locks select Wire/Derive 0.14.2. The root minimum remains 0.14.0 and
-canonical Types 0.16.0/Platform 0.17.0 remain isolated integration suppliers.
-Only Metrics advanced. Logging remains dependency-free at 0.23.7, its manifest
-and ledger unchanged; no Logging release or upload ran. No library implementation,
-API, numeric schema, encoded/retained byte, error or Rust floor changed.
+Delivery ran in the isolated checkout
+`target/deploy/rust-1991-20261102/release-checkout/` to preserve concurrent local
+policy/documentation edits. Do not overwrite that unrelated working-tree work.
+Raw release/publication logs remain in its parent; plans and journals remain in
+its `.git/release-state/`. Readback receipts inside it are
+`target/publication/verification.aA3Fhf` and `verification.yoqaAG`. No cleanup ran.
+The post-publication catalog/CI/receipt update needs no further product release.
 
-The independent registry consumer and frozen CI intent now select Metrics 0.25.1,
-Wire/Derive 0.14.2, Types 0.16.0, Platform 0.17.0 and Logging 0.23.7. Only the
-Metrics version/checksum record changed in the post-publication lock update.
-Strict Clippy, three real Principal/Account schema/byte/refusal tests, composition
-execution on Rust 1.91 and Wasm compilation pass. Both libraries are registry
-dependencies. Absent/malformed/stale intent refuses before Cargo effects.
-The source-copy and earlier registry checks remain distinct evidence.
+Executable Shared Tooling remains reviewed 0.27.23 at
+619d194875369e0f72b45477b66adb430acbf6b7. This delivery does not adopt a new
+executable snapshot or include concurrent policy-reference edits.
 
-The complete release gate rechecked arithmetic-only/recording-only isolation,
-all-feature Wasm exclusion of native metadata, and the allocator-free link.
-The [adoption receipt](../evidence/wire-0142.md) retains locked metadata, source
-and registry identity checks, TypeScript cases and identical full src payloads
-versus Wire 0.14.0 (22 Core, three Derive files). The earlier [0.14.1 receipt](../evidence/wire-0141.md)
-retains its original scope. No endpoint/runtime supplier entered Metrics' graph.
-
-Hosted PR-source MSRV and TypeScript have passed; all three native jobs remain
-asynchronous at the receipt's observation. Pending jobs are not passes and are
-separate from completed local release gates and exact published acceptance.
-Final acceptance/migration/receipt updates need no additional product release.
-Docs, pins, Actionlint and CI selection checks pass. Raw deployment logs and
-new registry proof remain under target/deploy/wire-0142-20261101/; adoption/index/
-archive comparisons under target/adoptions/wire-0142-20261101/. No cleanup ran.
-
-[Migration guidance](../../releases/metrics/0.25.md) continues to require Metrics
-^0.25 / Wire ^0.14 for schemas and Types ^0.16 or Platform ^0.17 for identities.
-Prior [Wire 0.14 delivery](../evidence/wire-0140-delivery-20261101.md) remains
-complete: Metrics 0.25.0 was uploaded once, PRs #119/#121 merged and issue #120
-closed. Do not replay earlier uploads. Historical Metrics 0.24.2 is Git-only /
-unuploaded. Canic stays separately owned. No sibling checkout, history or tag
-was rewritten. Shared stays reviewed 0.27.23 at
-619d194875369e0f72b45477b66adb430acbf6b7. No new owning issue was required.
+The earlier [Wire 0.14.2 delivery](../evidence/wire-0142-delivery-20261101.md)
+remains complete at Metrics 0.25.1. Earlier 0.25.0, PRs #119/#121 and issue #120
+remain delivered; do not replay uploads. Historical Metrics 0.24.2 is Git-only /
+unuploaded. Canic and stable adapters retain their separate owners. No sibling
+checkout, published tag or historical receipt was rewritten.
