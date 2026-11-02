@@ -25,6 +25,12 @@ registry-consumer acceptance step after `publish-verified`; a failed check never
 repeats an upload. The frozen exact version prevents ordinary source CI from
 silently qualifying an unrelated registry release or resolving latest versions.
 
+Current Metrics source adopts Wire 0.15/Types 0.17/Platform 0.18 for the pending
+Metrics 0.27 release. This frozen registry consumer remains on the compatible
+Wire 0.14 pairing until that Metrics version is published; advancing Wire alone
+would leave Metrics 0.26.1's native metadata on a different trait identity. See
+the [migration guide](../../releases/metrics/0.27.md).
+
 Acceptance always requires the intended Metrics version explicitly. The catalog
 must select that exact version, and resolved registry metadata must match it.
 Missing, malformed or stale intent refuses before Cargo/fetch/compiler effects;

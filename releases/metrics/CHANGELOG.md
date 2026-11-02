@@ -5,6 +5,15 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.27.0]
+
+### ⚠️ Breaking
+
+- Select Wire 0.15 for native report metadata. Schema consumers must align
+  Metrics and Wire together; Principal/Account reports use canonical Types 0.17
+  or Platform 0.18 re-exports. Arithmetic, schemas, encoded bytes and the Rust
+  1.99.1 floor are unchanged. See the [migration guide](0.27.md).
+
 ## [0.26.1] - 2026-11-02
 
 ### 🔧 Changed

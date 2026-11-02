@@ -9,11 +9,13 @@ Run `bash scripts/ci/check-wire-identities.sh --prepare` to fetch the independen
 locked sources, then `make wire-identities-check`. Validation uses the root Rust
 floor on native and Wasm, preceded by strict Clippy on that same prepared
 compiler (Rust 1.99.1), with no implicit installation or dependency updates.
-The lock selects Wire/Derive 0.14.2 and the integration catalog selects the
-matching Types 0.16.0/facade 0.17.0 pair. The root Wire requirement is 0.14.0.
+The lock selects Wire/Derive 0.15.0 and the integration catalog selects the
+matching Types 0.17.0/facade 0.18.0 pair. The root Wire requirement is 0.15.0.
 The independently catalogued published consumer selects released Metrics
 0.26.1/Wire 0.14.2/Types 0.16.0/facade 0.17.0. Its graph remains frozen until
 another published pairing is deliberately selected there.
+See the [Metrics 0.27 migration](../../releases/metrics/0.27.md) for the native
+trait identity change and publication boundary.
 
 The script projects the root catalog and a verbatim Metrics source copy into a
 fresh workspace under target/qualification. Both local packages are members of

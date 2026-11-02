@@ -1,5 +1,24 @@
 # Current handoff — 2026-11-02
 
+The new Wire adoption is implemented locally, pending delivery. Root metadata
+selects published Wire/derive **0.15.0**; the independent source fixture selects
+canonical Types **0.17.0** / Platform **0.18.0**. Only those supplier records
+change in the root/source locks. [Qualification](../evidence/wire-0150.md) and
+[Metrics 0.27 migration](../../releases/metrics/0.27.md) record the native trait
+identity change, verified registry checksums and focused checks. Strict Clippy,
+numeric schema/byte tests, Rust–TypeScript runtime, real Principal/Account
+composition, Wasm, arithmetic-only profiles and allocator-free linking pass on
+Rust 1.99.1. No Rust implementation or package version changes are needed.
+
+Metrics' pending notes select **0.27.0** for the public Wire trait identity cut;
+native schema consumers need that Metrics publication before adopting the new
+pair. Logging needs no release. The frozen actual-registry consumer remains on
+Metrics 0.26.1/Logging 0.24.1, Wire 0.14.2, Types 0.16.0 and Platform 0.17.0;
+its unchanged graph also passes acceptance. Advance its catalog/lock/CI intent
+only after the new Metrics publication. No commit, release, publication, sibling
+mutation or artifact cleanup ran for this adoption. The two pre-existing README
+edits remain intact; full release gates remain for separately authorized delivery.
+
 The accepted ten complexity reductions and reviewed Shared Tooling adoption are
 delivered as **Metrics 0.26.1** and **Logging 0.24.1**, on GitHub and crates.io.
 [Patch delivery evidence](../evidence/cleanup-patch-delivery-20261102.md) records
