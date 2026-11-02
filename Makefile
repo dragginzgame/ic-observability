@@ -249,4 +249,5 @@ ci:
 	+$(MAKE) --no-print-directory package-doc-links-check
 
 # Admit the selected compiler before product Cargo effects.
-check check-wasm clippy docs-check test package-check typescript-check metrics-profiles-check allocation-free-check wire-identities-check published-identities-check production-dependencies-check publication-source-check: | compiler-check
+# Published intent must be admitted first; its helper checks the compiler next.
+check check-wasm clippy docs-check test package-check typescript-check metrics-profiles-check allocation-free-check wire-identities-check production-dependencies-check publication-source-check: | compiler-check
