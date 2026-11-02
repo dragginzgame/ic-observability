@@ -15,6 +15,11 @@ Metrics and Logging each own their package version and release notes.
   [migration notes](0.26.md) and
   [#124 — Adopt Rust 1.99.1 and consolidate compiler qualification](https://github.com/dragginzgame/ic-observability/issues/124).
 
+### 🧪 Testing
+
+- Reject missing, malformed or stale published-consumer version intent before
+  compiler observations; valid intent still requires exact compiler admission.
+
 ## [0.25.1] - 2026-11-01
 
 ### 🧪 Testing
