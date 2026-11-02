@@ -28,16 +28,20 @@ my @profiles = (
 
 for my $profile (@profiles) {
     my ($name, $target, $wire_expected, @features) = @$profile;
-    for my $owner ('ic-metrics', 'ic-logging') {
-        my @policy=$owner eq 'ic-logging'
-            ? ('--forbid-pattern','^(?!ic-logging$)')
-            : ('--require',"ic-wire=$wire_expected",'--require',"ic-wire-derive=$wire_expected",
-               '--require','serde=1','--forbid-pattern','^(?:ic-platform(?:-.*)?|ic-wire-endpoint)$');
-        my @selected_features = @features;
-        @selected_features = ('--no-default-features') if $owner eq 'ic-logging' && $name eq 'native-recording';
-        system($^X,'scripts/ci/check-cargo-graph.pl','--consumer','.',
-            '--package',$owner,'--target',$target,'--edges','normal,build',@selected_features,@policy) == 0
-            or die "$name: $owner production graph refused\n";
-    }
-    print "$name: resolved Metrics/Logging production graphs admitted\n";
+    system($^X,'scripts/ci/check-cargo-graph.pl','--consumer','.',
+        '--package','ic-metrics','--target',$target,'--edges','normal,build',@features,
+        '--require',"ic-wire=$wire_expected",'--require',"ic-wire-derive=$wire_expected",
+        '--require','serde=1','--forbid-pattern','^(?:ic-platform(?:-.*)?|ic-wire-endpoint)$') == 0
+        or die "$name: ic-metrics production graph refused\n";
+    print "$name: resolved Metrics production graph admitted\n";
+}
+
+# Logging has no feature matrix. Declaration admission independently refuses
+# every dependency; observe its resolved closure once per supported target.
+for my $target ($host, 'wasm32-unknown-unknown') {
+    system($^X,'scripts/ci/check-cargo-graph.pl','--consumer','.',
+        '--package','ic-logging','--target',$target,'--edges','normal,build',
+        '--all-features','--forbid-pattern','^(?!ic-logging$)') == 0
+        or die "$target: ic-logging production graph refused\n";
+    print "$target: dependency-free Logging production graph admitted\n";
 }

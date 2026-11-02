@@ -1,5 +1,23 @@
 # Current handoff — 2026-11-02
 
+The [three follow-up fixture cleanups](../evidence/fixture-scope-cleanup-20261102.md)
+are complete locally: direct archive-content refusal cases with one integrated
+tampered readback, flat native-evidence scenario assertions and one dependency
+baseline. ShellCheck, publication policy, all 15 native-evidence scenarios and
+dependency-admission fixtures pass. This batch changes no Rust implementation;
+earlier focused Rust/Wasm evidence remains applicable.
+
+The earlier [three fixture/export simplifications](../evidence/fixture-export-cleanup-20261102.md)
+are complete locally and uncommitted: parsed retained-consumer rendering with
+real supplier versions, independent native/Wasm Logging graph checks, and one
+export budget-stop/error state. Focused lint, export runtime, six graph checks,
+both retained-consumer release fixtures and source/registry Principal/Account
+identity checks pass on Rust 1.99.1, including Wasm compilation. Pending patch
+notes are Metrics 0.27.2 and Logging 0.24.3; package versions and lockfiles remain
+unchanged. Patch delivery is now authorized for both groups; full release
+validation and registry verification are the next steps.
+The pre-existing root/Metrics README edits remain byte-for-byte intact.
+
 **Metrics 0.27.1 and Logging 0.24.2 are released on GitHub and published on
 crates.io.** [Verified patch delivery](../evidence/flow-cleanup-delivery-20261102.md)
 records exact source/tag identities, full gates, official checksums and retained

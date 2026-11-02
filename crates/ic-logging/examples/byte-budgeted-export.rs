@@ -31,19 +31,19 @@ fn export(
     let mut body = String::new();
     let mut emitted = 0;
     let mut last_emitted = None;
-    let mut stopped_for_budget = false;
-    let mut error = None;
+    let mut stopped_for_budget = Ok(false);
     let scan = log.visit_page(filter, request, |entry| {
         let encoded = format!("{}: {}\n", entry.sequence, entry.message);
         if encoded.len() > max_bytes.saturating_sub(body.len()) {
-            stopped_for_budget = true;
-            if emitted == 0 {
-                error = Some(ExportError::EntryTooLarge {
+            stopped_for_budget = if emitted == 0 {
+                Err(ExportError::EntryTooLarge {
                     sequence: entry.sequence,
                     required_bytes: encoded.len(),
                     max_bytes,
-                });
-            }
+                })
+            } else {
+                Ok(true)
+            };
             return ControlFlow::Break(());
         }
         body.push_str(&encoded);
@@ -51,9 +51,7 @@ fn export(
         last_emitted = Some(entry.sequence);
         ControlFlow::Continue(())
     });
-    if let Some(error) = error {
-        return Err(error);
-    }
+    let stopped_for_budget = stopped_for_budget?;
     Ok(ExportPage {
         body,
         emitted,

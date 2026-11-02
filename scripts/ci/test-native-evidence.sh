@@ -371,66 +371,56 @@ while IFS='|' read -r scenario FIXTURE_FAILURE FIXTURE_FORMATTING \
         "$NATIVE_OUTCOME" "$INPUT_OUTCOME" "$TOOLS_OUTCOME" "$HOST_OUTCOME" "$COMPILER_OUTCOME" "$TOOLCHAIN_OUTCOME" \
         "$PREREQUISITES_OUTCOME" "$HOST_TOOLS_OUTCOME" "$TOOL_INPUT_OUTCOME" "$APPLICATION_OUTCOME" "$SETUP_OUTCOME")"
     [[ "$(cat unpacked/target/evidence/native-ci/outcome.txt)" == "$expected" ]] || exit 1
-    if [[ "$scenario" == success ]]; then
-        [[ "$SETUP_OUTCOME" == success ]] || exit 1
-        [[ -s unpacked/target/evidence/native-ci/tool-versions.txt ]] || exit 1
-        [[ ! -f unpacked/target/evidence/native-ci/tool-candidates.tar.gz ]] || exit 1
-    elif [[ "$scenario" == skipped-setup ]]; then
-        [[ "$SETUP_OUTCOME" == skipped && ! -e diagnostic-readback/setup-smoke.log ]] || exit 1
-        [[ ! -e diagnostic-readback/tools-setup.log && ! -e diagnostic-readback/tools-check.log ]] || exit 1
-        [[ ! -e unpacked/target/evidence/native-ci/tools-setup.log && ! -e unpacked/target/evidence/native-ci/tools-check.log ]] || exit 1
-    elif [[ "$scenario" == setup-smoke ]]; then
-        [[ "$SETUP_OUTCOME" == failure && "$HOST_OUTCOME" == skipped && "$HOST_TOOLS_OUTCOME" == skipped ]] || exit 1
-        grep -Fx 'setup smoke stdout' diagnostic-readback/setup-smoke.log > /dev/null
-        grep -Fx 'setup smoke stderr' diagnostic-readback/setup-smoke.log > /dev/null
-        cmp diagnostic-readback/setup-smoke.log unpacked/target/evidence/native-ci/setup-smoke.log
-    elif [[ "$scenario" == host-tools ]]; then
-        grep -Fx 'host setup stdout' diagnostic-readback/host-tools.log > /dev/null
-        grep -Fx 'host setup stderr' diagnostic-readback/host-tools.log > /dev/null
-        [[ "$TOOLCHAIN_OUTCOME" == skipped && "$TOOLS_OUTCOME" == skipped &&
-           "$APPLICATION_OUTCOME" == skipped && "$NATIVE_OUTCOME" == skipped ]] || exit 1
-        mkdir recovered-host-candidates
-        tar -xzf unpacked/target/evidence/native-ci/tool-candidates.tar.gz -C recovered-host-candidates
-        cmp .tools/host-set.fixture/failure:payload recovered-host-candidates/.tools/host-set.fixture/failure:payload
-    else
-        if [[ "$scenario" == compiler ]]; then
+    case "$scenario" in
+        success)
+            [[ "$SETUP_OUTCOME" == success ]] || exit 1
+            [[ -s unpacked/target/evidence/native-ci/tool-versions.txt ]] || exit 1
+            [[ ! -f unpacked/target/evidence/native-ci/tool-candidates.tar.gz ]] || exit 1 ;;
+        skipped-setup)
+            [[ "$SETUP_OUTCOME" == skipped && ! -e diagnostic-readback/setup-smoke.log ]] || exit 1
+            [[ ! -e diagnostic-readback/tools-setup.log && ! -e diagnostic-readback/tools-check.log ]] || exit 1
+            [[ ! -e unpacked/target/evidence/native-ci/tools-setup.log && ! -e unpacked/target/evidence/native-ci/tools-check.log ]] || exit 1 ;;
+        setup-smoke)
+            [[ "$SETUP_OUTCOME" == failure && "$HOST_OUTCOME" == skipped && "$HOST_TOOLS_OUTCOME" == skipped ]] || exit 1
+            grep -Fx 'setup smoke stdout' diagnostic-readback/setup-smoke.log > /dev/null
+            grep -Fx 'setup smoke stderr' diagnostic-readback/setup-smoke.log > /dev/null
+            cmp diagnostic-readback/setup-smoke.log unpacked/target/evidence/native-ci/setup-smoke.log ;;
+        host-tools)
+            grep -Fx 'host setup stdout' diagnostic-readback/host-tools.log > /dev/null
+            grep -Fx 'host setup stderr' diagnostic-readback/host-tools.log > /dev/null
+            [[ "$TOOLCHAIN_OUTCOME" == skipped && "$TOOLS_OUTCOME" == skipped &&
+               "$APPLICATION_OUTCOME" == skipped && "$NATIVE_OUTCOME" == skipped ]] || exit 1
+            mkdir recovered-host-candidates
+            tar -xzf unpacked/target/evidence/native-ci/tool-candidates.tar.gz -C recovered-host-candidates
+            cmp .tools/host-set.fixture/failure:payload recovered-host-candidates/.tools/host-set.fixture/failure:payload ;;
+        compiler)
             grep -Fx 'compiler partial stdout' diagnostic-readback/compiler.txt > /dev/null
             grep -Fx 'compiler partial stderr' diagnostic-readback/compiler.txt > /dev/null
             cmp diagnostic-readback/compiler.txt unpacked/target/evidence/native-ci/compiler.txt
-            [[ "$TOOLS_OUTCOME" == skipped && "$APPLICATION_OUTCOME" == skipped && "$NATIVE_OUTCOME" == skipped ]] || exit 1
-            exit 0
-        fi
-        if [[ "$scenario" == tool-inputs ]]; then
+            [[ "$TOOLS_OUTCOME" == skipped && "$APPLICATION_OUTCOME" == skipped && "$NATIVE_OUTCOME" == skipped ]] || exit 1 ;;
+        tool-inputs)
             grep -Fx 'reporter partial stdout' "diagnostic-readback/$failed_log" > /dev/null
             grep -Fx 'reporter partial stderr' "diagnostic-readback/$failed_log" > /dev/null
             [[ "$APPLICATION_OUTCOME" == skipped && "$NATIVE_OUTCOME" == skipped ]] || exit 1
-            [[ ! -f unpacked/target/evidence/native-ci/tool-candidates.tar.gz ]] || exit 1
-            exit 0
-        fi
-        if [[ "$scenario" == application-sources ]]; then
+            [[ ! -f unpacked/target/evidence/native-ci/tool-candidates.tar.gz ]] || exit 1 ;;
+        application-sources)
             grep -Fx 'fetch stdout' "diagnostic-readback/$failed_log" > /dev/null
             grep -Fx 'fetch stderr' "diagnostic-readback/$failed_log" > /dev/null
-            [[ "$NATIVE_OUTCOME" == skipped ]] || exit 1
-            exit 0
-        fi
-        case "$scenario" in
-            tools-*|collection-*)
-                phase=install
-                [[ "$scenario" != tools-check ]] || phase=check
-                grep -Fx "tool action stdout: $phase" "unpacked/target/evidence/native-ci/$failed_log" > /dev/null
-                grep -Fx "tool action stderr: $phase" "unpacked/target/evidence/native-ci/$failed_log" > /dev/null ;;
-            *)
-                grep -Fx "make stdout: $FIXTURE_FAILURE" "unpacked/target/evidence/native-ci/$failed_log" > /dev/null
-                grep -Fx "make stderr: $FIXTURE_FAILURE" "unpacked/target/evidence/native-ci/$failed_log" > /dev/null ;;
-        esac
-        if [[ "$scenario" == native || "$scenario" == formatting ]]; then
-            [[ ! -f unpacked/target/evidence/native-ci/tool-candidates.tar.gz ]] || exit 1
-        else
+            [[ "$NATIVE_OUTCOME" == skipped ]] || exit 1 ;;
+        tools-*|collection-*)
+            phase=install
+            [[ "$scenario" != tools-check ]] || phase=check
+            grep -Fx "tool action stdout: $phase" "unpacked/target/evidence/native-ci/$failed_log" > /dev/null
+            grep -Fx "tool action stderr: $phase" "unpacked/target/evidence/native-ci/$failed_log" > /dev/null
             mkdir recovered-candidates
             tar -xzf unpacked/target/evidence/native-ci/tool-candidates.tar.gz -C recovered-candidates
-            cmp .tools/rust/failure:payload recovered-candidates/.tools/rust/failure:payload
-        fi
-    fi
+            cmp .tools/rust/failure:payload recovered-candidates/.tools/rust/failure:payload ;;
+        native|formatting)
+            grep -Fx "make stdout: $FIXTURE_FAILURE" "unpacked/target/evidence/native-ci/$failed_log" > /dev/null
+            grep -Fx "make stderr: $FIXTURE_FAILURE" "unpacked/target/evidence/native-ci/$failed_log" > /dev/null
+            [[ ! -f unpacked/target/evidence/native-ci/tool-candidates.tar.gz ]] || exit 1 ;;
+        *) echo "unhandled native evidence scenario: $scenario" >&2; exit 2 ;;
+    esac
 ) done <<'SCENARIOS'
 success||no|0|0|0|0|native-ci.log|setup-smoke,host-tools,compiler,tools,application-sources,ci|success|success|success
 skipped-setup||no|0|0|0|0|native-ci.log||skipped|skipped|skipped

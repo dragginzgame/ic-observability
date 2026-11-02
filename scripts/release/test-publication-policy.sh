@@ -77,33 +77,54 @@ CURL
 chmod +x "$fixture/bin/curl"
 export PATH="$fixture/bin:$PATH" PUBLICATION_FIXTURE="$fixture"
 bash scripts/release/publication.sh verify > "$fixture/success.log" 2>&1
-find target/publication -name verified -type f | read -r _
-# Match valid checksum/provenance while changing the maintained content. The
-# real verifier must independently reject each archive, without extracting it.
+verified="$(find target/publication -name verified -type f)"
+[[ -f "$verified" ]]
+source_git="${verified%/*}/provenance/source.git"
+# Check content policy directly against the independently retrieved source.
+# Each variant must reach its intended refusal, not fail at an earlier boundary.
 for kind in content missing extra empty-directory manifest symlink duplicate; do
     variant="$fixture/$kind"
     mkdir "$variant"
     cp -R "$fixture/archive/ic-metrics-0.1.0" "$variant/"
     case "$kind" in
-        content) printf 'modified\n' >> "$variant/ic-metrics-0.1.0/src/lib.rs" ;;
-        missing) mv "$variant/ic-metrics-0.1.0/src/lib.rs" "$variant/missing.rs" ;;
-        extra) printf 'extra\n' > "$variant/ic-metrics-0.1.0/src/extra.rs" ;;
-        empty-directory) mkdir "$variant/ic-metrics-0.1.0/unexpected" ;;
-        manifest) printf '# changed\n' >> "$variant/ic-metrics-0.1.0/Cargo.toml.orig" ;;
+        content)
+            printf 'modified\n' >> "$variant/ic-metrics-0.1.0/src/lib.rs"
+            expected='package content differs from source: src/lib.rs' ;;
+        missing)
+            mv "$variant/ic-metrics-0.1.0/src/lib.rs" "$variant/missing.rs"
+            expected='maintained package roster differs from source' ;;
+        extra)
+            printf 'extra\n' > "$variant/ic-metrics-0.1.0/src/extra.rs"
+            expected='maintained package roster differs from source' ;;
+        empty-directory)
+            mkdir "$variant/ic-metrics-0.1.0/unexpected"
+            expected='unexpected archive directory' ;;
+        manifest)
+            printf '# changed\n' >> "$variant/ic-metrics-0.1.0/Cargo.toml.orig"
+            expected='package content differs from source: Cargo.toml.orig' ;;
         symlink)
             mv "$variant/ic-metrics-0.1.0/src/lib.rs" "$variant/original.rs"
-            ln -s ../../original.rs "$variant/ic-metrics-0.1.0/src/lib.rs" ;;
+            ln -s ../../original.rs "$variant/ic-metrics-0.1.0/src/lib.rs"
+            expected='non-regular archive member' ;;
+        duplicate) expected='duplicate archive member' ;;
     esac
     if [[ "$kind" == duplicate ]]; then
-        tar -czf "$fixture/valid.crate" -C "$variant" ic-metrics-0.1.0 ic-metrics-0.1.0/src/lib.rs
+        tar -czf "$variant/package.crate" -C "$variant" ic-metrics-0.1.0 ic-metrics-0.1.0/src/lib.rs
     else
-        tar -czf "$fixture/valid.crate" -C "$variant" ic-metrics-0.1.0
+        tar -czf "$variant/package.crate" -C "$variant" ic-metrics-0.1.0
     fi
-    checksum="$(bash scripts/ci/verify-file-checksum.sh --print sha256 "$fixture/valid.crate")"
-    jq --arg checksum "$checksum" '.version.checksum = $checksum' "$fixture/registry.json" > "$variant/registry.json"
-    cp "$variant/registry.json" "$fixture/registry.json"
-    if bash scripts/release/publication.sh verify > "$variant/result.log" 2>&1; then exit 1; fi
+    if perl scripts/release/check-package-content.pl "$variant/package.crate" "$source_git" \
+        "$source" ic-metrics@0.1.0 crates/ic-metrics > "$variant/result.log" 2>&1; then exit 1; fi
+    grep -Fxq "$expected" "$variant/result.log"
 done
+# Retain an integrated tampering case with matching checksum and provenance:
+# registry readback must still dispatch the content verifier and reject bytes.
+cp "$fixture/content/package.crate" "$fixture/valid.crate"
+checksum="$(bash scripts/ci/verify-file-checksum.sh --print sha256 "$fixture/valid.crate")"
+jq --arg checksum "$checksum" '.version.checksum = $checksum' "$fixture/registry.json" > "$fixture/tampered-registry.json"
+cp "$fixture/tampered-registry.json" "$fixture/registry.json"
+if bash scripts/release/publication.sh verify > "$fixture/tampered-readback.log" 2>&1; then exit 1; fi
+grep -Fxq 'package content differs from source: src/lib.rs' "$fixture/tampered-readback.log"
 tar -czf "$fixture/valid.crate" -C "$fixture/archive" ic-metrics-0.1.0
 checksum="$(bash scripts/ci/verify-file-checksum.sh --print sha256 "$fixture/valid.crate")"
 jq --arg checksum "$checksum" '.version.checksum = $checksum' "$fixture/registry.json" > "$fixture/reset.json"

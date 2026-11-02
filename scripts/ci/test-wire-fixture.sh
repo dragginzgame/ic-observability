@@ -14,6 +14,9 @@ members = [
     "crates/ic-metrics",
     "crates/ic-logging",
 ]
+default-members = [
+    "crates/ic-metrics",
+]
 resolver = "3"
 [workspace.package]
 edition = "2024"
@@ -59,9 +62,26 @@ for mode in source published; do
         jq -e '.workspace.members == ["probe"] and .workspace.dependencies["ic-metrics"].version == "=7.0.0" and .workspace.dependencies["ic-logging"].version == "=6.0.0" and .workspace.dependencies["ic-wire"].version == "=2.0.0"' "$destination/root.json" > /dev/null
     fi
 done
+for supplier in metrics logging; do
+    destination="$fixture/retained-$supplier"
+    mkdir -p "$destination"
+    version="$(jq -er --arg supplier "ic-$supplier" '.workspace.dependencies[$supplier].version' "$fixture/root.json")"
+    perl "$root/scripts/release/render-retained-consumer.pl" "$fixture/root.json" \
+        "$destination/Cargo.toml" "$supplier" "$version"
+    yq -p toml -o json '.' "$destination/Cargo.toml" > "$destination/root.json"
+    # Independent parsed comparison covers metadata, external aliases and the
+    # real retained identity, including both multiline member arrays.
+    jq -e --slurpfile original "$fixture/root.json" --arg supplier "ic-$supplier" --arg version "=$version" '
+        . == ($original[0]
+            | .workspace.members = ["supplier", "client"]
+            | .workspace["default-members"] = ["client"]
+            | del(.workspace.dependencies["ic-metrics"], .workspace.dependencies["ic-logging"])
+            | .workspace.dependencies[$supplier] = {path: "supplier", version: $version, "default-features": false})
+    ' "$destination/root.json" > /dev/null
+done
 mkdir -p "$fixture/collision/crates/ic-metrics"
 # A source catalog must not silently replace a root-owned dependency selection.
 if perl "$root/scripts/ci/render-wire-fixture.pl" "$fixture/root.json" "$fixture/catalog.json" "$fixture/collision" source "$fixture/metrics.json" > "$fixture/collision.log" 2>&1; then exit 1; fi
 [[ ! -e "$fixture/collision/Cargo.toml" ]] || exit 1
 fixture_complete=true
-printf 'Wire fixture rendering preserves parsed fields and independent graph selection.\n'
+printf 'Wire and retained-consumer rendering preserve parsed fields and independent identities.\n'

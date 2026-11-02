@@ -142,12 +142,11 @@ freeze_consumer() {
     cp Cargo.toml Cargo.lock rust-toolchain.toml "$consumer/"
     cp -R "crates/ic-$supplier/src" "crates/ic-$supplier/examples" "crates/ic-$supplier/Cargo.toml" \
         "crates/ic-$supplier/README.md" "crates/ic-$supplier/LICENSE" "$consumer/supplier/"
-    perl -pi -e 's/^members = .*/members = ["supplier", "client"]/; s/^default-members = .*/default-members = ["client"]/' "$consumer/Cargo.toml"
     # This standalone client owns only the retained supplier, not the product
     # workspace's complete local member catalog or release policy.
-    perl -ni -e 'print unless /^ic-(?:metrics|logging) = /' "$consumer/Cargo.toml"
-    SUPPLIER="$supplier" SUPPLIER_VERSION="$version" perl -0pi -e \
-        's/\[workspace.dependencies\]/[workspace.dependencies]\nic-$ENV{SUPPLIER} = { path = "supplier", version = "=$ENV{SUPPLIER_VERSION}", default-features = false }/' "$consumer/Cargo.toml"
+    yq -p toml -o json '.' "$consumer/Cargo.toml" > "$consumer/root.json"
+    perl scripts/release/render-retained-consumer.pl "$consumer/root.json" \
+        "$consumer/Cargo.toml" "$supplier" "$version"
     printf '[package]\nname = "retained-consumer"\nversion = "0.0.0"\nedition.workspace = true\n[dependencies]\nic-%s.workspace = true\n' "$supplier" > "$consumer/client/Cargo.toml"
     if [[ "$supplier" == metrics ]]; then
         cat > "$consumer/client/src/lib.rs" <<'RUST'

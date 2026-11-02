@@ -134,7 +134,7 @@ libraries; select direct Cargo commands when only one package or test is affecte
 | Logging | `cargo test -p ic-logging --lib --locked`; `cargo test -p ic-logging --doc --locked`; `cargo clippy -p ic-logging --lib --tests --examples --locked -- -D warnings` |
 | Numeric transport and native metadata | `cargo test -p ic-metrics --lib --no-default-features --features native-wire --locked wire::tests` |
 | Arithmetic without native Wire | `cargo test -p ic-metrics --lib --no-default-features --locked ratio::tests`; inspect native/Wasm normal/build graphs with defaults disabled |
-| Minimal Serde and feature graphs | `make metrics-profiles-check`; runs Serde round trips/refusals without Wire and checks resolved normal/build closures for native minimal, recording, default and all-feature Wasm profiles |
+| Minimal Serde and feature graphs | `make metrics-profiles-check`; runs Serde round trips/refusals without Wire, checks Metrics' native minimal, recording, default and all-feature Wasm normal/build closures, and checks dependency-free Logging once on native and Wasm |
 | Log export recipe | `cargo test -p ic-logging --example byte-budgeted-export --locked --offline`; execute the walkthrough with `cargo run -p ic-logging --example byte-budgeted-export --locked --offline` |
 | Recording model | `cargo test -p ic-metrics --lib --no-default-features --features recording --locked --offline recording::tests::model` |
 | Logging operation model | `cargo test -p ic-logging --lib --locked --offline log::tests::mixed`; exercises journal-based state, paging and visitor stops across admission, retention and restoration |
@@ -325,10 +325,12 @@ original source and dependency identities.
 
 The Metrics profile matrix delegates resolved normal/build graph mechanics to
 Shared's `scripts/ci/check-cargo-graph.pl`. Local code owns the four target/feature
-profiles and package-count/exclusion rules; declaration admission remains a
-separate guard. `bash scripts/ci/test-wire-fixture.sh` verifies parsed Cargo
-projection across multiline manifests, quoted strings, source normalization and
-independent registry selections, including source-catalog overlap refusal.
+profiles and package-count/exclusion rules. Logging has no feature matrix and is
+checked separately once on native and Wasm; declaration admission remains a
+separate guard that refuses every Logging dependency. `bash scripts/ci/test-wire-fixture.sh`
+verifies parsed Cargo projection across multiline manifests, quoted strings,
+source normalization, independent registry selections and retained consumers'
+real supplier versions, including source-catalog overlap refusal.
 
 ## Full release validation
 
@@ -396,6 +398,9 @@ Verification never extracts the remote archive into a filesystem. Unexpected,
 duplicate or non-regular members refuse, and a failed readback never retries an
 upload. The local archive-content policy requires all tracked package files to
 be shipped; deliberate future Cargo exclusions must update that policy explicitly.
+`bash scripts/release/test-publication-policy.sh` checks archive-content refusals
+directly against retrieved source, plus a complete tampered readback with matching
+checksum/provenance. Its registry responses and remote repository are local fixtures.
 
 Both commands require an explicit group; missing, empty and unknown selections
 refuse before setup, validation or mutation. A `PACKAGE` override must belong to

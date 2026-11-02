@@ -60,13 +60,11 @@ check_case() {
 }
 
 reset_case
-check_case standard-arithmetic pass
+check_case standard-transport pass
+cp "$fixture/workspace/crates/ic-metrics/Cargo.toml" "$fixture/standard-manifest"
 printf '\n[dev-dependencies]\nhelper = { package = "ic-testkit", path = "../../../vendor/ic-testkit" }\n' >> "$fixture/workspace/crates/ic-metrics/Cargo.toml"
 check_case development-package pass
 
-reset_case
-check_case standard-transport pass
-cp "$fixture/workspace/crates/ic-metrics/Cargo.toml" "$fixture/standard-manifest"
 sed 's/^serde = { /serde = { optional = true, /' "$fixture/standard-manifest" > "$fixture/workspace/crates/ic-metrics/Cargo.toml"
 check_case optional-serde 'transport dependency has unapproved optionality or defaults'
 sed 's/optional = true/optional = false/; s/native-wire = .*/native-wire = []/' "$fixture/standard-manifest" > "$fixture/workspace/crates/ic-metrics/Cargo.toml"

@@ -5,6 +5,17 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.27.2]
+
+### 🧹 Cleanup
+
+- Render retained release-consumer manifests from parsed fields, preserving real
+  supplier versions and independent release assertions across TOML layouts.
+  Share fixture serialization while keeping source and registry policy separate.
+- Narrow archive-content fixtures while retaining integrated tamper rejection;
+  flatten native-evidence assertions and remove a duplicate dependency-fixture
+  baseline.
+
 ## [0.27.1] - 2026-11-02
 
 ### 🧹 Cleanup

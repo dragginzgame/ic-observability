@@ -6,6 +6,17 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.24.3]
+
+### 🧹 Cleanup
+
+- Simplify the byte-budgeted export example's stop/error state while preserving
+  lossless UTF-8 continuation and typed oversized-row errors. Check Logging's
+  dependency-free native/Wasm graphs separately from Metrics' feature matrix;
+  retain real supplier identities in parsed release-consumer fixtures.
+- Simplify shared publication and native-evidence fixtures while preserving
+  archive-content rejection, diagnostic custody and dependency isolation checks.
+
 ## [0.24.2] - 2026-11-02
 
 ### 🧹 Cleanup
