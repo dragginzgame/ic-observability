@@ -2,7 +2,6 @@
 
 PACKAGE := ic-metrics
 export RELEASE_GROUP
-export MSRV
 export RELEASE_DELIVERY ?= direct
 export YQ := $(CURDIR)/.tools/host/bin/yq
 LOCAL_TOOL_INSTALL_TARGETS := install-release-editor
@@ -69,7 +68,7 @@ release-prepared-check release-committed-check release-tagged-check release-push
 release-files:
 	@bash scripts/release/metadata.sh files
 
-.PHONY: help install-hooks hook-check check check-wasm clippy docs-check check-doc-links test msrv shared-tooling-check check-pins release-tools-check ci
+.PHONY: help install-hooks hook-check check check-wasm clippy docs-check check-doc-links test msrv compiler-check compiler-policy-check shared-tooling-check check-pins release-tools-check ci
 .PHONY: ci-evidence-check evidence-check
 .PHONY: production-dependencies-check
 .PHONY: allocation-free-check
@@ -133,8 +132,8 @@ help:
 	@echo "Named tests: cargo test -p PACKAGE --locked <test-name> (ic-metrics or ic-logging)"
 	@echo "Recording tests: cargo test -p $(PACKAGE) --features recording --locked <test-name>"
 	@echo "Maintenance task definitions: tasks/README.md (adoption does not activate a schedule)"
-	@echo "Workspace gates cover Metrics and Logging; native/Wasm minimum: msrv"
-	@echo "Full release validation (or explicit check request): ci, msrv"
+	@echo "Workspace gates cover Metrics and Logging; compiler admission: msrv"
+	@echo "Full release validation (or explicit check request): ci; msrv admits the same pinned compiler"
 
 .PHONY: package-check
 
@@ -148,7 +147,6 @@ hook-check:
 ci-evidence-check:
 	bash scripts/ci/test-native-source-files.sh
 	bash scripts/ci/test-native-evidence.sh
-	bash scripts/ci/test-msrv-evidence.sh
 	bash scripts/ci/test-native-recovery-evidence.sh
 
 evidence-check:
@@ -202,8 +200,14 @@ metrics-profiles-check:
 	perl scripts/ci/check-metrics-profiles.pl
 	+cargo test -p ic-metrics --lib --no-default-features --locked --offline wire::serde_tests
 
-msrv:
-	+bash scripts/ci/check-msrv.sh
+compiler-check:
+	+bash scripts/ci/check-rust-compiler.sh
+
+# Compatibility entry point: compilation is covered once by ci.
+msrv: compiler-check
+
+compiler-policy-check:
+	bash scripts/ci/test-rust-compiler.sh
 
 check-pins:
 	bash scripts/ci/check-dependency-pins.sh --cargo-inheritance
@@ -224,6 +228,8 @@ release-tools-check:
 # Keep order explicit: stop on a failed gate, including any Clippy warning.
 # Clippy checks all native targets and Wasm libraries; standalone checks stay focused.
 ci:
+	+$(MAKE) --no-print-directory compiler-check
+	+$(MAKE) --no-print-directory compiler-policy-check
 	+$(MAKE) --no-print-directory shared-tooling-check
 	+$(MAKE) --no-print-directory check-doc-links
 	+$(MAKE) --no-print-directory ci-selection-check
@@ -241,3 +247,6 @@ ci:
 	+$(MAKE) --no-print-directory test
 	+$(MAKE) --no-print-directory package-check
 	+$(MAKE) --no-print-directory package-doc-links-check
+
+# Admit the selected compiler before product Cargo effects.
+check check-wasm clippy docs-check test package-check typescript-check metrics-profiles-check allocation-free-check wire-identities-check published-identities-check production-dependencies-check publication-source-check: | compiler-check

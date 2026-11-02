@@ -87,6 +87,7 @@ else
     cp "$root/Cargo.lock" "$fixture/Cargo.lock"
 fi
 export CARGO_TARGET_DIR="$root/target/qualification/$qualification-cargo"
+bash "$root/scripts/ci/check-rust-compiler.sh" > "$fixture/compiler.txt" 2>&1
 minimum="$(bash "$root/scripts/ci/read-cargo-workspace-rust-version.sh" "$root/Cargo.toml")"
 if [[ "${1:-}" == --update-lockfile ]]; then
     cargo "+$minimum" metadata --manifest-path "$fixture/Cargo.toml" --format-version 1 > "$fixture/metadata.json"
@@ -117,7 +118,7 @@ jq -e '
 ' "$fixture/metadata.json" > /dev/null
 targets=(--lib --tests)
 if [[ "$published" == true ]]; then targets+=(--examples); fi
-cargo clippy --locked --offline --manifest-path "$fixture/Cargo.toml" -p wire-identity-probe "${targets[@]}" -- -D warnings
+cargo "+$minimum" clippy --locked --offline --manifest-path "$fixture/Cargo.toml" -p wire-identity-probe "${targets[@]}" -- -D warnings
 cargo "+$minimum" test --locked --offline --manifest-path "$fixture/Cargo.toml" -p wire-identity-probe --lib
 if [[ "$published" == true ]]; then
     cargo "+$minimum" run --locked --offline --manifest-path "$fixture/Cargo.toml" -p wire-identity-probe --example observability-host

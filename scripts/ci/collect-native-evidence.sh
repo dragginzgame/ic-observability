@@ -19,9 +19,9 @@ case "$TOOLS_OUTCOME" in
         fi ;;
 esac
 git rev-parse HEAD > target/evidence/native-ci/source-commit.txt
-printf 'native=%s\ninputs=%s\ntools=%s\nhost=%s\ntoolchain=%s\nprerequisites=%s\nhost_tools=%s\ntool_inputs=%s\napplication_sources=%s\nsetup_smoke=%s\n' \
+printf 'native=%s\ninputs=%s\ntools=%s\nhost=%s\ncompiler=%s\ntoolchain=%s\nprerequisites=%s\nhost_tools=%s\ntool_inputs=%s\napplication_sources=%s\nsetup_smoke=%s\n' \
     "$NATIVE_OUTCOME" "$INPUT_OUTCOME" "$TOOLS_OUTCOME" \
-    "$HOST_OUTCOME" "$TOOLCHAIN_OUTCOME" \
+    "$HOST_OUTCOME" "$COMPILER_OUTCOME" "$TOOLCHAIN_OUTCOME" \
     "$PREREQUISITES_OUTCOME" "$HOST_TOOLS_OUTCOME" "$TOOL_INPUT_OUTCOME" "$APPLICATION_OUTCOME" \
     "$SETUP_OUTCOME" \
     > target/evidence/native-ci/outcome.txt
@@ -34,7 +34,7 @@ bash scripts/ci/collect-native-diagnostics.sh \
     "${RUNNER_TEMP:-${TMPDIR:-/tmp}}" "$collection_outcome" \
     "$PWD/ci/tool-versions.env" "$PWD/ci/ic-tools.tsv" \
     inputs.txt source-commit.txt source-files.nul source-sha256.txt outcome.txt \
-    setup-smoke.log prerequisites.log host-tools.log tools-setup.log tools-check.log tool-versions.txt application-sources.log native-ci.log || collection_status=$?
+    compiler.txt setup-smoke.log prerequisites.log host-tools.log tools-setup.log tools-check.log tool-versions.txt application-sources.log native-ci.log || collection_status=$?
 # Attempt recovery packaging even after collection fails, preserving the first error.
 archive_status=0
 bash scripts/ci/package-native-recovery-evidence.sh \

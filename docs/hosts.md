@@ -45,38 +45,30 @@ owns the wait-budget override and lock admission. Previous generations remain
 retained. Metrics' release editor selects the required `cli` feature through the
 managed installer, without adding a library dependency.
 
-Prepare the pinned Rust 1.99.1 development toolchain with rustfmt, Clippy and
-`wasm32-unknown-unknown`. Prepare Rust 1.91.0, including its Wasm
-target, for the advertised package floors.
-
-Local setup and both CI lanes use the selected shared installer. Prepare the
-host tools first so the installer uses the pinned TOML/JSON parsers:
+Rust 1.99.1 is both the supported minimum and exact development/release compiler,
+as approved in [#124](https://github.com/dragginzgame/ic-observability/issues/124).
+Prepare it once with rustfmt, Clippy and `wasm32-unknown-unknown`:
 
 ```sh
 make install-host-tools
 export PATH="$PWD/.tools/host/bin:$PATH"
 bash scripts/dev/prepare-rust-toolchain.sh --toolchain-file rust-toolchain.toml
-bash scripts/dev/prepare-rust-toolchain.sh --workspace-manifest Cargo.toml \
-    --target wasm32-unknown-unknown
+make compiler-check
 ```
 
-The TOML files own compiler selections; CI does not repeat their version pins or
-development component/target roster. Setup preserves the default toolchain. Checks still require prepared compilers;
-they never call this installer implicitly.
+`Cargo.toml` owns the package floor; `rust-toolchain.toml` owns the exact compiler,
+components and target. `compiler-check` requires these versions to agree and both
+workspace members to inherit the floor. It records actual `rustc -vV` and
+`cargo -vV` output and refuses failed observations, older/newer compilers, moving
+channels and conflicting `MSRV` overrides. Checks disable Rustup auto-install.
+Setup remains explicit and preserves the default toolchain. Help and unrelated
+Make targets do not parse Cargo to choose a compiler.
 
-The `msrv` validation adapter reads `workspace.package.rust-version` at execution
-time through the shared read-only workspace-floor reader, using prepared host
-parsers without requiring setup. `MSRV` can explicitly override it with one
-already prepared toolchain; Rustup auto-install is disabled. Help and unrelated
-Make targets do not parse Cargo just to select the floor. Full `make msrv` retains
-its release/explicit-check authority; focused package commands remain below.
-
-Both workspace libraries use that minimum:
-
-| Package | Rust floor | Floor gate |
-| --- | --- | --- |
-| `ic-metrics` | 1.91, native and Wasm | `make msrv` |
-| `ic-logging` | 1.91, native and Wasm | `make msrv` |
+`make msrv` remains a compatibility alias for compiler admission. `make ci`
+provides the compilation proof once on this same compiler; see the coverage map
+below. Both Metrics and Logging require Rust 1.99.1 on native and Wasm. This local
+owner decision supersedes the older Shared Tooling floor policy; the recorded
+snapshot has not been advanced.
 
 Use Git, GNU Make, Bash 3.2 or newer and standard Unix utilities. The
 [local setup guide](local-setup.md#bootstrap-prerequisites) owns system bootstrap,
@@ -142,7 +134,7 @@ libraries; select direct Cargo commands when only one package or test is affecte
 | Logging operation model | `cargo test -p ic-logging --lib --locked --offline log::tests::mixed`; exercises journal-based state, paging and visitor stops across admission, retention and restoration |
 | Histogram restoration oracle | `cargo test -p ic-metrics --lib --no-default-features --locked --offline histogram::tests::restoration`; exhaustive small-domain bounds/distributions and exact weighted overflow histories |
 | Rust/TypeScript report conformance | `make typescript-check`; requires prepared Node from `ci/node-version.txt`, executes five report cases and malformed-input checks |
-| Allocator-free arithmetic link | `make allocation-free-check`; minimum compiler only: `bash scripts/ci/check-allocation-free.sh 1.91.0` |
+| Allocator-free arithmetic link | `make allocation-free-check` |
 | Recording library checks | `cargo check -p ic-metrics --lib --features recording --locked`; Wasm: `cargo check -p ic-metrics --lib --features recording --locked --target wasm32-unknown-unknown`; lint: `cargo clippy -p ic-metrics --lib --tests --features recording --locked -- -D warnings` |
 | Recording tests and examples | `cargo test -p ic-metrics --lib --features recording --locked <test-name>`; doctests: `cargo test -p ic-metrics --doc --features recording --locked` |
 | Snapshot/pins | `make shared-tooling-check check-pins` |
@@ -172,7 +164,7 @@ print the expected output; no dependent install/admission follows. TypeScript co
 maintained typed consumer before the five Rust/TypeScript runtime report cases.
 
 `make wire-identities-check` runs the independently locked
-[identity consumer](../qualification/wire-identities/README.md) on Rust 1.91,
+[identity consumer](../qualification/wire-identities/README.md) on Rust 1.99.1,
 including its Wasm build. Prepare its sources with
 `bash scripts/ci/check-wire-identities.sh --prepare`. The probe copies the current
 Metrics source into a disposable owning workspace; it is source alignment rather
@@ -200,11 +192,10 @@ Fixed short histories and generated snapshot corruption cases remain in normal
 Logging tests. The extended test is deterministic and reports its seed/text for
 replay; it adds no dependency or performance measurement.
 
-
 The exact prose allowlist in ci/docs-only-paths.txt enables Shared's conservative
-classifier. Existing product job names remain stable; eligible prose runs real
-Linux docs/snapshot checks and records skipped native, MSRV and TypeScript scope.
-Unknown, mixed, policy/workflow and missing-history inputs run full qualification.
+classifier. Eligible prose runs real Linux docs/snapshot checks and records
+skipped native and TypeScript scope. Unknown, mixed, policy/workflow and
+missing-history inputs run full qualification.
 A failed classifier job falls back to full product checks and remains visibly
 failed. Packaged READMEs, embedded docs, companion declarations and new paths
 remain full CI. No release gate uses the shortcut. Focused routing validation is
@@ -215,17 +206,28 @@ package file selection in staging that cannot borrow repository-only link target
 `wasm32-unknown-unknown`, with no standard library or global allocator. Linker
 exports and dead-code retention keep the exercised arithmetic in the executable.
 The check uses locked offline dependencies and this repository's `target/`;
-CI runs it on the pinned compiler, and the MSRV adapter repeats it on its selected
-minimum compiler. This is a link-contract check, not an IC cost measurement.
-The MSRV workflow selects `ALLOCATION_FREE_EVIDENCE_ROOT` to capture the linked
-Wasm immediately on success, before later checks. Standalone checks select no
-additional artifact copy; all builds use this repository's `target/`.
+CI runs it once on the pinned/support compiler. This is a link-contract check,
+not an IC cost measurement. Each native job selects
+`ALLOCATION_FREE_EVIDENCE_ROOT` to capture a successfully linked Wasm before later
+checks. A failed link never captures an earlier target artifact. Standalone checks
+select no additional copy; all builds use this repository's `target/`.
 
-The release MSRV gate checks all native targets, including tests and development
-dependencies, at Rust 1.91; its Wasm check covers libraries. Public doctests
-also execute on the selected minimum compiler through `--workspace --all-features`,
-so package coverage follows workspace membership. The development
-compiler remains separate. `make evidence-check` is also included in CI and
+The former minimum/development duplication is consolidated as follows:
+
+| Previous minimum-compiler proof | Retained Rust 1.99.1 proof |
+| --- | --- |
+| Minimal Metrics library | `metrics-profiles-check` compiles and tests the no-default-features Serde profile; allocator-free Wasm links separately |
+| Workspace native all-targets/all-features | Native `clippy` checks all targets and `test` executes library, integration and example tests |
+| Wasm workspace libraries | Wasm all-features library Clippy in each native job |
+| Public doctests | Workspace all-features `test` executes both packages' doctests |
+| Package archives | `package-check` prepares and verifies both package archives |
+| Native Wire/derive and real identities | TypeScript job retains source and published Principal/Account tests, executable composition and Wasm checks |
+
+The native matrix still covers Linux x86_64, macOS x86_64 and macOS arm64; the
+separate TypeScript consumer job remains. No required-check dependency in this
+repository selects the retired `msrv` job. Optional installed-runtime evidence
+retains its own tooling and scope. Historical evidence keeps its original compiler.
+`make evidence-check` is also included in CI and
 release validation. Five historical checksum manifests use archive-directory
 paths; the Makefile records those working directories without rewriting receipts.
 The gate checks distributed archives and retained inspection reports. Historical
@@ -462,28 +464,21 @@ scratch and failed/skipped tool setup remain covered. Both uploads disable ZIP
 compression for their gzip payloads; archive/checksum pairing and 30-day retention
 remain unchanged.
 
-### MSRV evidence
+### Compiler evidence
 
-The minimum-compiler job uses the same source-input recorder with its own
-`target/evidence/msrv-ci` root. It records inputs before setup, retains parser
-and toolchain setup logs, and invokes `make msrv` through Shared Tooling's
-validation runner with manifest/lock checkpoints. The retained validation log
-contains the selected Rust/Cargo versions and expanded checker commands.
+The native job records compiler admission in `target/evidence/native-ci/compiler.txt`
+before managed-tool preparation or application compilation. Its outcome is
+included in diagnostic and recovery archives, including partial output on failure.
+The allocator-free Wasm is retained inside the full native recovery archive after
+a successful link. The TypeScript job also retains its compiler record; independent
+source and registry probes retain their own `compiler.txt`. Existing historical
+`msrv-ci` evidence is preserved; new runs no longer produce a duplicate archive.
 
-Collection and upload run after successful checkout even when input capture,
-setup or checks fail or are cancelled. Outcomes identify failed/skipped stages;
-no compiler or artifact receipt is inferred for a stage that did not run.
-The allocator-free checker copies only a successfully linked Wasm into this
-evidence root. A later check failure preserves it; a failed link never selects
-an earlier file from Cargo's target directory. Shared Tooling archives the
-dedicated root and computes its SHA-256 digest without replacing earlier output.
-The workflow uploads `msrv-ci.tar.gz` and `.sha256` for 30 days.
-
-The `test-msrv-evidence.sh` fixture, selected by `make ci-evidence-check`, executes
-the actual workflow bodies, MSRV checker, artifact copy and archive helpers with
-substituted setup/compiler effects. It covers input/setup failures, failures
-before/during/after linking, cancelled outcome projection and successful capture.
-This fixture establishes local wiring and custody, not a hosted MSRV pass.
+`make compiler-policy-check` exercises policy mismatches, failed executable
+observations and successful/failed link custody with substituted compiler effects.
+`make ci-evidence-check` executes retained workflow bodies and proves compiler
+failure prevents later tool/application effects while keeping its partial log.
+These local fixtures do not establish hosted native passes.
 
 [Released 0.8.1 acceptance](evidence/release-081.md) verifies all three native
 receipts and the complete Rust-floor run on its exact published source.

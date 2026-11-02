@@ -34,7 +34,11 @@ cp "$root/ci/release-delivery.txt" "$fixture/ci/"
 cp "$root/ci/cargo-release-groups.json" "$fixture/ci/"
 mkdir -p "$fixture/scripts/release"
 cp "$root/scripts/release/metadata.sh" "$fixture/scripts/release/"
-cp "$root/scripts/ci/check-msrv.sh" "$root/scripts/ci/read-cargo-workspace-rust-version.sh" "$fixture/scripts/ci/"
+# Compiler admission is qualified separately; retain Make's jobserver boundary here.
+cat > "$fixture/scripts/ci/check-rust-compiler.sh" <<'COMPILER'
+set -euo pipefail
+if [[ "${REQUIRE_JOBSERVER:-0}" == 1 ]]; then perl "$JOBSERVER_PROBE"; fi
+COMPILER
 cat > "$fixture/scripts/ci/check-allocation-free.sh" <<'ALLOCATOR'
 set -euo pipefail
 if [[ "${REQUIRE_JOBSERVER:-0}" == 1 ]]; then perl "$JOBSERVER_PROBE"; fi
@@ -78,6 +82,7 @@ printf '#!%s\n' "$real_bash" > "$fixture/bin/bash"
 cat >> "$fixture/bin/bash" <<'BASH'
 case "${1:-}" in
     */scripts/ci/check-make-execution.sh|*/scripts/ci/check-release-delivery.sh) exec "$STANDARD_RELEASE_REAL_BASH" "$@" ;;
+    scripts/ci/check-rust-compiler.sh) exec "$STANDARD_RELEASE_REAL_BASH" "$@" ;;
     scripts/release/metadata.sh)
         if [[ "$2" == selection ]]; then exit 0; fi
         if [[ "$2" == packages ]]; then printf 'ic-%s\n' "$RELEASE_GROUP"; exit 0; fi
@@ -230,13 +235,13 @@ BASH
 }
 printf '#!%s\nexit 0\n' "$real_bash" > "$fixture/bin/rustc"
 chmod +x "$fixture/bin/rustc"
-cargo_targets=(package-check publish publish-check check check-wasm clippy docs-check test msrv allocation-free-check)
+cargo_targets=(package-check publish publish-check check check-wasm clippy docs-check test allocation-free-check)
 metadata_targets=(release-preflight release-prepare-version release-commit-check release-prepared-check release-committed-check release-tagged-check release-push-check)
 cp "$fixture/mode-bash" "$fixture/bin/bash"
 # Shared Tooling owns flag aliases and inheritance permutations. Keep all actual
 # consumer targets under each unsafe behavior, without repeating that matrix.
 PATH="$fixture/bin:$PATH" make_probe_target_admission "$real_make" "$root/Makefile" "$fixture" "$EVENTS" \
-    release-patch release-minor release-major release-resume fmt fmt-check \
+    release-patch release-minor release-major release-resume fmt fmt-check compiler-check msrv \
     "${cargo_targets[@]}" "${metadata_targets[@]}"
 rm "$fixture/bin/bash"
 
@@ -246,7 +251,7 @@ JSON
 install_publication_boundary
 # The real consumer Makefile must leave both pipe descriptors open at every
 # owned Cargo boundary. Cargo effects are substituted; Make admission is real.
-PATH="$fixture/bin:$PATH" REQUIRE_JOBSERVER=1 MSRV=prepared-fixture \
+PATH="$fixture/bin:$PATH" REQUIRE_JOBSERVER=1 \
     make_probe_parallel_dispatch "$real_make" "$root/Makefile" "$fixture" "$EVENTS" "${cargo_targets[@]}"
 # Metadata also dispatches Cargo, so its Bash entry must retain the descriptors.
 cp "$fixture/mode-bash" "$fixture/bin/bash"
@@ -295,7 +300,7 @@ for fail in 0 1; do
     FAIL_CI_CLIPPY="$fail" "$real_make" "${parallel[@]}" --no-print-directory \
         -f "$root/Makefile" ci "MAKE=$fixture/gate-make" > "$fixture/output" 2>&1 || status=$?
     if [[ "$fail" == 0 ]]; then [[ "$status" == 0 ]] || exit 1; else [[ "$status" == 2 ]] || exit 1; fi
-    printf '%s\n' shared-tooling-check check-doc-links ci-selection-check evidence-check tools-check check-pins fmt-check clippy > "$fixture/expected"
+    printf '%s\n' compiler-check compiler-policy-check shared-tooling-check check-doc-links ci-selection-check evidence-check tools-check check-pins fmt-check clippy > "$fixture/expected"
     if [[ "$fail" == 0 ]]; then
         printf '%s\n' production-dependencies-check metrics-profiles-check allocation-free-check ci-evidence-check release-tools-check docs-check test package-check package-doc-links-check >> "$fixture/expected"
     fi

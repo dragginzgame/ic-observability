@@ -93,9 +93,9 @@ counters, aggregates, summaries and histograms in one host-owned stable B-tree m
 using IC Storage's governed collection over admitted IC Memory handles.
 Namespaced records retain units, reset epochs,
 wide totals and overflow flags. Adding `ic-metrics-stable` is the opt-in; existing
-arithmetic callers remain volatile. The adapter requires Rust 1.91 on host and
-Wasm. Hosts own allocation/bootstrap, synchronization, write cadence and resets;
-measurement arithmetic remains allocation-free and `no_std` on Rust 1.91.
+arithmetic callers remain volatile. IC Persistence owns the adapter's compiler
+support and qualification. Hosts own allocation/bootstrap, synchronization, write cadence and resets;
+measurement arithmetic remains allocation-free and `no_std` on Rust 1.99.1.
 
 The [application guide](https://github.com/dragginzgame/ic-observability/blob/main/crates/ic-metrics/src/application.md) is included in
 packaged crate documentation, with a compiled example of fixed named histograms,
@@ -177,7 +177,7 @@ publication and release metadata remain owned here.
 
 Use rustup with the pinned Rust 1.99.1 toolchain, Git, GNU Make and Bash 3.2 or
 newer. Install `wasm32-unknown-unknown` for Wasm checks. The arithmetic library's
-minimum compiler is Rust 1.91.0.
+minimum compiler is Rust 1.99.1.
 
 Optional structural Wasm inspection uses the published
 [IC Host inspector and its installation guide](https://github.com/dragginzgame/ic-tooling/tree/main/apps/ic-host-wasm-inspect).
@@ -219,7 +219,7 @@ procedures live in the [task catalog](https://github.com/dragginzgame/ic-observa
 
 ## Releases and adoption
 
-The arithmetic package requires Rust 1.91 on native and Wasm. Consumers select
+The arithmetic package requires Rust 1.99.1 on native and Wasm. Consumers select
 an available published release and qualify their integration. The
 [0.24 native metadata contract](https://github.com/dragginzgame/ic-observability/blob/main/releases/metrics/0.24.md)
 requires Wire 0.13 for reports composing Metrics metadata. Select this graph after

@@ -57,7 +57,7 @@ These report contracts are separate from Persistence's durable record layouts.
 
 Summaries and histograms project count, total,
 maximum, mean and scaled mean through `aggregate()`. The summary's latest
-observation remains summary-owned. The arithmetic package requires Rust 1.91 on native and
+observation remains summary-owned. The arithmetic package requires Rust 1.99.1 on native and
 Wasm. Each consumer qualifies its own integration.
 
 `validate_histogram_bounds` admits borrowed strictly increasing bounds without

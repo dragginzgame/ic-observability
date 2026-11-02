@@ -7,8 +7,8 @@ explicit-zero subaccounts), round trips and typed malformed/limit refusals.
 
 Run `bash scripts/ci/check-wire-identities.sh --prepare` to fetch the independently
 locked sources, then `make wire-identities-check`. Validation uses the root Rust
-floor on native and Wasm, preceded by strict Clippy on the prepared development
-compiler, with no implicit installation or dependency updates.
+floor on native and Wasm, preceded by strict Clippy on that same prepared
+compiler (Rust 1.99.1), with no implicit installation or dependency updates.
 The lock selects Wire/Derive 0.14.2 and the integration catalog selects the
 matching Types 0.16.0/facade 0.17.0 pair. The root Wire requirement is 0.14.0.
 The independently catalogued published consumer selects released Metrics
