@@ -1,76 +1,61 @@
 # Current handoff — 2026-11-02
 
-The five accepted flow simplifications are implemented locally, pending delivery.
-[Focused evidence](../evidence/flow-cleanup-20261102.md) records separated tool
-admission/setup fixtures, converged native evidence collection, shared Logging
-text components, source-only renderer inputs and browser subprocess diagnostics.
-Setup fixtures remain in explicit TypeScript CI and standard release validation;
-the complete CI/MSRV gates remain unchanged. Selected strict native/Wasm Clippy,
-Logging tests, browser runtime, both identity consumers, native evidence and
-actual disposable grouped release/recovery qualification pass. The matched
-Logging Wasm probe is 19 bytes smaller in both total/code sizes; no runtime cost
-claim follows. Drafts select Metrics 0.27.1 / Logging 0.24.2, with actual versions,
-all locks and dependency selections unchanged. No commit, release or publication
-ran for this batch. The existing README edits remain intact.
+**Metrics 0.27.1 and Logging 0.24.2 are released on GitHub and published on
+crates.io.** [Verified patch delivery](../evidence/flow-cleanup-delivery-20261102.md)
+records exact source/tag identities, full gates, official checksums and retained
+receipts. Both uploaded once and independent readback verified all maintained
+package files. No delivery blocker remains.
 
-**Metrics 0.27.0 is released on GitHub and published on crates.io**, with native
-metadata selecting Wire/derive **0.15.0**. Real identity integration selects
-canonical Types **0.17.0 / Platform 0.18.0**. Logging remains **0.24.1**, unchanged
-and not republished. [Verified delivery](../evidence/wire-0150-delivery-20261102.md)
-records exact source/tag identities, complete gates, registry checksum and
-retained receipts. No delivery blocker remains.
+The [five flow simplifications](../evidence/flow-cleanup-20261102.md) are delivered:
+setup admission is separate from refusal fixtures; native evidence collection
+converges before scenario assertions; Logging shares retained-text components;
+registry rendering drops unused source inputs; browser diagnostics share one
+execution owner. Setup fixtures remain in explicit TypeScript CI and standard
+release validation before the unchanged complete `ci msrv` gates. API, schema,
+byte, refusal, retention and feature-isolation contracts are preserved.
 
-Source commit: `af39cd6fc48704e2e5d37b34c9ca6cdf31d41cc3`.
-Release commit: `0ff6a7b9c0ff2ae7387c85c44b805eb5c200ee0a`.
-Annotated tag: `metrics-v0.27.0`. The standard Metrics minor release passed full
-`ci msrv` validation (150 s / 0 s), archive checks and atomic main/tag delivery.
-Publication dry run passed; the clean exact tag uploaded once. Independent
-readback verified non-yanked metadata, archive checksum, VCS provenance and all
-39 maintained package files. Do not replay uploads; verification-only recovery
-is `make verify-publication RELEASE_GROUP=metrics`.
+Source commit: `05defcb8f6fd65bdda676268a70687bedfca59dc`.
+Metrics release: `1a0b89c3727b32da2b6cdcc363bcd5607eea535d`, tag `metrics-v0.27.1`.
+Logging release: `787f785e3e36eabab651b28d9a081851f8e32458`, tag `logging-v0.24.2`.
+Both standard patch releases completed setup-policy qualification and full
+`ci msrv` validation (CI 147 s / 140 s; compiler admission passes), followed by
+metadata/archive checks and atomic main/tag pushes. Both publication dry runs
+passed; upload/readback ran from each exact clean tag. Do not replay uploads;
+use `make verify-publication RELEASE_GROUP=…` for readback-only reconciliation.
 
 The frozen actual-registry consumer and explicit CI intent now select Metrics
-0.27.0/Logging 0.24.1 with Wire/derive 0.15.0, Types 0.17.0 and Platform 0.18.0.
-Only the five changed supplier version/checksum entries differ in its lock;
-Logging and all other records are unchanged. Strict Clippy, all three real
-Principal/Account compatibility tests, executable composition and Wasm compile
-pass on Rust 1.99.1. This proves actual published packages independently of the
-[source-copy qualification](../evidence/wire-0150.md). Current qualification
-guides and the [Metrics 0.27 migration](../../releases/metrics/0.27.md) agree.
+0.27.1/Logging 0.24.2, with unchanged Wire/derive 0.15.0, Types 0.17.0 and Platform
+0.18.0. Only those two version/checksum entries changed in its lock. Strict
+Clippy, all three real Principal/Account compatibility tests, executable
+composition and Wasm compile pass on Rust 1.99.1. Current qualification guides
+and the [Metrics 0.27 migration](../../releases/metrics/0.27.md) agree. Source-copy
+proof remains separate from actual registry acceptance. Metrics arithmetic still
+excludes Wire/Platform without defaults, and Logging remains dependency-free.
 
-Native schema consumers can now adopt Metrics 0.27 with
-Wire 0.15 and qualify their own report graphs. No further Observability package
-publication is needed for this pairing. Arithmetic-only consumers need no Wire
-trait coordination. Public arithmetic, typed refusals, schemas, encoded bytes,
-feature isolation and the Rust 1.99.1 floor are preserved. No Platform runtime,
-Wire endpoint or stable-memory dependency enters Metrics; Logging remains
-independent and dependency-free.
+Delivery used the isolated checkout
+`target/deploy/flow-cleanup-20261102/checkout/`. Its parent retains raw setup,
+release/publication/acceptance logs and original README preservation hashes.
+Plans/journals remain in its `.git/release-state/`; readback directories are
+`target/publication/verification.WmhcnH` and `verification.8bD7J0`; actual registry
+consumer evidence is `target/qualification/wire-published.nijuup/report/`.
+The original root/Metrics README edits remain intact and uncommitted. No sibling
+mutation or artifact cleanup ran. The catalog/CI/receipt follow-up needs no
+further product release. Hosted runs remain asynchronous; local gates do not
+claim new macOS execution or IC performance qualification.
 
-Delivery used the clean isolated checkout
-`target/deploy/wire-0150-20261102/checkout/`. Its parent retains raw setup,
-release/publication and registry acceptance logs plus the README preservation
-hashes. Plans/journals remain in the isolated `.git/release-state/`; publication
-readback is `target/publication/verification.dn0KIx`; actual registry consumer
-inputs/observations are `target/qualification/wire-published.dU3Egu/report/`.
-The original `README.md` and `crates/ic-metrics/README.md` edits remain intact and
-uncommitted. No sibling mutation or artifact cleanup ran. The final catalog/CI/
-receipt follow-up requires no further product release. Hosted runs remain
-asynchronous; local gates do not imply new macOS execution.
-
-Shared Tooling remains the reviewed 0.27.26 snapshot at exact committed revision
+Shared Tooling remains the reviewed 0.27.26 snapshot at committed revision
 `fd9390ef797bfad8aaa05fdba8fcddec753b572c` (142 files). Its producer ledger marks
 that version Unreleased, not a tagged release claim. The
-[adoption receipt](../evidence/shared-tooling-02726.md) retains its original scope.
-The ten complexity reductions remain delivered through
-[Metrics 0.26.1/Logging 0.24.1](../evidence/cleanup-patch-delivery-20261102.md);
-[implementation evidence](../evidence/complexity-cleanup-20261102.md) is separate
-from later release effects.
+[adoption receipt](../evidence/shared-tooling-02726.md) retains its scope.
+The earlier [Wire 0.15 / Metrics 0.27.0 delivery](../evidence/wire-0150-delivery-20261102.md)
+retains the native trait identity migration; these patches add no new pairing.
+The ten earlier complexity reductions remain delivered through
+[Metrics 0.26.1/Logging 0.24.1](../evidence/cleanup-patch-delivery-20261102.md).
 
 The earlier Rust 1.99.1 adoption in
 [#124](https://github.com/dragginzgame/ic-observability/issues/124) remains closed
-and delivered through PRs #125/#126 as Metrics 0.26.0/Logging 0.24.0. Its
+and delivered through PRs #125/#126. Its
 [receipt](../evidence/rust-1991-delivery-20261102.md), prior snapshot and hosted
-results remain historical evidence. The earlier
-[Wire 0.14.2 delivery](../evidence/wire-0142-delivery-20261101.md) remains complete
-at Metrics 0.25.1. Historical Metrics 0.24.2 is Git-only / unuploaded. Canic and
-stable adapters retain separate owners. No published history was rewritten.
+results remain historical evidence. Historical Metrics 0.24.2 is Git-only /
+unuploaded. Canic and stable adapters retain separate owners. No published
+history was rewritten.
