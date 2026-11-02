@@ -57,12 +57,14 @@ jobs:
         with:
           node-version-file: ci/node-version.txt
           package-manager-cache: false
-      - name: Prepare host parsers and development Rust
+      - name: Prepare host parsers and supported Rust
         if: env.CI_SCOPE != 'docs'
         run: |
           bash scripts/dev/install-host-tools.sh --consumer "$PWD"
           PATH="$PWD/.tools/host/bin:$PATH" bash scripts/dev/prepare-rust-toolchain.sh \
             --toolchain-file rust-toolchain.toml
+          mkdir -p target/typescript-conformance
+          bash scripts/ci/check-rust-compiler.sh > target/typescript-conformance/compiler.txt 2>&1
       - name: Prepare locked sources
         if: env.CI_SCOPE != 'docs'
         run: cargo fetch --locked
@@ -74,8 +76,6 @@ jobs:
       - name: Prepare identity qualification sources
         if: env.CI_SCOPE != 'docs'
         run: |
-          PATH="$PWD/.tools/host/bin:$PATH" bash scripts/dev/prepare-rust-toolchain.sh \
-            --workspace-manifest Cargo.toml --target wasm32-unknown-unknown
           bash scripts/ci/check-wire-identities.sh --prepare
           bash scripts/ci/check-wire-identities.sh --published "$PUBLISHED_METRICS_VERSION" --prepare
       - name: Execute Rust and TypeScript report codecs
@@ -93,11 +93,13 @@ jobs:
           name: typescript-conformance-${{ github.run_attempt }}
           path: |
             target/typescript-conformance/
+            target/qualification/wire-identities.*/compiler.txt
             target/qualification/wire-identities.*/Cargo.toml
             target/qualification/wire-identities.*/Cargo.lock
             target/qualification/wire-identities.*/catalog.json
             target/qualification/wire-identities.*/metadata.json
             target/qualification/wire-identities.*/probe/
+            target/qualification/wire-published.*/compiler.txt
             target/qualification/wire-published.*/Cargo.toml
             target/qualification/wire-published.*/Cargo.lock
             target/qualification/wire-published.*/expected-package
@@ -193,6 +195,11 @@ jobs:
         run: |
           PATH="$PWD/.tools/host/bin:$PATH" bash scripts/dev/prepare-rust-toolchain.sh \
             --toolchain-file rust-toolchain.toml
+      - name: Admit and record the supported compiler
+        if: env.CI_SCOPE != 'docs'
+        id: compiler
+        run: |
+          bash scripts/ci/check-rust-compiler.sh > target/evidence/native-ci/compiler.txt 2>&1
       - name: Install and verify the complete common toolset
         if: env.CI_SCOPE != 'docs'
         id: tools
@@ -216,6 +223,7 @@ jobs:
         id: native_ci
         env:
           TMPDIR: ${{ github.workspace }}/target/evidence/native-ci/scratch
+          ALLOCATION_FREE_EVIDENCE_ROOT: ${{ github.workspace }}/target/evidence/native-ci
         run: |
           mkdir -p "$TMPDIR"
           make ci 2>&1 | tee target/evidence/native-ci/native-ci.log
@@ -229,6 +237,7 @@ jobs:
           INPUT_OUTCOME: ${{ steps.native_inputs.outcome }}
           TOOLS_OUTCOME: ${{ steps.tools.outcome }}
           HOST_OUTCOME: ${{ steps.native_host.outcome }}
+          COMPILER_OUTCOME: ${{ steps.compiler.outcome }}
           TOOLCHAIN_OUTCOME: ${{ steps.toolchain.outcome }}
           PREREQUISITES_OUTCOME: ${{ steps.prerequisites.outcome }}
           HOST_TOOLS_OUTCOME: ${{ steps.host_tools.outcome }}
@@ -258,77 +267,5 @@ jobs:
             target/evidence/native-ci.tar.gz
             target/evidence/native-ci.tar.gz.sha256
           include-hidden-files: true
-          if-no-files-found: error
-          retention-days: 30
-
-  msrv:
-    needs: changes
-    if: ${{ always() && !cancelled() }}
-    env:
-      CI_SCOPE: ${{ needs.changes.result == 'success' && needs.changes.outputs.scope == 'docs' && 'docs' || 'full' }}
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Record documentation-only scope
-        if: env.CI_SCOPE == 'docs'
-        run: echo 'Documentation-only selection; msrv qualification was not run.' >> "$GITHUB_STEP_SUMMARY"
-      # actions/checkout v6
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        if: env.CI_SCOPE != 'docs'
-        id: checkout
-      - name: Record MSRV qualification inputs
-        if: env.CI_SCOPE != 'docs'
-        id: inputs
-        run: bash scripts/ci/record-native-inputs.sh target/evidence/msrv-ci
-      - name: Prepare host parsers
-        if: env.CI_SCOPE != 'docs'
-        id: host_tools
-        run: |
-          mkdir -p target/evidence/msrv-ci
-          bash scripts/dev/install-host-tools.sh --consumer "$PWD" \
-            2>&1 | tee target/evidence/msrv-ci/host-tools.log
-      - name: Prepare minimum Rust
-        if: env.CI_SCOPE != 'docs'
-        id: toolchain
-        run: |
-          mkdir -p target/evidence/msrv-ci
-          PATH="$PWD/.tools/host/bin:$PATH" bash scripts/dev/prepare-rust-toolchain.sh \
-            --workspace-manifest Cargo.toml --target wasm32-unknown-unknown \
-            2>&1 | tee target/evidence/msrv-ci/toolchain.log
-      - name: Prepare the locked application sources
-        if: env.CI_SCOPE != 'docs'
-        id: application_sources
-        run: |
-          cargo fetch --locked 2>&1 | tee target/evidence/msrv-ci/application-sources.log
-      - name: Check workspace native and Wasm MSRV
-        if: env.CI_SCOPE != 'docs'
-        id: check
-        env:
-          VALIDATION_LOG_DIR: ${{ github.workspace }}/target/evidence/msrv-ci
-          VALIDATION_FAILURE_LOG_DIR: ${{ github.workspace }}/target/evidence/msrv-ci/failures
-          ALLOCATION_FREE_EVIDENCE_ROOT: ${{ github.workspace }}/target/evidence/msrv-ci
-          TMPDIR: ${{ github.workspace }}/target/evidence/msrv-ci/scratch
-        run: |
-          mkdir -p "$TMPDIR"
-          bash scripts/ci/run-validation-targets.sh --fail-fast --input Cargo.toml --input Cargo.lock msrv
-      - name: Retain MSRV artifacts and outcome
-        id: artifacts
-        if: env.CI_SCOPE != 'docs' && (always() && steps.checkout.outcome == 'success')
-        env:
-          INPUT_OUTCOME: ${{ steps.inputs.outcome }}
-          HOST_TOOLS_OUTCOME: ${{ steps.host_tools.outcome }}
-          TOOLCHAIN_OUTCOME: ${{ steps.toolchain.outcome }}
-          APPLICATION_SOURCES_OUTCOME: ${{ steps.application_sources.outcome }}
-          MSRV_OUTCOME: ${{ steps.check.outcome }}
-        run: bash scripts/ci/collect-msrv-evidence.sh
-      # actions/upload-artifact v7
-      - name: Upload MSRV evidence
-        if: env.CI_SCOPE != 'docs' && (always() && steps.checkout.outcome == 'success')
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
-        with:
-          name: msrv-${{ github.run_attempt }}
-          compression-level: 0
-          path: |
-            target/evidence/msrv-ci.tar.gz
-            target/evidence/msrv-ci.tar.gz.sha256
           if-no-files-found: error
           retention-days: 30

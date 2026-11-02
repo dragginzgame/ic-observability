@@ -48,3 +48,8 @@ probe is unchanged and does not select Logging. The TypeScript CI job prepares
 and executes both consumers against its explicitly recorded historical registry
 intent. Advance that CI intent with the catalog/lock after deliberately selecting
 a different published Metrics version.
+
+The probe inherits the current workspace Rust 1.99.1 floor and uses the same
+exact compiler for Clippy, runtime tests and Wasm checks. Compiler admission is
+retained in each probe's `compiler.txt`; registry packages retain their published
+metadata and are not rewritten to claim this new support floor.

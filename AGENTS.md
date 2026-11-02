@@ -4,7 +4,10 @@ Read [DRAGGINZGAME.md](DRAGGINZGAME.md) first. The reviewed Shared Tooling revis
 `619d194875369e0f72b45477b66adb430acbf6b7` (snapshot version 0.27.23)
 and file digests are recorded in
 [.shared-tooling.snapshot](.shared-tooling.snapshot). This is the local overlay;
-there are no baseline exceptions. Read [the current handoff](docs/status/current.md)
+the maintainer-approved [compiler policy exception](https://github.com/dragginzgame/ic-observability/issues/124)
+sets Rust 1.99.1 as both the supported minimum and exact development/release
+compiler, superseding the adopted baseline's lowest-floor/separate-lane policy.
+The corresponding Shared Tooling policy is not yet adopted. Read [the current handoff](docs/status/current.md)
 at startup and [the extraction contract](docs/extraction.md) before arithmetic,
 consumer-contract or persistence-boundary changes.
 

@@ -13,11 +13,11 @@ bash "$root/scripts/ci/extract-workflow-step.sh" "$fixture/steps.json" select > 
 yq -o json '.jobs' "$root/.github/workflows/ci.yml" > "$fixture/jobs.json"
 # Stable product job names retain full execution when classification fails.
 jq -e '
-  all(.typescript,.native,.msrv; .needs == "changes" and
+  all(.typescript,.native; .needs == "changes" and
     (.if | contains("always()")) and
     (.env.CI_SCOPE | contains("needs.changes.result == '\''success'\''") and endswith("'\''full'\'' }}"))) and
   (.native.strategy.matrix.include | length == 3) and
-  all(.typescript.steps[],.native.steps[],.msrv.steps[];
+  all(.typescript.steps[],.native.steps[];
     (.if | contains("env.CI_SCOPE")))
 ' "$fixture/jobs.json" > /dev/null
 mkdir -p "$fixture/repo/scripts/ci" "$fixture/repo/ci" "$fixture/repo/docs/status"

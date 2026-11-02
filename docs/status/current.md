@@ -1,4 +1,20 @@
-# Current handoff — 2026-11-01
+# Current handoff — 2026-11-02
+
+[#124](https://github.com/dragginzgame/ic-observability/issues/124) is implemented
+locally, pending review and delivery. Rust 1.99.1 is both the workspace floor and
+exact pinned compiler. Duplicate minimum-compiler CI/setup is removed; all three
+native hosts, Wasm libraries, allocator-free linking, doctests, package archives
+and independent consumer checks remain on that same compiler. `make msrv` now
+admits the compiler only; `make ci` supplies compilation once.
+
+The [qualification record](../evidence/rust-1991-issue-124.md) maps retained
+proofs and records focused Linux checks. No new hosted pass is claimed. Both
+groups have independent breaking pending notes: Metrics 0.26.0 and Logging
+0.24.0. Package versions and all three locks remain unchanged; no real-checkout
+staging, commit, release, publication or sibling mutation ran. The approved local
+policy exception in AGENTS.md does not advance Shared Tooling 0.27.23.
+
+## Last completed delivery — 2026-11-01
 
 The latest Wire adoption and deployment is complete. [PR #122](https://github.com/dragginzgame/ic-observability/pull/122)
 is merged. **Metrics 0.25.1** is Git-released, crates.io published and independently

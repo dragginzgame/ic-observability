@@ -5,6 +5,16 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.26.0]
+
+### ⚠️ Breaking
+
+- Require Rust 1.99.1 on native and Wasm, matching the pinned development and
+  release compiler. Consolidate duplicate compiler jobs while retaining native,
+  Wasm, doctest, package and consumer qualification. See the
+  [migration notes](0.26.md) and
+  [#124 — Adopt Rust 1.99.1 and consolidate compiler qualification](https://github.com/dragginzgame/ic-observability/issues/124).
+
 ## [0.25.1] - 2026-11-01
 
 ### 🧪 Testing
