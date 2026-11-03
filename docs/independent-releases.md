@@ -72,8 +72,10 @@ retry, release or version change is part of either verification command.
 
 Preflight admits prepared tools. Release validation adopts Shared Tooling's
 [group-plan contract](release-group-validation.md). The consumer-owned
-[roster](../ci/release-validation.json) matches the full `ci` recipe exactly;
-compiler admission is the same check exposed by `msrv`, without a second compiler
+[roster](../ci/release-validation.json) is the single ordered declaration for full
+CI and release selection. Shared's roster helper admits the projected Cargo group
+names; neither caller parses Make recipes or maintains another stage list.
+Compiler admission is the same check exposed by `msrv`, without a second compiler
 matrix. Repository CI still covers both libraries on all three required hosts.
 
 The selector compares the entire proposed source with the annotated ancestor
@@ -93,6 +95,20 @@ missing, lightweight or nonancestor baseline also broadens scope. The adoption
 itself therefore requires full validation at release time. Group selection does
 not establish downstream consumer or native/IC runtime acceptance. Services
 retain their own Wire/report DTO qualification; Persistence retains stable adapters.
+
+The local mapping retains these product obligations for
+[#129](https://github.com/dragginzgame/ic-observability/issues/129):
+
+| Boundary | Required obligations and owner |
+| --- | --- |
+| Metrics | Default/all-feature native and Wasm lint/docs, all-feature tests and archive; minimal Serde execution, feature graphs and allocator-free Wasm linking. `recording` remains an explicitly selected feature. |
+| Logging | All-target native and Wasm-library lint, native/Wasm docs, engine/example/doctests and archive; dependency-free graphs on both targets. |
+| Reverse consumers | Metrics attribution/transport/reset contracts remain with IcyDB, Canic, Timers, Backup, Blob's restoration probe and Toko Miner under the [downstream contract checks](extraction.md#downstream-contract-checks). Services own report DTOs; Persistence owns stable adapters for both packages. No owning acceptance is inferred from a core gate. |
+| Hosts and installed artifacts | Linux x86_64, macOS x86_64 and macOS arm64 retain their [native CI obligations](hosts.md). These libraries install no CLI or endpoint. Cargo archive verification and selected-package registry/source readback remain separate release/publication requirements. |
+| Shared and unknown inputs | Full workspace scope, including both libraries and every common stage; unknown package membership refuses until its mapping is qualified. External contract changes still require review by their owners. |
+
+This tooling change alters no library API, Serde representation or retained-data
+contract, so it creates no new sibling migration or acceptance claim.
 
 ## Plans, transactions and recovery
 
@@ -115,9 +131,18 @@ validated/prepared receipts in GROUP-X.Y.Z/ and binds source, destination, group
 policy blob and prepared bytes. Each attempt retains its canonical plan, baseline,
 host/compiler/build configuration, complete source-input checkpoint, stage
 decisions, raw logs and timings beneath `target/release-validation/`. A versioned
-consumer proof requires every selected stage to pass with before/after input
-observations. The validated receipt binds that proof. Resume re-admits the same
-selection and evidence; missing, altered, interrupted or failed evidence refuses.
+Shared proof requires every selected stage to pass with before/after input
+observations. The [shared verifier](group-validation-adoption.md) owns event,
+timing, checkpoint and log admission while source is still pristine. The consumer's
+`group-validation:2` validated receipt binds that proof's bytes and release intent.
+After allowed version metadata changes, late admission regenerates the original
+selection/configuration and checks byte custody of the sealed plan/context,
+policy, group projection and all Shared-admitted records/logs. The caller context
+binds the physical checkout root, so copying a proof to another checkout refuses.
+Existing metadata,
+source and index checks admit the prepared commit. It does not rerun the generic
+verifier against changed metadata, project versions or relocate proof.
+Missing, altered, interrupted or failed evidence refuses.
 No check-result reuse or package-version projection is enabled. Retain the
 attempt directory for recovery; deleting `target/` also removes that evidence.
 One repository-wide lock protects the shared lock.
@@ -127,7 +152,9 @@ receipts cannot resume. Older receipts remain archived rather than overwritten.
 Existing tags and journals keep their original meaning, including the 0.23.1
 group attempts made before this ledger migration. They are not converted to the
 new file plan. Exact old-attempt recovery belongs to its recorded source, policy
-and adapter. Both recorded 0.23.1 attempts were complete before this change.
+and adapter. The completed 0.28.1/0.24.4 deliveries retain their version-1 consumer
+receipts and recorded adapter; the new format does not reinterpret them. Both
+recorded 0.23.1 attempts were complete before the group-ledger change.
 
 Independent releases do not make incompatible integration stacks compatible.
 Services coordinate their own Wire identities and schemas; persistence
@@ -146,3 +173,12 @@ source copies pinned to their prior compatible identities; this is source-level
 consumer evidence, not publication of the simulated releases. Successful group
 receipts and all failures remain retained at the printed evidence directory.
 Other standard Make, hook and retention fixtures keep their distinct scopes.
+
+`make release-validation-check` keeps lightweight product mapping, exclusion,
+Shared-helper wiring and receipt-custody regressions in routine CI.
+`make release-validation-qualify` additionally compares full and selected command
+traces and proves full-CI workspace selection/lint ordering. Renew that matched
+qualification when mapping, runner, relevant configuration or covered contracts
+change, or by explicit request; it does not run permanently in every ordinary CI
+change. Its Make effects are substituted, so applicable native acceptance still
+belongs to the three-host CI matrix and real package gates.

@@ -116,6 +116,7 @@ help:
 	@echo "Early setup: setup-smoke-check"
 	@echo "Minimal Serde and Metrics graphs: metrics-profiles-check; Logging graphs: logging-profiles-check"
 	@echo "Release group-plan scope and recovery fixtures: release-validation-check"
+	@echo "Renew matched full/selected mapping qualification: release-validation-qualify (on relevant changes)"
 	@echo "Tooling fixtures: hook-check, release-tools-check (no release Git effects)"
 	@echo "CI evidence fixture: ci-evidence-check (substitute action results and Make effects, no hosted run)"
 	@echo "Frozen evidence archive checksums (read-only): evidence-check"
@@ -131,7 +132,7 @@ help:
 # Only the release adapter selects group scope. Ordinary commands and full CI
 # retain workspace scope, even when RELEASE_GROUP is inherited.
 override validation_cargo_selection = $(if $(filter group,$(OBSERVABILITY_RELEASE_VALIDATION_SCOPE)),-p ic-$(RELEASE_GROUP),--workspace)
-.PHONY: validation-scope-check release-validation-check logging-profiles-check
+.PHONY: validation-scope-check release-validation-check release-validation-qualify logging-profiles-check
 validation-scope-check:
 	@case '$(OBSERVABILITY_RELEASE_VALIDATION_SCOPE)' in ''|workspace) ;; group) bash scripts/release/metadata.sh selection ;; *) exit 2 ;; esac
 	@if test -n "$${OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT:-}"; then perl scripts/release/validation.pl admit "$$OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT" '$(OBSERVABILITY_RELEASE_VALIDATION_SCOPE)' '$(RELEASE_GROUP)'; fi
@@ -196,6 +197,11 @@ logging-profiles-check:
 release-validation-check:
 	bash scripts/release/test-validation-plan.sh
 
+# Renew matched full/selected mapping evidence after changes to mapping/runner/
+# configuration/contracts, or by explicit request; ordinary CI keeps wiring tests.
+release-validation-qualify:
+	bash scripts/release/test-validation-plan.sh --qualify
+
 compiler-check:
 	+bash scripts/ci/check-rust-compiler.sh
 
@@ -221,30 +227,8 @@ release-tools-check:
 	bash scripts/release/test-fixture-retention.sh
 	bash scripts/release/test-publication-policy.sh
 
-# Keep order explicit: stop on a failed gate, including any Clippy warning.
-# Clippy checks all native targets and Wasm libraries; standalone checks stay focused.
-ci:
-	+$(MAKE) --no-print-directory compiler-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
-	+$(MAKE) --no-print-directory compiler-policy-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
-	+$(MAKE) --no-print-directory shared-tooling-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
-	+$(MAKE) --no-print-directory check-doc-links OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
-	+$(MAKE) --no-print-directory ci-selection-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
-	+$(MAKE) --no-print-directory release-validation-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
-	+$(MAKE) --no-print-directory evidence-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
-	+$(MAKE) --no-print-directory tools-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
-	+$(MAKE) --no-print-directory check-pins OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
-	+$(MAKE) --no-print-directory fmt-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
-	+$(MAKE) --no-print-directory clippy OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
-	+$(MAKE) --no-print-directory production-dependencies-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
-	+$(MAKE) --no-print-directory metrics-profiles-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
-	+$(MAKE) --no-print-directory logging-profiles-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
-	+$(MAKE) --no-print-directory allocation-free-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
-	+$(MAKE) --no-print-directory ci-evidence-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
-	+$(MAKE) --no-print-directory release-tools-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
-	+$(MAKE) --no-print-directory docs-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
-	+$(MAKE) --no-print-directory test OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
-	+$(MAKE) --no-print-directory package-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
-	+$(MAKE) --no-print-directory package-doc-links-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
+# One full stage roster drives CI and release selection.
+include make/validation.mk
 
 # Make admits Cargo recipes; script entrypoints own their compiler admission.
 clippy docs-check test package-check: | validation-scope-check

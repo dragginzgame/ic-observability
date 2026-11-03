@@ -51,7 +51,7 @@ metadata() {
 }
 validated_identity() {
     release_receipt_identity || return
-    printf 'group-validation:1\n%s\n' "$attempt" || return
+    printf 'group-validation:2\n%s\n' "$attempt" || return
     bash "$root/scripts/ci/verify-file-checksum.sh" --print sha256 "$attempt/proof.json"
 }
 validated() {
@@ -89,7 +89,7 @@ case "$operation" in
             CARGO_NET_OFFLINE=true bash "$root/scripts/ci/run-validation-targets.sh" \
             --plan "$attempt/plan.json"
         bash "$root/scripts/ci/check-release-source.sh"
-        perl "$root/scripts/release/validation.pl" seal "$attempt"
+        release_receipt_write "$attempt/proof.json" perl "$root/scripts/release/validation.pl" seal "$attempt"
         release_receipt_write "$state/validated" validated_identity
         ;;
     prepare)

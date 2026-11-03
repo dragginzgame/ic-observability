@@ -45,6 +45,10 @@ admission; selected executables, source archives and receipts remain. Retiring
 old executable generations is explicit owner-operated maintenance under the
 [shared guide](tool-store-maintenance.md), with quiescence and custody checks.
 No store reclamation or application-artifact cleanup is part of this adoption.
+The 0.28.1 snapshot adds script interfaces without changing selected tools or
+their build identities; its adoption checks the prepared tools without reinstalling.
+The released 0.28.2 snapshot retains those same interfaces and tool selections;
+its additional runner regression fix is producer-owned, not another consumer suite.
 Explicit Cargo setup waits up to 60 seconds per occupied admitted slot, while
 offline checks remain immediate. The shared
 [setup guide](local-setup.md#standard-cargo-tool-build-environment) owns the
@@ -302,6 +306,11 @@ Run full local suites only for an explicitly authorized release or an explicit
 request for those checks. The full gate is `make ci`; `make msrv` is the same
 compiler admission already included there. Reuse passing evidence only for
 unchanged inputs. Full CI
+reads the single policy roster through Shared's admitted interface, once per
+host. `make release-validation-qualify` renews matched full/selected mapping
+evidence after mapping/runner/configuration/contract changes; ordinary CI keeps
+the smaller caller-wiring check. These fixtures substitute Make effects and do
+not themselves establish native package acceptance. Full CI
 admits tools, pins and formatting before the native/Wasm Clippy gate. Clippy
 denies warnings and runs before test suites, documentation builds and dependency
 qualification fixtures. The complete gate checks both workspace libraries' builds,

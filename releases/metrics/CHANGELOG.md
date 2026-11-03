@@ -5,6 +5,15 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.28.2]
+
+### 🛠️ Tooling
+
+- Adopt Shared Tooling 0.28.2 and its common validation-evidence, baseline and roster
+  interfaces. Keep one CI stage declaration, preserve sealed release recovery
+  after version preparation, and renew matched mapping qualification explicitly.
+  [#129 — Consolidate shared validation mechanics](https://github.com/dragginzgame/ic-observability/issues/129).
+
 ## [0.28.1] - 2026-11-03
 
 ### 🛠️ Tooling

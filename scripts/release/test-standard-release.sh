@@ -35,7 +35,7 @@ cmp "$fixture/expected-release-files" "$fixture/release-files"
 for selection in default direct; do
     if [[ "$selection" == default ]]; then unset RELEASE_DELIVERY; else export RELEASE_DELIVERY=direct; fi
     TMPDIR="$fixture" "$real_bash" "$root/scripts/ci/check-release-commands.sh" "$root" \
-        make/consumer.mk make/tools.mk make/release.mk make/rust-format.mk make/execution.mk \
+        make/consumer.mk make/tools.mk make/release.mk make/rust-format.mk make/execution.mk make/validation.mk \
         scripts/ci/check-make-execution.sh scripts/ci/check-release-delivery.sh \
         ci/release-delivery.txt scripts/ci/run-formatting.sh \
         scripts/release/metadata.sh ci/cargo-release-groups.json > "$fixture/output" 2>&1
@@ -206,26 +206,23 @@ for group in metrics logging; do
     done
 done
 
-# CI dispatch must stop at either Clippy failure before expensive suites. Only
-# recursive gates are substituted; the real sequential CI recipe runs under -j.
+# The real CI entry forces workspace scope through recursive Make. The named
+# mapping qualification separately exercises shared dispatch and lint ordering.
 cat > "$fixture/gate-make" <<'MAKE'
 #!/usr/bin/env bash
 set -euo pipefail
 [[ $# == 3 && "$1" == --no-print-directory && "$3" == OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace ]] || exit 91
 printf '%s\n' "$2" >> "$EVENTS"
-if [[ "$2" == clippy && "${FAIL_CI_CLIPPY:-0}" == 1 ]]; then exit 37; fi
+exit "${FAIL_CI_DISPATCH:-0}"
 MAKE
 chmod +x "$fixture/gate-make"
 for fail in 0 1; do
     : > "$EVENTS"
     status=0
-    FAIL_CI_CLIPPY="$fail" "$real_make" "${parallel[@]}" --no-print-directory \
+    FAIL_CI_DISPATCH="$fail" "$real_make" "${parallel[@]}" --no-print-directory \
         -f "$root/Makefile" ci "MAKE=$fixture/gate-make" > "$fixture/output" 2>&1 || status=$?
     if [[ "$fail" == 0 ]]; then [[ "$status" == 0 ]] || exit 1; else [[ "$status" == 2 ]] || exit 1; fi
-    printf '%s\n' compiler-check compiler-policy-check shared-tooling-check check-doc-links ci-selection-check release-validation-check evidence-check tools-check check-pins fmt-check clippy > "$fixture/expected"
-    if [[ "$fail" == 0 ]]; then
-        printf '%s\n' production-dependencies-check metrics-profiles-check logging-profiles-check allocation-free-check ci-evidence-check release-tools-check docs-check test package-check package-doc-links-check >> "$fixture/expected"
-    fi
+    printf 'workspace-ci\n' > "$fixture/expected"
     cmp "$fixture/expected" "$EVENTS"
 done
 

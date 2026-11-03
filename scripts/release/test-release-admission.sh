@@ -48,6 +48,11 @@ export FIXTURE_PUBLICATION_EVENTS="$fixture/publication-events"
 export FIXTURE_CARGO_EVENTS="$fixture/cargo-events"
 export PATH="$fixture/bin:$PATH" RELEASE_DELIVERY=direct RELEASE_REMOTE=origin RELEASE_BRANCH=main
 cd "$fixture/repo"
+# This fixture substitutes broad gates. Two ordered stages prove the actual
+# receipt/renderer lifecycle without replaying every unrelated fake CI target;
+# the mapping qualification owns the production roster and exclusion coverage.
+jq -cS '.stages = ["compiler-check", "compiler-policy-check"]' ci/release-validation.json > .fixture-policy
+mv .fixture-policy ci/release-validation.json
 cat >> Makefile <<'MAKE'
 
 include fixture-gates.mk

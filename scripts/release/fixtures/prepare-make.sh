@@ -4,7 +4,7 @@ prepare_make_fixture() {
     local source_root="$1" destination="$2" command
     unset OBSERVABILITY_RELEASE_VALIDATION_SCOPE OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT
     mkdir -p "$destination/bin" "$destination/ci" "$destination/scripts/release"
-    bash "$source_root/scripts/ci/prepare-script-fixture.sh" "$source_root" "$destination" make/consumer.mk
+    bash "$source_root/scripts/ci/prepare-script-fixture.sh" "$source_root" "$destination" make/consumer.mk make/validation.mk
     cp "$source_root/Makefile" "$destination/Makefile"
     cp "$source_root/ci/"{release-delivery.txt,cargo-release-groups.json,release-validation.json} "$destination/ci/"
     cp "$source_root/scripts/release/metadata.sh" "$destination/scripts/release/"

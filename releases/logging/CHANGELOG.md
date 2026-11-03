@@ -6,6 +6,15 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.24.5]
+
+### 🛠️ Tooling
+
+- Adopt Shared Tooling 0.28.2 and its common validation evidence and baseline helpers.
+  Share the full CI roster with release selection and keep matched mapping
+  qualification separate from routine caller checks, with sealed recovery intact.
+  [#129 — Consolidate shared validation mechanics](https://github.com/dragginzgame/ic-observability/issues/129).
+
 ## [0.24.4] - 2026-11-03
 
 ### 🛠️ Tooling
