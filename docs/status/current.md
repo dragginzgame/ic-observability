@@ -1,75 +1,67 @@
 # Current handoff — 2026-11-03
 
-**Shared Tooling 0.28.2 and the fix for [#129](https://github.com/dragginzgame/ic-observability/issues/129) are implemented locally and uncommitted.**
-The snapshot selects 148 files from reviewed committed revision
-`5cf67f81c50c56ac17389ae71a3a87d46e86e8a2`, verified against remote main and
-annotated release tag `v0.28.2`; the supplier ledger is dated 2026-11-03.
-[Adoption/issue evidence](../evidence/shared-tooling-0282-20261103.md) records scope,
-caller qualification and retained logs. Tool selections/build identities are
-unchanged; prepared offline tools and snapshot integrity checks pass.
-No package version, dependency graph or library source was changed.
-The pre-existing two-line Cargo.toml comment edit remains untouched.
+**Metrics 0.28.2 and Logging 0.24.5 are delivered and verified on crates.io.**
+[Delivery evidence](../evidence/shared-tooling-0282-delivery-20261103.md) records
+release identities, complete local plans, official checksums and archive/source
+comparisons. Both releases ran from this normal checkout on `main` through the
+established approved direct `origin/main` flow. Each package was uploaded once.
+Source implementation: `ae36ac071f5f2cacef7d449203ef06ad75107598`.
+Metrics release/tag: `1a991a37e5dbd02efee5af38f77180cc8450e1c9`, `metrics-v0.28.2`.
+Logging release/tag: `5069d8827001ff7ae67a90d5c763bab6152c59cc`, `logging-v0.24.5`.
+The two releases preserved unrelated group metadata and passed all 21 local
+workspace-scope stages independently (407 and 423 summed stage seconds).
+Official readback verified all 32 maintained Metrics files and 12 Logging files.
+Use `make verify-publication RELEASE_GROUP=...` for readback; never replay uploads.
+The pre-existing two-line Cargo.toml comment edit is restored and compared with
+its saved patch, with safety copies retained in the local stash and delivery folder.
 
-Full CI and release selection now consume one declared stage roster through
-Shared's roster interface. Full CI runs it once per required host, with explicit
-workspace scope through recursive Make. The local Make-recipe parser and generic
-baseline/event/timing/checkpoint parsing are removed. Shared observes annotated
-ancestor baselines and admits fresh retained execution evidence. Local policy
-still owns the independent package mapping, exclusions, compiler/configuration,
-source/index, metadata and publication authority.
+**#129 is closed after delivery and qualification on all three required hosts.**
+[CI run 41640061420](https://github.com/dragginzgame/ic-observability/actions/runs/41640061420)
+completed successfully on the final Logging release commit. Linux x86_64,
+macOS Intel x86_64 and macOS ARM64 each actually ran and passed native CI,
+including evidence retention and upload. The exact source, expected host jobs,
+native steps and overall success were checked in the retained run response.
+Superseded runs and documentation-only skips are excluded.
+[#129](https://github.com/dragginzgame/ic-observability/issues/129#issuecomment-6605109269)
+was closed after verification at `2026-11-03T13:29:36Z`.
+The accepted run response, logs and publication proof are under
+`target/deploy/shared-tooling-0282-20261103/`.
 
-Future releases use consumer receipt identity `group-validation:2`, binding
-Shared's canonical proof before version preparation. Late admission checks sealed
-byte custody and regenerates selection/configuration, while existing metadata
-checks admit prepared files. The physical checkout root is bound; relocation,
-missing evidence and changed configuration refuse. No stage reuse or version
-projection is enabled. Existing completed version-1 receipts retain their recorded
-adapter and meaning; they are not converted or reinterpreted.
+Shared Tooling is released `v0.28.2`, reviewed revision
+`5cf67f81c50c56ac17389ae71a3a87d46e86e8a2`, with 148 verified snapshot files.
+[Implementation evidence](../evidence/shared-tooling-0282-20261103.md) records the
+focused qualification and product/reverse-consumer/host obligations. Tool
+selections, dependency graph and Rust library code remain unchanged.
 
-Routine CI keeps mapping/helper/custody regressions. Matched full/selected command
-comparison and full-CI ordering/jobserver qualification are explicit through
-`make release-validation-qualify`, renewed after mapping, runner, configuration or
-covered-contract changes. This adoption exercised that path. The metadata fixture
-uses two explicit substitute stages, preserving its real renderer/receipt/recovery
-proof without replaying every unrelated fake CI stage. Production keeps all 21.
+Full CI and release selection use one declared stage roster through Shared's
+roster interface. Full CI runs it once per required host and forces workspace
+scope through recursive Make. Shared owns baseline and fresh execution evidence
+admission; local policy owns package/feature mapping, exclusions, source/index,
+compiler/configuration, metadata and publication authority.
 
-Both package mappings, fresh Shared evidence, prepared-metadata custody, changed
-proof/configuration refusal, relocation rejection, full-CI workspace selection,
-strict-lint ordering and recursive jobserver propagation pass on Linux. Actual
-metadata/rollback/resume/publication-selection fixtures pass for both groups;
-Cargo upload and broad gates are substituted, retained consumers run real Rust.
-The matched comparison also passed with inherited runner depth 3. The metadata
-fixture requalified real prepared-file and protected-proof recovery for both groups.
-No full repository gate or new hosted/macOS acceptance is claimed for this local
-adoption. Linux and both macOS native CI obligations remain unchanged.
-Deployment is requested for Metrics 0.28.2 and Logging 0.24.5 through the
-established direct `origin/main` and crates.io flow from this normal checkout.
-Close #129 only after delivery and complete required native CI acceptance.
-No implementation blocker remains. The earlier
-[0.28.1 local proof](../evidence/shared-tooling-0281-20261103.md) remains retained.
+Consumer receipt identity `group-validation:2` binds Shared's proof before version
+preparation. Late admission checks sealed byte custody and selection/configuration,
+with existing metadata/index checks. Physical-root binding rejects relocation.
+No stage reuse, version projection or old-receipt reinterpretation was added.
+Completed version-1 receipts retain their recorded adapter and meaning.
+Routine CI keeps caller/mapping/custody regressions; matched full/selected
+comparison and full-CI ordering/jobserver qualification have the explicit
+`make release-validation-qualify` lifecycle for relevant changes.
 
-**Published state remains Metrics 0.28.1 and Logging 0.24.4.**
-[Verified delivery](../evidence/shared-tooling-0280-delivery-20261103.md) records
-both 21-stage release plans, official checksums and exact archive/source proof.
-Source preparation: `973ccdfe849fc499f17988b1e296584393d2897a`.
-Metrics: `3b4c4c353dff8d7746016ceb03091c6b6e611b38`, `metrics-v0.28.1`.
-Logging: `97c274403b07c993a251adad85848f463c5cc805`, `logging-v0.24.4`.
-Receipt follow-up HEAD: `6fd6efc443fd32222416081c6b7dae3d3674815c`.
-Do not replay uploads; `make verify-publication RELEASE_GROUP=...` is readback-only.
-The earlier [0.28.0 snapshot adoption](../evidence/shared-tooling-0280-groups-20261103.md)
-retains its original 145-file revision and version-1 qualification.
+The new release plans/proofs remain in `target/release-validation/` at
+`metrics-0.28.2.STrFrI/` and `logging-0.24.5.799sgg/`; journals and protected
+receipts remain in `.git/release-state/`. Registry/source proof is retained at
+`target/publication/verification.ZZDZS1/` and `verification.uxKOTk/`.
+The [previous delivery](../evidence/shared-tooling-0280-delivery-20261103.md) and
+[0.28.1 local qualification](../evidence/shared-tooling-0281-20261103.md) retain
+their original identities, scope and artifacts.
 
-Metrics owns arithmetic, state admission and validated Serde, with optional
-bounded recording; it has no Wire/Platform/endpoint dependency. Services own
-report DTOs, Wire metadata, codecs and clients. Use the
-[0.28 migration](../../releases/metrics/0.28.md). Logging remains a dependency-free
-heap engine; Persistence owns both opted-in stable adapters. No library contract
-or retained-data reset is introduced by this tooling adoption.
-
-Observability #128 was closed after the
-[Metrics 0.28.0 delivery](../evidence/metrics-0280-delivery-20261103.md).
+Metrics owns arithmetic, admission and validated Serde, with optional bounded
+recording and no Wire/Platform/endpoint dependency. Services own report DTOs,
+Wire metadata, codecs and clients; use the [0.28 migration](../../releases/metrics/0.28.md).
+Logging remains a dependency-free heap engine; Persistence owns both opted-in
+stable adapters. This tooling change introduces no library or retained-data reset.
+Observability #128 remains closed after its own earlier verified delivery.
 Consumer migrations remain with Blob #113, IcyDB #614, Relay #22, Storage #154 and
-Canic #523; Toko Miner owns removal of its explicit feature selection. No sibling
-acceptance, mutation or delivery is claimed. Earlier receipts, original deployment
-checkouts, publication proof, stash safety copies and private retained evidence
-keep their original scope. No unrelated artifact cleanup ran.
+Canic #523; Toko Miner owns its explicit feature-selection removal. No sibling
+acceptance, source mutation or delivery is claimed. No unrelated cleanup ran.
