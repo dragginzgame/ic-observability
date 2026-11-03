@@ -25,7 +25,7 @@ For the currently published Metrics API and separately selected heap logs:
 
 ```toml
 [dependencies]
-ic-metrics = "0.28"
+ic-metrics = "0.29"
 ic-logging = "0.23"
 ```
 
