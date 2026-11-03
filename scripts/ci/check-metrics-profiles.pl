@@ -4,7 +4,7 @@ use warnings;
 
 
 # Resolved normal/build closures complement declaration admission. Development
-# codec fixtures must not make Wire appear to be a production dependency.
+# dependencies must not enter the measurement production graph.
 @ARGV == 0 or die "usage: check-metrics-profiles.pl\n";
 $ENV{RUSTUP_AUTO_INSTALL} = '0';
 
@@ -20,18 +20,17 @@ sub observe {
 my ($host) = observe(qw(rustc -vV)) =~ /^host: (\S+)$/m;
 defined($host) or die "missing compiler host triple\n";
 my @profiles = (
-    ['native-minimal', $host, 0, '--no-default-features'],
-    ['native-recording', $host, 0, '--no-default-features', '--features', 'ic-metrics/recording'],
-    ['native-default', $host, 1],
-    ['wasm-all-features', 'wasm32-unknown-unknown', 0, '--all-features'],
+    ['native-minimal', $host, '--no-default-features'],
+    ['native-recording', $host, '--no-default-features', '--features', 'ic-metrics/recording'],
+    ['native-default', $host],
+    ['wasm-all-features', 'wasm32-unknown-unknown', '--all-features'],
 );
 
 for my $profile (@profiles) {
-    my ($name, $target, $wire_expected, @features) = @$profile;
+    my ($name, $target, @features) = @$profile;
     system($^X,'scripts/ci/check-cargo-graph.pl','--consumer','.',
         '--package','ic-metrics','--target',$target,'--edges','normal,build',@features,
-        '--require',"ic-wire=$wire_expected",'--require',"ic-wire-derive=$wire_expected",
-        '--require','serde=1','--forbid-pattern','^(?:ic-platform(?:-.*)?|ic-wire-endpoint)$') == 0
+        '--require','serde=1','--forbid-pattern','^(?:ic-wire(?:-.*)?|ic-platform(?:-.*)?)$') == 0
         or die "$name: ic-metrics production graph refused\n";
     print "$name: resolved Metrics production graph admitted\n";
 }

@@ -35,69 +35,6 @@ jobs:
           CI_HEAD: ${{ github.sha }}
         run: bash scripts/ci/select-ci.sh
 
-  typescript:
-    needs: changes
-    if: ${{ always() && !cancelled() }}
-    env:
-      CI_SCOPE: ${{ needs.changes.result == 'success' && needs.changes.outputs.scope == 'docs' && 'docs' || 'full' }}
-      # Frozen registry acceptance intent; advance with the published catalog/lock.
-      PUBLISHED_METRICS_VERSION: '0.27.2'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
-    steps:
-      - name: Record documentation-only scope
-        if: env.CI_SCOPE == 'docs'
-        run: echo 'Documentation-only selection; typescript qualification was not run.' >> "$GITHUB_STEP_SUMMARY"
-      # actions/checkout v6
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        if: env.CI_SCOPE != 'docs'
-      - name: Prepare pinned Node
-        if: env.CI_SCOPE != 'docs'
-        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
-        with:
-          node-version-file: ci/node-version.txt
-          package-manager-cache: false
-      - name: Prepare host parsers and supported Rust
-        if: env.CI_SCOPE != 'docs'
-        run: |
-          bash scripts/dev/install-host-tools.sh --consumer "$PWD"
-          PATH="$PWD/.tools/host/bin:$PATH" bash scripts/dev/prepare-rust-toolchain.sh \
-            --toolchain-file rust-toolchain.toml
-          mkdir -p target/typescript-conformance
-          bash scripts/ci/check-rust-compiler.sh > target/typescript-conformance/compiler.txt 2>&1
-      - name: Prepare locked sources
-        if: env.CI_SCOPE != 'docs'
-        run: cargo fetch --locked
-      - name: Prepare locked TypeScript compiler
-        if: env.CI_SCOPE != 'docs'
-        run: |
-          bash scripts/dev/prepare-typescript.sh
-          make typescript-setup-policy-check
-      - name: Prepare identity qualification sources
-        if: env.CI_SCOPE != 'docs'
-        run: |
-          bash scripts/ci/check-wire-identities.sh --prepare
-          bash scripts/ci/check-wire-identities.sh --published "$PUBLISHED_METRICS_VERSION" --prepare
-      - name: Execute Rust and TypeScript report codecs
-        if: env.CI_SCOPE != 'docs'
-        run: |
-          mkdir -p target/typescript-conformance
-          make typescript-check wire-identities-check 2>&1 | tee target/typescript-conformance/check.log
-          make published-identities-check EXPECTED_METRICS_VERSION="$PUBLISHED_METRICS_VERSION" \
-            2>&1 | tee target/typescript-conformance/published-check.log
-      # actions/upload-artifact v7
-      - name: Retain conformance inputs and outputs
-        if: env.CI_SCOPE != 'docs' && (always())
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
-        with:
-          name: typescript-conformance-${{ github.run_attempt }}
-          path: |
-            target/typescript-conformance/
-            target/qualification/wire-identities.*/report/
-            target/qualification/wire-published.*/report/
-          if-no-files-found: ignore
-          retention-days: 30
-
   native:
     needs: changes
     if: ${{ always() && !cancelled() }}

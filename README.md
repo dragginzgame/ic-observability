@@ -24,14 +24,17 @@ For a published arithmetic-only consumer and separately selected heap logs:
 
 ```toml
 [dependencies]
-ic-metrics = { version = "0.24", default-features = false }
+ic-metrics = "0.28"
 ic-logging = "0.23"
 ```
 
-Enable `recording` for bounded Metrics retention, or `native-wire` for native
-metadata. These features do not select persistence or endpoints.
-The [0.24 native metadata contract](releases/metrics/0.24.md) selects Wire
-0.13 and requires matching native report dependencies.
+Enable `recording` for bounded Metrics retention. Validated Serde is always
+available; services own report DTOs, Wire schemas and generated clients.
+The [0.28 migration](releases/metrics/0.28.md) removes Metrics' earlier
+`native-wire` feature and schema implementations without changing numeric records.
+The [0.24 migration](releases/metrics/0.24.md) describes the historical Wire 0.13
+cohort. The Logging example selects an older release line; its compiler floor and
+dependencies can differ from the current checkout.
 The [0.18 migration guide](docs/migration-018.md) covers combined Logging
 text budgets, append receipts, explicit topic matching, borrowed checkpoints,
 visitor paging and validated summary/histogram transport, available in the

@@ -36,7 +36,6 @@ my %members = map { $_ => 1 } @{$metadata->{workspace_members}};
 my %owners = ('ic-metrics' => 'measurement', 'ic-logging' => 'logging');
 my %transport_policy = (
     serde => { target => undef, features => ['derive'], optional => 0 },
-    'ic-wire' => { target => 'cfg(not(target_family = "wasm"))', features => ['typescript'], optional => 1 },
 );
 my %packages;
 my %observed_members;
@@ -48,22 +47,20 @@ for my $package (@{$metadata->{packages}}) {
     ref($package->{dependencies}) eq 'ARRAY' or die "missing declared dependencies\n";
     my $features = $package->{features};
     ref($features) eq 'HASH' or die "missing declared features\n";
-    my @defaults = $owners{$name} eq 'measurement' ? ('native-wire') : ();
-    join("\0", @{$features->{default} // []}) eq join("\0", @defaults)
+    @{$features->{default} // []} == 0
         or die "$name has unapproved default features\n";
-    if ($owners{$name} eq 'measurement') {
-        ref($features->{'native-wire'}) eq 'ARRAY'
-            && join("\0", @{$features->{'native-wire'}}) eq 'dep:ic-wire'
-            or die "native-wire must select only the optional Wire dependency\n";
-    }
+    !exists($features->{'native-wire'})
+        or die "$name declares the retired native-wire feature\n";
     my %transport;
     for my $dependency (@{$package->{dependencies}}) {
+        $dependency->{name} !~ /\Aic-wire(?:-|\z)/
+            or die "$name directly depends on Wire: $dependency->{name}\n";
         # Metadata includes inactive optional and target-specific declarations.
         if (($dependency->{kind} // 'normal') ne 'dev') {
             my $dep = $dependency->{name};
             $owners{$name} eq 'measurement'
                 or die "$name declares a production dependency: $dep\n";
-            ($dep eq 'serde' || $dep eq 'ic-wire')
+            $dep eq 'serde'
                 or die "$name declares a production dependency: $dep\n";
             my $policy = $transport_policy{$dep};
             !!$dependency->{optional} == $policy->{optional} && !$dependency->{uses_default_features}
@@ -85,13 +82,12 @@ for my $package (@{$metadata->{packages}}) {
         my $edges = $features->{$feature};
         ref($edges) eq 'ARRAY' or die "invalid declared features\n";
         for my $edge (@$edges) {
-            next if $owners{$name} eq 'measurement' && $feature eq 'native-wire' && $edge eq 'dep:ic-wire';
             defined($edge) && !ref($edge) && exists($features->{$edge})
                 or die "$name forwards dependency features\n";
         }
     }
     if ($owners{$name} eq 'measurement') {
-        $transport{'serde'} && $transport{'ic-wire'}
+        $transport{'serde'}
             or die "missing standard transport dependency\n";
     }
 }

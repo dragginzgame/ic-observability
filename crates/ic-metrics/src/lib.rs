@@ -5,8 +5,8 @@
 //! not read platform counters or manufacture measurements. The library is
 //! `no_std` on every target. Measurement arithmetic needs no allocator;
 //! the opt-in `recording` feature uses `alloc` for bounded keyed retention.
-//! Validated Serde transport is always available. Default `native-wire` adds native
-//! Wire metadata; disable defaults for arithmetic without that dependency.
+//! Validated Serde transport is always available. Services own report schemas
+//! and codec integrations; Metrics has no Wire or platform dependency.
 
 #![doc = include_str!("application.md")]
 #![no_std]
@@ -26,8 +26,8 @@ mod histogram;
 mod ratio;
 mod state;
 mod summary;
+mod transport;
 mod window;
-mod wire;
 pub use window::MeasurementWindow;
 
 pub use aggregate::{

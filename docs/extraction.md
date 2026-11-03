@@ -49,11 +49,17 @@ receipts preserve the supplying packages and repository identities they measured
 | `MeasurementCounter` | Scalar wide total and actual-overflow flag; checked totals and numeric deltas, without observation statistics. Optional stable checkpoints retain only its scalar state. |
 
 Aggregates, counters, summaries and fixed-bound histograms implement standard
-Serde transport with default-enabled `native-wire` metadata. Disabling defaults
-omits the native Wire dependency while retaining Serde and arithmetic. Decoding uses their canonical
+Serde transport on native and Wasm. Metrics owns no Wire metadata or schema
+dependency. Services own report DTOs and generated clients. Decoding uses their canonical
 arithmetic admission; const histogram bounds fix array lengths without dynamic
 collections. Consumer codec limits and report schema adoption remain explicit.
 These report contracts are separate from Persistence's durable record layouts.
+
+The [0.28 removal](../releases/metrics/0.28.md) is coordinated by
+[#128 — Remove Metrics' Wire metadata dependency](https://github.com/dragginzgame/ic-observability/issues/128).
+Blob, IcyDB, Relay and Storage own their actionable DTO/schema migrations; Canic
+already projects to its own primitive metric DTO. Arithmetic-only callers,
+including Timers and Backup, retain their existing arithmetic contracts.
 
 Summaries and histograms project count, total,
 maximum, mean and scaled mean through `aggregate()`. The summary's latest

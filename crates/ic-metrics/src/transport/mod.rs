@@ -9,10 +9,6 @@ use array::FixedArray;
 // The serialized fields are independent of private arithmetic layout. In
 // particular, empty maxima use Option and every decoded value passes admission.
 #[derive(Serialize, Deserialize)]
-#[cfg_attr(
-    all(feature = "native-wire", not(target_family = "wasm")),
-    derive(ic_wire::Wire)
-)]
 #[serde(deny_unknown_fields)]
 struct AggregateFields {
     samples: u64,
@@ -50,10 +46,6 @@ impl<'de> Deserialize<'de> for MeasurementAggregate {
 }
 
 #[derive(Serialize, Deserialize)]
-#[cfg_attr(
-    all(feature = "native-wire", not(target_family = "wasm")),
-    derive(ic_wire::Wire)
-)]
 #[serde(deny_unknown_fields)]
 struct CounterFields {
     total: u128,
@@ -78,10 +70,6 @@ impl<'de> Deserialize<'de> for MeasurementCounter {
 }
 
 #[derive(Serialize, Deserialize)]
-#[cfg_attr(
-    all(feature = "native-wire", not(target_family = "wasm")),
-    derive(ic_wire::Wire)
-)]
 #[serde(deny_unknown_fields)]
 struct SummaryFields {
     aggregate: MeasurementAggregate,
@@ -106,10 +94,6 @@ impl<'de> Deserialize<'de> for MeasurementSummary {
 }
 
 #[derive(Serialize, Deserialize)]
-#[cfg_attr(
-    all(feature = "native-wire", not(target_family = "wasm")),
-    derive(ic_wire::Wire)
-)]
 #[serde(deny_unknown_fields)]
 struct HistogramFields<const N: usize> {
     upper_bounds: FixedArray<u64, N>,
@@ -149,11 +133,5 @@ impl<'de, const N: usize> Deserialize<'de> for MeasurementHistogram<N> {
     }
 }
 
-#[cfg(all(feature = "native-wire", not(target_family = "wasm")))]
-mod native;
-
-#[cfg(all(test, feature = "native-wire", not(target_family = "wasm")))]
-mod tests;
-
 #[cfg(all(test, not(target_family = "wasm")))]
-mod serde_tests;
+mod tests;

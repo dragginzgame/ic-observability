@@ -132,14 +132,13 @@ libraries; select direct Cargo commands when only one package or test is affecte
 | Focused library checks | `cargo check -p PACKAGE --all-targets --locked`; library Wasm: `cargo check -p PACKAGE --locked --target wasm32-unknown-unknown`; `cargo clippy -p PACKAGE --all-targets --locked -- -D warnings` |
 | Named tests | `cargo test -p ic-metrics --locked <test-name>`; package doctests: `cargo test -p PACKAGE --locked --doc` |
 | Logging | `cargo test -p ic-logging --lib --locked`; `cargo test -p ic-logging --doc --locked`; `cargo clippy -p ic-logging --lib --tests --examples --locked -- -D warnings` |
-| Numeric transport and native metadata | `cargo test -p ic-metrics --lib --no-default-features --features native-wire --locked wire::tests` |
-| Arithmetic without native Wire | `cargo test -p ic-metrics --lib --no-default-features --locked ratio::tests`; inspect native/Wasm normal/build graphs with defaults disabled |
-| Minimal Serde and feature graphs | `make metrics-profiles-check`; runs Serde round trips/refusals without Wire, checks Metrics' native minimal, recording, default and all-feature Wasm normal/build closures, and checks dependency-free Logging once on native and Wasm |
+| Validated numeric transport | `cargo test -p ic-metrics --lib --locked --offline transport::tests` |
+| Allocation-free arithmetic | `cargo test -p ic-metrics --lib --no-default-features --locked ratio::tests`; native/Wasm graphs exclude Wire and Platform under every feature selection |
+| Minimal Serde and feature graphs | `make metrics-profiles-check`; runs Serde round trips/refusals, checks Metrics' native minimal, recording, default and all-feature Wasm normal/build closures, and checks dependency-free Logging once on native and Wasm |
 | Log export recipe | `cargo test -p ic-logging --example byte-budgeted-export --locked --offline`; execute the walkthrough with `cargo run -p ic-logging --example byte-budgeted-export --locked --offline` |
 | Recording model | `cargo test -p ic-metrics --lib --no-default-features --features recording --locked --offline recording::tests::model` |
 | Logging operation model | `cargo test -p ic-logging --lib --locked --offline log::tests::mixed`; exercises journal-based state, paging and visitor stops across admission, retention and restoration |
 | Histogram restoration oracle | `cargo test -p ic-metrics --lib --no-default-features --locked --offline histogram::tests::restoration`; exhaustive small-domain bounds/distributions and exact weighted overflow histories |
-| Rust/TypeScript report conformance | `make typescript-check`; requires prepared Node from `ci/node-version.txt`, executes five report cases and malformed-input checks |
 | Allocator-free arithmetic link | `make allocation-free-check` |
 | Recording library checks | `cargo check -p ic-metrics --lib --features recording --locked`; Wasm: `cargo check -p ic-metrics --lib --features recording --locked --target wasm32-unknown-unknown`; lint: `cargo clippy -p ic-metrics --lib --tests --features recording --locked -- -D warnings` |
 | Recording tests and examples | `cargo test -p ic-metrics --lib --features recording --locked <test-name>`; doctests: `cargo test -p ic-metrics --doc --features recording --locked` |
@@ -154,45 +153,12 @@ opt-in: include `--features recording` when selecting its tests, checks or examp
 A recording test-name filter without that feature can succeed with zero selected
 tests; confirm that the intended cases actually ran.
 
-The separate TypeScript CI job runs on Linux. Prepare the exact Node version in
-`ci/node-version.txt` explicitly (for example, `nvm install` and `nvm use` with that
-version), then run `make typescript-check` with locked Cargo sources already
-available. Validation checks the prepared Node version and never installs it.
-Prepare npm and the pinned compiler explicitly with
-`bash scripts/dev/prepare-typescript.sh`. That command installs the package
-manager declared in ci/typescript/package.json, checks the exact Node/npm
-selection, then runs the locked npm install. `make typescript-setup-check` only
-admits the prepared tools; it never installs anything or runs fixtures.
-`make typescript-setup-policy-check` separately runs the setup failure fixture in
-TypeScript CI and standard release validation. The fixture substitutes global
-npm effects and checks rejection of
-Node/npm mismatches before the locked install. Failed npm version observation
-and Node package-manager selection retain their failure status, even if they
-print the expected output; no dependent install/admission follows. TypeScript compilation runs the
-maintained typed consumer before the five Rust/TypeScript runtime report cases.
-
-`make wire-identities-check` runs the independently locked
-[identity consumer](../qualification/wire-identities/README.md) on Rust 1.99.1,
-including its Wasm build. Prepare its sources with
-`bash scripts/ci/check-wire-identities.sh --prepare`. The probe copies the current
-Metrics source into a disposable owning workspace; it is source alignment rather
-than registry Metrics acceptance. Its additional Platform suppliers never enter
-the root Cargo lock or feature graph. CI invokes it in the TypeScript job.
-
-`make published-identities-check EXPECTED_METRICS_VERSION=0.27.2` is separate post-publication acceptance against
-exact registry Metrics, with its own [catalog/lock](../qualification/wire-published/README.md).
-Prepare it explicitly with
-`bash scripts/ci/check-wire-identities.sh --published 0.27.2 --prepare`. It reuses the
-same identity assertions but copies no Metrics source. It also runs the compiled
-Metrics/Logging composition example on the Rust floor. Logging is a registry
-development dependency of the private consumer only, never a dependency of
-Metrics. CI's TypeScript job exercises this frozen published consumer in addition
-to the current-source probe; its explicit version intent is not acceptance of a
-future unpublished package. The recorded registry
-version must match the explicitly requested expected version. Missing, malformed
-or stale intent refuses before Cargo effects. The catalog/lock must be
-deliberately advanced after publication; ordinary source CI
-never selects a new registry version or updates the lock.
+Services own report DTOs, Wire metadata, generated clients and browser/runtime
+qualification. Metrics maintains validated Serde, arithmetic and native/Wasm
+graph admission. The [0.28 migration](../releases/metrics/0.28.md) retires
+Metrics-owned Wire and TypeScript entrypoints, Node/npm setup and source/registry
+pairing fixtures. Historical qualification READMEs and evidence retain their
+original package identities; they do not qualify the current source.
 
 For Logging's extended model exploration, run
 `cargo test -p ic-logging --lib --locked --offline log::tests::mixed::long_utf8_histories_match_independent_event_history -- --ignored --exact`.
@@ -202,7 +168,7 @@ replay; it adds no dependency or performance measurement.
 
 The exact prose allowlist in ci/docs-only-paths.txt enables Shared's conservative
 classifier. Eligible prose runs real Linux docs/snapshot checks and records
-skipped native and TypeScript scope. Unknown, mixed, policy/workflow and
+skipped native scope. Unknown, mixed, policy/workflow and
 missing-history inputs run full qualification.
 A failed classifier job falls back to full product checks and remains visibly
 failed. Packaged READMEs, embedded docs, companion declarations and new paths
@@ -229,10 +195,9 @@ The former minimum/development duplication is consolidated as follows:
 | Wasm workspace libraries | Wasm all-features library Clippy in each native job |
 | Public doctests | Workspace all-features `test` executes both packages' doctests |
 | Package archives | `package-check` prepares and verifies both package archives |
-| Native Wire/derive and real identities | TypeScript job retains source and published Principal/Account tests, executable composition and Wasm checks |
 
-The native matrix still covers Linux x86_64, macOS x86_64 and macOS arm64; the
-separate TypeScript consumer job remains. No required-check dependency in this
+The native matrix still covers Linux x86_64, macOS x86_64 and macOS arm64.
+Service owners retain browser/schema qualification. No required-check dependency in this
 repository selects the retired `msrv` job. Optional installed-runtime evidence
 retains its own tooling and scope. Historical evidence keeps its original compiler.
 `make evidence-check` is also included in CI and
@@ -256,12 +221,10 @@ adapter ordering check uses `--manifest-order-grouped` against its current or
 selected committed source. No paired formatter override is needed here.
 
 `make production-dependencies-check` admits both libraries through successful
-locked, offline Cargo metadata. Metrics admits required Serde and optional IC Wire
-transport declarations without dependency defaults. Serde is unconditional with
-only `derive`; default-enabled `native-wire` selects Wire only under
-`cfg(not(target_family = "wasm"))` with only `typescript`. Package features may
-compose local switches; only `native-wire` may select `dep:ic-wire`. These declaration
-checks do not depend on which features or targets are active on the checking host.
+locked, offline Cargo metadata. Metrics admits only required, unconditional Serde
+without defaults and with `derive`. Local features may compose local switches,
+never forward dependency features. The retired `native-wire` feature and all
+Wire-family dependencies, including development inputs, refuse.
 Logging admits no production dependencies, including Metrics itself.
 Other normal/build dependencies are rejected, including optional and inactive
 target-specific entries.
@@ -283,7 +246,7 @@ Role labels, formatting and `make check-pins` remain separate checks.
 Keep compilation checks sequential when they share `target/`; check for active
 builds before source mutation or compilation. Bare Cargo commands select both
 libraries; use `-p ic-metrics` or `-p ic-logging` for focused work. Builds use
-locked dependencies. Metrics requires Serde and native-only Wire metadata;
+locked dependencies. Metrics requires only Serde for validated numeric records;
 Logging has no dependencies. Neither owns platform readers or a server harness.
 Stable storage qualification belongs to IC Persistence.
 The inspector's CLI checks stay at IC Host; existing smoke artifacts under
@@ -327,10 +290,9 @@ The Metrics profile matrix delegates resolved normal/build graph mechanics to
 Shared's `scripts/ci/check-cargo-graph.pl`. Local code owns the four target/feature
 profiles and package-count/exclusion rules. Logging has no feature matrix and is
 checked separately once on native and Wasm; declaration admission remains a
-separate guard that refuses every Logging dependency. `bash scripts/ci/test-wire-fixture.sh`
-verifies parsed Cargo projection across multiline manifests, quoted strings,
-source normalization, independent registry selections and retained consumers'
-real supplier versions, including source-catalog overlap refusal.
+separate guard that refuses every Logging dependency. `bash scripts/release/test-retained-consumer.sh`
+verifies parsed Cargo projection across multiline manifests, quoted strings and
+retained consumers' real supplier versions while preserving other catalog fields.
 
 ## Full release validation
 
@@ -341,8 +303,8 @@ request for those checks. The full gate is `make ci`, then workspace-native/Wasm
 admits tools, pins and formatting before the native/Wasm Clippy gate. Clippy
 denies warnings and runs before test suites, documentation builds and dependency
 qualification fixtures. The complete gate checks both workspace libraries' builds,
-docs and tests. Configured CI and required branch
-checks remain unchanged. Strict native all-target and Wasm library Clippy supply
+docs and tests. The retired TypeScript job has no enforced required-check
+reference on main; native CI retains its three hosts. Strict native all-target and Wasm library Clippy supply
 CI type checking; `make check` and `make check-wasm` remain focused entrypoints.
 The workspace currently contains two libraries. If other Wasm targets
 are added, extend the Clippy target selection to preserve their CI coverage.
@@ -359,11 +321,8 @@ Select `RELEASE_GROUP=metrics` or `RELEASE_GROUP=logging` explicitly; see
 [independent releases](independent-releases.md) for the version/ledger map.
 Use `make release-resume RELEASE_GROUP=logging VERSION=X.Y.Z` for recovery of a
 specific saved Logging attempt.
-Standard release preflight first runs `setup-smoke-check` and
-`typescript-setup-check`. Release validation runs `typescript-setup-policy-check`
-once before the unchanged complete `ci msrv` gates. Prepare the declared Node/npm
-tools explicitly before releasing either group; Rust library tests and native
-`make ci` remain Node-free.
+Standard release preflight first runs `setup-smoke-check`. Release validation
+runs the complete `ci msrv` gates. Neither group requires Node/npm tooling.
 The Make smoke parses the actual consumer and tests exported publication-mode
 overrides, then deliberately stops before metadata, compiler or upload recipes.
 Native CI runs it before tool installation on all three declared hosts, including
@@ -493,8 +452,8 @@ The native job records compiler admission in `target/evidence/native-ci/compiler
 before managed-tool preparation or application compilation. Its outcome is
 included in diagnostic and recovery archives, including partial output on failure.
 The allocator-free Wasm is retained inside the full native recovery archive after
-a successful link. The TypeScript job also retains its compiler record; independent
-source and registry probes retain their own `report/compiler.txt`. Existing historical
+a successful link. Historical TypeScript, source and registry probes retain
+their original compiler receipts. Existing historical
 `msrv-ci` evidence is preserved; new runs no longer produce a duplicate archive.
 
 `make compiler-policy-check` exercises policy mismatches, failed executable

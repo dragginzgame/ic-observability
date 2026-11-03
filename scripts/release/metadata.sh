@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Shared companions: scripts/ci/cargo-release-group.sh scripts/ci/cargo-release-metadata.sh scripts/ci/check-release-source.sh scripts/ci/check-release-delivery.sh scripts/ci/check-release-changelog.sh scripts/ci/cargo-release-preflight.sh scripts/ci/release-receipts.sh scripts/dev/release-editor.sh scripts/ci/check-setup-smoke.sh scripts/ci/check-typescript-setup.sh scripts/ci/test-typescript-setup.sh scripts/dev/prepare-typescript.sh scripts/ci/fixture-lifecycle.sh ci/typescript/package.json ci/node-version.txt ci/tool-versions.env ci/release-delivery.txt ci/release-tools.env
+# Shared companions: scripts/ci/cargo-release-group.sh scripts/ci/cargo-release-metadata.sh scripts/ci/check-release-source.sh scripts/ci/check-release-delivery.sh scripts/ci/check-release-changelog.sh scripts/ci/cargo-release-preflight.sh scripts/ci/release-receipts.sh scripts/dev/release-editor.sh scripts/ci/check-setup-smoke.sh scripts/ci/fixture-lifecycle.sh ci/tool-versions.env ci/release-delivery.txt ci/release-tools.env
 set -euo pipefail
 [[ $# == 1 ]] || exit 2
 operation="$1"
@@ -58,7 +58,7 @@ case "$operation" in
     preflight)
         [[ "$(printf '%s' "$plan" | jq -er .previous)" == "${RELEASE_PREVIOUS:?}" ]]
         bash "$root/scripts/ci/check-release-changelog.sh" "$RELEASE_VERSION" "$RELEASE_PREVIOUS" "${RELEASE_DATE:?}" "$changelog"
-        "${RELEASE_MAKE:-make}" --no-print-directory setup-smoke-check typescript-setup-check
+        "${RELEASE_MAKE:-make}" --no-print-directory setup-smoke-check
         bash "$root/scripts/ci/cargo-release-preflight.sh" "$PWD" "$release_cache_prepare" \
             --pin "${RUST_TOOL_VERSIONS:-$root/ci/tool-versions.env}" --pin "$root/ci/release-tools.env" \
             --check rust-tools-check --check release-editor-check \
@@ -70,7 +70,7 @@ case "$operation" in
         release_receipt_archive "$state/previous-attempt.XXXXXX" "$state/validated" "$state/prepared"
         VALIDATION_FAILURE_LOG_DIR="$(git rev-parse --git-path release-state)/validation-failures" \
             CARGO_NET_OFFLINE=true bash "$root/scripts/ci/run-validation-targets.sh" \
-            --fail-fast --input Cargo.toml --input Cargo.lock typescript-setup-policy-check ci msrv
+            --fail-fast --input Cargo.toml --input Cargo.lock ci msrv
         bash "$root/scripts/ci/check-release-source.sh"
         release_receipt_write "$state/validated" release_receipt_identity
         ;;

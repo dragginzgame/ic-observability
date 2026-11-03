@@ -17,7 +17,6 @@ CARGO_PUBLISH_VERIFY_TARGETS := publication-source-check clippy
 export OBSERVABILITY_PUBLICATION_MODE
 publish: override OBSERVABILITY_PUBLICATION_MODE := publish
 publish-check: override OBSERVABILITY_PUBLICATION_MODE := check
-FORMAT_RUST_ARGS := --rustfmt-source qualification/wire-identities/src/lib.rs --rustfmt-source qualification/wire-published/examples/observability-host.rs --rustfmt-edition 2024
 
 # These frozen manifests use archive-directory paths; retain their original bytes.
 # All other maintained checksum manifests use repository-root paths.
@@ -72,24 +71,15 @@ release-files:
 .PHONY: ci-evidence-check evidence-check
 .PHONY: production-dependencies-check
 .PHONY: allocation-free-check
-.PHONY: typescript-check
-.PHONY: wire-identities-check publication-source-check verify-publication publish-verified
+.PHONY: publication-source-check verify-publication publish-verified
 .PHONY: ci-selection-check package-doc-links-check
 .PHONY: metrics-profiles-check
 .PHONY: install-release-editor release-editor-check
-.PHONY: setup-smoke-check typescript-setup-check typescript-setup-policy-check published-identities-check
+.PHONY: setup-smoke-check
 
 setup-smoke-check:
 	bash scripts/ci/check-setup-smoke.sh "$(MAKE_COMMAND)"
 
-typescript-setup-check:
-	bash scripts/ci/check-typescript-setup.sh
-
-typescript-setup-policy-check:
-	bash scripts/ci/test-typescript-setup.sh
-
-published-identities-check:
-	+bash scripts/ci/check-wire-identities.sh --published "$(EXPECTED_METRICS_VERSION)"
 
 install-release-editor:
 	+@bash scripts/dev/release-editor.sh install
@@ -123,11 +113,7 @@ help:
 	@echo "Focused: format-tools-check, fmt, fmt-check, check, check-wasm, clippy, docs-check, check-doc-links, shared-tooling-check, check-pins"
 	@echo "Dependency declarations and boundary fixtures: production-dependencies-check"
 	@echo "Link Metrics arithmetic without an allocator: allocation-free-check"
-	@echo "Execute Metrics Rust/TypeScript codec conformance (prepared Node): typescript-check"
-	@echo "Identity composition: wire-identities-check; docs: ci-selection-check package-doc-links-check"
-	@echo "Registry-only acceptance: published-identities-check EXPECTED_METRICS_VERSION=X.Y.Z (explicit post-publication check)"
-	@echo "Early setup: setup-smoke-check, typescript-setup-check (read-only tool admission)"
-	@echo "TypeScript setup refusal fixtures: typescript-setup-policy-check (Node required)"
+	@echo "Early setup: setup-smoke-check"
 	@echo "Minimal Serde execution and native/Wasm dependency graphs: metrics-profiles-check"
 	@echo "Tooling fixtures: hook-check, release-tools-check (no release Git effects)"
 	@echo "CI evidence fixture: ci-evidence-check (substitute action results and Make effects, no hosted run)"
@@ -184,14 +170,6 @@ check-doc-links:
 test:
 	+cargo test --workspace --all-features --locked
 
-# Explicit Node-dependent acceptance; ordinary library tests need only Rust.
-typescript-check:
-	+IC_METRICS_NODE_VERSION="$$(cat ci/node-version.txt)" \
-		cargo test -p ic-metrics --lib --no-default-features --features native-wire --locked --offline \
-		wire::tests::browser::generated_codecs_round_trip_between_rust_and_typescript -- --ignored --exact
-
-wire-identities-check:
-	+bash scripts/ci/check-wire-identities.sh
 
 ci-selection-check:
 	bash scripts/ci/test-ci-selection.sh
@@ -200,9 +178,8 @@ package-doc-links-check:
 	perl scripts/ci/check-package-doc-links.pl
 
 metrics-profiles-check:
-	bash scripts/ci/test-wire-fixture.sh
 	perl scripts/ci/check-metrics-profiles.pl
-	+cargo test -p ic-metrics --lib --no-default-features --locked --offline wire::serde_tests
+	+cargo test -p ic-metrics --lib --no-default-features --locked --offline transport::tests
 
 compiler-check:
 	+bash scripts/ci/check-rust-compiler.sh
@@ -225,9 +202,9 @@ allocation-free-check:
 
 # Retention owns the separate release/publication/hook bodies and custody cases.
 release-tools-check:
+	bash scripts/release/test-retained-consumer.sh
 	bash scripts/release/test-fixture-retention.sh
 	bash scripts/release/test-publication-policy.sh
-	bash scripts/ci/test-published-identities-selection.sh
 
 # Keep order explicit: stop on a failed gate, including any Clippy warning.
 # Clippy checks all native targets and Wasm libraries; standalone checks stay focused.
@@ -253,5 +230,4 @@ ci:
 	+$(MAKE) --no-print-directory package-doc-links-check
 
 # Make admits Cargo recipes; script entrypoints own their compiler admission.
-# Published intent is checked before the helper observes its compiler.
-check check-wasm clippy docs-check test package-check typescript-check metrics-profiles-check production-dependencies-check publication-source-check: | compiler-check
+check check-wasm clippy docs-check test package-check metrics-profiles-check production-dependencies-check publication-source-check: | compiler-check

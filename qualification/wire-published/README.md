@@ -1,69 +1,12 @@
-# Published identity consumer
+# Historical published Wire identity qualification
 
-This post-publication check selects exact registry Metrics 0.27.2, published Wire
-and canonical Types/facade identities. It reuses the maintained Principal/Account
-assertions from [the source probe](../wire-identities/README.md), with no copied
-Metrics source, patch, replacement or external path dependency. Only the probe
-is a workspace member. Its recorded lock owns the registry graph independently
-of the arithmetic workspace and the source-alignment qualification.
+The frozen Metrics 0.27.2 / Logging 0.24.3 consumer was retired by the
+[Metrics 0.28 boundary change](../../releases/metrics/0.28.md). Current services own
+Wire report DTOs and browser/runtime qualification; Metrics owns arithmetic and
+validated Serde. No registry pairing, copied source or schema adapter remains as
+a current qualification route here.
 
-Explicit preparation: `bash scripts/ci/check-wire-identities.sh --published 0.27.2 --prepare`.
-Acceptance: `make published-identities-check EXPECTED_METRICS_VERSION=0.27.2`. Checks use locked offline sources,
-strict Clippy, three real schema/byte tests on the Rust floor and a Wasm check.
-Preparation fetches dependencies; checks never update them or install tools.
-The lock selects Wire/Derive 0.15.0 with canonical Types 0.17.0/facade 0.18.0.
-This catalog owns those Wire and identity selections as well as Metrics/Logging;
-current source adoption cannot silently change this frozen registry graph.
-CI retains this consumer's manifest, lock, expected-package intent, resolved
-metadata and probe sources alongside its acceptance log, including on failure.
-
-After publishing a new Metrics version, deliberately align this catalog's Metrics,
-Wire and identity selections and run
-`bash scripts/ci/check-wire-identities.sh --published X.Y.Z --update-lockfile`, reviewing
-the resulting lock before preparation/acceptance. This is a separate read-only
-registry-consumer acceptance step after `publish-verified`; a failed check never
-repeats an upload. The frozen exact version prevents ordinary source CI from
-silently qualifying an unrelated registry release or resolving latest versions.
-
-Metrics 0.27.2 is published with Wire 0.15 metadata; this registry consumer now
-qualifies that pairing independently of the current-source fixture. Older
-Metrics 0.26.1 supplies Wire 0.14 metadata, so native consumers must update the
-pair together. See the [migration guide](../../releases/metrics/0.27.md).
-
-Acceptance always requires the intended Metrics version explicitly. The catalog
-must select that exact version, and resolved registry metadata must match it.
-Missing, malformed or stale intent refuses before Cargo/fetch/compiler effects;
-checks never silently fall back to the catalog's historical version. The retained
-fixture records expected-package and reports its accepted registry identity.
-Use `bash scripts/ci/test-published-identities-selection.sh` for the focused
-selection rejection fixture (Cargo effects are substituted).
-
-
-The [observability host example](examples/observability-host.rs) composes exact
-published Metrics 0.27.2 and Logging 0.24.3. Logging is a development dependency
-of this private consumer only. Its counters track log admission, truncation,
-eviction and refusal; a host-selected metrics-window reset preserves the log's
-identity. These are diagnostic events rather than authoritative application outcomes.
-
-The existing acceptance command also lints, compiles and executes that example
-on the Rust floor. The surrounding identity probe explicitly selects native-wire
-for its schema tests; the example itself uses only arithmetic APIs. Root feature
-checks separately prove arithmetic-only consumers can omit Wire. The source-copy
-probe is unchanged and does not select Logging. The TypeScript CI job prepares
-and executes both consumers against its explicitly recorded historical registry
-intent. Advance that CI intent with the catalog/lock after deliberately selecting
-a different published Metrics version.
-
-The probe inherits the current workspace Rust 1.99.1 floor and uses the same
-exact compiler for Clippy, runtime tests and Wasm checks. Compiler admission is
-retained in each probe's `report/compiler.txt`; registry packages retain their published
-metadata and are not rewritten to claim this new support floor.
-
-Fixture manifests are rendered from parsed TOML fields; formatting does not
-control selection. Registry rendering takes the root metadata and frozen catalog,
-without parsing the current Metrics package manifest as a rendering input.
-Source rendering separately supplies its normalized local package manifest.
-Each attempt's `report/` contains the explicit catalog,
-generated manifest/lock, probe sources, compiler observation and metadata when
-available. CI uploads that curated directory; Cargo build caches remain outside
-it. Source-copy and frozen-registry consumers retain separate attempts and locks.
+The [verified delivery receipt](../../docs/evidence/fixture-cleanup-delivery-20261102.md)
+retains checksums, tagged source, Principal/Account checks, executable composition
+and the raw report locations for that exact published pair. Historical artifacts
+and original receipts remain intact. They do not qualify the current source.

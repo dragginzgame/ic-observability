@@ -5,6 +5,22 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.28.0]
+
+### ⚠️ Breaking
+
+- Remove `native-wire` and Metrics-owned Wire metadata. Services own report DTOs,
+  schemas and generated clients; Metrics retains validated Serde and arithmetic
+  without a Wire/Platform dependency. Remove feature forwarding and migrate
+  enclosing report schemas through the [0.28 guide](0.28.md).
+  [#128 — Remove Metrics' Wire metadata dependency](https://github.com/dragginzgame/ic-observability/issues/128).
+
+### 🧹 Cleanup
+
+- Retire Metrics-owned browser/pairing qualification and Node/npm setup. Keep
+  Serde representation/refusal tests, native/Wasm graph checks and independent
+  release-consumer qualification. Historical receipts retain their original scope.
+
 ## [0.27.2] - 2026-11-02
 
 ### 🧹 Cleanup

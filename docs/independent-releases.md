@@ -70,12 +70,10 @@ identity through Shared's observation/provenance helpers. If readback fails, use
 `verify-publication` to reconcile without repeating the upload. No automatic
 retry, release or version change is part of either verification command.
 
-Preflight admits the prepared Node/npm tools without running setup fixtures.
-Release validation runs `typescript-setup-policy-check`, then the complete `ci`
-and `msrv` gates. TypeScript CI also selects the setup fixtures explicitly.
-Metrics remains
-arithmetic-only without defaults, optionally adds native-wire and recording, and
-excludes native metadata on Wasm. Logging remains dependency-free. Group selection
+Preflight admits prepared tools. Release validation runs the complete `ci`
+and `msrv` gates. Metrics supplies arithmetic and validated Serde on native/Wasm,
+with optional `recording`; services own Wire/TypeScript qualification. Logging
+remains dependency-free. Group selection
 does not narrow these obligations or establish native/IC runtime acceptance.
 
 ## Plans, transactions and recovery
@@ -106,7 +104,7 @@ new file plan. Exact old-attempt recovery belongs to its recorded source, policy
 and adapter. Both recorded 0.23.1 attempts were complete before this change.
 
 Independent releases do not make incompatible integration stacks compatible.
-Public Wire identity changes still require matching native consumers; persistence
+Services coordinate their own Wire identities and schemas; persistence
 adapters retain their own integration/release owners. Arithmetic, Serde fields,
 encoded bytes and Logging's retained-data contract do not change in this split.
 

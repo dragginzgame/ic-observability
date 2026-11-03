@@ -33,11 +33,8 @@ reset_case() {
     for name in ic-testkit ic-stable-structures ordinary serde ic-wire; do package "$name"; done
     cat >> "$fixture/workspace/crates/ic-metrics/Cargo.toml" <<'TRANSPORT'
 [features]
-default = ["native-wire"]
-native-wire = ["dep:ic-wire"]
+default = []
 recording = []
-[target.'cfg(not(target_family = "wasm"))'.dependencies]
-ic-wire = { path = "../../../vendor/ic-wire", optional = true, default-features = false, features = ["typescript"] }
 [dependencies]
 serde = { path = "../../../vendor/serde", default-features = false, features = ["derive"] }
 TRANSPORT
@@ -67,58 +64,52 @@ check_case development-package pass
 
 sed 's/^serde = { /serde = { optional = true, /' "$fixture/standard-manifest" > "$fixture/workspace/crates/ic-metrics/Cargo.toml"
 check_case optional-serde 'transport dependency has unapproved optionality or defaults'
-sed 's/optional = true/optional = false/; s/native-wire = .*/native-wire = []/' "$fixture/standard-manifest" > "$fixture/workspace/crates/ic-metrics/Cargo.toml"
-check_case required-wire 'native-wire must select only the optional Wire dependency'
 sed 's/default-features = false/default-features = true/g' "$fixture/standard-manifest" > "$fixture/workspace/crates/ic-metrics/Cargo.toml"
 check_case transport-default-features 'transport dependency has unapproved optionality or defaults'
-sed '/^ic-wire = /d; s/native-wire = .*/native-wire = []/' "$fixture/standard-manifest" > "$fixture/workspace/crates/ic-metrics/Cargo.toml"
-check_case missing-transport 'native-wire must select only the optional Wire dependency'
+sed '/^serde = /d' "$fixture/standard-manifest" > "$fixture/workspace/crates/ic-metrics/Cargo.toml"
+check_case missing-transport 'missing standard transport dependency'
 
 # Admit the actual target/feature contract, not merely dependency package names.
-for placement in unconditional wasm narrower serde-target; do
+reset_case
+sed "s/^\[dependencies\]/[target.'cfg(target_os = \"none\")'.dependencies]/" "$fixture/workspace/crates/ic-metrics/Cargo.toml" > "$fixture/candidate"
+mv "$fixture/candidate" "$fixture/workspace/crates/ic-metrics/Cargo.toml"
+check_case serde-target 'serde has an unapproved target placement'
+for change in missing std alloc; do
     reset_case
-    case "$placement" in
-        unconditional)
-            sed '/^\[target\./d; /^ic-wire = /d' "$fixture/workspace/crates/ic-metrics/Cargo.toml" > "$fixture/candidate"
-            printf '\n[dependencies.ic-wire]\npath = "../../../vendor/ic-wire"\noptional = true\ndefault-features = false\nfeatures = ["typescript"]\n' >> "$fixture/candidate" ;;
-        wasm)
-            sed 's/not(target_family = "wasm")/target_family = "wasm"/' "$fixture/workspace/crates/ic-metrics/Cargo.toml" > "$fixture/candidate" ;;
-        narrower)
-            sed 's/not(target_family = "wasm")/target_os = "linux"/' "$fixture/workspace/crates/ic-metrics/Cargo.toml" > "$fixture/candidate" ;;
-        serde-target)
-            sed "s/^\[dependencies\]/[target.'cfg(target_os = \"none\")'.dependencies]/" "$fixture/workspace/crates/ic-metrics/Cargo.toml" > "$fixture/candidate" ;;
-    esac
+    replacement='[]'
+    [[ "$change" == missing ]] || replacement="[\"derive\", \"$change\"]"
+    sed "s/features = \[\"derive\"\]/features = $replacement/" "$fixture/workspace/crates/ic-metrics/Cargo.toml" > "$fixture/candidate"
     mv "$fixture/candidate" "$fixture/workspace/crates/ic-metrics/Cargo.toml"
-    dep=ic-wire
-    [[ "$placement" != serde-target ]] || dep=serde
-    check_case "$placement" "$dep has an unapproved target placement"
+    check_case "serde-$change" 'serde has unapproved transport features'
 done
-for selection in serde:derive ic-wire:typescript; do
-    dep="${selection%:*}" feature="${selection#*:}"
-    for change in missing std alloc; do
-        reset_case
-        replacement='[]'
-        [[ "$change" == missing ]] || replacement="[\"$feature\", \"$change\"]"
-        sed "s/features = \[\"$feature\"\]/features = $replacement/" "$fixture/workspace/crates/ic-metrics/Cargo.toml" > "$fixture/candidate"
-        mv "$fixture/candidate" "$fixture/workspace/crates/ic-metrics/Cargo.toml"
-        check_case "$dep-$change" "$dep has unapproved transport features"
-    done
-done
-for edge in serde/std ic-wire/alloc; do
-    reset_case
-    sed "s|recording = \[\]|recording = [\"$edge\"]|" "$fixture/workspace/crates/ic-metrics/Cargo.toml" > "$fixture/candidate"
-    mv "$fixture/candidate" "$fixture/workspace/crates/ic-metrics/Cargo.toml"
-    check_case "forward-${edge%/*}" 'ic-metrics forwards dependency features'
-done
+reset_case
+sed 's|recording = \[\]|recording = ["serde/std"]|' "$fixture/workspace/crates/ic-metrics/Cargo.toml" > "$fixture/candidate"
+mv "$fixture/candidate" "$fixture/workspace/crates/ic-metrics/Cargo.toml"
+check_case forward-serde 'ic-metrics forwards dependency features'
 reset_case
 awk '{ print } /^recording =/ { print "combined = [\"recording\"]" }' "$fixture/workspace/crates/ic-metrics/Cargo.toml" > "$fixture/candidate"
 mv "$fixture/candidate" "$fixture/workspace/crates/ic-metrics/Cargo.toml"
 check_case local-feature-composition pass
 
 reset_case
-sed 's/default = \["native-wire"\]/default = []/' "$fixture/workspace/crates/ic-metrics/Cargo.toml" > "$fixture/candidate"
+sed 's/default = \[\]/default = ["recording"]/' "$fixture/workspace/crates/ic-metrics/Cargo.toml" > "$fixture/candidate"
 mv "$fixture/candidate" "$fixture/workspace/crates/ic-metrics/Cargo.toml"
 check_case default-metadata 'ic-metrics has unapproved default features'
+
+reset_case
+awk '{ print } /^recording =/ { print "native-wire = []" }' "$fixture/workspace/crates/ic-metrics/Cargo.toml" > "$fixture/candidate"
+mv "$fixture/candidate" "$fixture/workspace/crates/ic-metrics/Cargo.toml"
+check_case retired-feature 'ic-metrics declares the retired native-wire feature'
+
+# Wire is forbidden even as an inactive target/optional or development input.
+for table in dependencies dev-dependencies build-dependencies "target.'cfg(target_os = \"none\")'.dependencies"; do
+    reset_case
+    printf '\n[%s.ic-wire]\npath = "../../../vendor/ic-wire"\noptional = false\n' "$table" >> "$fixture/workspace/crates/ic-metrics/Cargo.toml"
+    check_case "wire-${table%%.*}" 'ic-metrics directly depends on Wire: ic-wire'
+done
+reset_case
+printf '\n[dependencies.ic-wire]\npath = "../../../vendor/ic-wire"\noptional = true\n' >> "$fixture/workspace/crates/ic-metrics/Cargo.toml"
+check_case wire-optional 'ic-metrics directly depends on Wire: ic-wire'
 
 add_declaration() {
     local owner="$1" selection="$2" table=dependencies extra=''

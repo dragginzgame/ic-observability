@@ -131,6 +131,6 @@ checkpoint cadence, lifecycle, retention scheduling and stable identity; linking
 the heap crate selects no persistence. Diagnostic logs must not be treated as
 evidence that a paid effect completed.
 
-The compiled [observability host example](https://github.com/dragginzgame/ic-observability/blob/main/qualification/wire-published/examples/observability-host.rs)
-shows an application counting Logging receipts and refusals with Metrics while
-keeping the libraries and their reset lifetimes independent.
+Applications may count Logging receipts and refusals with Metrics while keeping
+the libraries and their reset lifetimes independent. The host owns those counters
+and any report DTOs; linking Logging adds no Metrics or schema dependency.

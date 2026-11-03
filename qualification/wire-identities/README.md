@@ -1,46 +1,11 @@
-# Metrics identity compatibility qualification
+# Historical source Wire identity qualification
 
-This fixture composes the current Metrics source with the published Wire core,
-canonical Platform Types and Platform's principal facade. Three tests exercise
-real Principal/Account schema composition, exact bytes (including absent versus
-explicit-zero subaccounts), round trips and typed malformed/limit refusals.
+This fixture was retired by the [Metrics 0.28 boundary change](../../releases/metrics/0.28.md).
+Metrics no longer implements Wire metadata; services own report DTOs, schemas,
+generated clients and integration qualification. There is no current source-copy
+pairing target or additional Platform graph in this workspace.
 
-Run `bash scripts/ci/check-wire-identities.sh --prepare` to fetch the independently
-locked sources, then `make wire-identities-check`. Validation uses the root Rust
-floor on native and Wasm, preceded by strict Clippy on that same prepared
-compiler (Rust 1.99.1), with no implicit installation or dependency updates.
-The lock selects Wire/Derive 0.15.0 and the integration catalog selects the
-matching Types 0.17.0/facade 0.18.0 pair. The root Wire requirement is 0.15.0.
-The independently catalogued published consumer selects released Metrics
-0.27.2/Wire 0.15.0/Types 0.17.0/facade 0.18.0. Its graph remains frozen until
-another published pairing is deliberately selected there.
-See the [Metrics 0.27 migration](../../releases/metrics/0.27.md) for the native
-trait identity change and publication boundary.
-
-The script projects the root catalog and a verbatim Metrics source copy into a
-fresh workspace under target/qualification. Both local packages are members of
-that workspace, and the copied Metrics package is always version 0.0.0. This is
-source-alignment evidence, never publication or a registry-only consumer check.
-The copied source is not a second maintained implementation. The fixture's own
-Cargo.lock and integration catalog are its dependency owners; Platform cannot
-unify features with the arithmetic workspace or enter its production graph.
-Cargo.toml.in is a manifest template for that generated workspace, not an
-additional member of the production workspace.
-
-When deliberately updating Wire or the integration pairing, use
-`bash scripts/ci/check-wire-identities.sh --update-lockfile`, review the isolated
-lock diff, then prepare and run the check again. That explicit operation updates
-only this fixture lock. Ordinary checks use --locked --offline and refuse stale
-inputs. All generated sources, metadata and compiler outputs remain beneath
-this repository's target/; no sibling source or path dependency is selected.
-
-The separate [published consumer](../wire-published/README.md) reuses these
-assertions with an exact registry Metrics dependency and its own lock. Use that
-post-publication proof when registry acceptance, rather than source alignment,
-is required.
-
-Fixture manifests are rendered from parsed TOML fields; formatting does not
-control selection. Each attempt's `report/` contains the explicit catalog,
-generated manifest/lock, probe sources, compiler observation and metadata when
-available. CI uploads that curated directory; Cargo build caches remain outside
-it. Source-copy and frozen-registry consumers retain separate attempts and locks.
+Historical [Wire 0.15 qualification](../../docs/evidence/wire-0150.md) and
+[delivered patch receipts](../../docs/evidence/fixture-cleanup-delivery-20261102.md)
+retain their original Metrics/Wire/Types/Platform identities and results.
+They are historical evidence, not acceptance of the current source.

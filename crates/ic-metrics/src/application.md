@@ -337,30 +337,26 @@ live alongside the table in a consumer-defined struct inside the same window.
 
 ### Numeric transport
 
-Embed aggregates, counters, summaries and fixed-bound histograms directly in Serde/IC Wire
-reports. Serde is always available on native and Wasm targets. Default-enabled
-`native-wire` adds Wire TypeScript metadata on native
-hosts. Measurement arithmetic remains allocation-free; heap recording is opt-in.
-The 0.24 contract implements Wire 0.13's native metadata trait. Applications
-deriving Wire for reports containing Metrics values must select that same Wire
-line; earlier Wire traits cannot describe Wire 0.13 implementations. Serde record
-layouts remain unchanged. See the [native metadata migration guide](https://github.com/dragginzgame/ic-observability/blob/main/releases/metrics/0.24.md).
+Embed aggregates, counters, summaries and fixed-bound histograms in Serde records.
+Serde is always available on native and Wasm; measurement arithmetic remains
+allocation-free and heap recording is opt-in. Metrics owns no Wire metadata or
+frontend schema. Services project measurements into their own Wire-derived DTOs
+and qualify field order, bytes, generated clients and incoming numeric admission.
+The [0.28 migration guide](https://github.com/dragginzgame/ic-observability/blob/main/releases/metrics/0.28.md)
+describes removal of the earlier native metadata feature and trait implementations.
 
 ```rust
-# #[cfg(all(feature = "native-wire", not(target_family = "wasm")))]
-# {
-#[derive(serde::Serialize, serde::Deserialize, ic_wire::Wire)]
+#[derive(serde::Serialize, serde::Deserialize)]
 struct OwnerReport {
     instructions: ic_metrics::MeasurementAggregate,
     movements: ic_metrics::MeasurementCounter,
     ordered: ic_metrics::MeasurementSummary,
     distribution: ic_metrics::MeasurementHistogram<3>,
 }
-# }
 ```
 
-Migrate consumer numeric mirrors by replacing their fields with these canonical
-values, then regenerate browser contracts. The aggregate record carries `samples`,
+Use these canonical values for arithmetic and validated Serde. Service DTOs
+carry the report's independently owned schema. The aggregate record carries `samples`,
 `total`, optional `maximum`, `samples_overflowed` and `total_overflowed`; the scalar
 record carries `total` and `total_overflowed`. Totals stay `u128` (browser `bigint`).
 An empty maximum is `None`, while a measured zero is `Some(0)`. Means are derived
@@ -371,16 +367,14 @@ upper bounds, disjoint counts, overflow count, all overflow flags and an aggrega
 The histogram's const bound count fixes all three array lengths; decoding uses
 stack arrays and does not allocate a dynamic collection, including for bounds
 beyond Serde's built-in array-trait lengths. Bounds, count/total consistency and
-maximum placement are independently admitted after field decoding. Browser
-metadata describes that same fixed layout; browser schema checks alone do not
-replace Rust arithmetic admission.
+maximum placement are independently admitted after field decoding. Consumer
+schema checks do not replace Rust arithmetic admission.
 
-Use IC Wire's bounded native codecs with consumer-selected byte, allocation,
-node and depth limits. These fixed-size numeric records allocate no dynamic
-collections during Serde decoding. Generated browser metadata describes the
-serialized layout; Rust numeric admission remains authoritative on incoming
-reports. No historical consumer codec fallback is provided. This integration does
-not serialize windows, keyed tables or checked wide
+Consumers select codecs and byte, allocation, node and depth limits. These
+fixed-size numeric records allocate no dynamic collections during Serde decoding.
+Rust numeric admission remains authoritative on incoming reports. Service DTOs
+restore measurement state through the canonical constructors before recording
+or arithmetic. This transport does not serialize windows, keyed tables or checked wide
 accumulators. Those shapes require separately scoped transport contracts.
 
 Applications still own labels, units, grouping, replicated admission, limits,

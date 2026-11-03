@@ -17,12 +17,7 @@ serde_json.workspace = true
 all-features = true
 
 [features]
-default = ["native-wire"]
-native-wire = ["dep:ic-wire"]
 recording = []
-
-[target.'cfg(not(target_family = "wasm"))'.dependencies]
-ic-wire = { workspace = true, optional = true }
 
 [dependencies]
 serde.workspace = true

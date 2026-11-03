@@ -6,20 +6,19 @@ for maintainer commands.
 
 Measurement arithmetic with standard numeric transport and optional bounded heap recording.
 
-For allocation-free arithmetic and Serde without native Wire metadata:
+For allocation-free arithmetic and validated Serde:
 
 ```toml
 [dependencies]
-ic-metrics = { version = "0.24", default-features = false }
+ic-metrics = "0.28"
 ```
 
-Add `features = ["recording"]` for bounded heap recording, or `native-wire` for
-native schema generation. Default features select `native-wire`; Wasm still
-excludes that dependency. Neither feature adds persistence or endpoint integration.
-
-The compiled [observability host example](https://github.com/dragginzgame/ic-observability/blob/main/qualification/wire-published/examples/observability-host.rs)
-uses Metrics counters for Logging admission, truncation, eviction and refusal.
-The application owns both instances and their reset policy; the libraries remain independent.
+Add `features = ["recording"]` for bounded heap recording. The current source
+has no default features or Wire dependency. Services own native/browser schemas,
+codec selection and generated clients. See the
+[0.28 migration](https://github.com/dragginzgame/ic-observability/blob/main/releases/metrics/0.28.md)
+for removal of the earlier `native-wire` feature and schema implementations.
+Applications own Metrics/Logging instances and reset policy; the libraries remain independent.
 
 IC Metrics is a standalone application capability alongside IC Timers, IC Jobs
 and IC Auth. Applications and Canic compose these packages through explicit
@@ -27,10 +26,9 @@ dependencies. Metrics owns measurement arithmetic and optional bounded retention
 the consuming application owns platform reads, attribution, lifecycle and endpoints.
 
 IC Tooling owns Host, Build and Testkit. Those packages support development and
-qualification outside Metrics' production graphs. Numeric transport uses Serde
-and default-enabled native-only IC Wire metadata. Select `default-features = false`
-for arithmetic and Serde without Wire, or explicitly select `native-wire` for native
-metadata generation. IC Persistence's optional stable package consumes Memory and Storage;
+qualification outside Metrics' production graphs. Numeric transport uses Serde;
+no feature introduces a schema supplier, runtime or endpoint. IC Persistence's
+optional stable package consumes Memory and Storage;
 their stable-structures dependency is supplied through IC Platform. Metrics
 does not read platform counters or depend on Canic.
 
@@ -220,10 +218,13 @@ procedures live in the [task catalog](https://github.com/dragginzgame/ic-observa
 ## Releases and adoption
 
 The arithmetic package requires Rust 1.99.1 on native and Wasm. Consumers select
-an available published release and qualify their integration. The
+an available published release and qualify their integration. Metrics 0.28 removes
+Metrics-owned native schemas; service owners coordinate DTO adoption through the
+[migration guide](https://github.com/dragginzgame/ic-observability/blob/main/releases/metrics/0.28.md).
+The
 [0.24 native metadata contract](https://github.com/dragginzgame/ic-observability/blob/main/releases/metrics/0.24.md)
-requires Wire 0.13 for reports composing Metrics metadata. Select this graph after
-the corresponding Metrics release is published:
+describes the historical Wire 0.13 cohort. This example selects that older release line, whose compiler
+floor and dependencies can differ from the current checkout:
 
 ```toml
 [workspace.dependencies]
@@ -289,6 +290,6 @@ for composing the table and fixed measurement shapes in a reset window.
 ## Numeric transport
 
 Embed `MeasurementAggregate` and `MeasurementCounter` in Serde
-reports, alongside `MeasurementSummary` and `MeasurementHistogram<N>`, with
-native IC Wire browser metadata. Decoding uses canonical numeric
+reports, alongside `MeasurementSummary` and `MeasurementHistogram<N>`. Services
+own Wire and browser metadata. Decoding uses canonical numeric
 admission. See the [transport and migration guide](https://github.com/dragginzgame/ic-observability/blob/main/crates/ic-metrics/src/application.md#numeric-transport).
