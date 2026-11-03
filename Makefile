@@ -56,7 +56,7 @@ release-verify:
 
 release-prepare-version:
 	+@bash scripts/release/metadata.sh prepare
-	+$(MAKE) --no-print-directory package-check
+	+$(MAKE) --no-print-directory package-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=group
 
 release-commit-check:
 	+@bash scripts/release/metadata.sh commit-check
@@ -114,7 +114,8 @@ help:
 	@echo "Dependency declarations and boundary fixtures: production-dependencies-check"
 	@echo "Link Metrics arithmetic without an allocator: allocation-free-check"
 	@echo "Early setup: setup-smoke-check"
-	@echo "Minimal Serde execution and native/Wasm dependency graphs: metrics-profiles-check"
+	@echo "Minimal Serde and Metrics graphs: metrics-profiles-check; Logging graphs: logging-profiles-check"
+	@echo "Release group-plan scope and recovery fixtures: release-validation-check"
 	@echo "Tooling fixtures: hook-check, release-tools-check (no release Git effects)"
 	@echo "CI evidence fixture: ci-evidence-check (substitute action results and Make effects, no hosted run)"
 	@echo "Frozen evidence archive checksums (read-only): evidence-check"
@@ -122,13 +123,21 @@ help:
 	@echo "Recording tests: cargo test -p $(PACKAGE) --features recording --locked <test-name>"
 	@echo "Maintenance task definitions: tasks/README.md (adoption does not activate a schedule)"
 	@echo "Workspace gates cover Metrics and Logging; compiler admission: msrv"
-	@echo "Full release validation (or explicit check request): ci; msrv admits the same pinned compiler"
+	@echo "Full workspace validation (explicit check request): ci; releases select a complete group plan"
 
 .PHONY: package-check
 
 # Verify both workspace archives offline. No registry upload or version mutation.
+# Only the release adapter selects group scope. Ordinary commands and full CI
+# retain workspace scope, even when RELEASE_GROUP is inherited.
+override validation_cargo_selection = $(if $(filter group,$(OBSERVABILITY_RELEASE_VALIDATION_SCOPE)),-p ic-$(RELEASE_GROUP),--workspace)
+.PHONY: validation-scope-check release-validation-check logging-profiles-check
+validation-scope-check:
+	@case '$(OBSERVABILITY_RELEASE_VALIDATION_SCOPE)' in ''|workspace) ;; group) bash scripts/release/metadata.sh selection ;; *) exit 2 ;; esac
+	@if test -n "$${OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT:-}"; then perl scripts/release/validation.pl admit "$$OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT" '$(OBSERVABILITY_RELEASE_VALIDATION_SCOPE)' '$(RELEASE_GROUP)'; fi
+
 package-check:
-	+cargo package --workspace --all-features --locked --offline --allow-dirty
+	+cargo package $(validation_cargo_selection) --all-features --locked --offline --allow-dirty
 
 hook-check:
 	bash scripts/dev/test-format-hook.sh
@@ -151,12 +160,12 @@ check-wasm:
 	+cargo check --workspace --all-features --locked --target wasm32-unknown-unknown
 
 clippy:
-	+cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
-	+cargo clippy --workspace --lib --all-features --locked --target wasm32-unknown-unknown -- -D warnings
+	+cargo clippy $(validation_cargo_selection) --all-targets --all-features --locked -- -D warnings
+	+cargo clippy $(validation_cargo_selection) --lib --all-features --locked --target wasm32-unknown-unknown -- -D warnings
 
 docs-check:
-	+RUSTDOCFLAGS="-D warnings" cargo doc --workspace --all-features --locked --no-deps
-	+RUSTDOCFLAGS="-D warnings" cargo doc --workspace --all-features --locked --no-deps --target wasm32-unknown-unknown
+	+RUSTDOCFLAGS="-D warnings" cargo doc $(validation_cargo_selection) --all-features --locked --no-deps
+	+RUSTDOCFLAGS="-D warnings" cargo doc $(validation_cargo_selection) --all-features --locked --no-deps --target wasm32-unknown-unknown
 
 check-doc-links:
 	perl scripts/ci/check-documentation-links.pl --root "$(CURDIR)" \
@@ -168,7 +177,7 @@ check-doc-links:
 		crates/ic-logging/README.md crates/ic-logging/CHANGELOG.md
 
 test:
-	+cargo test --workspace --all-features --locked
+	+cargo test $(validation_cargo_selection) --all-features --locked
 
 
 ci-selection-check:
@@ -178,8 +187,14 @@ package-doc-links-check:
 	perl scripts/ci/check-package-doc-links.pl
 
 metrics-profiles-check:
-	perl scripts/ci/check-metrics-profiles.pl
+	perl scripts/ci/check-metrics-profiles.pl metrics
 	+cargo test -p ic-metrics --lib --no-default-features --locked --offline transport::tests
+
+logging-profiles-check:
+	perl scripts/ci/check-metrics-profiles.pl logging
+
+release-validation-check:
+	bash scripts/release/test-validation-plan.sh
 
 compiler-check:
 	+bash scripts/ci/check-rust-compiler.sh
@@ -209,25 +224,28 @@ release-tools-check:
 # Keep order explicit: stop on a failed gate, including any Clippy warning.
 # Clippy checks all native targets and Wasm libraries; standalone checks stay focused.
 ci:
-	+$(MAKE) --no-print-directory compiler-check
-	+$(MAKE) --no-print-directory compiler-policy-check
-	+$(MAKE) --no-print-directory shared-tooling-check
-	+$(MAKE) --no-print-directory check-doc-links
-	+$(MAKE) --no-print-directory ci-selection-check
-	+$(MAKE) --no-print-directory evidence-check
-	+$(MAKE) --no-print-directory tools-check
-	+$(MAKE) --no-print-directory check-pins
-	+$(MAKE) --no-print-directory fmt-check
-	+$(MAKE) --no-print-directory clippy
-	+$(MAKE) --no-print-directory production-dependencies-check
-	+$(MAKE) --no-print-directory metrics-profiles-check
-	+$(MAKE) --no-print-directory allocation-free-check
-	+$(MAKE) --no-print-directory ci-evidence-check
-	+$(MAKE) --no-print-directory release-tools-check
-	+$(MAKE) --no-print-directory docs-check
-	+$(MAKE) --no-print-directory test
-	+$(MAKE) --no-print-directory package-check
-	+$(MAKE) --no-print-directory package-doc-links-check
+	+$(MAKE) --no-print-directory compiler-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
+	+$(MAKE) --no-print-directory compiler-policy-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
+	+$(MAKE) --no-print-directory shared-tooling-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
+	+$(MAKE) --no-print-directory check-doc-links OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
+	+$(MAKE) --no-print-directory ci-selection-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
+	+$(MAKE) --no-print-directory release-validation-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
+	+$(MAKE) --no-print-directory evidence-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
+	+$(MAKE) --no-print-directory tools-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
+	+$(MAKE) --no-print-directory check-pins OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
+	+$(MAKE) --no-print-directory fmt-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
+	+$(MAKE) --no-print-directory clippy OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
+	+$(MAKE) --no-print-directory production-dependencies-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
+	+$(MAKE) --no-print-directory metrics-profiles-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
+	+$(MAKE) --no-print-directory logging-profiles-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
+	+$(MAKE) --no-print-directory allocation-free-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
+	+$(MAKE) --no-print-directory ci-evidence-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
+	+$(MAKE) --no-print-directory release-tools-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
+	+$(MAKE) --no-print-directory docs-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
+	+$(MAKE) --no-print-directory test OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
+	+$(MAKE) --no-print-directory package-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
+	+$(MAKE) --no-print-directory package-doc-links-check OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace
 
 # Make admits Cargo recipes; script entrypoints own their compiler admission.
-check check-wasm clippy docs-check test package-check metrics-profiles-check production-dependencies-check publication-source-check: | compiler-check
+clippy docs-check test package-check: | validation-scope-check
+check check-wasm clippy docs-check test package-check metrics-profiles-check logging-profiles-check production-dependencies-check publication-source-check: | compiler-check

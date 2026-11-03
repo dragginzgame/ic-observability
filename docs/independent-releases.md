@@ -1,7 +1,7 @@
 # Independent Metrics and Logging releases
 
 The two libraries remain in one development workspace and share the catalog,
-lockfile, compiler policy and complete release validation. They have no dependency
+lockfile, compiler policy and repository-wide CI. They have no dependency
 on one another. [The declared policy](../ci/cargo-release-groups.json) and root
 Cargo.toml dependency catalog identify every member:
 
@@ -70,17 +70,35 @@ identity through Shared's observation/provenance helpers. If readback fails, use
 `verify-publication` to reconcile without repeating the upload. No automatic
 retry, release or version change is part of either verification command.
 
-Preflight admits prepared tools. Release validation runs the complete `ci`
-and `msrv` gates. Metrics supplies arithmetic and validated Serde on native/Wasm,
-with optional `recording`; services own Wire/TypeScript qualification. Logging
-remains dependency-free. Group selection
-does not narrow these obligations or establish native/IC runtime acceptance.
+Preflight admits prepared tools. Release validation adopts Shared Tooling's
+[group-plan contract](release-group-validation.md). The consumer-owned
+[roster](../ci/release-validation.json) matches the full `ci` recipe exactly;
+compiler admission is the same check exposed by `msrv`, without a second compiler
+matrix. Repository CI still covers both libraries on all three required hosts.
+
+The selector compares the entire proposed source with the annotated ancestor
+tag for the selected group's current version. Only implementation, examples,
+tests and documentation confined to that independent library can narrow scope.
+The other package has no dependency edge, shared public identity, runtime,
+generated client or storage integration with it. Common declaration guards still
+admit that architecture. Metrics keeps all-feature native/Wasm lint, Rustdoc,
+tests and archives, minimal Serde/feature graphs and the allocator-free Wasm link.
+Logging keeps the same package gates and its dependency-free native/Wasm graphs.
+Common tools, policies, formatting, documentation, evidence and release fixtures
+remain required; package-document link checks still inspect both archives.
+
+Manifests/features, Cargo.lock, compiler policy, shared code, CI/release machinery,
+other-group changes and unknown paths select the complete workspace gate. A
+missing, lightweight or nonancestor baseline also broadens scope. The adoption
+itself therefore requires full validation at release time. Group selection does
+not establish downstream consumer or native/IC runtime acceptance. Services
+retain their own Wire/report DTO qualification; Persistence retains stable adapters.
 
 ## Plans, transactions and recovery
 
 The existing shared runner and group-capable editor own metadata rendering,
 selected-package lock updates, staging, commits, tags, push and resume. The local
-adapter supplies group policy, existing tool preparation, full validation and
+adapter supplies group policy, existing tool preparation, planned validation and
 source/receipt admission. There is no second release implementation.
 
 Plans always include Cargo.toml and Cargo.lock. Each group additionally selects
@@ -94,7 +112,15 @@ New tags are metrics-vX.Y.Z and logging-vX.Y.Z; subjects are Release metrics X.Y
 and Release logging X.Y.Z. The shared runner journals GROUP-X.Y.Z.plan under Git's
 release-state directory, with selected files alongside it. The adapter keeps its
 validated/prepared receipts in GROUP-X.Y.Z/ and binds source, destination, group,
-policy blob and prepared bytes. One repository-wide lock protects the shared lock.
+policy blob and prepared bytes. Each attempt retains its canonical plan, baseline,
+host/compiler/build configuration, complete source-input checkpoint, stage
+decisions, raw logs and timings beneath `target/release-validation/`. A versioned
+consumer proof requires every selected stage to pass with before/after input
+observations. The validated receipt binds that proof. Resume re-admits the same
+selection and evidence; missing, altered, interrupted or failed evidence refuses.
+No check-result reuse or package-version projection is enabled. Retain the
+attempt directory for recovery; deleting `target/` also removes that evidence.
+One repository-wide lock protects the shared lock.
 Renderer failure restores original selected files; wrong-group or altered
 receipts cannot resume. Older receipts remain archived rather than overwritten.
 

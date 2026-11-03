@@ -1,5 +1,32 @@
 # Current handoff — 2026-11-03
 
+**Current work: Shared Tooling 0.28.0 and release-group validation adopted locally.**
+The snapshot selects 145 files from committed revision
+`70939d3b6ca335cb718363b47f15cc616c3bed1c`; the producer ledger is Unreleased.
+[Adoption evidence](../evidence/shared-tooling-0280-groups-20261103.md) describes
+the consumer mapping and qualification. Managed tools were explicitly refreshed;
+offline checks pass. No application dependency or package version was advanced.
+An unrelated comment-only change to root Cargo.toml group headings was preserved.
+
+Confined library changes select that release group's package checks and dedicated
+native/Wasm graphs. Shared/manifests/locks, another group, unknown inputs or missing
+baseline history select the full roster. The complete baseline-to-source diff,
+host/compiler/configuration and every source input are retained. A versioned
+successful-execution proof is bound to the release receipt and re-admitted on
+prepare/resume. Old receipts keep their original meaning. No stage reuse or
+version projection is enabled. The adoption itself selects full scope at release.
+Repository CI remains full on Linux and both macOS hosts.
+
+Focused real package lint/docs/tests/archives and separate production graphs pass
+on Linux, Rust 1.99.1. Scope/failure/drift/recovery fixtures and actual Make routing
+pass. Integrated disposable release-admission qualification passes both groups,
+including rollback, tamper rejection, resume and unrelated identity preservation.
+No hosted/macOS or full-suite result is claimed. Pending notes are Metrics 0.28.1
+and Logging 0.24.4. Deployment is now requested from the normal checkout on
+`main`. Prepare the scoped source commit, then obtain the explicitly required
+approval for direct delivery to `origin/main` before invoking the release commands.
+Publish each group immediately after its own release/tag, with verified readback.
+
 **Metrics 0.28.0 is released on GitHub and published on crates.io.**
 [Verified delivery](../evidence/metrics-0280-delivery-20261103.md) records the full
 release gate, source/tag, official checksum and independent archive/consumer proof.
@@ -55,7 +82,7 @@ guidance was reconciled with this cut and the Wire lock refresh is superseded.
 No artifact cleanup ran. The receipt/handoff follow-up needs no product release.
 
 The earlier [Metrics 0.27.2 / Logging 0.24.3 delivery](../evidence/fixture-cleanup-delivery-20261102.md)
-retains its independent package identities and checksums. Shared Tooling remains
-0.27.26 at `fd9390ef797bfad8aaa05fdba8fcddec753b572c` (142 files), reviewed from
-an Unreleased producer ledger; see [adoption evidence](../evidence/shared-tooling-02726.md).
+retains its independent package identities and checksums. The earlier
+[Shared Tooling 0.27.26 adoption](../evidence/shared-tooling-02726.md)
+keeps its original evidence and scope.
 Historical Metrics 0.24.2 remains Git-only / unuploaded. Published history is intact.

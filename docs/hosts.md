@@ -37,7 +37,7 @@ collection or turn a failed check into a successful one.
 
 ## Prerequisites and focused checks
 
-After adopting Shared Tooling 0.27.26, rerun `make install-tools`, then
+After adopting Shared Tooling 0.28.0, rerun `make install-tools`, then
 `make tools-check`: the changed build-helper policy participates in tool identity.
 Linux fingerprints retain native tool/header/library providers while excluding
 unrelated applications. Successful tool compilation scratch is discarded after
@@ -134,7 +134,7 @@ libraries; select direct Cargo commands when only one package or test is affecte
 | Logging | `cargo test -p ic-logging --lib --locked`; `cargo test -p ic-logging --doc --locked`; `cargo clippy -p ic-logging --lib --tests --examples --locked -- -D warnings` |
 | Validated numeric transport | `cargo test -p ic-metrics --lib --locked --offline transport::tests` |
 | Allocation-free arithmetic | `cargo test -p ic-metrics --lib --no-default-features --locked ratio::tests`; native/Wasm graphs exclude Wire and Platform under every feature selection |
-| Minimal Serde and feature graphs | `make metrics-profiles-check`; runs Serde round trips/refusals, checks Metrics' native minimal, recording, default and all-feature Wasm normal/build closures, and checks dependency-free Logging once on native and Wasm |
+| Minimal Serde and feature graphs | `make metrics-profiles-check`; runs Serde round trips/refusals and Metrics' native minimal, recording, default and all-feature Wasm normal/build closures. `make logging-profiles-check` independently checks dependency-free Logging on native and Wasm |
 | Log export recipe | `cargo test -p ic-logging --example byte-budgeted-export --locked --offline`; execute the walkthrough with `cargo run -p ic-logging --example byte-budgeted-export --locked --offline` |
 | Recording model | `cargo test -p ic-metrics --lib --no-default-features --features recording --locked --offline recording::tests::model` |
 | Logging operation model | `cargo test -p ic-logging --lib --locked --offline log::tests::mixed`; exercises journal-based state, paging and visitor stops across admission, retention and restoration |
@@ -299,7 +299,9 @@ retained consumers' real supplier versions while preserving other catalog fields
 Focused checks for changed behavior and directly affected callers are sufficient
 for ordinary handoff under [the validation policy](../DRAGGINZGAME.md#validation-and-evidence).
 Run full local suites only for an explicitly authorized release or an explicit
-request for those checks. The full gate is `make ci`, then workspace-native/Wasm `make msrv`; reuse passing evidence only for unchanged inputs. Full CI
+request for those checks. The full gate is `make ci`; `make msrv` is the same
+compiler admission already included there. Reuse passing evidence only for
+unchanged inputs. Full CI
 admits tools, pins and formatting before the native/Wasm Clippy gate. Clippy
 denies warnings and runs before test suites, documentation builds and dependency
 qualification fixtures. The complete gate checks both workspace libraries' builds,
@@ -322,7 +324,10 @@ Select `RELEASE_GROUP=metrics` or `RELEASE_GROUP=logging` explicitly; see
 Use `make release-resume RELEASE_GROUP=logging VERSION=X.Y.Z` for recovery of a
 specific saved Logging attempt.
 Standard release preflight first runs `setup-smoke-check`. Release validation
-runs the complete `ci msrv` gates. Neither group requires Node/npm tooling.
+selects the qualified [group plan](independent-releases.md), with full workspace
+fallback for shared or uncertain changes. Package Cargo recipes use the admitted
+scope; plain `make ci` forces workspace scope even through recursive Make
+overrides. Neither group requires Node/npm tooling.
 The Make smoke parses the actual consumer and tests exported publication-mode
 overrides, then deliberately stops before metadata, compiler or upload recipes.
 Native CI runs it before tool installation on all three declared hosts, including

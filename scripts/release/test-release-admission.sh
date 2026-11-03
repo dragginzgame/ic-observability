@@ -5,6 +5,8 @@ set -euo pipefail
 unset MAKEFLAGS MFLAGS MAKEOVERRIDES GNUMAKEFLAGS MAKEFILES RELEASE_COMMIT
 unset VALIDATION_REPOSITORY_ROOT VALIDATION_RUNNER_SNAPSHOT_PATH VALIDATION_LOG_DIR
 unset VALIDATION_FAILURE_LOG_DIR GITHUB_STEP_SUMMARY RELEASE_MAKE
+unset VALIDATION_INPUT_ROOT VALIDATION_INPUT_BASELINE
+unset OBSERVABILITY_RELEASE_VALIDATION_SCOPE OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT
 root="${BASH_SOURCE[0]}"
 [[ "$root" == /* ]] || root="$PWD/$root"
 root="$(cd -P "${root%/*}/../.." && printf '%s/.' "$PWD")"
@@ -51,17 +53,20 @@ cat >> Makefile <<'MAKE'
 include fixture-gates.mk
 MAKE
 cat > fixture-gates.mk <<'MAKE'
-.PHONY: install-rust-tools rust-tools-check install-release-editor release-editor-check ci msrv package-check clippy
+.PHONY: install-rust-tools rust-tools-check install-release-editor release-editor-check compiler-check compiler-policy-check package-check clippy
 install-rust-tools rust-tools-check install-release-editor:
 	@test ! -e .git/fail-tools
 release-editor-check:
 	@if test -e .git/broken-editor; then printf '%s\n' "$$FIXTURE_BROKEN_EDITOR"; else printf '%s\n' "$$FIXTURE_RELEASE_EDITOR"; fi
-ci:
-	@test ! -e .git/fail-validation
-	@test -z "$${IC_METRICS_RELEASE_CACHE_PREPARE+x}" && test "$${CARGO_NET_OFFLINE:-false}" = true
-	@printf 'ci\n' >> .git/gates
-	@if test -e .git/drift-input; then printf '\n# fixture drift\n' >> Cargo.lock; fi
-msrv:
+$(filter-out compiler-check compiler-policy-check package-check clippy,$(shell jq -r '.stages[]' ci/release-validation.json)):
+	@:
+compiler-check:
+	@if test -z "$${OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT:-}"; then bash scripts/ci/check-rust-compiler.sh; else \
+	    test ! -e .git/fail-validation && \
+	    test -z "$${IC_METRICS_RELEASE_CACHE_PREPARE+x}" && test "$${CARGO_NET_OFFLINE:-false}" = true && \
+	    printf 'ci\n' >> .git/gates && \
+	    { test ! -e .git/drift-input || printf '\n# fixture drift\n' >> Cargo.lock; }; fi
+compiler-policy-check:
 	@test ! -e .git/fail-msrv
 	@printf 'msrv\n' >> .git/gates
 package-check:
@@ -254,6 +259,11 @@ for group in metrics logging; do
     printf 'tampered\n' > "$receipt"
     if make release-resume "VERSION=$candidate" > "$fixture/$group-tamper.log" 2>&1; then exit 1; fi
     cp "$fixture/$group-receipt" "$receipt"
+    validation_attempt="$(cat ".git/release-state/$group-$candidate/validation-attempt")"
+    cp "$validation_attempt/proof.json" "$fixture/$group-proof"
+    printf 'tampered\n' > "$validation_attempt/proof.json"
+    if make release-resume "VERSION=$candidate" > "$fixture/$group-proof-tamper.log" 2>&1; then exit 1; fi
+    cp "$fixture/$group-proof" "$validation_attempt/proof.json"
     if RELEASE_GROUP="$other" make release-resume "VERSION=$candidate" > "$fixture/$group-wrong-group.log" 2>&1; then exit 1; fi
     rm .git/hold-push
     make release-resume "VERSION=$candidate" > "$fixture/$group-resume.log" 2>&1

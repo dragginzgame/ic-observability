@@ -170,7 +170,7 @@ for failure in none metadata package; do
     if [[ "$failure" == none ]]; then [[ "$status" == 0 ]] || exit 1; else [[ "$status" != 0 ]] || exit 1; fi
     printf 'metadata prepare\n' > "$fixture/expected"
     if [[ "$failure" != metadata ]]; then
-        printf '%s\n' package --workspace --all-features --locked --offline --allow-dirty >> "$fixture/expected"
+        printf '%s\n' package -p ic-metrics --all-features --locked --offline --allow-dirty >> "$fixture/expected"
     fi
     cmp "$fixture/expected" "$EVENTS"
 done
@@ -184,12 +184,34 @@ PATH="$fixture/bin:$PATH" REQUIRE_JOBSERVER=1 CLIPPY_FAILURE=native "$real_make"
 printf '%s\n' clippy --workspace --all-targets --all-features --locked -- -D warnings > "$fixture/expected"
 cmp "$fixture/expected" "$EVENTS"
 
+# The same Cargo recipes select either independent package under group scope;
+# full CI remains workspace-scoped. Inspect actual dispatch, including Wasm.
+for group in metrics logging; do
+    for target in clippy docs-check test package-check; do
+        : > "$EVENTS"
+        PATH="$fixture/bin:$PATH" REQUIRE_JOBSERVER=1 RELEASE_GROUP="$group" \
+            "$real_make" "${parallel[@]}" --no-print-directory -f "$root/Makefile" \
+            "$target" OBSERVABILITY_RELEASE_VALIDATION_SCOPE=group > "$fixture/output" 2>&1
+        case "$target" in
+            clippy)
+                printf '%s\n' clippy -p "ic-$group" --all-targets --all-features --locked -- -D warnings \
+                    clippy -p "ic-$group" --lib --all-features --locked --target wasm32-unknown-unknown -- -D warnings > "$fixture/expected" ;;
+            docs-check)
+                printf '%s\n' doc -p "ic-$group" --all-features --locked --no-deps \
+                    doc -p "ic-$group" --all-features --locked --no-deps --target wasm32-unknown-unknown > "$fixture/expected" ;;
+            test) printf '%s\n' test -p "ic-$group" --all-features --locked > "$fixture/expected" ;;
+            package-check) printf '%s\n' package -p "ic-$group" --all-features --locked --offline --allow-dirty > "$fixture/expected" ;;
+        esac
+        cmp "$fixture/expected" "$EVENTS"
+    done
+done
+
 # CI dispatch must stop at either Clippy failure before expensive suites. Only
 # recursive gates are substituted; the real sequential CI recipe runs under -j.
 cat > "$fixture/gate-make" <<'MAKE'
 #!/usr/bin/env bash
 set -euo pipefail
-[[ $# == 2 && "$1" == --no-print-directory ]] || exit 91
+[[ $# == 3 && "$1" == --no-print-directory && "$3" == OBSERVABILITY_RELEASE_VALIDATION_SCOPE=workspace ]] || exit 91
 printf '%s\n' "$2" >> "$EVENTS"
 if [[ "$2" == clippy && "${FAIL_CI_CLIPPY:-0}" == 1 ]]; then exit 37; fi
 MAKE
@@ -200,9 +222,9 @@ for fail in 0 1; do
     FAIL_CI_CLIPPY="$fail" "$real_make" "${parallel[@]}" --no-print-directory \
         -f "$root/Makefile" ci "MAKE=$fixture/gate-make" > "$fixture/output" 2>&1 || status=$?
     if [[ "$fail" == 0 ]]; then [[ "$status" == 0 ]] || exit 1; else [[ "$status" == 2 ]] || exit 1; fi
-    printf '%s\n' compiler-check compiler-policy-check shared-tooling-check check-doc-links ci-selection-check evidence-check tools-check check-pins fmt-check clippy > "$fixture/expected"
+    printf '%s\n' compiler-check compiler-policy-check shared-tooling-check check-doc-links ci-selection-check release-validation-check evidence-check tools-check check-pins fmt-check clippy > "$fixture/expected"
     if [[ "$fail" == 0 ]]; then
-        printf '%s\n' production-dependencies-check metrics-profiles-check allocation-free-check ci-evidence-check release-tools-check docs-check test package-check package-doc-links-check >> "$fixture/expected"
+        printf '%s\n' production-dependencies-check metrics-profiles-check logging-profiles-check allocation-free-check ci-evidence-check release-tools-check docs-check test package-check package-doc-links-check >> "$fixture/expected"
     fi
     cmp "$fixture/expected" "$EVENTS"
 done

@@ -6,6 +6,15 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.24.4]
+
+### 🛠️ Tooling
+
+- Adopt Shared Tooling 0.28.0 and independent release-validation plans. Confined
+  Logging changes retain its native/Wasm package and dependency checks; shared or
+  uncertain changes run the workspace gate. Preserve complete repository CI and
+  require retained plan evidence for release recovery.
+
 ## [0.24.3] - 2026-11-02
 
 ### 🧹 Cleanup

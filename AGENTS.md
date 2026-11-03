@@ -88,7 +88,10 @@ consumer-contract or persistence-boundary changes.
 - After Rust edits, run `make fmt`, then selected package checks or named tests.
   Focused commands and host qualification are in [docs/hosts.md](docs/hosts.md).
   Full `make ci` and `make msrv` are release gates or explicit
-  check requests. Follow [the validation policy](DRAGGINZGAME.md#validation-and-evidence)
+  check requests. Releases select the qualified
+  [group validation plan](docs/independent-releases.md); shared or uncertain inputs
+  retain the full roster. Repository CI still covers both packages.
+  Follow [the validation policy](DRAGGINZGAME.md#validation-and-evidence)
   for batched focused checks and evidence reuse. Documentation-only work needs
   link, consistency and diff checks.
 - Fix warnings in the selected Clippy gate before later validation.

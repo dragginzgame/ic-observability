@@ -49,8 +49,19 @@ state="$(git rev-parse --git-path release-state)/$RELEASE_GROUP-$RELEASE_VERSION
 metadata() {
     bash "$root/scripts/ci/cargo-release-metadata.sh" "$1" "$primary" ${2:+"$2"}
 }
+validated_identity() {
+    release_receipt_identity || return
+    printf 'group-validation:1\n%s\n' "$attempt" || return
+    bash "$root/scripts/ci/verify-file-checksum.sh" --print sha256 "$attempt/proof.json"
+}
+validated() {
+    [[ -f "$state/validation-attempt" && ! -L "$state/validation-attempt" ]]
+    attempt="$(cat "$state/validation-attempt")"
+    release_receipt_check "$state/validated" validated_identity
+    perl "$root/scripts/release/validation.pl" check "$attempt"
+}
 prepared() {
-    release_receipt_check "$state/validated" release_receipt_identity
+    validated
     metadata check --manifest-order-grouped
     release_receipt_check "$state/prepared" release_receipt_payload "${RELEASE_COMMIT:-}" "${files[@]}"
 }
@@ -67,15 +78,22 @@ case "$operation" in
         ;;
     verify)
         mkdir -p "$state"
-        release_receipt_archive "$state/previous-attempt.XXXXXX" "$state/validated" "$state/prepared"
+        release_receipt_archive "$state/previous-attempt.XXXXXX" "$state/validated" "$state/prepared" "$state/validation-attempt"
+        mkdir -p target/release-validation
+        attempt="$(mktemp -d "target/release-validation/$RELEASE_GROUP-$RELEASE_VERSION.XXXXXX")"
+        perl "$root/scripts/release/validation.pl" select "$attempt"
+        release_receipt_write "$state/validation-attempt" printf '%s\n' "$attempt"
+        OBSERVABILITY_RELEASE_VALIDATION_SCOPE="$(jq -er .scope "$attempt/plan.json")" \
+            OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT="$attempt" VALIDATION_LOG_DIR="$attempt/logs" \
         VALIDATION_FAILURE_LOG_DIR="$(git rev-parse --git-path release-state)/validation-failures" \
             CARGO_NET_OFFLINE=true bash "$root/scripts/ci/run-validation-targets.sh" \
-            --fail-fast --input Cargo.toml --input Cargo.lock ci msrv
+            --plan "$attempt/plan.json"
         bash "$root/scripts/ci/check-release-source.sh"
-        release_receipt_write "$state/validated" release_receipt_identity
+        perl "$root/scripts/release/validation.pl" seal "$attempt"
+        release_receipt_write "$state/validated" validated_identity
         ;;
     prepare)
-        release_receipt_check "$state/validated" release_receipt_identity
+        validated
         bash "$root/scripts/ci/check-release-source.sh"
         CARGO_RELEASE_METADATA_EDITOR="$("${RELEASE_MAKE:-make}" --no-print-directory -s release-editor-check)"
         export CARGO_RELEASE_METADATA_EDITOR

@@ -5,7 +5,9 @@ use warnings;
 
 # Resolved normal/build closures complement declaration admission. Development
 # dependencies must not enter the measurement production graph.
-@ARGV == 0 or die "usage: check-metrics-profiles.pl\n";
+my $group = shift // 'all';
+@ARGV == 0 && $group =~ /\A(?:all|metrics|logging)\z/
+    or die "usage: check-metrics-profiles.pl [metrics|logging]\n";
 $ENV{RUSTUP_AUTO_INSTALL} = '0';
 
 sub observe {
@@ -26,7 +28,7 @@ my @profiles = (
     ['wasm-all-features', 'wasm32-unknown-unknown', '--all-features'],
 );
 
-for my $profile (@profiles) {
+for my $profile ($group eq 'logging' ? () : @profiles) {
     my ($name, $target, @features) = @$profile;
     system($^X,'scripts/ci/check-cargo-graph.pl','--consumer','.',
         '--package','ic-metrics','--target',$target,'--edges','normal,build',@features,
@@ -37,7 +39,7 @@ for my $profile (@profiles) {
 
 # Logging has no feature matrix. Declaration admission independently refuses
 # every dependency; observe its resolved closure once per supported target.
-for my $target ($host, 'wasm32-unknown-unknown') {
+for my $target ($group eq 'metrics' ? () : ($host, 'wasm32-unknown-unknown')) {
     system($^X,'scripts/ci/check-cargo-graph.pl','--consumer','.',
         '--package','ic-logging','--target',$target,'--edges','normal,build',
         '--all-features','--forbid-pattern','^(?!ic-logging$)') == 0

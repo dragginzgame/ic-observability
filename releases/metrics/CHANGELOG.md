@@ -5,6 +5,15 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.28.1]
+
+### 🛠️ Tooling
+
+- Adopt Shared Tooling 0.28.0 and independent release-validation plans. Confined
+  Metrics changes retain its complete package checks; shared or uncertain changes
+  run the workspace gate. Bind scope decisions and successful checks to retained
+  recovery evidence while preserving full repository CI.
+
 ## [0.28.0] - 2026-11-03
 
 ### ⚠️ Breaking
