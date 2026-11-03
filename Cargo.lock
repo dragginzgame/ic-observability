@@ -14,7 +14,7 @@ version = "0.24.3"
 
 [[package]]
 name = "ic-metrics"
-version = "0.27.2"
+version = "0.28.0"
 dependencies = [
  "num-bigint",
  "serde",
