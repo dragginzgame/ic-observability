@@ -1,12 +1,25 @@
 # Current handoff — 2026-11-03
 
-**Current work: Shared Tooling 0.28.0 and release-group validation adopted locally.**
+**Metrics 0.28.1 and Logging 0.24.4 are released and verified on crates.io.**
+[Delivery evidence](../evidence/shared-tooling-0280-delivery-20261103.md) records
+the approved direct delivery from this normal checkout to `origin/main`, both
+annotated tags, official checksums and exact maintained-file comparisons.
+Source preparation: `973ccdfe849fc499f17988b1e296584393d2897a`.
+Metrics release/tag: `3b4c4c353dff8d7746016ceb03091c6b6e611b38`, `metrics-v0.28.1`.
+Logging release/tag: `97c274403b07c993a251adad85848f463c5cc805`, `logging-v0.24.4`.
+Each group changed only its selected four release metadata files and preserved
+the other group's identity/ledger. Both publication dry runs passed; each package
+was uploaded once and verified before moving to the next group. Do not replay
+uploads; `make verify-publication RELEASE_GROUP=...` is readback-only.
+
+**Shared Tooling 0.28.0 and release-group validation are delivered.**
 The snapshot selects 145 files from committed revision
 `70939d3b6ca335cb718363b47f15cc616c3bed1c`; the producer ledger is Unreleased.
 [Adoption evidence](../evidence/shared-tooling-0280-groups-20261103.md) describes
 the consumer mapping and qualification. Managed tools were explicitly refreshed;
-offline checks pass. No application dependency or package version was advanced.
-An unrelated comment-only change to root Cargo.toml group headings was preserved.
+offline checks pass. Application dependency selections and Rust source are unchanged.
+The unrelated root Cargo.toml comment edit is restored independently of release
+commits, with safety copies in the local stash and delivery evidence directory.
 
 Confined library changes select that release group's package checks and dedicated
 native/Wasm graphs. Shared/manifests/locks, another group, unknown inputs or missing
@@ -17,22 +30,19 @@ prepare/resume. Old receipts keep their original meaning. No stage reuse or
 version projection is enabled. The adoption itself selects full scope at release.
 Repository CI remains full on Linux and both macOS hosts.
 
-Focused real package lint/docs/tests/archives and separate production graphs pass
-on Linux, Rust 1.99.1. Scope/failure/drift/recovery fixtures and actual Make routing
-pass. Integrated disposable release-admission qualification passes both groups,
-including rollback, tamper rejection, resume and unrelated identity preservation.
-No hosted/macOS or full-suite result is claimed. Pending notes are Metrics 0.28.1
-and Logging 0.24.4. Deployment is now requested from the normal checkout on
-`main`. Prepare the scoped source commit, then obtain the explicitly required
-approval for direct delivery to `origin/main` before invoking the release commands.
-Publish each group immediately after its own release/tag, with verified readback.
+Both fresh workspace-scope release plans passed all 21 stages on Linux,
+Rust 1.99.1, including native/Wasm lint, production graphs, allocator-free linking,
+documentation, tests, archives and real metadata/rollback/resume fixtures.
+Summed stage durations were 902 seconds for Metrics and 913 for Logging.
+Scope/failure/drift/recovery checks remain qualified. Hosted CI is asynchronous;
+no new hosted/macOS or IC runtime acceptance is claimed. No delivery blocker remains.
 
-**Metrics 0.28.0 is released on GitHub and published on crates.io.**
+**Earlier Metrics 0.28.0 qualification remains retained.**
 [Verified delivery](../evidence/metrics-0280-delivery-20261103.md) records the full
 release gate, source/tag, official checksum and independent archive/consumer proof.
 [#128 — Remove Metrics' Wire metadata dependency](https://github.com/dragginzgame/ic-observability/issues/128)
-is closed as completed after delivery. Logging remains 0.24.3; its implementation,
-manifest and ledger are unchanged. No delivery blocker remains.
+was closed as completed after that delivery. The current patch batch changes
+release tooling and package identities, with no further library contract change.
 
 Metrics owns measurement arithmetic, state validation and validated Serde.
 Services own frontend/report DTOs, Wire metadata, codecs and generated clients.
