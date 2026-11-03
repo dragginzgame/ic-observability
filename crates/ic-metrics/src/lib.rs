@@ -1,14 +1,16 @@
-//! Measurement arithmetic and optional bounded recording for Internet Computer consumers.
+//! Application instrumentation for the Canic application tree.
 //!
 //! Values use one consumer-selected unit per aggregate. Consumers own sampling,
 //! attribution, instance identity, reset policy and reporting. This crate does
 //! not read platform counters or manufacture measurements. The library is
-//! `no_std` on every target. Measurement arithmetic needs no allocator;
+//! `no_std` on every target. Fixed recording needs no allocator;
 //! the opt-in `recording` feature uses `alloc` for bounded keyed retention.
-//! Validated Serde transport is always available. Services own report schemas
-//! and codec integrations; Metrics has no Wire or platform dependency.
+//! Canic's metrics adapter owns reporting DTOs, schemas and the shared endpoint.
+//! Recorder types are not transport contracts. Governed storage adapters use
+//! [`persistence`]; Metrics has no production dependencies.
 
 #![doc = include_str!("application.md")]
+#![doc = include_str!("api-boundary.md")]
 #![no_std]
 
 #[cfg(feature = "recording")]
@@ -23,24 +25,16 @@ pub use recording::{
 mod aggregate;
 mod counter;
 mod histogram;
-mod ratio;
+pub mod persistence;
 mod state;
 mod summary;
-mod transport;
 mod window;
 pub use window::MeasurementWindow;
 
-pub use aggregate::{
-    CheckedMeasurementAggregate, MeasurementAggregate, MeasurementInterval,
-    MeasurementIntervalError, MeasurementMeanError, MeasurementRecordError,
-};
+pub use aggregate::MeasurementAggregate;
 pub use counter::{MeasurementCounter, MeasurementCounterError};
-pub use histogram::{
-    HistogramBoundsError, HistogramMergeError, HistogramQueryError, HistogramRange,
-    MeasurementHistogram, validate_histogram_bounds,
-};
-pub use ratio::{MeasurementRatioError, checked_scaled_ratio, checked_scaled_ratio_nearest};
-pub use state::MeasurementStateError;
+pub use histogram::{HistogramBoundsError, HistogramMergeError, MeasurementHistogram};
+pub(crate) use state::MeasurementStateError;
 pub use summary::MeasurementSummary;
 
 // One owner for tracked overflow; flags never infer loss from the numeric cap.

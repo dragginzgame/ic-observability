@@ -112,9 +112,9 @@ help:
 	@echo "Clone setup: install-hooks (requires prepared manifest formatter and rustfmt)"
 	@echo "Focused: format-tools-check, fmt, fmt-check, check, check-wasm, clippy, docs-check, check-doc-links, shared-tooling-check, check-pins"
 	@echo "Dependency declarations and boundary fixtures: production-dependencies-check"
-	@echo "Link Metrics arithmetic without an allocator: allocation-free-check"
+	@echo "Link fixed Metrics recording without an allocator: allocation-free-check"
 	@echo "Early setup: setup-smoke-check"
-	@echo "Minimal Serde and Metrics graphs: metrics-profiles-check; Logging graphs: logging-profiles-check"
+	@echo "Dependency-free Metrics graphs: metrics-profiles-check; Logging graphs: logging-profiles-check"
 	@echo "Release group-plan scope and recovery fixtures: release-validation-check"
 	@echo "Renew matched full/selected mapping qualification: release-validation-qualify (on relevant changes)"
 	@echo "Tooling fixtures: hook-check, release-tools-check (no release Git effects)"
@@ -174,7 +174,7 @@ check-doc-links:
 		docs/principles/*.md docs/evidence/*.md docs/status/*.md rules/*.md audits/*.md tasks/*.md \
 		qualification/*/README.md
 	perl scripts/ci/check-documentation-links.pl --root "$(CURDIR)" \
-		crates/ic-metrics/src/application.md crates/ic-metrics/README.md crates/ic-metrics/CHANGELOG.md \
+		crates/ic-metrics/src/*.md crates/ic-metrics/README.md crates/ic-metrics/CHANGELOG.md \
 		crates/ic-logging/README.md crates/ic-logging/CHANGELOG.md
 
 test:
@@ -189,7 +189,6 @@ package-doc-links-check:
 
 metrics-profiles-check:
 	perl scripts/ci/check-metrics-profiles.pl metrics
-	+cargo test -p ic-metrics --lib --no-default-features --locked --offline transport::tests
 
 logging-profiles-check:
 	perl scripts/ci/check-metrics-profiles.pl logging

@@ -5,7 +5,7 @@ Read [DRAGGINZGAME.md](DRAGGINZGAME.md) first, then
 [snapshot manifest](.shared-tooling.snapshot) records the reviewed Shared Tooling
 files and exact revision. This is the local overlay; there are no baseline
 exceptions. Product-specific safeguards and scoped permissions below remain binding.
-Read [the extraction contract](docs/extraction.md) before arithmetic,
+Read [the extraction contract](docs/extraction.md) before recording,
 consumer-contract or persistence-boundary changes.
 
 ## Ownership
@@ -20,9 +20,12 @@ consumer-contract or persistence-boundary changes.
   paths; each alias belongs to its group's dependency roster. Catalog entries
   alone add no dependency edge between the libraries.
   Services own frontend/report DTOs, Wire metadata and generated clients.
-  Metrics owns validated Serde records without Wire, Platform or endpoint
-  dependencies. Historical Wire pairing receipts retain their original scope;
-  current consumer migration is coordinated in Observability #128.
+  Metrics instruments the Canic application tree; Canic's metrics adapter owns
+  report DTOs, Wire/TypeScript projection and the shared reporting endpoint.
+  Recording types are not report DTOs. Metrics exposes no general arithmetic,
+  statistics, formatting or report-decoding API. The current boundary and
+  consumer repairs are owned by Observability #130; historical receipts retain
+  their original scope.
   Release, resume and publication require an explicit RELEASE_GROUP; no default
   group or PACKAGE inference is permitted.
 - Logging owns a dependency-free `no_std` + `alloc` heap engine with explicit
@@ -31,17 +34,18 @@ consumer-contract or persistence-boundary changes.
   Canic adoption and governed stable-adapter qualification remain separate work;
   see [the logging boundary](docs/logging.md). Publication is selected per package.
 
-- Metrics owns allocation-free measurement arithmetic and optional bounded heap recording. Keep its library
-  `no_std`, with allocation-free arithmetic; consumers own platform counter reads.
-- Serde transport for aggregates, counters, summaries and fixed-bound histograms
-  is standard on every target. There is no `native-wire` feature or Wire trait
-  implementation; endpoint owners project validated state into their own DTOs.
-  Decode only through canonical arithmetic admission. Heap recording stays optional.
+- Metrics owns application observation recording and optional bounded heap retention.
+  Keep fixed recorders allocation-free and the library `no_std`, with no production
+  dependencies. Consumers own platform reads, units and attribution.
+- Recorder types implement neither Serde nor Wire. Canic's adapter owns report
+  validation and projection without making report readers depend on Metrics.
+  Numeric implementation details stay private. Governed storage adapters use
+  only the explicit `persistence` restoration contract; heap retention stays optional.
 - IC Persistence owns the separately opted-in `ic-metrics-stable` package, its
   governed Memory/Storage integration, tests and release. This repository owns
-  arithmetic and the explicitly selected `recording` store. Hosts retain allocator
+  recording and the explicitly selected `recording` store. Hosts retain allocator
   selection, lifecycle, instance identity and write cadence.
-  Never add stable-memory dependencies to the arithmetic package.
+  Never add stable-memory dependencies to the instrumentation package.
 - IC Persistence likewise owns the separately selected `ic-logging-stable`
   adapter, durable codec and governed storage qualification. Logging owns passive
   checkpoints and canonical restoration, including sequence/time watermarks after
@@ -110,7 +114,7 @@ consumer-contract or persistence-boundary changes.
 - Metrics selects the released IC Build metadata editor in `ci/release-tools.env`.
   Explicit setup installs it through the shared managed installer; checks and
   metadata preparation only admit an already prepared selection. It is tooling,
-  never a dependency of the arithmetic library.
+  never a dependency of the instrumentation library.
 - `make check-pins` requires prepared Git, jq and Mike Farah yq. Checks never
   install tools or unlock dependency graphs. Select product CLI adapters through
   the shared managed installer; local selectors implement the approved compiler policy.

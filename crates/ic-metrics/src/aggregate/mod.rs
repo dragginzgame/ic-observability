@@ -1,104 +1,9 @@
-//! Order-independent observations and exact interval arithmetic.
-
-mod checked;
-pub use checked::{CheckedMeasurementAggregate, MeasurementRecordError};
-
-use core::fmt;
+//! Application-owned observations, without report arithmetic.
 
 use crate::{MeasurementStateError, add_count, add_total};
 
 #[cfg(test)]
 mod tests;
-
-// Preserve native-width division for ordinary windows; wide totals stay exact.
-const fn mean_total(samples: u64, total: u128) -> Option<u128> {
-    if total <= u64::MAX as u128 {
-        // TryFrom is not const at the arithmetic support floor.
-        #[expect(
-            clippy::cast_possible_truncation,
-            reason = "the branch admits a u64 total"
-        )]
-        let narrow = total as u64;
-        match narrow.checked_div(samples) {
-            Some(mean) => Some(mean as u128),
-            None => None,
-        }
-    } else {
-        total.checked_div(samples as u128)
-    }
-}
-
-/// Why a measurement aggregate cannot supply an integer or scaled mean.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum MeasurementMeanError {
-    /// The tracked sample count has actually overflowed.
-    SampleCountOverflow,
-}
-
-impl fmt::Display for MeasurementMeanError {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        formatter.write_str("measurement sample count has overflowed")
-    }
-}
-
-impl core::error::Error for MeasurementMeanError {}
-
-/// Why two tracked snapshots cannot supply an exact count/total interval.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum MeasurementIntervalError {
-    /// A sample count has actually overflowed.
-    SampleCountOverflow,
-    /// The current sample count is below the previous count.
-    DecreasingSamples,
-    /// The current total is below the previous total.
-    DecreasingTotal,
-    /// The total changed without any additional observations.
-    TotalWithoutSamples,
-}
-
-impl fmt::Display for MeasurementIntervalError {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        formatter.write_str(match self {
-            Self::SampleCountOverflow => "interval sample count has overflowed",
-            Self::DecreasingSamples => "interval sample count decreased",
-            Self::DecreasingTotal => "interval total decreased",
-            Self::TotalWithoutSamples => "interval total changed without samples",
-        })
-    }
-}
-
-impl core::error::Error for MeasurementIntervalError {}
-
-/// Exact count and total differences, without a maximum or latest observation.
-///
-/// Constructed by [`MeasurementAggregate::interval_since`] only after numeric
-/// admission. Consumers must establish common units, identity and append-only
-/// continuity; increasing numbers alone cannot establish any of those facts.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub struct MeasurementInterval {
-    samples: u64,
-    total: u128,
-}
-
-impl MeasurementInterval {
-    /// Number of added observations, including measured zero.
-    #[must_use]
-    pub const fn samples(self) -> u64 {
-        self.samples
-    }
-
-    /// Exact sum of added observations in the consumer's unit.
-    #[must_use]
-    pub const fn total(self) -> u128 {
-        self.total
-    }
-
-    /// Floor-rounded mean, or `None` when no observations were added.
-    #[must_use]
-    pub const fn mean(self) -> Option<u128> {
-        mean_total(self.samples, self.total)
-    }
-}
 
 /// Mergeable count, total and maximum in one consumer-selected unit.
 ///
@@ -125,7 +30,7 @@ impl MeasurementAggregate {
     /// # Errors
     /// Rejects invalid empty state, missing maxima, inconsistent overflow flags
     /// and totals outside the range allowed by count and maximum.
-    pub const fn from_parts(
+    pub(crate) const fn from_parts(
         samples: u64,
         total: u128,
         maximum: Option<u64>,
@@ -231,87 +136,5 @@ impl MeasurementAggregate {
         } else {
             Some(self.maximum)
         }
-    }
-
-    /// Floor-rounded mean, or `None` when empty. Exactly reached caps are valid.
-    ///
-    /// # Errors
-    /// Returns [`MeasurementMeanError::SampleCountOverflow`] on actual count overflow.
-    /// An exact count guarantees that the accumulated total is also exact.
-    pub const fn mean(self) -> Result<Option<u128>, MeasurementMeanError> {
-        if self.samples_overflowed {
-            return Err(MeasurementMeanError::SampleCountOverflow);
-        }
-        Ok(mean_total(self.samples, self.total))
-    }
-
-    /// Compute `floor(total * scale / samples)` after checking actual overflow.
-    ///
-    /// Scales the exact total before division, retaining fractional information
-    /// that multiplying the integer mean would lose. A scale of ten reports
-    /// tenths; callers own units and display. Empty is `None`, measured zero is
-    /// `Some(0)`, and an exactly reached count cap remains exact.
-    ///
-    /// # Errors
-    /// Returns [`MeasurementMeanError::SampleCountOverflow`] on actual count overflow,
-    /// even with scale zero. An exact count bounds the scaled result within `u128`.
-    ///
-    /// ```
-    /// use ic_metrics::MeasurementAggregate;
-    /// # fn main() -> Result<(), ic_metrics::MeasurementMeanError> {
-    /// let mut values = MeasurementAggregate::EMPTY;
-    /// assert_eq!(values.scaled_mean(10)?, None);
-    /// values.record(3);
-    /// values.record(4);
-    /// assert_eq!(values.mean()?, Some(3));
-    /// assert_eq!(values.scaled_mean(10)?, Some(35));
-    /// # Ok(())
-    /// # }
-    /// ```
-    pub const fn scaled_mean(self, scale: u64) -> Result<Option<u128>, MeasurementMeanError> {
-        if self.samples_overflowed {
-            return Err(MeasurementMeanError::SampleCountOverflow);
-        }
-        if self.samples == 0 {
-            return Ok(None);
-        }
-        let samples = self.samples as u128;
-        let scale = scale as u128;
-        // Admitted exact state has total <= samples * maximum. The quotient
-        // is at most u64::MAX, and the final result is at most maximum * scale.
-        // Decomposition avoids a potentially overflowing total * scale product.
-        Ok(Some(
-            (self.total / samples) * scale + (self.total % samples) * scale / samples,
-        ))
-    }
-
-    /// Exact count/total difference from an earlier snapshot of this accumulator.
-    ///
-    /// Consumers must first establish matching units, window/reset identity and
-    /// append-only continuity. This cannot detect a reset followed by numerically
-    /// larger values or changed attribution. Maxima and latest values are not
-    /// subtractable and are not returned. Empty intervals differ from added zeros.
-    ///
-    /// # Errors
-    /// Rejects sample overflow, decreasing samples, decreasing totals, then a
-    /// changed total with no added samples, in that order. An exact sample count
-    /// guarantees total exactness in both snapshots.
-    pub const fn interval_since(
-        self,
-        previous: Self,
-    ) -> Result<MeasurementInterval, MeasurementIntervalError> {
-        if self.samples_overflowed || previous.samples_overflowed {
-            return Err(MeasurementIntervalError::SampleCountOverflow);
-        }
-        let Some(samples) = self.samples.checked_sub(previous.samples) else {
-            return Err(MeasurementIntervalError::DecreasingSamples);
-        };
-        let Some(total) = self.total.checked_sub(previous.total) else {
-            return Err(MeasurementIntervalError::DecreasingTotal);
-        };
-        if samples == 0 && total != 0 {
-            return Err(MeasurementIntervalError::TotalWithoutSamples);
-        }
-        Ok(MeasurementInterval { samples, total })
     }
 }

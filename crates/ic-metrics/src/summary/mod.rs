@@ -1,4 +1,4 @@
-//! Saturating arithmetic without sampling or attribution policy.
+//! Ordered application observations without attribution policy.
 
 use crate::{MeasurementAggregate, MeasurementStateError};
 
@@ -12,7 +12,7 @@ mod tests;
 /// before using raw counts/totals for exact arithmetic. Latest and maximum remain
 /// individual observations after overflow. Empty and measured zero are distinct.
 /// Consumers own units, identity, ordering and reset boundaries.
-/// Project counts, totals, maximum and means through [`Self::aggregate`], just
+/// Project counts, totals and maximum through [`Self::aggregate`], just
 /// as for a histogram; this type adds ordered recording and [`Self::latest`].
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct MeasurementSummary {
@@ -29,7 +29,7 @@ impl MeasurementSummary {
     /// Rejects absent/nonempty latest values, values above the maximum and
     /// observations inconsistent with the aggregate's exact total. With an exact
     /// count, the other observations cannot contribute more than their maximum.
-    pub const fn from_parts(
+    pub(crate) const fn from_parts(
         aggregate: MeasurementAggregate,
         latest: Option<u64>,
     ) -> Result<Self, MeasurementStateError> {

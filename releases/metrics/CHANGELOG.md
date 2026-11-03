@@ -5,6 +5,17 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.29.0] - Unreleased
+
+### ⚠️ Breaking
+
+- Restrict Metrics to application instrumentation. Remove general ratio/rounding,
+  averaging and report-query APIs, and recorder Serde traits. Canic's metrics
+  adapter owns report DTOs and the shared endpoint; governed storage uses the
+  explicit persistence restoration contract. Preserve recording/overflow/reset
+  semantics and storage-owned retained formats. See the [migration guide](0.29.md).
+  [#130 — Restrict Metrics to instrumentation](https://github.com/dragginzgame/ic-observability/issues/130).
+
 ## [0.28.2] - 2026-11-03
 
 ### 🛠️ Tooling

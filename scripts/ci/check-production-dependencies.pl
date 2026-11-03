@@ -34,9 +34,6 @@ ref($metadata) eq 'HASH' && ($metadata->{version} // 0) == 1
     or die "invalid Cargo workspace metadata\n";
 my %members = map { $_ => 1 } @{$metadata->{workspace_members}};
 my %owners = ('ic-metrics' => 'measurement', 'ic-logging' => 'logging');
-my %transport_policy = (
-    serde => { target => undef, features => ['derive'], optional => 0 },
-);
 my %packages;
 my %observed_members;
 for my $package (@{$metadata->{packages}}) {
@@ -51,27 +48,12 @@ for my $package (@{$metadata->{packages}}) {
         or die "$name has unapproved default features\n";
     !exists($features->{'native-wire'})
         or die "$name declares the retired native-wire feature\n";
-    my %transport;
     for my $dependency (@{$package->{dependencies}}) {
         $dependency->{name} !~ /\Aic-wire(?:-|\z)/
             or die "$name directly depends on Wire: $dependency->{name}\n";
         # Metadata includes inactive optional and target-specific declarations.
         if (($dependency->{kind} // 'normal') ne 'dev') {
-            my $dep = $dependency->{name};
-            $owners{$name} eq 'measurement'
-                or die "$name declares a production dependency: $dep\n";
-            $dep eq 'serde'
-                or die "$name declares a production dependency: $dep\n";
-            my $policy = $transport_policy{$dep};
-            !!$dependency->{optional} == $policy->{optional} && !$dependency->{uses_default_features}
-                && ($dependency->{kind} // 'normal') eq 'normal'
-                or die "transport dependency has unapproved optionality or defaults\n";
-            !$transport{$dep}++ or die "duplicate transport declaration\n";
-            ($dependency->{target} // '') eq ($policy->{target} // '')
-                or die "$dep has an unapproved target placement\n";
-            ref($dependency->{features}) eq 'ARRAY'
-                && join("\0", sort @{$dependency->{features}}) eq join("\0", @{$policy->{features}})
-                or die "$dep has unapproved transport features\n";
+            die "$name declares a production dependency: $dependency->{name}\n";
         }
         # Development dependencies must not bypass the governed Storage facade.
         $dependency->{name} ne 'ic-stable-structures'
@@ -86,10 +68,6 @@ for my $package (@{$metadata->{packages}}) {
                 or die "$name forwards dependency features\n";
         }
     }
-    if ($owners{$name} eq 'measurement') {
-        $transport{'serde'}
-            or die "missing standard transport dependency\n";
-    }
 }
 for my $name (keys %owners) {
     $packages{$name} or die "missing registered workspace package: $name\n";
@@ -97,4 +75,4 @@ for my $name (keys %owners) {
 for my $member (keys %members) {
     $observed_members{$member} or die "missing workspace member metadata\n";
 }
-print "Metrics transport and independent Logging declarations admitted.\n";
+print "Dependency-free Metrics and independent Logging declarations admitted.\n";

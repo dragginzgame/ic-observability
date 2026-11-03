@@ -80,38 +80,21 @@ fn restoration_admits_numeric_quality_and_recording_continues() {
 }
 
 #[test]
-fn differences_check_loss_before_numeric_discontinuity() {
-    let previous = Counter::from_parts(7, false).unwrap();
-    let current = Counter::from_parts(12, false).unwrap();
-    assert_eq!(current.delta_since(previous), Ok(5));
-    assert_eq!(previous.delta_since(previous), Ok(0));
-    assert_eq!(Counter::ZERO.delta_since(Counter::ZERO), Ok(0));
-    assert_eq!(previous.delta_since(current), Err(Error::DecreasingTotal));
-    let exact_cap = Counter::from_parts(u128::MAX, false).unwrap();
-    assert_eq!(exact_cap.delta_since(previous), Ok(u128::MAX - 7));
-    let lost = Counter::from_parts(u128::MAX, true).unwrap();
-    assert_eq!(lost.delta_since(previous), Err(Error::TotalOverflow));
-    assert_eq!(current.delta_since(lost), Err(Error::TotalOverflow));
-    assert_eq!(lost.delta_since(lost), Err(Error::TotalOverflow));
-}
-
-#[test]
-fn addition_merge_restoration_and_differences_are_const() {
+fn addition_merge_and_restoration_are_const() {
     const RESULT: Result<u128, Error> = {
         let mut counter = Counter::ZERO;
         counter.add(5);
-        let before = counter;
         let Ok(batch) = Counter::from_parts(9, false) else {
             panic!("exact batch")
         };
         counter.merge(batch);
-        counter.delta_since(before)
+        counter.exact_total()
     };
     const EXACT: Result<u128, Error> = {
         let mut counter = Counter::ZERO;
         counter.add(u128::MAX);
         counter.exact_total()
     };
-    assert_eq!(RESULT, Ok(9));
+    assert_eq!(RESULT, Ok(14));
     assert_eq!(EXACT, Ok(u128::MAX));
 }

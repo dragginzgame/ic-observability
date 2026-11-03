@@ -6,12 +6,9 @@ version = "0.28.2"
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
-description = "Allocation-free measurement arithmetic with validated numeric transport"
+description = "Application instrumentation with bounded recording and explicit persistence admission"
 readme = "README.md"
 publish = ["crates-io"]
-
-[target.'cfg(not(target_family = "wasm"))'.dev-dependencies]
-serde_json.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -19,11 +16,9 @@ all-features = true
 [features]
 recording = []
 
-[dependencies]
-serde.workspace = true
-
 [dev-dependencies]
 num-bigint.workspace = true
+serde.workspace = true
 
 [lints]
 workspace = true

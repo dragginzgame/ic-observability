@@ -3,7 +3,7 @@ use crate::{MeasurementAggregate as Aggregate, MeasurementStateError as Error};
 #[test]
 fn restored_caps_preserve_exactness_and_sticky_loss() {
     let exact = Aggregate::from_parts(u64::MAX, 0, Some(0), false, false).unwrap();
-    assert_eq!(exact.mean(), Ok(Some(0)));
+    assert!(!exact.samples_overflowed());
     let mut lost = exact;
     lost.record(0);
     assert_eq!(

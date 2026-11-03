@@ -12,15 +12,12 @@ mod tests;
 pub enum MeasurementCounterError {
     /// A required counter total has actually overflowed.
     TotalOverflow,
-    /// The current total is below the previous total.
-    DecreasingTotal,
 }
 
 impl fmt::Display for MeasurementCounterError {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         formatter.write_str(match self {
             Self::TotalOverflow => "counter total has overflowed",
-            Self::DecreasingTotal => "counter total decreased",
         })
     }
 }
@@ -48,10 +45,9 @@ impl core::error::Error for MeasurementCounterError {}
 /// retries.add(1);
 /// assert_eq!(retries.exact_total()?, 2);
 /// let mut bytes = MeasurementCounter::ZERO;
-/// let before = bytes;
 /// bytes.add(32_768);
 /// bytes.add(0);
-/// assert_eq!(bytes.delta_since(before)?, 32_768);
+/// assert_eq!(bytes.exact_total()?, 32_768);
 /// # Ok(())
 /// # }
 /// ```
@@ -76,7 +72,7 @@ impl MeasurementCounter {
     /// # Errors
     /// Returns [`MeasurementStateError::InvalidOverflowFlag`] when a true flag
     /// accompanies a total below its clipped cap.
-    pub const fn from_parts(
+    pub(crate) const fn from_parts(
         total: u128,
         total_overflowed: bool,
     ) -> Result<Self, MeasurementStateError> {
@@ -130,24 +126,6 @@ impl MeasurementCounter {
             Err(MeasurementCounterError::TotalOverflow)
         } else {
             Ok(self.total)
-        }
-    }
-
-    /// Exact difference from an earlier snapshot of this counter, including zero.
-    ///
-    /// Consumers must first establish matching units, counter/window identity and
-    /// append-only continuity. Numeric success cannot detect a reset followed by
-    /// larger values, changed attribution or an unrelated counter.
-    ///
-    /// # Errors
-    /// Rejects actual overflow in either snapshot before a decreasing total.
-    pub const fn delta_since(self, previous: Self) -> Result<u128, MeasurementCounterError> {
-        if self.total_overflowed || previous.total_overflowed {
-            return Err(MeasurementCounterError::TotalOverflow);
-        }
-        match self.total.checked_sub(previous.total) {
-            Some(delta) => Ok(delta),
-            None => Err(MeasurementCounterError::DecreasingTotal),
         }
     }
 }

@@ -1,295 +1,77 @@
-# ic-metrics
+# IC Metrics
 
-Metrics owns its version and [changelog](https://github.com/dragginzgame/ic-observability/blob/main/releases/metrics/CHANGELOG.md), alongside Logging's
-independent version and ledger. See [release groups](https://github.com/dragginzgame/ic-observability/blob/main/docs/independent-releases.md)
-for maintainer commands.
+[![crates.io](https://img.shields.io/crates/v/ic-metrics.svg)](https://crates.io/crates/ic-metrics)
+[![docs.rs](https://docs.rs/ic-metrics/badge.svg)](https://docs.rs/ic-metrics)
 
-Measurement arithmetic with standard numeric transport and optional bounded heap recording.
+Application instrumentation for the Canic application tree: Canic, IcyDB,
+Backup, Blob and participating libraries. Metrics records observations and tracks
+overflow; Canic's metrics adapter owns reporting DTOs, Wire/TypeScript projection
+and the shared reporting endpoint. Report readers do not need Metrics.
 
-For allocation-free arithmetic and validated Serde:
-
-```toml
-[dependencies]
-ic-metrics = "0.28"
-```
-
-Add `features = ["recording"]` for bounded heap recording. The current source
-has no default features or Wire dependency. Services own native/browser schemas,
-codec selection and generated clients. See the
-[0.28 migration](https://github.com/dragginzgame/ic-observability/blob/main/releases/metrics/0.28.md)
-for removal of the earlier `native-wire` feature and schema implementations.
-Applications own Metrics/Logging instances and reset policy; the libraries remain independent.
-
-IC Metrics is a standalone application capability alongside IC Timers, IC Jobs
-and IC Auth. Applications and Canic compose these packages through explicit
-dependencies. Metrics owns measurement arithmetic and optional bounded retention;
-the consuming application owns platform reads, attribution, lifecycle and endpoints.
-
-IC Tooling owns Host, Build and Testkit. Those packages support development and
-qualification outside Metrics' production graphs. Numeric transport uses Serde;
-no feature introduces a schema supplier, runtime or endpoint. IC Persistence's
-optional stable package consumes Memory and Storage;
-their stable-structures dependency is supplied through IC Platform. Metrics
-does not read platform counters or depend on Canic.
-
-The `no_std` library exports `MeasurementAggregate` for mergeable
-count/total/maximum with sticky actual-overflow flags,
-and `MeasurementSummary` for ordered observations with a latest value.
-`MeasurementHistogram` adds a mergeable fixed-size distribution with caller-selected bounds.
-Zero is a valid observation; an empty summary has no latest or maximum value.
-Tracked count and total clip independently, with sticky actual-overflow flags.
-The tracked integer APIs use `u64` samples/counts and `u128` totals/means. Every
-exact counted batch fits its total. An exactly reached numeric cap remains exact. Consumers establish units, identity and
-reset boundaries before comparing observations; overflowed totals cannot supply
-exact interval arithmetic.
-
-`CheckedMeasurementAggregate` accepts exact `u128` observations and retains count,
-total, minimum and maximum. `try_record` rejects count or total overflow before
-changing any state; empty extrema are `None`, and zero is a valid observation.
-Consumers that require exact reporting can handle that typed failure directly.
-This accumulator has no stable record or sticky overflow state.
-
-`MeasurementCounter` supports scalar event, item or byte totals.
-It holds a `u128` total and sticky actual-overflow flag, with `add`, `merge`,
-validated `from_parts`, `exact_total` and identity-qualified `delta_since`.
-Zero is an exact scalar value; an absent metric stays consumer-owned. An exactly
-reached cap remains exact, and narrow reports use checked conversions. This
-counter retains no observation statistics. The optional stable adapter can
-checkpoint its total and overflow flag without manufacturing sample counts.
+Metrics 0.29 applies the breaking instrumentation boundary in
+[#130 — Restrict Metrics to instrumentation](https://github.com/dragginzgame/ic-observability/issues/130).
+It is not a general arithmetic, statistics, formatting or numeric-validation
+library. Published 0.28 releases retain their earlier API; see the
+[migration guide](https://github.com/dragginzgame/ic-observability/blob/main/releases/metrics/0.29.md).
 
 ```rust
-use ic_metrics::MeasurementSummary;
-
-let mut summary = MeasurementSummary::EMPTY;
-assert_eq!(summary.latest(), None);
-summary.record(0);
-assert_eq!(summary.aggregate().samples(), 1);
-assert_eq!(summary.latest(), Some(0));
+use ic_metrics::{MeasurementAggregate, MeasurementCounter};
+let mut instructions = MeasurementAggregate::EMPTY;
+instructions.record(0);
+instructions.record(12_000);
+let mut retries = MeasurementCounter::ZERO;
+retries.add(1);
+assert_eq!(instructions.samples(), 2);
+assert_eq!(instructions.total(), 12_000);
+assert_eq!(instructions.maximum(), Some(12_000));
+assert!(!instructions.samples_overflowed());
+assert!(!instructions.total_overflowed());
+assert_eq!(retries.exact_total(), Ok(1));
 ```
 
-Tracked `MeasurementAggregate::mean()` returns
-`Result<Option<u128>, MeasurementMeanError>`: empty is `None`, measured zero is
-`Some(0)`, and exact means round down. Actual sample-count overflow returns
-`SampleCountOverflow`; an exact count guarantees an exact total. Exactly reaching
-the cap remains valid. `scaled_mean(scale)` checks count quality and retains
-fractional information: samples 3 and 4 yield 35 at scale ten. Admitted scaled
-means fit `u128` without a ratio-projection failure.
-Accumulator flags cannot restore a clamped input sample.
+Fixed counters, aggregates, ordered summaries and fixed-bound histograms are
+`no_std`, allocation-free and dependency-free. Enable `recording` for bounded heap
+retention with explicit entry/key budgets and omitted-observation accounting;
+that feature uses `alloc` and adds no dependencies. `MeasurementWindow<T>` provides
+local nonwrapping reset bookkeeping for application-selected measurement state.
 
-Summaries and histograms expose aggregate projections through `aggregate()`:
-use `summary.aggregate().mean()` or `summary.aggregate().scaled_mean(10)`.
-The latest observation remains summary-specific.
+Exactly reaching a cap remains exact. Actual overflow clips the total/count and
+sets a sticky flag. Empty observations differ from measured zero; zero counters
+are exact. Applications own units, platform reads, attribution, labels, admission,
+identity, synchronization, reset authorization, lifecycle and limits. Diagnostic
+metrics never replace balances, spending authority, budgets or journal debt.
 
-`MeasurementAggregate::merge` combines count/total and maximum without claiming
-ordering or deduplication. `interval_since(previous)` returns checked count/total
-differences and mean after the owner establishes common identity, units and
-append-only continuity. It rejects actual overflow and numeric discontinuity;
-maximum and latest values cannot be subtracted. Ordered summaries do not merge.
+Recorder values are not frontend DTOs and implement neither Serde nor Wire.
+Adapters project fields and source quality into their own report contracts and
+own averages, rounding, percentages, intervals and quantiles. Preserve wide totals
+and explicit unavailable/overflow results. Do not depend on Metrics to decode or
+validate a report.
 
-IC Persistence owns the [optional stable adapter](https://github.com/dragginzgame/ic-persistence/tree/main/crates/ic-metrics-stable) which stores
-counters, aggregates, summaries and histograms in one host-owned stable B-tree map,
-using IC Storage's governed collection over admitted IC Memory handles.
-Namespaced records retain units, reset epochs,
-wide totals and overflow flags. Adding `ic-metrics-stable` is the opt-in; existing
-arithmetic callers remain volatile. IC Persistence owns the adapter's compiler
-support and qualification. Hosts own allocation/bootstrap, synchronization, write cadence and resets;
-measurement arithmetic remains allocation-free and `no_std` on Rust 1.99.1.
+Governed Storage adapters use `ic_metrics::persistence` for canonical restoration
+of retained counters, aggregates, summaries and histograms. Storage owns durable
+encoding/bytes, governed allocation, namespace/configuration identity, continuity,
+checkpoint cadence and same-release reopening. Public raw constructors and
+transport reconstruction are absent; restoration never infers lost provenance.
+See the [complete API inventory](https://github.com/dragginzgame/ic-observability/blob/main/docs/metrics-api.md)
+and [compiled application guide](https://github.com/dragginzgame/ic-observability/blob/main/crates/ic-metrics/src/application.md).
 
-The [application guide](https://github.com/dragginzgame/ic-observability/blob/main/crates/ic-metrics/src/application.md) is included in
-packaged crate documentation, with a compiled example of fixed named histograms,
-separate units and event counts. It covers sample admission, async attribution,
-resets, reporting and cost qualification; applications own those policies.
-
-For a distribution, construct `MeasurementHistogram::new([10, 100])`. Its
-disjoint buckets cover `0..=10` and `11..=100`; `overflow()` counts larger
-observations. `bucket_counts()` returns those two counts, and `aggregate()`
-includes every observation. Duplicate or descending bounds return a typed
-`HistogramBoundsError` identifying the invalid bound. Construction and recording
-support constant evaluation. Storage is fixed, recording searches at most the
-configured number of bounds, and every bucket saturates independently. Buckets
-describe ranges; they do not provide exact percentiles. Units, thresholds and
-export encoding remain consumer-owned. `merge(&other)` requires matching bounds
-and returns a typed mismatch without changing the destination. Bucket and overflow
-overflow flags distinguish exact caps from lost counts.
-
-`cumulative_count(index)` provides exact counts through a configured
-bound and `quantile_bucket(numerator, denominator)` for nearest-rank ranges, such
-as p95 with `(95, 100)`. Empty quantiles are `None`; required count overflow
-returns `HistogramQueryError`. Overflow has no configured ceiling.
-`checked_scaled_ratio(numerator, denominator, scale)` floors an exact scaled
-integer ratio from a `u128` numerator, without floating point or overflowing
-intermediate multiplication. Callers establish exact inputs and handle empty or
-overflowed diagnostics before using it. Consumer adoption remains separately qualified.
-
-`checked_scaled_ratio_nearest` provides an explicit nearest-integer projection,
-rounding exact halves upward. For example, `(1, 6, 1000)` returns 167 and
-`(1, 2, 1)` returns 1. It shares exact-input, zero-denominator and final-overflow
-admission with the floor operation; a rounded increment can itself overflow.
-Formatting and empty/missing values remain caller-owned. Existing ratios and
-scaled means continue to round down.
-
-Known callers are IcyDB, Canic, ic-timers, ic-backup, IC Blob Storage's
-restoration test probe and Toko Miner's production game-shard action metrics. Their
-attribution, registries, callback roles, replication, persistence and reporting
-remain local. ic-backup's host integration measures local durations in nanoseconds
-and prepared chunk sizes in bytes, with a four-bound byte histogram in the
-inspected implementation. Its diagnostics establish no IC instruction or cycle cost.
-The crate has no global consumer registry, stable-memory allocation or endpoints.
-Consumers own their summary and histogram instances, labels and persistence policy.
-[The extraction contract](https://github.com/dragginzgame/ic-observability/blob/main/docs/extraction.md)
-records scope and evidence.
-
-Platform reads belong in consumer adapters:
-IcyDB and Canic use `ic_cdk::api::call_context_instruction_counter()`; IC Timers
-uses its existing `ic0::performance_counter(1)` binding. Both read counter 1.
-Consumers own target gating, native handling, call-context identity and attribution.
-IcyDB's inclusive overlapping spans and Canic's exclusive endpoint accounting
-remain different consumer contracts.
-
-## Measuring cost
-
-Measure raw canister Wasm bytes, IC instructions and actual cycle charges
-separately. Shared arithmetic allocates nothing; registry lookups, labels,
-encoding and stable writes are separate consumer costs. Build profiles belong
-to each application, and native timing is not IC measurement evidence.
-
-The [tracked-recording comparison](https://github.com/dragginzgame/ic-observability/blob/main/docs/evidence/tracked-080.md),
-[quantile comparison](https://github.com/dragginzgame/ic-observability/blob/main/docs/evidence/quantile-cost-062.md) and
-[durable-store experiment](https://github.com/dragginzgame/ic-observability/blob/main/docs/evidence/stable-cost-072.md) retain reproducible
-sources, locked graphs, Wasms and raw IC readings. The separate
-[frozen durability receipt](https://github.com/dragginzgame/ic-observability/blob/main/docs/evidence/stable-current-0146.md) qualifies its
-recorded Memory/Storage integration without rewriting those historical inputs.
-The separate [Memory 0.49 comparison](https://github.com/dragginzgame/ic-observability/blob/main/docs/evidence/memory-0147.md) records retained
-upgrade behavior and the measured size/instruction/cycle tradeoffs of that adoption.
-Their bounded workloads do
-not establish whole-application or mainnet savings. Original reader, histogram
-and consumer-lookup evidence remains unchanged under `docs/evidence`; the
-[cleanup receipt](https://github.com/dragginzgame/ic-observability/blob/main/docs/evidence/cleanup-082.md) retains the previous guide text.
-Compute distribution queries during reporting when possible.
-
-## Development
-
-Common contributor commands use the reviewed [Shared Tooling Make
-interface](https://github.com/dragginzgame/ic-observability/blob/main/docs/make-interface.md). Product builds, compiler floors, validation,
-publication and release metadata remain owned here.
-
-Use rustup with the pinned Rust 1.99.1 toolchain, Git, GNU Make and Bash 3.2 or
-newer. Install `wasm32-unknown-unknown` for Wasm checks. The arithmetic library's
-minimum compiler is Rust 1.99.1.
-
-Optional structural Wasm inspection uses the published
-[IC Host inspector and its installation guide](https://github.com/dragginzgame/ic-tooling/tree/main/apps/ic-host-wasm-inspect).
-Experiments select their own qualified tool identity and limits. Metrics has no
-inspector wrapper or pin; the arithmetic library builds and runs without IC Host.
-Use `-p ic-metrics` to select arithmetic; bare Cargo commands select both workspace libraries.
-
-Prepare and check the reviewed tools, select their paths, then install the
-repository's formatting hook:
+Rust 1.99.1 is the floor and pinned compiler on native and Wasm. Focused checks:
 
 ```sh
-make install-tools
-make tools-check
-export PATH="$PWD/.tools/host/bin:$PWD/.tools/rust/common/bin:$PATH"
-make install-hooks
+make fmt
+cargo clippy -p ic-metrics --all-targets --all-features --locked --offline -- -D warnings
+cargo test -p ic-metrics --all-features --locked --offline
+make metrics-profiles-check allocation-free-check
 ```
 
-[Local setup](https://github.com/dragginzgame/ic-observability/blob/main/docs/local-setup.md)
-owns bootstrap prerequisites, tool inventory, shared storage, installer failure
-handling and PATH selection. [Git hook rules](https://github.com/dragginzgame/ic-observability/blob/main/rules/git-hooks.md)
-own staged formatting and hook installation. The reviewed shared tooling is
-vendored; normal commands need no Shared Tooling sibling checkout.
+The [host guide](https://github.com/dragginzgame/ic-observability/blob/main/docs/hosts.md)
+owns command scope and evidence limits. Raw Wasm bytes, IC instructions and actual
+cycles are separate measurements; native checks do not provide IC cost evidence.
 
-`make fmt` sorts workspace manifests within dependency groups and formats Rust; `make fmt-check` checks
-without editing. `make help` lists focused commands. Select named tests during
-implementation. `make check`, `make check-wasm`, `make clippy`, `make docs-check`
-and `make test` cover both workspace libraries; use `cargo ... -p PACKAGE --locked`
-for focused package checks.
-Full release validation uses `make ci` and workspace-native/Wasm `make msrv`;
-implementation, inspection and documentation use focused checks under the shared
-validation policy. The [host support and qualification guide](https://github.com/dragginzgame/ic-observability/blob/main/docs/hosts.md#prerequisites-and-focused-checks)
-owns local gates and native acceptance. [Agent rules](https://github.com/dragginzgame/ic-observability/blob/main/AGENTS.md)
-own command authority.
-
-Common IC executable setup and PocketIC ownership are documented in
-[IC tools](https://github.com/dragginzgame/ic-observability/blob/main/docs/ic-tools.md).
-Metrics has no active server caller or Testkit dependency. Repository maintenance
-procedures live in the [task catalog](https://github.com/dragginzgame/ic-observability/blob/main/tasks/README.md).
-
-## Releases and adoption
-
-The arithmetic package requires Rust 1.99.1 on native and Wasm. Consumers select
-an available published release and qualify their integration. Metrics 0.28 removes
-Metrics-owned native schemas; service owners coordinate DTO adoption through the
-[migration guide](https://github.com/dragginzgame/ic-observability/blob/main/releases/metrics/0.28.md).
-The
-[0.24 native metadata contract](https://github.com/dragginzgame/ic-observability/blob/main/releases/metrics/0.24.md)
-describes the historical Wire 0.13 cohort. This example selects that older release line, whose compiler
-floor and dependencies can differ from the current checkout:
-
-```toml
-[workspace.dependencies]
-ic-metrics = "0.24"
-```
-
-For optional durable metrics, follow
-[IC Persistence's migration guide](https://github.com/dragginzgame/ic-persistence/blob/main/docs/migration/ic-metrics-stable.md)
-for the adapter's separate release line and Memory/Storage compatibility.
-
-Members inherit with `ic-metrics = { workspace = true }`. Published consumers
-resolve the registry package; consumers exposing shared types coordinate the
-same released dependency identity. The [Metrics changelog](https://github.com/dragginzgame/ic-observability/blob/main/releases/metrics/CHANGELOG.md)
-owns release history and required hard-cut changes. The [extraction contract](https://github.com/dragginzgame/ic-observability/blob/main/docs/extraction.md)
-maps integration scope and the owning consumer qualification issues;
-the [current handoff](https://github.com/dragginzgame/ic-observability/blob/main/docs/status/current.md)
-distinguishes local preparation, publication and hosted qualification.
-
-Contributions follow the [shared contribution rules](https://github.com/dragginzgame/ic-observability/blob/main/rules/contributions.md).
-Maintainer releases use `make release-patch RELEASE_GROUP=metrics` (or minor/major)
-under the [shared release contract](https://github.com/dragginzgame/ic-observability/blob/main/docs/releases.md).
-This repository supports `RELEASE_DELIVERY=direct` only, defaulting to remote
-`origin` and branch `main`. Standard preflight prepares locked sources,
-common Rust tools and the explicitly selected published IC Build release editor.
-`ci/release-tools.env` owns the editor version and its 1 MiB per-document limit.
-`make install-tools`/`make tools-check` include it; `install-release-editor` and
-`release-editor-check` select it separately. Metadata preparation checks the
-prepared executable without installing tools. The arithmetic library has no IC Build dependency.
-The shared contract owns validation, commit/tag delivery and
-interrupted-release recovery.
-
-Publication is separate from release delivery:
-
-```sh
-make publish-check RELEASE_GROUP=metrics
-make publish RELEASE_GROUP=metrics
-```
-
-An explicit group is required, on the command line or in the environment;
-`RELEASE_GROUP=logging` selects Logging. A `PACKAGE` override must belong to the
-selected group and cannot infer it. The workspace's
-[publication guide](https://github.com/dragginzgame/ic-observability/blob/main/README.md#release-and-package-publication)
-owns the shared adapter, validation, retained evidence and partial-publication
-reconciliation procedure. Publication uses existing versions and normal Cargo
-credentials; it does not bump versions, create Git commits/tags or clean artifacts.
-
-## Optional bounded recording
-
-Enable `recording` for `BoundedMeasurementTable`: a same-unit keyed recorder with
-explicit entry and UTF-8 key budgets, borrowed snapshots, and a separate aggregate
-for observations whose identities were omitted. It uses `alloc` but no production
-dependencies beyond the standard transport stack. Measurement arithmetic remains allocation-free and all features remain
-`no_std`. Collection allocates on admitted new identities, not repeated keys;
-report construction and endpoint selection remain consumer-owned.
-
-`MeasurementWindow<T>` supplies heap-local nonwrapping reset bookkeeping for
-consumer-defined state. Reset sequences are not global identities. See the
-[bounded recording contract](https://github.com/dragginzgame/ic-observability/blob/main/docs/extraction.md#bounded-recording-extension).
-
-See the [compiled application example](https://github.com/dragginzgame/ic-observability/blob/main/crates/ic-metrics/src/application.md#bounded-heap-recording)
-for composing the table and fixed measurement shapes in a reset window.
-
-## Numeric transport
-
-Embed `MeasurementAggregate` and `MeasurementCounter` in Serde
-reports, alongside `MeasurementSummary` and `MeasurementHistogram<N>`. Services
-own Wire and browser metadata. Decoding uses canonical numeric
-admission. See the [transport and migration guide](https://github.com/dragginzgame/ic-observability/blob/main/crates/ic-metrics/src/application.md#numeric-transport).
+Metrics and Logging have independent versions and publication. No release or
+publication is implied by preparing an API cut. Maintainer delivery requires an
+explicit `RELEASE_GROUP=metrics` and the
+[independent-release workflow](https://github.com/dragginzgame/ic-observability/blob/main/docs/independent-releases.md).
+The [Metrics ledger](https://github.com/dragginzgame/ic-observability/blob/main/releases/metrics/CHANGELOG.md)
+owns current and historical release notes. Historical receipts retain their
+original source, package, schema and runtime qualification identities.

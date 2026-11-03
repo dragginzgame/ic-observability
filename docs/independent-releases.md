@@ -84,7 +84,8 @@ tests and documentation confined to that independent library can narrow scope.
 The other package has no dependency edge, shared public identity, runtime,
 generated client or storage integration with it. Common declaration guards still
 admit that architecture. Metrics keeps all-feature native/Wasm lint, Rustdoc,
-tests and archives, minimal Serde/feature graphs and the allocator-free Wasm link.
+tests and archives, dependency-free feature graphs, public API/persistence checks
+and the allocator-free Wasm link.
 Logging keeps the same package gates and its dependency-free native/Wasm graphs.
 Common tools, policies, formatting, documentation, evidence and release fixtures
 remain required; package-document link checks still inspect both archives.
@@ -101,14 +102,15 @@ The local mapping retains these product obligations for
 
 | Boundary | Required obligations and owner |
 | --- | --- |
-| Metrics | Default/all-feature native and Wasm lint/docs, all-feature tests and archive; minimal Serde execution, feature graphs and allocator-free Wasm linking. `recording` remains an explicitly selected feature. |
+| Metrics | Default/all-feature native and Wasm lint/docs, all-feature tests and archive; public API/persistence client tests, dependency-free feature graphs and allocator-free Wasm linking. `recording` remains an explicitly selected feature. |
 | Logging | All-target native and Wasm-library lint, native/Wasm docs, engine/example/doctests and archive; dependency-free graphs on both targets. |
-| Reverse consumers | Metrics attribution/transport/reset contracts remain with IcyDB, Canic, Timers, Backup, Blob's restoration probe and Toko Miner under the [downstream contract checks](extraction.md#downstream-contract-checks). Services own report DTOs; Persistence owns stable adapters for both packages. No owning acceptance is inferred from a core gate. |
+| Reverse consumers | Metrics attribution/recording/reset contracts remain with the application tree under the [downstream contract checks](extraction.md#downstream-contract-checks). Canic's adapter owns reporting; Storage owns governed persistence. The [0.29 API inventory](metrics-api.md) tracks concrete consumer repairs. No owning acceptance is inferred from a core gate. |
 | Hosts and installed artifacts | Linux x86_64, macOS x86_64 and macOS arm64 retain their [native CI obligations](hosts.md). These libraries install no CLI or endpoint. Cargo archive verification and selected-package registry/source readback remain separate release/publication requirements. |
 | Shared and unknown inputs | Full workspace scope, including both libraries and every common stage; unknown package membership refuses until its mapping is qualified. External contract changes still require review by their owners. |
 
-This tooling change alters no library API, Serde representation or retained-data
-contract, so it creates no new sibling migration or acceptance claim.
+The group-validation adoption itself altered no library API or retained-data
+contract. Later product releases retain their own migration and consumer obligations;
+the Metrics 0.29 hard cut does not imply sibling acceptance.
 
 ## Plans, transactions and recovery
 

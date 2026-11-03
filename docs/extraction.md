@@ -10,119 +10,67 @@ retained-data adoption boundary and new summary/histogram report contracts.
 
 | Package | Owner |
 | --- | --- |
-| `ic-metrics` | The arithmetic, numeric transport and optional bounded recorder contract below |
+| `ic-metrics` | Application instrumentation and the optional bounded recorder contract below |
 | `ic-logging` | Heap admission, retention and paging; [logging contract](logging.md) |
 | `ic-metrics-stable` | IC Persistence; unchanged external stable adapter owner |
 | `ic-logging-stable` | IC Persistence; separately selected durable checkpoints over Logging's validated restoration contract |
 
 ## Measurement contract
 
-IC Metrics owns allocation-free `no_std` arithmetic and optional bounded heap
-recording. Default arithmetic remains allocation-free. Consumers own platform
-reads, sample admission, units, attribution, instance identities, limits, labels,
-synchronization, lifecycle and endpoints. The
-[application guide](../crates/ic-metrics/src/application.md) is included in the
-crate documentation and supplies compiled examples.
+Metrics instruments the Canic application tree: Canic, IcyDB, Backup, Blob and
+participating libraries. The maintainer decision in
+[#130 — Restrict Metrics to instrumentation](https://github.com/dragginzgame/ic-observability/issues/130)
+supersedes the former general-arithmetic and validated-transport boundary.
+Metrics records application observations; it is not a statistics, numeric
+validation, formatting or report-decoding library. Canic's metrics adapter owns
+the shared reporting endpoint, transport DTOs and Wire/TypeScript projection.
+Report readers must not acquire Metrics to decode or validate results.
+
+Fixed application recorders are allocation-free, `no_std` and dependency-free.
+Optional bounded heap retention uses `alloc` behind `recording`. Consumers own
+platform reads, units, observation attribution, limits, labels, instance identity,
+synchronization, lifecycle and reset authorization. The
+[compiled application guide](../crates/ic-metrics/src/application.md) demonstrates
+that boundary; the [API inventory](metrics-api.md) accounts for every public type,
+method, field, trait implementation and re-export, plus downstream repairs.
 
 ## Capability placement
 
-Metrics is an independently released application capability, at the same layer
-as Timers, Jobs and Auth. Applications and Canic compose those capabilities;
-Metrics does not depend on those consumers or own their orchestration policy.
-Its arithmetic package stays portable, with standard numeric transport. IC Persistence owns
-the separately published stable adapter alongside its Memory/Storage packages.
+Metrics is an application capability alongside Timers, Jobs and Auth. Applications
+and Canic compose those capabilities; Metrics depends on none of them. IC Storage
+owns governed persistence integration. IC Tooling owns Host, Build and Testkit;
+tooling-specific reporting, benchmark statistics and numeric helpers stay there.
+No general math crate replaces the removed API.
 
-IC Tooling owns the separate Host, Build and Testkit packages. Benchmark parsing,
-finite-sample reporting and tooling-specific arithmetic stay with that reporter;
-Metrics' general integer APIs remain here.
-Qualification tools do not enter the Metrics production graph. Existing frozen
-receipts preserve the supplying packages and repository identities they measured.
+## Recording and report ownership
 
-## Arithmetic ownership
-
-| Primitive | Retained state and projection |
+| Recorder | Retained instrumentation state |
 | --- | --- |
-| `CheckedMeasurementAggregate` | Exact `u128` observations, count, total and extrema; recording rejects overflow without partial updates. No persistence or attribution. |
-| `MeasurementAggregate` | Mergeable sample count, wide total, maximum and actual-overflow flags; checked means and count/total intervals. |
-| `MeasurementSummary` | An aggregate plus the latest ordered observation; no merge that invents ordering. |
-| `MeasurementHistogram<N>` | Immutable finite bounds, disjoint counts, overflow and an aggregate; equal-bound merging and checked cumulative counts/nearest-rank ranges. |
-| `MeasurementCounter` | Scalar wide total and actual-overflow flag; checked totals and numeric deltas, without observation statistics. Optional stable checkpoints retain only its scalar state. |
+| `MeasurementAggregate` | Same-unit observation count, wide total, maximum and sticky actual-overflow quality; deliberately attributed batch merging |
+| `MeasurementCounter` | Diagnostic scalar total and actual-overflow flag; no authoritative financial/budget state |
+| `MeasurementSummary` | Aggregate plus latest ordered observation; no unordered merge |
+| `MeasurementHistogram<N>` | Immutable configured bounds, disjoint counts, overflow and aggregate; same-bound merging |
+| `BoundedMeasurementTable` (`recording`) | Bounded first-admitted keys with explicit omission accounting |
+| `MeasurementWindow<T>` | Host-selected measurement composition and nonwrapping local reset sequence |
 
-Aggregates, counters, summaries and fixed-bound histograms implement standard
-Serde transport on native and Wasm. Metrics owns no Wire metadata or schema
-dependency. Services own report DTOs and generated clients. Decoding uses their canonical
-arithmetic admission; const histogram bounds fix array lengths without dynamic
-collections. Consumer codec limits and report schema adoption remain explicit.
-These report contracts are separate from Persistence's durable record layouts.
+Zero is a valid observation, separate from no samples. Empty maxima/latest values
+are absent; a scalar starts at exact zero. Exactly reaching a cap remains exact.
+Actual overflow clips and sets sticky quality; merging propagates that quality.
+Consumers cannot reconstruct lost provenance from a clipped number.
 
-The [0.28 removal](../releases/metrics/0.28.md) is coordinated by
-[#128 — Remove Metrics' Wire metadata dependency](https://github.com/dragginzgame/ic-observability/issues/128).
-Blob, IcyDB, Relay and Storage own their actionable DTO/schema migrations; Canic
-already projects to its own primitive metric DTO. Arithmetic-only callers,
-including Timers and Backup, retain their existing arithmetic contracts.
+The report adapter projects counts, totals, individual extrema and bucket quality
+into its own DTOs. It owns means, rounding, percentages, histogram queries,
+intervals, validation, Wire metadata and generated clients. Recorder types have
+no Serde/Wire implementation and are not transport payloads. Preserve wide totals
+and explicit unavailable values; narrow conversions must not silently clip.
+Identity, units and reset continuity precede comparisons. Maxima/latest values
+cannot be subtracted; a latest timer delay is not a cohort total.
 
-Summaries and histograms project count, total,
-maximum, mean and scaled mean through `aggregate()`. The summary's latest
-observation remains summary-owned. The arithmetic package requires Rust 1.99.1 on native and
-Wasm. Each consumer qualifies its own integration.
-
-`validate_histogram_bounds` admits borrowed strictly increasing bounds without
-constructing temporary measurement state. Construction, restored-state admission
-and the stable adapter share this ordering rule. Stored bytes still receive
-independent arithmetic validation; the adapter owns its bound-count limit.
-
-The checked wide accumulator accepts `u128` observations and rejects count/total
-overflow without changing any field. Its count is `u64`; empty extrema are `None`.
-It supplies exact reporting arithmetic without platform reads, persistence or
-floating-point sample storage.
-
-The tracked integer APIs use `u64` observations, sample counts and bucket counts; accumulated
-quantities and means use `u128`. Zero is a valid observation. Empty aggregates
-have no maximum, ordered summaries have no latest, and empty means are `None`.
-A zero scalar counter is exact; consumers decide whether a counter exists.
-
-Exactly reaching a numeric cap remains exact. Actual overflow clips the value
-and sets a sticky flag. Recording a clipped input cannot recover its lost
-quality. Reports preserve flags or explicit unavailable results and use checked
-narrowing. Consumers may alert once on a flag transition per window; this
-library never logs or supplies authoritative spending, budgets, balances or debt.
-
-`scaled_mean(scale)` admits quality before scaling the total, preserving
-fractional information that multiplying an integer mean loses. The generic
-`checked_scaled_ratio` accepts already exact inputs; it does not admit units,
-identity, overflow provenance or empty observations. Quantiles identify bucket
-ranges, not exact observed percentiles.
-
-For admitted aggregates, total overflow implies sample-count overflow. Mean and
-interval queries reject count overflow first; exact counts bound totals and
-scaled means. The generic ratio owns zero-denominator
-and result-overflow errors for independently supplied scalar inputs; the scalar
-counter retains its actual-total-overflow error. Flags now use `*_overflowed`
-names, and the remaining error cases are `SampleCountOverflow`, `TotalOverflow`,
-`CountOverflow` and `InvalidOverflowFlag`. Histogram `overflow()` remains the
-beyond-last-bound count; `overflow_count_overflowed()` reports its lost quality.
-Consumer-owned DTO/wire names need not follow these Rust API names.
-
-Merging adds deliberately attributed batches without deduplication. Before
-intervals or scalar deltas, establish matching units, counter/window identity
-and append-only continuity. Numeric success cannot detect a reset followed by
-larger readings. Maxima, latest observations and quantiles are not subtractable.
-
-The 0.14 hard cut removes complete floating-point sample statistics
-from Metrics. Testkit's private development reporter owns its finite-sample
-mean, midpoint median and observed nearest-rank quantile, including non-finite
-admission and typed failures. Its worker schema, sample storage, process lifecycle
-and report presentation remain Testkit-owned. Metrics retains checked and tracked integer
-arithmetic; histogram quantiles remain bucket ranges.
-Other callers of the removed sample API must move it to their owning reporter.
-Testkit 0.54.0 source at
-[`ff88087`](https://github.com/dragginzgame/ic-testkit/tree/ff88087d6757121ac92e0dec4705ecaccfd8ebed)
-contains that private reporter and selects Metrics 0.14.
-[PR #125](https://github.com/dragginzgame/ic-testkit/pull/125) was closed without
-merging after those changes were integrated through the maintainer's release
-path. Its proposed checked-cohort rewrite was not integrated: Testkit retains
-one cohort count and atomic multi-counter admission. Adopting Metrics 0.14 does
-not require replacing that consumer-owned builder.
+The [0.29 migration](../releases/metrics/0.29.md) removes the leaking general
+numeric and report APIs. The earlier [0.28 cut](../releases/metrics/0.28.md) removed
+Wire metadata only; its released contracts and frozen receipts keep their scope.
+The 0.14 floating-point-statistics removal likewise remains historical evidence,
+not a reason to retain general integer reporting helpers today.
 
 ## Platform and persistence boundaries
 
@@ -138,9 +86,9 @@ including persisted records, governed collection integration, restoration and
 checkpoint validation. Its canonical guide and
 [migration guide](https://github.com/dragginzgame/ic-persistence/blob/main/docs/migration/ic-metrics-stable.md)
 own version selection and retained-data compatibility. Hosts retain allocation,
-identities, lifecycle, write cadence and reset policy. Metrics supplies validated
-arithmetic state through its public API; standard transport supplies validated numeric
-transport, with no stable-memory allocation or storage dependency. Historical storage receipts below retain their
+identities, lifecycle, write cadence and reset policy. Metrics supplies canonical retained-state admission only through its explicit
+`persistence` module. Storage owns the codec and retained bytes; there is no
+recorder transport contract or stable-memory dependency. Historical storage receipts below retain their
 original source and graph identities.
 
 The published [IC Host Wasm inspector](https://github.com/dragginzgame/ic-tooling/tree/main/apps/ic-host-wasm-inspect)
@@ -149,7 +97,7 @@ experiments retain their own qualified tool identity; Metrics maintains no CLI
 adapter or pin. Common setup, CI and release preflight require no inspector. It
 does not execute canisters or estimate instruction/cycle costs. PocketIC provisioning and lifecycle
 belong to IC Testkit; this workspace has no maintained server caller.
-No IC Host package is required to compile or use the arithmetic library.
+No IC Host package is required to compile or use the instrumentation library.
 
 ## Downstream contract checks
 
@@ -164,7 +112,7 @@ No IC Host package is required to compile or use the arithmetic library.
 
 Review affected producers, DTOs, codecs, generated views and callers when shared
 contracts change. Consumers explicitly select registry dependencies, remove
-superseded arithmetic and qualify their own runtime/native contracts. Exposed
+superseded recording implementations and qualify their own runtime/native contracts. Exposed
 shared types require a consistent dependency identity. Publication and a lock
 update do not establish owning acceptance. GitHub issues retain current work;
 remaining original Canic qualification stays with
@@ -224,7 +172,7 @@ adds no further production dependency and uses Rust `alloc`, never `std` or plat
 per-key byte and total-key-byte limits. Existing identities continue at capacity.
 Each refused observation contributes exactly once to a same-unit omitted aggregate;
 its count is observations, not distinct omitted identities. Reports borrow keys
-and copy arithmetic state; no global top-cost or complete-identity claim is made.
+and copy recorded observation state; no global top-cost or complete-identity claim is made.
 The key-byte budget excludes map-node and allocator overhead. Bounds are product
 choices; the shared crate chooses no application capacity or admission labels.
 

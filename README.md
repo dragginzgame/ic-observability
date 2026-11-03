@@ -5,7 +5,7 @@ application-selected crates.
 
 | Crate | Responsibility | Status |
 | --- | --- | --- |
-| [ic-metrics](crates/ic-metrics/README.md) | Validated measurement arithmetic, numeric transport and optional bounded heap recording | Published package; existing crate identity retained |
+| [ic-metrics](crates/ic-metrics/README.md) | Application instrumentation and optional bounded heap recording | Independent Metrics release group |
 | [ic-logging](crates/ic-logging/README.md) | Bounded heap logs, UTF-8-safe truncation, explicit age retention and scan-bounded cursor pages | Heap engine with validated checkpoint restoration |
 
 The workspace is the renamed IC Metrics repository. It shares one catalog,
@@ -14,13 +14,14 @@ groups. Neither library
 depends on the other. Consumers can keep selecting `ic-metrics` by its existing
 package name; logging is a separate opt-in dependency.
 
-Both libraries are `no_std`. Measurement arithmetic is allocation-free;
+Both libraries are `no_std` and have no production dependencies. Fixed Metrics recording is allocation-free;
 Metrics' optional `recording` feature and the Logging library use `alloc`.
 Applications own attribution, labels, clocks, authorization, lifecycle and
-endpoints. Logging supplies no global recorder, timer or IC exports. The
+endpoints. Canic's metrics adapter owns the shared reporting endpoint and DTOs.
+Logging supplies no global recorder, timer or IC exports. The
 [independent worker example](crates/ic-logging/examples/worker.rs) demonstrates
 logging without Canic.
-For a published arithmetic-only consumer and separately selected heap logs:
+For the currently published Metrics API and separately selected heap logs:
 
 ```toml
 [dependencies]
@@ -28,8 +29,11 @@ ic-metrics = "0.28"
 ic-logging = "0.23"
 ```
 
-Enable `recording` for bounded Metrics retention. Validated Serde is always
-available; services own report DTOs, Wire schemas and generated clients.
+Enable `recording` for bounded Metrics retention. Metrics follows
+the [0.29 instrumentation boundary](releases/metrics/0.29.md): no general numeric
+helpers or recorder Serde traits. Governed storage uses explicit restoration;
+Canic's adapter owns report DTOs, validation, Wire schemas and generated clients.
+Earlier 0.28 releases retain their previous Serde API.
 The [0.28 migration](releases/metrics/0.28.md) removes Metrics' earlier
 `native-wire` feature and schema implementations without changing numeric records.
 The [0.24 migration](releases/metrics/0.24.md) describes the historical Wire 0.13

@@ -36,7 +36,6 @@ reset_case() {
 default = []
 recording = []
 [dependencies]
-serde = { path = "../../../vendor/serde", default-features = false, features = ["derive"] }
 TRANSPORT
 }
 check_case() {
@@ -57,35 +56,16 @@ check_case() {
 }
 
 reset_case
-check_case standard-transport pass
-cp "$fixture/workspace/crates/ic-metrics/Cargo.toml" "$fixture/standard-manifest"
+check_case dependency-free pass
 printf '\n[dev-dependencies]\nhelper = { package = "ic-testkit", path = "../../../vendor/ic-testkit" }\n' >> "$fixture/workspace/crates/ic-metrics/Cargo.toml"
 check_case development-package pass
 
-sed 's/^serde = { /serde = { optional = true, /' "$fixture/standard-manifest" > "$fixture/workspace/crates/ic-metrics/Cargo.toml"
-check_case optional-serde 'transport dependency has unapproved optionality or defaults'
-sed 's/default-features = false/default-features = true/g' "$fixture/standard-manifest" > "$fixture/workspace/crates/ic-metrics/Cargo.toml"
-check_case transport-default-features 'transport dependency has unapproved optionality or defaults'
-sed '/^serde = /d' "$fixture/standard-manifest" > "$fixture/workspace/crates/ic-metrics/Cargo.toml"
-check_case missing-transport 'missing standard transport dependency'
-
-# Admit the actual target/feature contract, not merely dependency package names.
+# Every production declaration, including Serde, is forbidden.
 reset_case
-sed "s/^\[dependencies\]/[target.'cfg(target_os = \"none\")'.dependencies]/" "$fixture/workspace/crates/ic-metrics/Cargo.toml" > "$fixture/candidate"
-mv "$fixture/candidate" "$fixture/workspace/crates/ic-metrics/Cargo.toml"
-check_case serde-target 'serde has an unapproved target placement'
-for change in missing std alloc; do
-    reset_case
-    replacement='[]'
-    [[ "$change" == missing ]] || replacement="[\"derive\", \"$change\"]"
-    sed "s/features = \[\"derive\"\]/features = $replacement/" "$fixture/workspace/crates/ic-metrics/Cargo.toml" > "$fixture/candidate"
-    mv "$fixture/candidate" "$fixture/workspace/crates/ic-metrics/Cargo.toml"
-    check_case "serde-$change" 'serde has unapproved transport features'
-done
-reset_case
+printf '\n[dev-dependencies]\nserde = { path = "../../../vendor/serde" }\n' >> "$fixture/workspace/crates/ic-metrics/Cargo.toml"
 sed 's|recording = \[\]|recording = ["serde/std"]|' "$fixture/workspace/crates/ic-metrics/Cargo.toml" > "$fixture/candidate"
 mv "$fixture/candidate" "$fixture/workspace/crates/ic-metrics/Cargo.toml"
-check_case forward-serde 'ic-metrics forwards dependency features'
+check_case forward-dependency 'ic-metrics forwards dependency features'
 reset_case
 awk '{ print } /^recording =/ { print "combined = [\"recording\"]" }' "$fixture/workspace/crates/ic-metrics/Cargo.toml" > "$fixture/candidate"
 mv "$fixture/candidate" "$fixture/workspace/crates/ic-metrics/Cargo.toml"
@@ -127,6 +107,9 @@ add_declaration() {
 
 # Construct the same declaration axes while keeping each owner's policy explicit.
 for owner in ic-metrics ic-logging; do
+    reset_case
+    printf '\nserde = { path = "../../../vendor/serde" }\n' >> "$fixture/workspace/crates/$owner/Cargo.toml"
+    check_case "$owner-serde" "$owner declares a production dependency: serde"
     for selection in normal optional target build; do
         reset_case
         add_declaration "$owner" "$selection"

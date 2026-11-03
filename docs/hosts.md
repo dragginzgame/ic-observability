@@ -115,7 +115,7 @@ Optional structural Wasm inspection follows the
 [IC Host inspector guide](https://github.com/dragginzgame/ic-tooling/tree/main/apps/ic-host-wasm-inspect).
 Experiments select their qualified published version, managed installation and
 budgets directly. Metrics has no inspector wrapper, pin or Make targets; common
-setup/check, CI, release preflight and the arithmetic library require no inspector.
+setup/check, CI, release preflight and the instrumentation library require no inspector.
 Existing experiment sources, executable identities and artifacts remain frozen.
 The reviewed snapshot owns default pins in `ci/tool-versions.env` and
 `ci/ic-tools.tsv`; host, Rust and IC exceptions are independently selected
@@ -136,14 +136,14 @@ libraries; select direct Cargo commands when only one package or test is affecte
 | Focused library checks | `cargo check -p PACKAGE --all-targets --locked`; library Wasm: `cargo check -p PACKAGE --locked --target wasm32-unknown-unknown`; `cargo clippy -p PACKAGE --all-targets --locked -- -D warnings` |
 | Named tests | `cargo test -p ic-metrics --locked <test-name>`; package doctests: `cargo test -p PACKAGE --locked --doc` |
 | Logging | `cargo test -p ic-logging --lib --locked`; `cargo test -p ic-logging --doc --locked`; `cargo clippy -p ic-logging --lib --tests --examples --locked -- -D warnings` |
-| Validated numeric transport | `cargo test -p ic-metrics --lib --locked --offline transport::tests` |
-| Allocation-free arithmetic | `cargo test -p ic-metrics --lib --no-default-features --locked ratio::tests`; native/Wasm graphs exclude Wire and Platform under every feature selection |
-| Minimal Serde and feature graphs | `make metrics-profiles-check`; runs Serde round trips/refusals and Metrics' native minimal, recording, default and all-feature Wasm normal/build closures. `make logging-profiles-check` independently checks dependency-free Logging on native and Wasm |
+| Explicit persistence clients | `cargo test -p ic-metrics --test persistence --all-features --locked --offline`; negative API checks: `cargo test -p ic-metrics --doc --all-features --locked --offline` |
+| Fixed instrumentation | `cargo test -p ic-metrics --lib --no-default-features --locked --offline aggregate::tests`; native/Wasm production graphs exclude all external dependencies |
+| Instrumentation feature graphs | `make metrics-profiles-check`; checks dependency-free native minimal, recording, default and all-feature Wasm normal/build closures. `make logging-profiles-check` independently checks Logging |
 | Log export recipe | `cargo test -p ic-logging --example byte-budgeted-export --locked --offline`; execute the walkthrough with `cargo run -p ic-logging --example byte-budgeted-export --locked --offline` |
 | Recording model | `cargo test -p ic-metrics --lib --no-default-features --features recording --locked --offline recording::tests::model` |
 | Logging operation model | `cargo test -p ic-logging --lib --locked --offline log::tests::mixed`; exercises journal-based state, paging and visitor stops across admission, retention and restoration |
 | Histogram restoration oracle | `cargo test -p ic-metrics --lib --no-default-features --locked --offline histogram::tests::restoration`; exhaustive small-domain bounds/distributions and exact weighted overflow histories |
-| Allocator-free arithmetic link | `make allocation-free-check` |
+| Allocator-free fixed recording link | `make allocation-free-check` |
 | Recording library checks | `cargo check -p ic-metrics --lib --features recording --locked`; Wasm: `cargo check -p ic-metrics --lib --features recording --locked --target wasm32-unknown-unknown`; lint: `cargo clippy -p ic-metrics --lib --tests --features recording --locked -- -D warnings` |
 | Recording tests and examples | `cargo test -p ic-metrics --lib --features recording --locked <test-name>`; doctests: `cargo test -p ic-metrics --doc --features recording --locked` |
 | Snapshot/pins | `make shared-tooling-check check-pins` |
@@ -152,17 +152,16 @@ libraries; select direct Cargo commands when only one package or test is affecte
 | Frozen evidence integrity | `make evidence-check` (checksums only; no replay or payload-privacy qualification) |
 | Maintained docs | `make check-doc-links`, consistency review and `git diff --check` |
 
-Default-feature commands above cover allocation-free arithmetic. Recording is
+Default-feature commands above cover fixed instrumentation. Recording is
 opt-in: include `--features recording` when selecting its tests, checks or examples.
 A recording test-name filter without that feature can succeed with zero selected
 tests; confirm that the intended cases actually ran.
 
-Services own report DTOs, Wire metadata, generated clients and browser/runtime
-qualification. Metrics maintains validated Serde, arithmetic and native/Wasm
-graph admission. The [0.28 migration](../releases/metrics/0.28.md) retires
-Metrics-owned Wire and TypeScript entrypoints, Node/npm setup and source/registry
-pairing fixtures. Historical qualification READMEs and evidence retain their
-original package identities; they do not qualify the current source.
+Canic's metrics adapter owns report DTOs, Wire/TypeScript projection and the shared
+reporting endpoint. Metrics owns instrumentation, explicit persistence restoration
+and native/Wasm graph admission. The [0.29 API inventory](metrics-api.md) maps
+removed general numeric and transport APIs to their owners. Earlier Wire/Serde
+qualification receipts retain their original package identities.
 
 For Logging's extended model exploration, run
 `cargo test -p ic-logging --lib --locked --offline log::tests::mixed::long_utf8_histories_match_independent_event_history -- --ignored --exact`.
@@ -180,9 +179,9 @@ remain full CI. No release gate uses the shortcut. Focused routing validation is
 `make ci-selection-check`; `make package-doc-links-check` checks Cargo's actual
 package file selection in staging that cannot borrow repository-only link targets.
 
-`make allocation-free-check` links the runtime-input arithmetic example for
+`make allocation-free-check` links the runtime-input instrumentation example for
 `wasm32-unknown-unknown`, with no standard library or global allocator. Linker
-exports and dead-code retention keep the exercised arithmetic in the executable.
+exports and dead-code retention keep the exercised recording in the executable.
 The check uses locked offline dependencies and this repository's `target/`;
 CI runs it once on the pinned/support compiler. This is a link-contract check,
 not an IC cost measurement. Each native job selects
@@ -194,7 +193,7 @@ The former minimum/development duplication is consolidated as follows:
 
 | Previous minimum-compiler proof | Retained Rust 1.99.1 proof |
 | --- | --- |
-| Minimal Metrics library | `metrics-profiles-check` compiles and tests the no-default-features Serde profile; allocator-free Wasm links separately |
+| Minimal Metrics library | `metrics-profiles-check` admits the dependency-free no-default-features profile; allocator-free Wasm links separately |
 | Workspace native all-targets/all-features | Native `clippy` checks all targets and `test` executes library, integration and example tests |
 | Wasm workspace libraries | Wasm all-features library Clippy in each native job |
 | Public doctests | Workspace all-features `test` executes both packages' doctests |
@@ -213,11 +212,10 @@ and are not compared with current files.
 
 ### Dependency roles and production graphs
 
-The workspace owns independent Metrics and Logging libraries. Metrics has standard
-numeric transport; Logging has no dependencies. The root catalog's
-`Tests and tooling only` group selects `num-bigint` for the ratio
-oracle, with default features disabled. It is inherited only by development
-dependencies. IC Persistence owns stable-adapter graph admission and tests.
+The workspace owns independent, dependency-free Metrics and Logging libraries.
+The root catalog's `Tests and tooling only` group selects `num-bigint` for the
+restoration overflow oracle and Serde for public API trait-refusal checks. Neither
+enters production. IC Storage owns adapter graph and retained-format qualification.
 
 The root catalog uses Shared Tooling's grouped sort order.
 `make fmt`, `make fmt-check` and hooks use that shared default; every release
@@ -225,18 +223,17 @@ adapter ordering check uses `--manifest-order-grouped` against its current or
 selected committed source. No paired formatter override is needed here.
 
 `make production-dependencies-check` admits both libraries through successful
-locked, offline Cargo metadata. Metrics admits only required, unconditional Serde
-without defaults and with `derive`. Local features may compose local switches,
-never forward dependency features. The retired `native-wire` feature and all
-Wire-family dependencies, including development inputs, refuse.
-Logging admits no production dependencies, including Metrics itself.
+locked, offline Cargo metadata. Neither library admits normal/build dependencies. Local features may compose
+local switches, never forward dependency features. The retired `native-wire`
+feature and all Wire-family dependencies, including development inputs, refuse.
+Metrics has no recorder Serde implementation or transport dependency.
 Other normal/build dependencies are rejected, including optional and inactive
 target-specific entries.
 This constrains the production graph without
 compiler-host discovery or repeated graph traversal. Development dependencies
 remain separate; the existing direct stable-substrate prohibition applies there
 too. Fixtures cover declaration axes, renamed dependencies, allowed development
-use, transport placement/features, forwarded dependency features, failed Cargo
+use, Serde refusal, forwarded dependency features, failed Cargo
 children and malformed/incomplete metadata. CI and release
 verification use the same check.
 
@@ -250,15 +247,14 @@ Role labels, formatting and `make check-pins` remain separate checks.
 Keep compilation checks sequential when they share `target/`; check for active
 builds before source mutation or compilation. Bare Cargo commands select both
 libraries; use `-p ic-metrics` or `-p ic-logging` for focused work. Builds use
-locked dependencies. Metrics requires only Serde for validated numeric records;
-Logging has no dependencies. Neither owns platform readers or a server harness.
+locked dependencies. Both libraries have no production dependencies. Neither owns platform readers or a server harness.
 Stable storage qualification belongs to IC Persistence.
 The inspector's CLI checks stay at IC Host; existing smoke artifacts under
 `target/evidence/wasm-inspector/` remain retained historical evidence.
 
 Formatting fixtures use Shared Tooling's current-source selector for maintained
 Rust sources and Cargo manifests, including pending additions and deletions.
-Metrics selects its arithmetic Rust entrypoint. Its single development dependency
+Metrics selects its instrumentation Rust entrypoint. Its single development dependency
 has no pair to reorder, so the hook fixture uses Shared's explicit mode without
 dependency-table perturbation. Generic manifest sorting remains qualified at
 Shared Tooling; the local fixture retains Rust formatting, preservation, failure
@@ -281,9 +277,9 @@ after host parsers are prepared. Standard release preflight prepares/checks the
 editor before offline validation; standalone preflight only checks it. Metadata
 preparation resolves its absolute admitted path without installation, then Shared
 Tooling owns candidate preparation, validation and failure restoration. Missing
-selections refuse before metadata mutation. The arithmetic library requires no IC Build.
+selections refuse before metadata mutation. The instrumentation library requires no IC Build.
 
-The arithmetic library declares or imports no external IC-specific package and
+The instrumentation library declares or imports no external IC-specific package and
 needs no Platform dependency. There is no maintained Rust CLI, endpoint or messaging
 codec to migrate to Clap or Wire. Tracked sources and actual package file lists
 are reviewed for the no-symlink rule; managed tool-selection pointers and isolated

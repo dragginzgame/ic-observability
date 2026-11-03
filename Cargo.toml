@@ -19,14 +19,10 @@ ic-logging = { path = "crates/ic-logging", version = "0.24.5" }
 # Changelog : releases/metrics/CHANGELOG.md
 ic-metrics = { path = "crates/ic-metrics", version = "0.28.2" }
 
-# Production dependencies
-# External, also used by tests: validated Serde records are standard.
-serde = { version = "1.0", default-features = false, features = ["derive"] }
-
 # Tests and tooling only
-# External arithmetic oracle and native-only JSON conformance.
+# External restoration oracle and public API trait-refusal checks.
 num-bigint = { version = "0.5.1", default-features = false }
-serde_json = "1.0"
+serde = { version = "1.0", default-features = false }
 
 [workspace.lints.rust]
 missing_docs = "warn"

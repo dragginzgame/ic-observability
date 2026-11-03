@@ -1,5 +1,27 @@
 # Current handoff — 2026-11-03
 
+**Metrics 0.29.0 delivery is authorized and being prepared; #130 stays open.**
+The [complete API inventory](../metrics-api.md) records every retained public
+member/trait and the removed arithmetic/report surface, with owning consumer
+repairs. Metrics now instruments the Canic application tree. General numeric
+helpers, report queries and direct recorder Serde are removed; explicit
+`persistence` functions retain canonical restoration for Storage. Fixed recording,
+overflow, reset and retention semantics remain; production graphs are dependency-free.
+Canic's adapter owns report DTOs, Wire/TypeScript and the shared endpoint.
+The [0.29 migration](../../releases/metrics/0.29.md) documents this breaking cut.
+Delivery runs from this normal checkout on `main` to the established approved
+`origin/main`, with `metrics-v0.29.0` and crates.io publication selected separately.
+The canonical minor-release transaction owns the version preparation. Logging
+remains 0.24.5. No delivery/publication is claimed until its receipt is verified.
+Focused Linux/Rust 1.99.1 checks pass: 50 library, three external client, five
+positive doctest and 30 compile-fail cases; strict native/Wasm Clippy, production
+graphs/declarations/refusal fixtures, allocator-free Wasm link, rustdoc and links.
+Logs remain in `target/issue-130/`. Storage's real retained-codec qualification,
+report-owner rounding/validation and sibling repairs are not claimed; keep
+[#130](https://github.com/dragginzgame/ic-observability/issues/130) open until its
+required consumer work is completed. No sibling checkout changed. Preserve the
+pre-existing lowercase Cargo catalog comments alongside this batch's scoped edits.
+
 **Metrics 0.28.2 and Logging 0.24.5 are delivered and verified on crates.io.**
 [Delivery evidence](../evidence/shared-tooling-0282-delivery-20261103.md) records
 release identities, complete local plans, official checksums and archive/source
@@ -56,9 +78,9 @@ The [previous delivery](../evidence/shared-tooling-0280-delivery-20261103.md) an
 [0.28.1 local qualification](../evidence/shared-tooling-0281-20261103.md) retain
 their original identities, scope and artifacts.
 
-Metrics owns arithmetic, admission and validated Serde, with optional bounded
-recording and no Wire/Platform/endpoint dependency. Services own report DTOs,
-Wire metadata, codecs and clients; use the [0.28 migration](../../releases/metrics/0.28.md).
+Published Metrics 0.28 owns its earlier arithmetic/Serde contract; the local
+0.29 instrumentation cut above supersedes it on the next release. Canic's adapter
+owns report DTOs, Wire metadata, codecs, clients and endpoint integration.
 Logging remains a dependency-free heap engine; Persistence owns both opted-in
 stable adapters. This tooling change introduces no library or retained-data reset.
 Observability #128 remains closed after its own earlier verified delivery.

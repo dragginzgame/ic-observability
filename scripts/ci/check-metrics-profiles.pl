@@ -32,7 +32,7 @@ for my $profile ($group eq 'logging' ? () : @profiles) {
     my ($name, $target, @features) = @$profile;
     system($^X,'scripts/ci/check-cargo-graph.pl','--consumer','.',
         '--package','ic-metrics','--target',$target,'--edges','normal,build',@features,
-        '--require','serde=1','--forbid-pattern','^(?:ic-wire(?:-.*)?|ic-platform(?:-.*)?)$') == 0
+        '--forbid-pattern','^(?!ic-metrics$)') == 0
         or die "$name: ic-metrics production graph refused\n";
     print "$name: resolved Metrics production graph admitted\n";
 }
