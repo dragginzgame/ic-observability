@@ -1,9 +1,45 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# One roster drives both full qualification and explicit scenario selection.
+scenarios="$(cat <<'SCENARIOS'
+success||no|0|0|0|0|native-ci.log|setup-smoke,host-tools,compiler,tools,application-sources,ci|success|success|success
+skipped-setup||no|0|0|0|0|native-ci.log||skipped|skipped|skipped
+setup-smoke|setup-smoke|no|0|0|43|0|setup-smoke.log|setup-smoke|skipped|skipped|skipped
+host-tools|host-tools|no|0|0|43|0|native-ci.log|setup-smoke,host-tools|success|skipped|success
+compiler|compiler|no|0|0|43|0|compiler.txt|setup-smoke,host-tools,compiler|success|success|success
+tool-inputs|tool-inputs|no|0|0|43|0|tool-versions.txt|setup-smoke,host-tools,compiler,tools|success|success|success
+application-sources|application-sources|no|0|0|43|0|application-sources.log|setup-smoke,host-tools,compiler,tools,application-sources|success|success|success
+tools-install|tools-install|no|0|0|43|0|tools-setup.log|setup-smoke,host-tools,compiler,tools|success|success|success
+tools-check|tools-check|no|0|0|43|0|tools-check.log|setup-smoke,host-tools,compiler,tools|success|success|success
+native|ci|no|0|0|43|0|native-ci.log|setup-smoke,host-tools,compiler,tools,application-sources,ci|success|success|success
+formatting|ci|yes|0|0|43|0|native-ci.log|setup-smoke,host-tools,compiler,tools,application-sources,ci|success|success|success
+collection-partial|tools-install|no|1|0|43|1|tools-setup.log|setup-smoke,host-tools,compiler,tools|success|success|success
+collection-failure|tools-install|no|2|0|43|2|tools-setup.log|setup-smoke,host-tools,compiler,tools|success|success|success
+native-archive-failure||no|0|23|0|23|native-ci.log|setup-smoke,host-tools,compiler,tools,application-sources,ci|success|success|success
+collection-archive-failure|tools-install|no|2|23|43|2|tools-setup.log|setup-smoke,host-tools,compiler,tools|success|success|success
+SCENARIOS
+)"
+selected_scenario=''
+if [[ "$#" != 0 ]]; then
+    [[ "$#" == 2 && "$1" == --scenario && -n "$2" ]] || {
+        echo 'usage: test-native-evidence.sh [--scenario NAME]' >&2
+        exit 2
+    }
+    selected_scenario="$2"
+    found=false
+    while IFS='|' read -r name _; do
+        [[ "$name" != "$selected_scenario" ]] || found=true
+    done <<< "$scenarios"
+    [[ "$found" == true ]] || {
+        printf 'Unknown native evidence scenario: %s\n' "$selected_scenario" >&2
+        exit 2
+    }
+fi
+
 # Execute the consumer workflow's source/setup/archive bodies with substituted
 # action results and Make effects. This proves local IO/status, not hosted execution.
-unset MAKEFLAGS MFLAGS MAKEOVERRIDES GNUMAKEFLAGS MAKEFILES GIT_DIR GIT_WORK_TREE
+unset MAKEFLAGS MFLAGS MAKEOVERRIDES GNUMAKEFLAGS MAKEFILES GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE
 root="${BASH_SOURCE[0]}"
 [[ "$root" == /* ]] || root="$PWD/$root"
 root="$(cd -P "${root%/*}/../.." && printf '%s/.' "$PWD")"
@@ -86,63 +122,66 @@ for phase in install check; do
     fi
 done
 TOOLS
-# Execute the real workflow setup bodies and selected helper. Shared owns
-# generic argument admission; Metrics owns compiler/component/target selection.
-mkdir -p "$fixture/rust-bin"
-cat > "$fixture/rust-bin/rustup" <<'RUSTUP'
+# Focused recovery cases need only their shared workflow setup above.
+if [[ -z "$selected_scenario" ]]; then
+    # Execute the real workflow setup bodies and selected helper. Shared owns
+    # generic argument admission; Metrics owns compiler/component/target selection.
+    mkdir -p "$fixture/rust-bin"
+    cat > "$fixture/rust-bin/rustup" <<'RUSTUP'
 #!/usr/bin/env bash
 printf '%s\0' "$@" > "$METRICS_RUSTUP_ARGS"
 exit "$METRICS_RUSTUP_STATUS"
 RUSTUP
-chmod +x "$fixture/rust-bin/rustup"
-version="$("$yq" -p toml -o yaml -r '.toolchain.channel' "$root/rust-toolchain.toml")"
-command_file=toolchain
-components=(--component clippy --component rustfmt)
-printf '%s\0' toolchain install "$version" --profile minimal \
-    ${components[@]+"${components[@]}"} --target wasm32-unknown-unknown > "$fixture/rust-expected"
-for expected_status in 0 49; do
-    status=0
-    (cd "$root" && PATH="$fixture/rust-bin:$PATH" METRICS_RUSTUP_ARGS="$fixture/rust-actual" \
-        METRICS_RUSTUP_STATUS="$expected_status" "$BASH" --noprofile --norc -e -o pipefail \
-        "$fixture/commands/$command_file.sh") > "$fixture/rust-supported-$expected_status.log" 2>&1 || status=$?
-    [[ "$status" == "$expected_status" ]] || exit 1
-    cmp "$fixture/rust-expected" "$fixture/rust-actual"
-done
-# Execute the actual host gate with substituted platform observations. Failed
-# comparisons must refuse before writing PATH, including on Bash 3.2.
-mkdir -p "$fixture/host-bin"
-cat > "$fixture/host-bin/uname" <<'UNAME'
+    chmod +x "$fixture/rust-bin/rustup"
+    version="$("$yq" -p toml -o yaml -r '.toolchain.channel' "$root/rust-toolchain.toml")"
+    command_file=toolchain
+    components=(--component clippy --component rustfmt)
+    printf '%s\0' toolchain install "$version" --profile minimal \
+        ${components[@]+"${components[@]}"} --target wasm32-unknown-unknown > "$fixture/rust-expected"
+    for expected_status in 0 49; do
+        status=0
+        (cd "$root" && PATH="$fixture/rust-bin:$PATH" METRICS_RUSTUP_ARGS="$fixture/rust-actual" \
+            METRICS_RUSTUP_STATUS="$expected_status" "$BASH" --noprofile --norc -e -o pipefail \
+            "$fixture/commands/$command_file.sh") > "$fixture/rust-supported-$expected_status.log" 2>&1 || status=$?
+        [[ "$status" == "$expected_status" ]] || exit 1
+        cmp "$fixture/rust-expected" "$fixture/rust-actual"
+    done
+    # Execute the actual host gate with substituted platform observations. Failed
+    # comparisons must refuse before writing PATH, including on Bash 3.2.
+    mkdir -p "$fixture/host-bin"
+    cat > "$fixture/host-bin/uname" <<'UNAME'
 #!/usr/bin/env bash
 case "$1" in -s) printf '%s\n' "$FIXTURE_HOST_OS"; exit "${FIXTURE_HOST_STATUS:-0}" ;; -m) printf '%s\n' "$FIXTURE_HOST_ARCH" ;; *) exit 2 ;; esac
 UNAME
-cat > "$fixture/host-bin/sw_vers" <<'VERSION'
+    cat > "$fixture/host-bin/sw_vers" <<'VERSION'
 #!/usr/bin/env bash
 [[ "$1" == -productVersion ]] || exit 2
 printf '%s\n' "$FIXTURE_HOST_VERSION"
 VERSION
-chmod +x "$fixture/host-bin/uname" "$fixture/host-bin/sw_vers"
-# Shared owns generic mismatches; retain this workflow's ordering/PATH boundary.
-for scenario in success wrong-os failed-observation; do
-    host_os=Darwin host_arch=arm64 host_version=15.0 host_status=0
-    case "$scenario" in
-        wrong-os) host_os=Linux ;;
-        failed-observation) host_status=43 ;;
-    esac
-    expected_status=1
-    [[ "$scenario" != failed-observation ]] || expected_status=43
-    : > "$fixture/host-$scenario.path"
-    status=0
-    (cd "$root" && PATH="$fixture/host-bin:$PATH" EXPECTED_OS=Darwin EXPECTED_ARCHITECTURE=arm64 \
-        FIXTURE_HOST_OS="$host_os" FIXTURE_HOST_ARCH="$host_arch" FIXTURE_HOST_VERSION="$host_version" \
-        FIXTURE_HOST_STATUS="$host_status" \
-        GITHUB_PATH="$fixture/host-$scenario.path" "$BASH" --noprofile --norc -e -o pipefail \
-        "$fixture/commands/native_host.sh") > "$fixture/host-$scenario.log" 2>&1 || status=$?
-    if [[ "$scenario" == success ]]; then
-        [[ "$status" == 0 && "$(cat "$fixture/host-$scenario.path")" == /bin ]] || exit 1
-    else
-        [[ "$status" == "$expected_status" && ! -s "$fixture/host-$scenario.path" ]] || exit 1
-    fi
-done
+    chmod +x "$fixture/host-bin/uname" "$fixture/host-bin/sw_vers"
+    # Shared owns generic mismatches; retain this workflow's ordering/PATH boundary.
+    for scenario in success wrong-os failed-observation; do
+        host_os=Darwin host_arch=arm64 host_version=15.0 host_status=0
+        case "$scenario" in
+            wrong-os) host_os=Linux ;;
+            failed-observation) host_status=43 ;;
+        esac
+        expected_status=1
+        [[ "$scenario" != failed-observation ]] || expected_status=43
+        : > "$fixture/host-$scenario.path"
+        status=0
+        (cd "$root" && PATH="$fixture/host-bin:$PATH" EXPECTED_OS=Darwin EXPECTED_ARCHITECTURE=arm64 \
+            FIXTURE_HOST_OS="$host_os" FIXTURE_HOST_ARCH="$host_arch" FIXTURE_HOST_VERSION="$host_version" \
+            FIXTURE_HOST_STATUS="$host_status" \
+            GITHUB_PATH="$fixture/host-$scenario.path" "$BASH" --noprofile --norc -e -o pipefail \
+            "$fixture/commands/native_host.sh") > "$fixture/host-$scenario.log" 2>&1 || status=$?
+        if [[ "$scenario" == success ]]; then
+            [[ "$status" == 0 && "$(cat "$fixture/host-$scenario.path")" == /bin ]] || exit 1
+        else
+            [[ "$status" == "$expected_status" && ! -s "$fixture/host-$scenario.path" ]] || exit 1
+        fi
+    done
+fi
 # Copy the workflow's source inputs and Make/helper closure, including pending
 # untracked helpers. Historical docs/evidence archives are not fixture inputs.
 # The live source-hash step below refuses any omitted workflow input.
@@ -154,6 +193,12 @@ while IFS= read -r -d '' path; do
         cp -p "$root/$path" "$fixture/source/$path"
     fi
 done < "$fixture/source-files"
+# Model pending deletions only in this fixture's index. The live selector still
+# retains missing tracked paths so hosted hashing refuses an incomplete checkout.
+export GIT_INDEX_FILE="$fixture/index"
+git -C "$root" read-tree HEAD
+git -C "$root" ls-files --deleted -z > "$fixture/deleted-paths"
+git -C "$root" update-index --force-remove -z --stdin < "$fixture/deleted-paths"
 cat > "$fixture/bin/make" <<'MAKE'
 #!/usr/bin/env bash
 set -euo pipefail
@@ -253,7 +298,9 @@ check_retained_recovery_inputs() {
 # Scenario data supplies expectations independently of observed step outcomes.
 while IFS='|' read -r scenario FIXTURE_FAILURE FIXTURE_FORMATTING \
     FIXTURE_COLLECTION_STATUS FIXTURE_ARCHIVE_STATUS expected_pipeline_status \
-    expected_collector_status failed_log expected_trace HOST_OUTCOME TOOLCHAIN_OUTCOME PREREQUISITES_OUTCOME; do (
+    expected_collector_status failed_log expected_trace HOST_OUTCOME TOOLCHAIN_OUTCOME PREREQUISITES_OUTCOME; do
+    [[ -z "$selected_scenario" || "$scenario" == "$selected_scenario" ]] || continue
+(
     worktree="$fixture/$scenario"
     mkdir -p "$worktree"
     cp -R "$fixture/source/." "$worktree/"
@@ -421,22 +468,8 @@ while IFS='|' read -r scenario FIXTURE_FAILURE FIXTURE_FORMATTING \
             [[ ! -f unpacked/target/evidence/native-ci/tool-candidates.tar.gz ]] || exit 1 ;;
         *) echo "unhandled native evidence scenario: $scenario" >&2; exit 2 ;;
     esac
-) done <<'SCENARIOS'
-success||no|0|0|0|0|native-ci.log|setup-smoke,host-tools,compiler,tools,application-sources,ci|success|success|success
-skipped-setup||no|0|0|0|0|native-ci.log||skipped|skipped|skipped
-setup-smoke|setup-smoke|no|0|0|43|0|setup-smoke.log|setup-smoke|skipped|skipped|skipped
-host-tools|host-tools|no|0|0|43|0|native-ci.log|setup-smoke,host-tools|success|skipped|success
-compiler|compiler|no|0|0|43|0|compiler.txt|setup-smoke,host-tools,compiler|success|success|success
-tool-inputs|tool-inputs|no|0|0|43|0|tool-versions.txt|setup-smoke,host-tools,compiler,tools|success|success|success
-application-sources|application-sources|no|0|0|43|0|application-sources.log|setup-smoke,host-tools,compiler,tools,application-sources|success|success|success
-tools-install|tools-install|no|0|0|43|0|tools-setup.log|setup-smoke,host-tools,compiler,tools|success|success|success
-tools-check|tools-check|no|0|0|43|0|tools-check.log|setup-smoke,host-tools,compiler,tools|success|success|success
-native|ci|no|0|0|43|0|native-ci.log|setup-smoke,host-tools,compiler,tools,application-sources,ci|success|success|success
-formatting|ci|yes|0|0|43|0|native-ci.log|setup-smoke,host-tools,compiler,tools,application-sources,ci|success|success|success
-collection-partial|tools-install|no|1|0|43|1|tools-setup.log|setup-smoke,host-tools,compiler,tools|success|success|success
-collection-failure|tools-install|no|2|0|43|2|tools-setup.log|setup-smoke,host-tools,compiler,tools|success|success|success
-native-archive-failure||no|0|23|0|23|native-ci.log|setup-smoke,host-tools,compiler,tools,application-sources,ci|success|success|success
-collection-archive-failure|tools-install|no|2|23|43|2|tools-setup.log|setup-smoke,host-tools,compiler,tools|success|success|success
-SCENARIOS
+)
+    printf 'Native evidence scenario passed: %s\n' "$scenario"
+done <<< "$scenarios"
 echo 'Native evidence source/setup/archive cases passed (action results and Make effects substituted; no hosted CI claim)'
 fixture_complete=true

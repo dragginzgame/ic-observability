@@ -6,7 +6,8 @@ root="$(cd -P "${root%/*}/../.." && printf '%s/.' "$PWD")"
 root="${root%/.}"
 # shellcheck source=scripts/ci/fixture-lifecycle.sh
 source "$root/scripts/ci/fixture-lifecycle.sh"
-fixture="$(fixture_create "${TMPDIR:-/tmp}/native-archive.XXXXXX")"
+mkdir -p "$root/target/qualification"
+fixture="$(fixture_create "${TMPDIR:-$root/target/qualification}/native-archive.XXXXXX")"
 fixture_complete=false
 trap 'fixture_finish "$?" "$fixture" "Native archive fixture retained"' EXIT
 real_tar="$(command -v tar)"

@@ -1,11 +1,12 @@
 #!/usr/bin/env perl
-# Shared companions: scripts/ci/validation-evidence.pl ci/release-validation.json ci/cargo-release-groups.json
+# Shared companions: scripts/ci/validation-evidence.pl scripts/ci/CheckProcess.pm ci/release-validation.json ci/cargo-release-groups.json
 # Product scope and protected-receipt custody; Shared owns reusable observations.
 use strict;
 use warnings;
 use FindBin qw($RealBin);
 use lib "$RealBin/../ci";
 use ValidationPlan qw(bytes digest document relative_path);
+use CheckProcess qw(observe);
 use JSON::PP;
 use Cwd qw(abs_path);
 use File::Path qw(make_path);
@@ -18,20 +19,6 @@ my $root = abs_path('.');
 my $json = JSON::PP->new->canonical->utf8;
 my $policy_path = 'ci/release-validation.json';
 my $observer = "$RealBin/../ci/validation-evidence.pl";
-sub observe {
-    open my $in, '-|', @_ or die "start observation: $!\n";
-    binmode $in;
-    my $raw = '';
-    while (1) {
-        my $n = read $in, my $chunk, 65536;
-        defined($n) or die "read observation: $!\n";
-        last unless $n;
-        $raw .= $chunk;
-        length($raw) <= 4194304 or die "observation exceeds 4 MiB\n";
-    }
-    close $in or die "observation failed: @_\n";
-    return $raw;
-}
 sub same { $json->encode($_[0]) eq $json->encode($_[1]) or die "$_[2]\n" }
 sub write_document {
     my ($path, $value) = @_;

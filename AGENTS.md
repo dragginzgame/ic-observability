@@ -19,13 +19,10 @@ consumer-contract or persistence-boundary changes.
   The root dependency catalog lists both members with full current versions and
   paths; each alias belongs to its group's dependency roster. Catalog entries
   alone add no dependency edge between the libraries.
-  Services own frontend/report DTOs, Wire metadata and generated clients.
-  Metrics instruments the Canic application tree; Canic's metrics adapter owns
-  report DTOs, Wire/TypeScript projection and the shared reporting endpoint.
-  Recording types are not report DTOs. Metrics exposes no general arithmetic,
-  statistics, formatting or report-decoding API. The current boundary and
-  consumer repairs are owned by Observability #130; historical receipts retain
-  their original scope.
+  The shared observability contract owns the application-tree instrumentation
+  boundary and Canic's reporting authority. The concrete public API and remaining
+  consumer repairs are recorded in [the API inventory](docs/metrics-api.md) and
+  Observability #130; historical receipts retain their original scope.
   Release, resume and publication require an explicit RELEASE_GROUP; no default
   group or PACKAGE inference is permitted.
 - Logging owns a dependency-free `no_std` + `alloc` heap engine with explicit

@@ -7,11 +7,12 @@ root="${BASH_SOURCE[0]}"
 [[ "$root" == /* ]] || root="$PWD/$root"
 root="$(cd -P "${root%/*}/../.." && printf '%s/.' "$PWD")"
 root="${root%/.}"
-# The arithmetic-only workspace has no dependency pair to reorder. Shared owns
+# The fixed-instrumentation workspace has no dependency pair to reorder. Shared owns
 # generic manifest sorting; this fixture retains Rust hook and failure checks.
 # shellcheck source=scripts/ci/fixture-lifecycle.sh
 source "$root/scripts/ci/fixture-lifecycle.sh"
-fixture="$(fixture_create "${TMPDIR:-/tmp}/metrics-format-hook.XXXXXX")"
+mkdir -p "$root/target/qualification"
+fixture="$(fixture_create "${TMPDIR:-$root/target/qualification}/metrics-format-hook.XXXXXX")"
 fixture_complete=false
 trap 'fixture_finish "$?" "$fixture" "Metrics formatting fixture retained"' EXIT
 TMPDIR="$fixture" bash "$root/scripts/ci/check-formatting-hooks.sh" "$root" \

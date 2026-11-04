@@ -1,4 +1,36 @@
-# Current handoff — 2026-11-03
+# Current handoff — 2026-11-04
+
+**Deployment selected: Metrics 0.29.1 and Logging 0.24.6.**
+The authorized plan uses this normal `main` checkout, `origin/main`, explicit
+release groups and GitHub tags followed by crates.io publication/readback.
+Both candidates were absent from the registry and remote tags before dispatch.
+The standard runner must finish each complete selected gate before preparation.
+No new version is claimed delivered until release and publication succeed.
+Shared Tooling 0.29.4 and the external Rust test layout are prepared locally.
+The [latest adoption receipt](../evidence/shared-tooling-0294-20261104.md) records
+revision `628ccc75d813bfd9bae777bfbaef55838d25b1b2`, its Unreleased status and all
+149 verified files. Retained-state admission, Make dispatch and isolated runner
+refusal probes pass; no recovery evidence was deleted. Catalog/compiler selections
+and package versions are unchanged. Pending notes remain Metrics 0.29.1 and Logging
+0.24.6: compatible tooling and test cleanup, with no library contract change.
+The [earlier cleanup receipt](../evidence/shared-tooling-0293-20261104.md) owns
+external test-layout, companion-resolver and native-evidence scenario checks.
+Retained consumer contracts are ordinary Rust files included in shared formatting.
+Native evidence supports focused scenario selection; its complete default remains.
+The [adoption-gap follow-up](../evidence/shared-tooling-0294-20261104.md#adoption-gap-follow-up)
+records all five subsequent repairs: missing package-input rejection, one bounded
+local process-capture owner, command-scoped CI/release scratch defaults, standard-
+library test import consistency and accurate workspace/focused help labels.
+Process and package-input negative regressions run in owning normal gates.
+Strict affected Clippy, seven histogram/two ordinary Logging model tests, package
+links, dependency graphs/refusals and publication-policy checks pass. The extended
+Logging exploration stays intentionally ignored. Matched mapping/custody and both
+group release/recovery fixture directions pass with substituted broad effects;
+default scratch and explicit CI overrides are checked. No full/hosted CI is claimed.
+No supplier checkout was changed; runtime contracts and lockfile remain unchanged.
+The pre-existing lowercase Cargo comments are preserved in a dedicated Git stash
+and safety copies under `target/deploy/observability-20261104/`; restore only those
+comments after both clean-checkout uploads, preserving newly released versions.
 
 **Metrics 0.29.0 is delivered to GitHub and verified on crates.io. Logging stays 0.24.5.**
 The [delivery receipt](../evidence/metrics-0290-delivery-20261103.md) owns exact
@@ -40,7 +72,7 @@ The pre-existing lowercase Cargo catalog comments are restored and unstaged;
 safety copies remain under `target/deploy/metrics-0290-20261103/` and the earlier
 stash. No unrelated cleanup or sibling delivery ran.
 
-Shared Tooling remains released `v0.28.2`, revision
+The earlier Shared Tooling release was `v0.28.2`, revision
 `5cf67f81c50c56ac17389ae71a3a87d46e86e8a2`, with 148 verified snapshot files.
 The [earlier delivery](../evidence/shared-tooling-0282-delivery-20261103.md) owns
 Metrics 0.28.2 / Logging 0.24.5 registry proof and #129's completed three-host

@@ -5,6 +5,27 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.29.1] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt committed Shared Tooling 0.29.4 rules and release/evidence fixes, including
+  retained-state admission around release steps. Move
+  reset-window tests into their own module so file-based source reports can
+  separate test bodies while preserving private access and test behavior.
+- Prepare CI selection, compiler-policy and publication fixtures through the shared
+  companion resolver, preserving helper dependencies and existing refusal checks.
+- Keep retained-consumer contracts in regular Rust test files covered by formatting,
+  with a focused execution entrypoint and complete default release qualification.
+- Keep standalone local fixture scratch under the workspace's `target/`, retaining
+  explicit temporary-root overrides and failed-input evidence.
+- Allow native-evidence checks to select one recovery scenario while retaining the
+  complete default run. Simplify synthetic dependency inputs without reducing
+  declaration and metadata refusal coverage.
+- Reject missing maintained package inputs and bound captured check commands by
+  output size and lifetime. Keep default CI/release validation scratch under
+  `target/`, and distinguish workspace gates from focused checks in command help.
+
 ## [0.29.0] - 2026-11-03
 
 ### ⚠️ Breaking

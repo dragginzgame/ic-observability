@@ -29,6 +29,7 @@ include make/validation.mk
 $(shell jq -r '.stages[]' ci/release-validation.json):
 	+@if test "$${REQUIRE_JOBSERVER:-0}" = 1 && test '$@' = compiler-check; then perl scripts/ci/check-pipe-jobserver.pl; fi
 	@printf '%s\t%s\n' '$@' "$${OBSERVABILITY_RELEASE_VALIDATION_SCOPE:-workspace}" >> .git/commands
+	@printf '%s\n' "$${TMPDIR:-}" >> .git/scratch-roots
 	@test "$${FAIL_TARGET:-}" != '$@'
 	@if test "$${DRIFT_TARGET:-}" = '$@'; then printf 'drift\n' >> crates/ic-metrics/src/lib.rs; fi
 MAKE
@@ -136,17 +137,20 @@ if [[ "$qualify" == true ]]; then
     : > .git/commands
     parallel=(-j2)
     if make --help | grep -q -- --jobserver-style; then parallel+=(--jobserver-style=pipe); fi
-    REQUIRE_JOBSERVER=1 make "${parallel[@]}" --no-print-directory ci \
+    env -u TMPDIR REQUIRE_JOBSERVER=1 make "${parallel[@]}" --no-print-directory ci \
         OBSERVABILITY_RELEASE_VALIDATION_SCOPE=group > "$fixture/ci.log" 2>&1
     cmp .git/commands "$fixture/full-plan-commands"
+    case "$(tail -1 .git/scratch-roots)" in "$PWD"/target/qualification/full-roster.*/tmp) ;; *) exit 1 ;; esac
     refuse env OBSERVABILITY_RELEASE_VALIDATION_SCOPE=group bash scripts/ci/observability-ci.sh
     cmp .git/commands "$fixture/full-plan-commands"
     seal
     # Full CI stops at strict lint failure before expensive product stages.
     : > .git/commands
     export FAIL_TARGET=clippy
-    refuse make --no-print-directory ci OBSERVABILITY_RELEASE_VALIDATION_SCOPE=group
+    mkdir "$fixture/selected-scratch"
+    TMPDIR="$fixture/selected-scratch" refuse make --no-print-directory ci OBSERVABILITY_RELEASE_VALIDATION_SCOPE=group
     unset FAIL_TARGET
+    [[ "$(tail -1 .git/scratch-roots)" == "$fixture/selected-scratch" ]]
     tail -1 .git/commands > "$fixture/last-command"
     printf 'clippy\tworkspace\n' > "$fixture/last-expected"
     cmp "$fixture/last-command" "$fixture/last-expected"

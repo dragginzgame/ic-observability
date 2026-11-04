@@ -1,6 +1,10 @@
 #!/usr/bin/env perl
+# Shared companions: scripts/ci/CheckProcess.pm
 use strict;
 use warnings;
+use FindBin qw($RealBin);
+use lib "$RealBin/../ci";
+use CheckProcess ();
 
 # Consumer policy: every maintained package file must match the retrieved Git
 # source. Cargo-generated manifest, lock and provenance have separate owners.
@@ -13,18 +17,7 @@ $commit =~ /\A[0-9a-f]{40,64}\z/ or die "invalid source commit\n";
 $path =~ m{\Acrates/ic-(?:metrics|logging)\z} or die "invalid package path\n";
 
 sub observe {
-    open my $child, '-|', @_ or die "cannot start content observation\n";
-    binmode $child;
-    my $output = '';
-    while (1) {
-        my $count = read($child, my $chunk, 65536);
-        defined($count) or die "cannot read content observation\n";
-        last unless $count;
-        $output .= $chunk;
-        length($output) <= 33554432 or die "content observation exceeds 32 MiB\n";
-    }
-    close $child or die "content observation failed\n";
-    return $output;
+    return CheckProcess::observe({max_stdout => 33554432}, @_);
 }
 
 my %expected;

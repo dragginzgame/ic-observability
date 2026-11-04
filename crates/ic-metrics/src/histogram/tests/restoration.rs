@@ -152,14 +152,14 @@ fn check_histogram_restoration<const N: usize>(bounds: [u64; N]) {
         // Also enumerate unreachable distributions, including incorrect count
         // sums, impossible totals and a maximum in an unoccupied bucket.
         for mut distribution in 0..5_usize.pow(u32::try_from(N + 1).unwrap()) {
-            let counts = core::array::from_fn(|_| {
+            let counts = std::array::from_fn(|_| {
                 let count = u64::try_from(distribution % 5).unwrap();
                 distribution /= 5;
                 count
             });
             let overflow = u64::try_from(distribution).unwrap();
             for total in 0..=u128::from(samples) * 3 {
-                for maximum in core::iter::once(None).chain((0..=3).map(Some)) {
+                for maximum in std::iter::once(None).chain((0..=3).map(Some)) {
                     let Ok(aggregate) =
                         Aggregate::from_parts(u64::from(samples), total, maximum, false, false)
                     else {
@@ -196,7 +196,7 @@ fn histogram_restoration_matches_independent_bounded_sequences() {
 
 fn check_histogram_bound_sets<const N: usize>() {
     for mut encoded in 0..4_u64.pow(u32::try_from(N).unwrap()) {
-        let bounds: [u64; N] = core::array::from_fn(|_| {
+        let bounds: [u64; N] = std::array::from_fn(|_| {
             let value = encoded % 4;
             encoded /= 4;
             value
@@ -216,7 +216,7 @@ fn check_weighted_histogram_merges<const N: usize>(bounds: [u64; N]) {
         // neither saturates during accumulation nor repeats admission ranges.
         let mut samples = BigUint::default();
         let mut total = BigUint::default();
-        let mut buckets: [BigUint; N] = core::array::from_fn(|_| BigUint::default());
+        let mut buckets: [BigUint; N] = std::array::from_fn(|_| BigUint::default());
         let mut overflow = BigUint::default();
         let mut maximum = None;
         for (value, weight) in values.into_iter().zip(weights) {
@@ -260,14 +260,14 @@ fn check_weighted_histogram_merges<const N: usize>(bounds: [u64; N]) {
     };
 
     let mut combined = Histogram::new(bounds).unwrap();
-    let mut combined_weights = core::array::from_fn(|_| BigUint::default());
+    let mut combined_weights = std::array::from_fn(|_| BigUint::default());
     check(&combined, &combined_weights);
     for (index, value) in values.into_iter().enumerate() {
         let mut batch = Histogram::new(bounds).unwrap();
         batch.record(value);
         let mut weight = BigUint::from(1_u8);
         for bit in 0..=129 {
-            let mut weights = core::array::from_fn(|_| BigUint::default());
+            let mut weights = std::array::from_fn(|_| BigUint::default());
             weights[index] = weight.clone();
             check(&batch, &weights);
             combined.merge(&batch).unwrap();

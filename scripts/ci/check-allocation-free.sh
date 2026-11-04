@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Shared companions: scripts/ci/check-rust-compiler.sh scripts/ci/check-make-execution.sh
 set -euo pipefail
 # Validation only. Cargo uses this repository's target directory and locked graph.
 [[ $# == 0 ]] || { echo 'usage: check-allocation-free.sh' >&2; exit 2; }

@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
+consumers_only=false
+if [[ "$#" != 0 ]]; then
+    [[ "$#" == 1 && "$1" == --consumers-only ]] || {
+        echo 'usage: test-release-admission.sh [--consumers-only]' >&2
+        exit 2
+    }
+    consumers_only=true
+fi
 # Actual consumer policy, editor, runner, Git, group metadata and publication plan.
 # Only setup, broad gates, archive compilation and registry upload are substituted.
 unset MAKEFLAGS MFLAGS MAKEOVERRIDES GNUMAKEFLAGS MAKEFILES RELEASE_COMMIT
@@ -24,10 +32,48 @@ cleanup() {
     exit "$status"
 }
 trap cleanup EXIT
+freeze_consumer() {
+    local group="$1" supplier="$2" version="$3"
+    consumer="$fixture/$group-consumer"
+    mkdir -p "$consumer/supplier" "$consumer/client/src" "$consumer/client/tests"
+    cp Cargo.toml Cargo.lock rust-toolchain.toml "$consumer/"
+    cp -R "crates/ic-$supplier/src" "crates/ic-$supplier/examples" "crates/ic-$supplier/Cargo.toml" \
+        "crates/ic-$supplier/README.md" "crates/ic-$supplier/LICENSE" "$consumer/supplier/"
+    # This standalone client owns only the retained supplier, not the product
+    # workspace's complete local member catalog or release policy.
+    yq -p toml -o json '.' "$consumer/Cargo.toml" > "$consumer/root.json"
+    perl scripts/release/render-retained-consumer.pl "$consumer/root.json" \
+        "$consumer/Cargo.toml" "$supplier" "$version"
+    printf '[package]\nname = "retained-consumer"\nversion = "0.0.0"\nedition.workspace = true\n[dependencies]\nic-%s.workspace = true\n' "$supplier" > "$consumer/client/Cargo.toml"
+    : > "$consumer/client/src/lib.rs"
+    cp "scripts/release/fixtures/retained-consumer/tests/$supplier.rs" \
+        "$consumer/client/tests/contract.rs"
+    cargo metadata --manifest-path "$consumer/Cargo.toml" --offline --format-version 1 > "$fixture/$group-consumer-before.json"
+    cp "$consumer/Cargo.lock" "$fixture/$group-consumer.lock"
+}
+
+# Exercise only the generated public consumer contracts during layout changes.
+# The default entrypoint still owns the full release/recovery qualification.
+if [[ "$consumers_only" == true ]]; then
+    cd "$root"
+    cargo metadata --no-deps --locked --offline --format-version 1 > "$fixture/workspace-metadata.json"
+    for supplier in metrics logging; do
+        version="$(jq -er --arg name "ic-$supplier" '.packages[] | select(.name == $name) | .version' "$fixture/workspace-metadata.json")"
+        freeze_consumer "$supplier" "$supplier" "$version"
+        CARGO_TARGET_DIR="$root/target/release-group-consumers" cargo test --manifest-path "$consumer/Cargo.toml" \
+            -p retained-consumer --test contract --locked --offline > "$fixture/$supplier-consumer-test.log" 2>&1
+        cmp "$consumer/Cargo.lock" "$fixture/$supplier-consumer.lock"
+        echo "$supplier: generated public consumer contract passed"
+    done
+    fixture_complete=true
+    exit 0
+fi
+
 FIXTURE_RELEASE_EDITOR="$(make --no-print-directory -s -C "$root" release-editor-check)"
 export FIXTURE_RELEASE_EDITOR
 FIXTURE_REAL_CARGO="$(command -v cargo)"
 export FIXTURE_REAL_CARGO
+export FIXTURE_SUPPLIED_TMPDIR="${TMPDIR:-}"
 mkdir "$fixture/repo" "$fixture/bin"
 (cd "$root" && git ls-files --cached --others --exclude-standard -z | while IFS= read -r -d '' path; do
     [[ ! -f "$path" ]] || printf '%s\0' "$path"
@@ -68,6 +114,7 @@ $(filter-out compiler-check compiler-policy-check package-check clippy,$(shell j
 compiler-check:
 	@if test -z "$${OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT:-}"; then bash scripts/ci/check-rust-compiler.sh; else \
 	    test ! -e .git/fail-validation && \
+	    test "$${TMPDIR:-}" = "$${FIXTURE_SUPPLIED_TMPDIR:-$$PWD/$$OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT/tmp}" && \
 	    test -z "$${IC_METRICS_RELEASE_CACHE_PREPARE+x}" && test "$${CARGO_NET_OFFLINE:-false}" = true && \
 	    printf 'ci\n' >> .git/gates && \
 	    { test ! -e .git/drift-input || printf '\n# fixture drift\n' >> Cargo.lock; }; fi
@@ -140,60 +187,6 @@ for selection in missing empty unknown; do
     [[ ! -s "$FIXTURE_CARGO_EVENTS" && ! -e .git/gates && ! -e .git/release-state ]]
     [[ -z "$(git status --porcelain)" ]]
 done
-freeze_consumer() {
-    local group="$1" supplier="$2" version="$3"
-    consumer="$fixture/$group-consumer"
-    mkdir -p "$consumer/supplier" "$consumer/client/src"
-    cp Cargo.toml Cargo.lock rust-toolchain.toml "$consumer/"
-    cp -R "crates/ic-$supplier/src" "crates/ic-$supplier/examples" "crates/ic-$supplier/Cargo.toml" \
-        "crates/ic-$supplier/README.md" "crates/ic-$supplier/LICENSE" "$consumer/supplier/"
-    # This standalone client owns only the retained supplier, not the product
-    # workspace's complete local member catalog or release policy.
-    yq -p toml -o json '.' "$consumer/Cargo.toml" > "$consumer/root.json"
-    perl scripts/release/render-retained-consumer.pl "$consumer/root.json" \
-        "$consumer/Cargo.toml" "$supplier" "$version"
-    printf '[package]\nname = "retained-consumer"\nversion = "0.0.0"\nedition.workspace = true\n[dependencies]\nic-%s.workspace = true\n' "$supplier" > "$consumer/client/Cargo.toml"
-    if [[ "$supplier" == metrics ]]; then
-        cat > "$consumer/client/src/lib.rs" <<'RUST'
-#[test]
-fn retained_instrumentation_contract() {
-    use ic_metrics::{MeasurementAggregate, MeasurementCounter, MeasurementCounterError, persistence};
-    let mut observations = MeasurementAggregate::EMPTY;
-    observations.record(0);
-    observations.record(u64::MAX);
-    assert_eq!(observations.samples(), 2);
-    assert_eq!(observations.maximum(), Some(u64::MAX));
-    assert!(!observations.total_overflowed());
-    let restored = persistence::restore_aggregate(
-        observations.samples(), observations.total(), observations.maximum(),
-        observations.samples_overflowed(), observations.total_overflowed(),
-    ).unwrap();
-    assert_eq!(restored, observations);
-    let mut events = MeasurementCounter::ZERO;
-    events.add(u128::MAX);
-    assert_eq!(events.exact_total(), Ok(u128::MAX));
-    events.add(1);
-    assert_eq!(events.exact_total(), Err(MeasurementCounterError::TotalOverflow));
-}
-RUST
-    else
-        cat > "$consumer/client/src/lib.rs" <<'RUST'
-#[test]
-fn retained_log_contract() {
-    use core::num::NonZeroUsize;
-    use ic_logging::{EntryInput, Filter, Level, Limits, Log, PageRequest};
-    let one = NonZeroUsize::new(1).unwrap();
-    let mut log = Log::new(Limits { max_entries: one, max_message_bytes: 32, max_label_bytes: 16, max_text_bytes: 64 });
-    let receipt = log.append(EntryInput { created_at_secs: 1, source: "fixture", topic: None, level: Level::Info, message: "retained" }).unwrap();
-    assert_eq!(receipt.sequence, 0);
-    assert_eq!(log.page(Filter::default(), PageRequest { before: None, max_results: one, max_scanned: one }).entries.len(), 1);
-    assert_eq!(log.prune_expired(3, 1, 1).removed, 1);
-}
-RUST
-    fi
-    cargo metadata --manifest-path "$consumer/Cargo.toml" --offline --format-version 1 > "$fixture/$group-consumer-before.json"
-    cp "$consumer/Cargo.lock" "$fixture/$group-consumer.lock"
-}
 for group in metrics logging; do
     export RELEASE_GROUP="$group"
     other=logging
@@ -298,7 +291,7 @@ for group in metrics logging; do
     diff -qr "crates/ic-$other/src" "$consumer/supplier/src" > "$fixture/$group-consumer-source-check"
     cmp "$consumer/Cargo.lock" "$fixture/$group-consumer.lock"
     CARGO_TARGET_DIR="$root/target/release-group-consumers" cargo test --manifest-path "$consumer/Cargo.toml" \
-        -p retained-consumer --lib --locked --offline > "$fixture/$group-consumer-test.log" 2>&1
+        -p retained-consumer --test contract --locked --offline > "$fixture/$group-consumer-test.log" 2>&1
     [[ "$(RELEASE_GROUP="$other" make -s release-version)" == "$other_version" ]]
     cargo metadata --locked --offline --format-version 1 > "$fixture/$group-after.json"
     jq -n -e --arg name "ic-$other" --slurpfile before "$fixture/$group-before.json" --slurpfile after "$fixture/$group-after.json" '

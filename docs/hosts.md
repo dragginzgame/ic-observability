@@ -49,6 +49,15 @@ The 0.28.1 snapshot adds script interfaces without changing selected tools or
 their build identities; its adoption checks the prepared tools without reinstalling.
 The released 0.28.2 snapshot retains those same interfaces and tool selections;
 its additional runner regression fix is producer-owned, not another consumer suite.
+The committed 0.29.4 refresh (`628ccc75`) likewise preserves tool catalogs and
+compiler selections. `make tools-check check-pins` admits the existing prepared
+tools; this adoption needs no reinstall. Its source rules prefer external Rust
+test modules. The reset-window cases live in `window/tests.rs`; the export example
+uses `examples/byte-budgeted-export/{main,tests}.rs` under its unchanged Cargo name.
+The shared release runner now admits bounded Git-side recovery state before and
+around adapter steps. The [retention contract](releases.md#artifact-retention-and-exact-push-scope)
+owns limits and refusal behavior; admission preserves all inputs and authorizes
+no cleanup. Existing source-bound release receipts retain their original snapshots.
 Explicit Cargo setup waits up to 60 seconds per occupied admitted slot, while
 offline checks remain immediate. The shared
 [setup guide](local-setup.md#standard-cargo-tool-build-environment) owns the
@@ -141,14 +150,21 @@ libraries; select direct Cargo commands when only one package or test is affecte
 | Instrumentation feature graphs | `make metrics-profiles-check`; checks dependency-free native minimal, recording, default and all-feature Wasm normal/build closures. `make logging-profiles-check` independently checks Logging |
 | Log export recipe | `cargo test -p ic-logging --example byte-budgeted-export --locked --offline`; execute the walkthrough with `cargo run -p ic-logging --example byte-budgeted-export --locked --offline` |
 | Recording model | `cargo test -p ic-metrics --lib --no-default-features --features recording --locked --offline recording::tests::model` |
+| Reset-window tests | `cargo test -p ic-metrics --lib --all-features --locked --offline window::tests` |
 | Logging operation model | `cargo test -p ic-logging --lib --locked --offline log::tests::mixed`; exercises journal-based state, paging and visitor stops across admission, retention and restoration |
 | Histogram restoration oracle | `cargo test -p ic-metrics --lib --no-default-features --locked --offline histogram::tests::restoration`; exhaustive small-domain bounds/distributions and exact weighted overflow histories |
 | Allocator-free fixed recording link | `make allocation-free-check` |
 | Recording library checks | `cargo check -p ic-metrics --lib --features recording --locked`; Wasm: `cargo check -p ic-metrics --lib --features recording --locked --target wasm32-unknown-unknown`; lint: `cargo clippy -p ic-metrics --lib --tests --features recording --locked -- -D warnings` |
 | Recording tests and examples | `cargo test -p ic-metrics --lib --features recording --locked <test-name>`; doctests: `cargo test -p ic-metrics --doc --features recording --locked` |
 | Snapshot/pins | `make shared-tooling-check check-pins` |
+| Local process capture | `perl scripts/ci/tests/check-process.t`; byte limits, child status, timeout, interruption and reaping without product compilation |
+| Packaged documentation admission | `perl scripts/ci/tests/package-doc-links.t`; rejects missing, symlink and directory inputs while admitting known Cargo-generated absences |
 | Local tools/hooks | `make tools-check hook-check` |
 | Release/evidence adapters | `make release-tools-check ci-evidence-check` |
+| Generated public consumer tests | `bash scripts/release/test-release-admission.sh --consumers-only`; builds the two retained supplier clients and runs their `tests/contract.rs` targets without release/recovery scenarios |
+| Native evidence scenario | `bash scripts/ci/test-native-evidence.sh --scenario collection-archive-failure`; runs the named workflow recovery case with substituted effects, excluding standalone host/compiler setup checks |
+| Compiler-policy fixture | `bash scripts/ci/test-rust-compiler.sh`; compiler/version refusals and linked-Wasm evidence custody with substituted compiler commands |
+| Publication-policy fixture | `bash scripts/release/test-publication-policy.sh`; local tag/source/archive/registry-refusal checks with substituted network observations and no uploads |
 | Frozen evidence integrity | `make evidence-check` (checksums only; no replay or payload-privacy qualification) |
 | Maintained docs | `make check-doc-links`, consistency review and `git diff --check` |
 
@@ -293,6 +309,9 @@ checked separately once on native and Wasm; declaration admission remains a
 separate guard that refuses every Logging dependency. `bash scripts/release/test-retained-consumer.sh`
 verifies parsed Cargo projection across multiline manifests, quoted strings and
 retained consumers' real supplier versions while preserving other catalog fields.
+The retained clients copy checked-in Rust contracts from
+`scripts/release/fixtures/retained-consumer/tests/`; shared standalone Rustfmt
+selection includes both contracts in `make fmt`, `make fmt-check` and the hook.
 
 ## Full release validation
 
@@ -428,6 +447,12 @@ command failures and nested hook logs remain separately checked. These fixtures
 perform no release in the maintained checkout or registry publication and do not
 qualify hosted execution.
 
+Standalone production-graph, native-source, recovery-archive, formatting-hook and
+standard-release fixtures default to `target/qualification`. Explicit `TMPDIR`
+still selects their scratch root. Successful inputs are removed; failed inputs
+remain at the reported path. The retention coordinator selects its own evidence
+root and passes it to children, preserving the native CI evidence layout.
+
 `scripts/release/metadata.sh files` projects the shared admitted group's exact
 NUL-delimited file plan through `make release-files`. Plan admission uses the
 prepared parsers and locked offline Cargo metadata. Consumer fixtures retain
@@ -471,6 +496,31 @@ observations and successful/failed link custody with substituted compiler effect
 `make ci-evidence-check` executes retained workflow bodies and proves compiler
 failure prevents later tool/application effects while keeping its partial log.
 These local fixtures do not establish hosted native passes.
+
+The native-evidence fixture's no-argument entry retains every scenario and its
+standalone host/compiler setup checks. `--scenario NAME` selects one row from the
+same scenario roster and retains the common workflow wiring/source checks.
+Names include `success`, `formatting`, `skipped-setup`, `collection-partial`,
+`collection-failure`, `native-archive-failure` and `collection-archive-failure`;
+other rows follow the failed workflow step, such as `compiler` or `tools-check`.
+Unknown names and malformed options refuse before allocating fixture inputs.
+
+Local captured check observations share `scripts/ci/CheckProcess.pm`: 60 seconds,
+4 MiB stdout and 1 MiB stderr per command. Package-content comparison retains its
+32 MiB stdout selection. Failed, oversized, timed-out or interrupted observations
+never reach parsing; diagnostics remain bounded, and the owned process group is
+terminated with the direct child reaped. These limits apply to captured read-only
+checks, not product builds or the inherited-stream full CI runner.
+The process regressions run in `production-dependencies-check`; missing/nonregular
+package-input regressions run in `package-doc-links-check`. Only Cargo's generated
+`Cargo.lock`, `Cargo.toml.orig` and `.cargo_vcs_info.json` may lack package-source
+files; every other listed input must be a regular maintained file.
+
+Local full-CI and release validation select a unique scratch directory beneath
+their own retained attempt when `TMPDIR` is unset. The selection is scoped to the
+runner command, and explicit `TMPDIR` overrides remain unchanged. Shared helper
+payloads and historical outside-target evidence remain intact. `make help` labels
+workspace gates separately; use the package/test selections above for focused work.
 
 [Released 0.8.1 acceptance](evidence/release-081.md) verifies all three native
 receipts and the complete Rust-floor run on its exact published source.

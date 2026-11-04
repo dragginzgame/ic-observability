@@ -21,7 +21,8 @@ jq -e '
     (.if | contains("env.CI_SCOPE")))
 ' "$fixture/jobs.json" > /dev/null
 mkdir -p "$fixture/repo/scripts/ci" "$fixture/repo/ci" "$fixture/repo/docs/status"
-cp "$root/scripts/ci/"{classify-ci-change.pl,select-ci.sh} "$fixture/repo/scripts/ci/"
+bash "$root/scripts/ci/prepare-script-fixture.sh" "$root" "$fixture/repo" \
+    scripts/ci/classify-ci-change.pl scripts/ci/select-ci.sh
 cp "$root/ci/docs-only-paths.txt" "$fixture/repo/ci/"
 # The actual allowlist must not admit packaged/embedded/companion inputs.
 while IFS= read -r path; do

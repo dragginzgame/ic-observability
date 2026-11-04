@@ -176,6 +176,13 @@ consumer evidence, not publication of the simulated releases. Successful group
 receipts and all failures remain retained at the printed evidence directory.
 Other standard Make, hook and retention fixtures keep their distinct scopes.
 
+For changes confined to generated consumer code or its test layout, use
+`bash scripts/release/test-release-admission.sh --consumers-only`. It freezes the
+current Metrics and Logging suppliers into workspace-owned copies, generates
+integration tests under each client's `tests/contract.rs`, and executes those
+named targets with locked dependencies. The no-argument fixture retains the
+complete group transaction, rollback, recovery and unaffected-identity checks.
+
 `make release-validation-check` keeps lightweight product mapping, exclusion,
 Shared-helper wiring and receipt-custody regressions in routine CI.
 `make release-validation-qualify` additionally compares full and selected command

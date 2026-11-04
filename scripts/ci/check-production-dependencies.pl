@@ -1,8 +1,12 @@
 #!/usr/bin/env perl
+# Shared companions: scripts/ci/CheckProcess.pm
 use strict;
 use warnings;
 use Cwd qw(getcwd);
 use JSON::PP qw(decode_json);
+use FindBin qw($RealBin);
+use lib $RealBin;
+use CheckProcess qw(observe);
 
 # Observability owns per-package declaration admission and transport boundaries.
 # This check never installs tools, builds artifacts or changes the locked graph.
@@ -15,15 +19,6 @@ if (@ARGV) {
 }
 getcwd() !~ /[\r\n]/ or die "resolved consumer path contains CR/LF\n";
 $ENV{RUSTUP_AUTO_INSTALL} = '0';
-
-sub observe {
-    my (@command) = @_;
-    open my $child, '-|', @command or die "cannot start $command[0]: $!\n";
-    local $/;
-    my $bytes = <$child> // '';
-    close $child or die "failed observation: @command\n";
-    return $bytes;
-}
 
 my $bytes = observe(qw(cargo metadata --no-deps --locked --offline --format-version 1));
 my $metadata = eval { decode_json($bytes) };

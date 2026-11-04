@@ -8,6 +8,10 @@ LOCAL_TOOL_INSTALL_TARGETS := install-release-editor
 LOCAL_TOOL_CHECK_TARGETS := release-editor-check
 # Normal setup needs host/Cargo tools only; optional IC tools are selected explicitly.
 IC_TOOLS :=
+# Retained consumer contracts are copied into generated workspaces for execution.
+FORMAT_RUST_ARGS := --rustfmt-edition 2024 \
+	--rustfmt-source scripts/release/fixtures/retained-consumer/tests/metrics.rs \
+	--rustfmt-source scripts/release/fixtures/retained-consumer/tests/logging.rs
 # Load the shared publication adapter directly; resolve eligibility only after
 # the public target's group prerequisite, never while parsing unrelated checks.
 override CARGO_PUBLISH_PACKAGES :=
@@ -110,7 +114,8 @@ help:
 	@echo "Rust setup: install-rust-tools; offline verification: rust-tools-check"
 	@echo "Release editor (also in install-tools/tools-check): install-release-editor, release-editor-check"
 	@echo "Clone setup: install-hooks (requires prepared manifest formatter and rustfmt)"
-	@echo "Focused: format-tools-check, fmt, fmt-check, check, check-wasm, clippy, docs-check, check-doc-links, shared-tooling-check, check-pins"
+	@echo "Workspace gates: check, check-wasm, clippy, docs-check, test (both packages; see docs/hosts.md for focused Cargo commands)"
+	@echo "Formatting and admission: format-tools-check, fmt, fmt-check, check-doc-links, shared-tooling-check, check-pins"
 	@echo "Dependency declarations and boundary fixtures: production-dependencies-check"
 	@echo "Link fixed Metrics recording without an allocator: allocation-free-check"
 	@echo "Early setup: setup-smoke-check"
@@ -185,6 +190,7 @@ ci-selection-check:
 	bash scripts/ci/test-ci-selection.sh
 
 package-doc-links-check:
+	perl scripts/ci/tests/package-doc-links.t
 	perl scripts/ci/check-package-doc-links.pl
 
 metrics-profiles-check:
@@ -214,6 +220,7 @@ check-pins:
 	bash scripts/ci/check-dependency-pins.sh --cargo-inheritance
 
 production-dependencies-check:
+	perl scripts/ci/tests/check-process.t
 	perl scripts/ci/check-production-dependencies.pl
 	bash scripts/ci/test-production-dependencies.sh
 

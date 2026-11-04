@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Shared companions: scripts/ci/read-cargo-workspace-rust-version.sh
 set -euo pipefail
 # Consumer policy: one exact, prepared compiler for development and support.
 [[ $# == 0 ]] || { echo 'usage: check-rust-compiler.sh' >&2; exit 2; }

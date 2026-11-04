@@ -434,7 +434,7 @@ fn seeded_operations_match_independent_event_history() {
         u64::MAX,
     ] {
         std::eprintln!("logging operation seed={seed}");
-        let states = core::iter::successors(Some(seed), |state| {
+        let states = std::iter::successors(Some(seed), |state| {
             Some(
                 state
                     .wrapping_mul(6_364_136_223_846_793_005)
@@ -468,7 +468,7 @@ fn long_utf8_histories_match_independent_event_history() {
     for seed in [1_u64, 42, 0xdead_beef, u64::MAX] {
         for text in ["", "\0", "e\u{301}", "é中🙂", "\u{10ffff}\n"] {
             std::eprintln!("extended logging seed={seed}, text={text:?}");
-            let states = core::iter::successors(Some(seed), |state| {
+            let states = std::iter::successors(Some(seed), |state| {
                 Some(
                     state
                         .wrapping_mul(6_364_136_223_846_793_005)

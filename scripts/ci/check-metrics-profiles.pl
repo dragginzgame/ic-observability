@@ -1,7 +1,10 @@
 #!/usr/bin/env perl
+# Shared companions: scripts/ci/CheckProcess.pm
 use strict;
 use warnings;
-
+use FindBin qw($RealBin);
+use lib $RealBin;
+use CheckProcess qw(observe);
 
 # Resolved normal/build closures complement declaration admission. Development
 # dependencies must not enter the measurement production graph.
@@ -9,15 +12,6 @@ my $group = shift // 'all';
 @ARGV == 0 && $group =~ /\A(?:all|metrics|logging)\z/
     or die "usage: check-metrics-profiles.pl [metrics|logging]\n";
 $ENV{RUSTUP_AUTO_INSTALL} = '0';
-
-sub observe {
-    my (@command) = @_;
-    open my $child, '-|', @command or die "cannot start $command[0]: $!\n";
-    local $/;
-    my $output = <$child> // '';
-    close $child or die "failed observation: @command\n";
-    return $output;
-}
 
 my ($host) = observe(qw(rustc -vV)) =~ /^host: (\S+)$/m;
 defined($host) or die "missing compiler host triple\n";

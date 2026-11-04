@@ -81,12 +81,13 @@ case "$operation" in
         release_receipt_archive "$state/previous-attempt.XXXXXX" "$state/validated" "$state/prepared" "$state/validation-attempt"
         mkdir -p target/release-validation
         attempt="$(mktemp -d "target/release-validation/$RELEASE_GROUP-$RELEASE_VERSION.XXXXXX")"
+        mkdir "$attempt/tmp"
         perl "$root/scripts/release/validation.pl" select "$attempt"
         release_receipt_write "$state/validation-attempt" printf '%s\n' "$attempt"
         OBSERVABILITY_RELEASE_VALIDATION_SCOPE="$(jq -er .scope "$attempt/plan.json")" \
             OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT="$attempt" VALIDATION_LOG_DIR="$attempt/logs" \
         VALIDATION_FAILURE_LOG_DIR="$(git rev-parse --git-path release-state)/validation-failures" \
-            CARGO_NET_OFFLINE=true bash "$root/scripts/ci/run-validation-targets.sh" \
+            TMPDIR="${TMPDIR:-$root/$attempt/tmp}" CARGO_NET_OFFLINE=true bash "$root/scripts/ci/run-validation-targets.sh" \
             --plan "$attempt/plan.json"
         bash "$root/scripts/ci/check-release-source.sh"
         release_receipt_write "$attempt/proof.json" perl "$root/scripts/release/validation.pl" seal "$attempt"

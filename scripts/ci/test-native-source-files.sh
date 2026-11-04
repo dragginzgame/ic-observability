@@ -7,7 +7,8 @@ root="$(cd -P "${root%/*}/../.." && printf '%s/.' "$PWD")"
 root="${root%/.}"
 # shellcheck source=scripts/ci/fixture-lifecycle.sh
 source "$root/scripts/ci/fixture-lifecycle.sh"
-fixture="$(fixture_create "${TMPDIR:-/tmp}/metrics-native-source.XXXXXX")"
+mkdir -p "$root/target/qualification"
+fixture="$(fixture_create "${TMPDIR:-$root/target/qualification}/metrics-native-source.XXXXXX")"
 fixture_complete=false
 trap 'fixture_finish "$?" "$fixture" "Failed native source fixture retained"' EXIT
 mkdir -p "$fixture/scripts/ci" "$fixture/crates/example" "$fixture/qualification/probe" "$fixture/ci/typescript/node_modules" "$fixture/docs/evidence" "$fixture/.tools" "$fixture/.private-evidence" "$fixture/target"

@@ -71,7 +71,7 @@ source-bound qualification, rather than maintaining another version roster here.
 
 ## Consumer recipes
 
-The [byte-budgeted export example](../crates/ic-logging/examples/byte-budgeted-export.rs)
+The [byte-budgeted export example](../crates/ic-logging/examples/byte-budgeted-export/main.rs)
 implements a caller-owned text format and body ceiling. Its tests cover exact
 UTF-8 byte limits, oversized-first-row errors, filtered empty scans and bounded
 continuation without losing a row. No new logging cursor or codec API is added.

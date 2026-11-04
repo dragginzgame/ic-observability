@@ -10,7 +10,8 @@ root="$(cd -P "${root%/*}/../.." && printf '%s/.' "$PWD")"
 root="${root%/.}"
 # shellcheck source=scripts/ci/fixture-lifecycle.sh
 source "$root/scripts/ci/fixture-lifecycle.sh"
-fixture="$(fixture_create "${TMPDIR:-/tmp}/standard-release-entry.XXXXXX")"
+mkdir -p "$root/target/qualification"
+fixture="$(fixture_create "${TMPDIR:-$root/target/qualification}/standard-release-entry.XXXXXX")"
 fixture_complete=false
 cleanup() {
     local status=$?

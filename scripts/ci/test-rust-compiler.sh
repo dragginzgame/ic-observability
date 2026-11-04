@@ -10,7 +10,8 @@ fixture="$(fixture_create "$root/target/qualification/compiler-policy.XXXXXX")"
 fixture_complete=false
 trap 'fixture_finish "$?" "$fixture" "Compiler policy fixture retained"' EXIT
 mkdir -p "$fixture/scripts/ci" "$fixture/bin" "$fixture/crates/ic-metrics" "$fixture/crates/ic-logging"
-cp "$root/scripts/ci/"{check-rust-compiler.sh,read-cargo-workspace-rust-version.sh,check-allocation-free.sh,check-make-execution.sh} "$fixture/scripts/ci/"
+bash "$root/scripts/ci/prepare-script-fixture.sh" "$root" "$fixture" \
+    scripts/ci/check-allocation-free.sh
 pin="$(yq -p toml -o yaml -r '.toolchain.channel' "$root/rust-toolchain.toml")"
 cat > "$fixture/bin/rustc" <<'RUSTC'
 #!/usr/bin/env bash

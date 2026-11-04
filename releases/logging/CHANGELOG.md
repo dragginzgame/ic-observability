@@ -6,6 +6,27 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.24.6] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt committed Shared Tooling 0.29.4 rules and release/evidence fixes, including
+  retained-state admission around release steps. Move
+  byte-budgeted export tests into their own module, retaining the example's
+  Cargo target and command while separating tests from its source report.
+- Prepare CI selection, compiler-policy and publication fixtures through the shared
+  companion resolver, preserving helper dependencies and existing refusal checks.
+- Keep retained-consumer contracts in regular Rust test files covered by formatting,
+  with a focused execution entrypoint and complete default release qualification.
+- Keep standalone local fixture scratch under the workspace's `target/`, retaining
+  explicit temporary-root overrides and failed-input evidence.
+- Allow native-evidence checks to select one recovery scenario while retaining the
+  complete default run. Simplify synthetic dependency inputs without reducing
+  declaration and metadata refusal coverage.
+- Reject missing maintained package inputs and bound captured check commands by
+  output size and lifetime. Keep default CI/release validation scratch under
+  `target/`, and distinguish workspace gates from focused checks in command help.
+
 ## [0.24.5] - 2026-11-03
 
 ### 🛠️ Tooling

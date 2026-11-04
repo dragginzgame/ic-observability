@@ -9,9 +9,10 @@ fixture="$(fixture_create "$root/target/qualification/publication-policy.XXXXXX"
 fixture_complete=false
 trap 'fixture_finish "$?" "$fixture" "Publication policy fixture retained"' EXIT
 mkdir -p "$fixture/repo/scripts/"{release,ci} "$fixture/bin" "$fixture/archive/ic-metrics-0.1.0"
-cp "$root/scripts/release/publication.sh" "$fixture/repo/scripts/release/"
-cp "$root/scripts/release/check-package-content.pl" "$fixture/repo/scripts/release/"
-cp "$root/scripts/ci/"{check-crates-io-version.sh,check-cargo-package-provenance.sh,verify-file-checksum.sh} "$fixture/repo/scripts/ci/"
+bash "$root/scripts/ci/prepare-script-fixture.sh" "$root" "$fixture/repo" \
+    scripts/release/publication.sh scripts/release/check-package-content.pl \
+    scripts/ci/check-crates-io-version.sh scripts/ci/check-cargo-package-provenance.sh \
+    scripts/ci/verify-file-checksum.sh
 cd "$fixture/repo"
 printf '/target/\n' > .gitignore
 printf '[workspace.package]\nrepository = "%s/remote.git"\n' "$fixture" > Cargo.toml

@@ -6,7 +6,8 @@ root="$(cd -P "${root%/*}/../.." && printf '%s/.' "$PWD")"
 root="${root%/.}"
 # shellcheck source=scripts/ci/fixture-lifecycle.sh
 source "$root/scripts/ci/fixture-lifecycle.sh"
-fixture="$(fixture_create "${TMPDIR:-/tmp}/metrics-production-graph.XXXXXX")"
+mkdir -p "$root/target/qualification"
+fixture="$(fixture_create "${TMPDIR:-$root/target/qualification}/metrics-production-graph.XXXXXX")"
 fixture_complete=false
 trap 'fixture_finish "$?" "$fixture" "Failed production graph fixture retained"' EXIT
 export CARGO_NET_OFFLINE=true RUSTUP_AUTO_INSTALL=0
@@ -18,11 +19,9 @@ package() {
     mkdir -p "$fixture/vendor/$name/src"
     printf '[package]\nname = "%s"\nversion = "0.1.0"\nedition = "2024"\n[workspace]\n' "$name" > "$fixture/vendor/$name/Cargo.toml"
     : > "$fixture/vendor/$name/src/lib.rs"
-    printf '\n[features]\nderive = []\ntypescript = []\nstd = []\nalloc = []\n' >> "$fixture/vendor/$name/Cargo.toml"
 }
 reset_case() {
-    local name
-    rm -rf "$fixture/workspace/crates" "$fixture/vendor" "$fixture/workspace/Cargo.lock"
+    rm -rf "$fixture/workspace/crates" "$fixture/workspace/Cargo.lock"
     mkdir -p "$fixture/workspace/crates/ic-metrics/src" "$fixture/workspace/crates/ic-logging/src"
     printf '[package]\nname = "ic-metrics"\nversion = "0.1.0"\nedition = "2024"\n' > "$fixture/workspace/crates/ic-metrics/Cargo.toml"
     : > "$fixture/workspace/crates/ic-metrics/src/lib.rs"
@@ -30,7 +29,6 @@ reset_case() {
     : > "$fixture/workspace/crates/ic-logging/src/lib.rs"
     printf '[workspace]\nmembers = ["crates/ic-logging", "crates/ic-metrics"]\nresolver = "3"\n' > "$fixture/workspace/Cargo.toml"
     cp "$root/rust-toolchain.toml" "$fixture/workspace/"
-    for name in ic-testkit ic-stable-structures ordinary serde ic-wire; do package "$name"; done
     cat >> "$fixture/workspace/crates/ic-metrics/Cargo.toml" <<'TRANSPORT'
 [features]
 default = []
@@ -57,11 +55,14 @@ check_case() {
 
 reset_case
 check_case dependency-free pass
+package ic-testkit
 printf '\n[dev-dependencies]\nhelper = { package = "ic-testkit", path = "../../../vendor/ic-testkit" }\n' >> "$fixture/workspace/crates/ic-metrics/Cargo.toml"
 check_case development-package pass
 
 # Every production declaration, including Serde, is forbidden.
 reset_case
+package serde
+printf '\n[features]\nstd = []\n' >> "$fixture/vendor/serde/Cargo.toml"
 printf '\n[dev-dependencies]\nserde = { path = "../../../vendor/serde" }\n' >> "$fixture/workspace/crates/ic-metrics/Cargo.toml"
 sed 's|recording = \[\]|recording = ["serde/std"]|' "$fixture/workspace/crates/ic-metrics/Cargo.toml" > "$fixture/candidate"
 mv "$fixture/candidate" "$fixture/workspace/crates/ic-metrics/Cargo.toml"
@@ -82,6 +83,7 @@ mv "$fixture/candidate" "$fixture/workspace/crates/ic-metrics/Cargo.toml"
 check_case retired-feature 'ic-metrics declares the retired native-wire feature'
 
 # Wire is forbidden even as an inactive target/optional or development input.
+package ic-wire
 for table in dependencies dev-dependencies build-dependencies "target.'cfg(target_os = \"none\")'.dependencies"; do
     reset_case
     printf '\n[%s.ic-wire]\npath = "../../../vendor/ic-wire"\noptional = false\n' "$table" >> "$fixture/workspace/crates/ic-metrics/Cargo.toml"
@@ -106,6 +108,7 @@ add_declaration() {
 }
 
 # Construct the same declaration axes while keeping each owner's policy explicit.
+package ordinary
 for owner in ic-metrics ic-logging; do
     reset_case
     printf '\nserde = { path = "../../../vendor/serde" }\n' >> "$fixture/workspace/crates/$owner/Cargo.toml"
@@ -126,6 +129,7 @@ printf '[workspace]\nmembers = ["crates/ic-metrics"]\nresolver = "3"\n' > "$fixt
 check_case missing-logging 'missing registered workspace package: ic-logging'
 
 reset_case
+package ic-stable-structures
 printf '\n[dev-dependencies]\nraw = { package = "ic-stable-structures", path = "../../../vendor/ic-stable-structures" }\n' >> "$fixture/workspace/crates/ic-metrics/Cargo.toml"
 check_case direct-development-substrate 'ic-metrics directly depends on the stable substrate'
 

@@ -86,7 +86,7 @@ stopping row counts as delivered and the returned `PageScan` resumes before it.
 The callback owns any allocation or encoding work it performs.
 
 For a response byte ceiling, see the compiled
-[byte-budgeted export example](examples/byte-budgeted-export.rs). It bounds the
+[byte-budgeted export example](examples/byte-budgeted-export/main.rs). It bounds the
 returned UTF-8 body and keeps the next un-emitted row available when a candidate
 does not fit. The callback's `Break` consumes that candidate in the engine, so
 this recipe resumes from the last **emitted** sequence instead of blindly using
