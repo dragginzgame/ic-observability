@@ -6,6 +6,25 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.24.8] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt committed Shared Tooling 0.30.4: keep formatter and LOC scratch under
+  the owning target directory, preserve explicit overrides and failed diagnostics,
+  and refresh LOC reporting, documentation companions and release-draft handling.
+  Final-candidate stage reuse remains disabled; package/dependency versions stay
+  unchanged until normal release preparation.
+- Enforce the shared Candid source boundary through the existing dependency gate,
+  with no allowances and group scope carried to actual crate/fixture sources.
+
+### 🧹 Cleanup
+
+- Compact superseded experimental evidence into topic summaries, preserving exact
+  release receipts and source-distribution custody while repairing references.
+  Retire raw bundles and their now-obsolete archive-checksum Make/CI stage;
+  deployed formats, product checks and tool-download verification stay unchanged.
+
 ## [0.24.7] - 2026-11-05
 
 ### 🛠️ Tooling

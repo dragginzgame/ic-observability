@@ -5,7 +5,8 @@ Metrics no longer implements Wire metadata; services own report DTOs, schemas,
 generated clients and integration qualification. There is no current source-copy
 pairing target or additional Platform graph in this workspace.
 
-Historical [Wire 0.15 qualification](../../docs/evidence/wire-0150.md) and
-[delivered patch receipts](../../docs/evidence/fixture-cleanup-delivery-20261102.md)
-retain their original Metrics/Wire/Types/Platform identities and results.
-They are historical evidence, not acceptance of the current source.
+The compact [Wire history](../../docs/evidence/wire-history.md) retains the old
+pairing decisions; superseded source copies and raw reports are retired. Protected
+[delivery receipts](../../docs/evidence/releases/fixture-cleanup-delivery-20261102.md)
+retain their original release identities and observations. Neither qualifies
+today's source or dependency graph.

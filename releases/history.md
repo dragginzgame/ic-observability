@@ -511,7 +511,7 @@ preserved; relative links are rebased for this historical location.
   transition with a matched IC fixture. Retained values, leases, rollback and
   reset checks pass. The durable fixture grows by 85,907 raw Wasm bytes; bootstrap
   instructions decrease slightly and checkpoint instructions increase slightly.
-  See the [version-bound comparison](../docs/evidence/memory-0147.md).
+  See the [version-bound comparison](../docs/evidence/persistence-history.md).
 
 ## [0.14.6] - 2026-10-19
 
@@ -522,7 +522,7 @@ preserved; relative links are rebased for this historical location.
 - Refresh the separately frozen IC durability and checkpoint-cost qualification
   for the governed Memory 0.48.2 / Storage 0.5.6 graph, with published Platform,
   Wire and Testkit interfaces. Historical experiment identities remain unchanged.
-  See the [current-graph receipt](../docs/evidence/stable-current-0146.md).
+  See the [current-graph receipt](../docs/evidence/persistence-history.md).
 
 ## [0.14.5] - 2026-10-19
 
@@ -696,9 +696,9 @@ preserved; relative links are rebased for this historical location.
   it for histogram construction, restoration and stable-load configuration.
   Keep first-invalid-bound reporting, size-before-row admission and V1 records.
 - Retain separate rank and scaled-ratio paths after reviewing their IC costs.
-  The [narrower rank trial](../docs/evidence/bounds-rank-0121.md) preserves histogram
+  The [narrower rank trial](../docs/evidence/metrics-history.md) preserves histogram
   costs but grows sample-statistics Wasm and regresses wide fractions; the
-  [existing ratio trial](../docs/evidence/arithmetic-convergence-0112.md) remains
+  [existing ratio trial](../docs/evidence/metrics-history.md) remains
   applicable to the unchanged ratio implementation.
 
 ## [0.12.0] - 2026-10-16
@@ -724,7 +724,7 @@ preserved; relative links are rebased for this historical location.
   ([Shared PR #254](https://github.com/dragginzgame/shared-tooling/pull/254)).
 - Retain sorted finite-sample statistics after the partitioning trial increased
   raw Wasm size and common small-sample IC costs. The
-  [frozen comparison](../docs/evidence/sample-selection-0120.md) records the rejected
+  [frozen comparison](../docs/evidence/metrics-history.md) records the rejected
   candidate and independent replay; the statistics API remains unchanged.
 
 ## [0.11.8] - 2026-10-16
@@ -756,7 +756,7 @@ preserved; relative links are rebased for this historical location.
   through the snapshot exporter.
 - Retain the measured histogram implementation: the proposed shared range
   construction saves only 5 Wasm bytes and increases common query costs. The
-  [matched IC comparison](../docs/evidence/quantile-range-0117.md) records the decision.
+  [matched IC comparison](../docs/evidence/metrics-history.md) records the decision.
 
 ## [0.11.6] - 2026-10-16
 
@@ -765,7 +765,7 @@ preserved; relative links are rebased for this historical location.
 - Share bounded cursor admission for fixed-size stable record reads, preserving
   V1 bytes and typed errors. The matched four-type probe is smaller and reduces
   histogram decoding instructions; see the
-  [decoder comparison](../docs/evidence/decoder-cleanup-0116.md).
+  [decoder comparison](../docs/evidence/metrics-history.md).
 - Reuse shared assertion and exit probes without fake parser responses or
   per-case Git repositories. Retention fixtures honor caller-selected `TMPDIR`,
   preserving actual metadata, release and retained-input checks.
@@ -781,7 +781,7 @@ preserved; relative links are rebased for this historical location.
   give the metadata adapter one release-file roster for Make and source checks.
 - Store immutable metric units without growable-string capacity metadata,
   preserving V1 records and reducing measured construction/clone instructions;
-  see the [identity comparison](../docs/evidence/identity-storage-0116.md).
+  see the [identity comparison](../docs/evidence/metrics-history.md).
 
 ## [0.11.5] - 2026-10-16
 
@@ -791,7 +791,7 @@ preserved; relative links are rebased for this historical location.
   as bytes, preserving public results, typed failures and stable V1 records.
   Matched IC probes show lower quantile and valid-unit instruction costs, with
   a bounded invalid-UTF-8 trade-off; see the
-  [measured cleanup decisions](../docs/evidence/admission-cleanup-0115.md).
+  [measured cleanup decisions](../docs/evidence/metrics-history.md).
 - Keep common installation/PATH mechanics and real Cargo offline-policy
   qualification at Shared Tooling. Metrics retains workflow result projection,
   recovery evidence and actual release-adapter checks
@@ -1309,7 +1309,7 @@ preserved; relative links are rebased for this historical location.
 
 - Use IC Host 0.14 for the private Wasm inspector, retaining its existing bounded
   inspection and report contracts. The published arithmetic library remains
-  dependency-free; [the dependency review](../docs/evidence/host-dependencies-0140.md)
+  dependency-free; [the dependency review](../docs/evidence/tooling.md)
   covers the unchanged consumed APIs and Rust floors.
 
 ### Fixed
@@ -1373,7 +1373,7 @@ preserved; relative links are rebased for this historical location.
 - Reduce common histogram quantile work with checked narrow-product arithmetic,
   retaining exact wide arithmetic for larger products and unchanged range/error
   semantics. The measured fast path adds 89 raw Wasm bytes; see
-  [the IC comparison](../docs/evidence/quantile-cost-062.md)
+  [the IC comparison](../docs/evidence/performance.md)
   ([#59](https://github.com/dragginzgame/ic-metrics/issues/59)).
 
 ### Testing
@@ -1381,7 +1381,7 @@ preserved; relative links are rebased for this historical location.
 - Retain a reproducible IC instruction, cycle and raw Wasm comparison of
   recording, prepared-batch merging and histogram queries, including exact-cap,
   overflow and atomic merge-rejection checks. See
-  [the source-bound observations](../docs/evidence/arithmetic-cost-061.md).
+  [the source-bound observations](../docs/evidence/performance.md).
 
 ## [0.6.1] - 2026-10-11
 

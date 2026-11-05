@@ -1,7 +1,39 @@
 # Current handoff — 2026-11-05
 
+**Shared Tooling 0.30.4 is adopted locally; this batch is uncommitted.**
+Revision `2aa41c7394300302fe802b69b31b855bdc89b671` matches upstream main when
+reviewed and verifies all 152 selected files. Its source ledger remains Unreleased;
+this is not a tagged-release claim. The [tooling summary](../evidence/tooling.md)
+records current decisions and the retained conclusions from earlier adoptions.
+Catalogs, package versions, Cargo.lock and compiler selections stay unchanged;
+no library Rust changed, so no new build/native or full CI matrix ran.
+Pending notes select Metrics 0.29.3 and Logging 0.24.8; current package versions
+remain 0.29.2 and 0.24.7. No commit, release, publication or sibling edit ran.
+The pre-existing Cargo comment casing remains intact. Final-candidate stage reuse
+and publication caching remain disabled; the existing qualified receipt contract stays.
+
+**The authorized evidence cleanup is complete.** The current tree has 77 evidence
+files, about 267 KiB of logical content, down from 342 files and about 43 MiB.
+Six compact topic summaries replace superseded diaries and raw attachments.
+All 67 historical release/delivery receipts are under `docs/evidence/releases/`;
+their prose and identities are preserved apart from repaired link destinations
+and explicit retention notices. The distribution custody ledger is byte-identical.
+The [retention index](../evidence/README.md) explains that removed raw artifacts
+are no longer independently verifiable from the current tree. No new archive,
+private-original cleanup, target cleanup, recovery mutation or history rewrite ran.
+
+The obsolete raw-archive checksum stage is retired with its inputs; new release
+plans have 20 stages. Tool-download integrity and recovery checks remain.
+The production-dependency gate now owns the shared lexical Candid check with zero
+allowances: workspace, Metrics and Logging select 34, 24 and 10 Rust files.
+Actual Make callers passed; a forbidden trait in a retained Metrics fixture was
+rejected for workspace/Metrics scope while Logging remained independent.
+Snapshot, pin, formatting, documentation-link, receipt-preservation and validation
+roster checks passed. These focused checks do not establish a new hosted/native
+matrix or release qualification.
+
 **Metrics 0.29.2 and Logging 0.24.7 are delivered to GitHub and verified on crates.io.**
-The [delivery receipt](../evidence/observability-patches-20261105.md) owns exact
+The [delivery receipt](../evidence/releases/observability-patches-20261105.md) owns exact
 source/tag/archive identities, validation and recovery locations. Delivery used
 this normal `main` checkout, `origin/main`, then one verified upload per group
 in Metrics-then-Logging order.
@@ -15,14 +47,13 @@ are finalized; delivery evidence alone needs no new pending release.
 Use `make verify-publication RELEASE_GROUP=metrics` or `RELEASE_GROUP=logging`
 for reconciliation; never upload these versions again.
 
-Shared Tooling 0.30.0 is selected at
+The delivered patches selected Shared Tooling 0.30.0 at
 `b37a882314d22bf7ab393b3fe561809377ffd22d`, with 150 verified files. Its source
 ledger remains Unreleased; no Shared release-tag claim is made. The
 [original rule audit](../reports/audits/2026/11/05/shared-tooling-adoption/01/report.md)
 retains its initial missing-document failure. The separately authorized
-[remediation receipt](../evidence/shared-tooling-0300-remediation-20261105.md)
-records the producer fix, canonical export, missing-target regression and passing
-normal consumer documentation check.
+[tooling summary](../evidence/tooling.md) retains the producer fix and its
+canonical-export, missing-target and normal-consumer documentation results.
 [#355 — Complete exported documentation closure for LOC classification and audit guidance](https://github.com/dragginzgame/shared-tooling/issues/355)
 is fixed, pushed and closed. No snapshot file was hand-patched and no check suppressed.
 No other sibling checkout was edited by this deployment.
@@ -32,10 +63,9 @@ LOC test role and its unchanged historical Cargo/artifact identity. Retained pri
 consumer fixtures declare their test role and inherited compiler floor. Publication
 carries explicit group scope to native/Wasm lint; full CI remains workspace-wide.
 No Rust lint allowances were found. Library APIs and retained-data contracts stay
-unchanged. Earlier [0.29.4 adoption](../evidence/shared-tooling-0294-20261104.md),
-[0.29.3 cleanup](../evidence/shared-tooling-0293-20261104.md) and
-[previous patch delivery](../evidence/observability-patches-20261104.md) retain their
-original identities and qualification.
+unchanged. Earlier adoption diaries are compacted into the tooling summary;
+the [previous patch delivery](../evidence/releases/observability-patches-20261104.md)
+retains its original identities and historical qualification.
 
 The pre-existing lowercase Cargo catalog comments are restored and unstaged,
 with the new versions retained. Dedicated stash

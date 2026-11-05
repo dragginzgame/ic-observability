@@ -122,7 +122,7 @@ This batch changes no Rust source, manifest, lock or executable-tool selection.
 
 Histogram restoration now derives count agreement, maximum placement and total
 range in one numeric admission pass after bounds admission. Public APIs, error
-priority and stable V1 layouts are unchanged. The [frozen comparison](../evidence/histogram-restoration-0101.md)
+priority and stable V1 layouts are unchanged. The [frozen comparison](../evidence/metrics-history.md)
 records 318,456 matching before/after inputs and a 1,398-to-1,326-byte raw Wasm
 probe. That reduction belongs only to the probe; no IC execution or cycle cost
 is measured. All histogram/restored-state tests, selected stable histogram and
@@ -134,7 +134,7 @@ granting local socket access. Hosted acceptance and release execution remain sep
 The released 0.10.0 batch also adds optional durable scalar counters to the
 existing one-map store; [the stable README](https://github.com/dragginzgame/ic-metrics/blob/92ff804125fb07370fad4cb24cc620f52122ac36/crates/ic-metrics-stable/README.md) owns supported
 kinds, identity, reset and write policy. Existing V1 layouts require no reset.
-[The frozen counter qualification](../evidence/durable-counter-097.md) retains
+[The frozen counter qualification](../evidence/persistence-history.md) retains
 its exact source before this API cut, including the earlier passing CI/floors
 and reproducible IC upgrade/rollback/cost results. It does not qualify this later
 source or an owning application's workload; its identities and archives are unchanged.
@@ -142,7 +142,7 @@ source or an owning application's workload; its identities and archives are unch
 Earlier pending fixture changes keep synthetic release cases on a minimal Git
 baseline and generic archive fidelity at Shared Tooling. Product-commit offline
 Cargo admission, workflow ordering, payload replay and outer Git custody remain
-local. [The retained handoff](../evidence/handoff-before-summary-cut-0100.md)
+local. [The retained handoff](../evidence/tooling.md)
 preserves their original qualification and all earlier release observations.
 
 ## Selected owners and qualification
@@ -150,7 +150,7 @@ preserves their original qualification and all earlier release observations.
 [The retained 0.10.0 CI receipt](https://github.com/dragginzgame/ic-metrics/actions/runs/38633947812)
 passes Linux, Intel macOS, Apple Silicon and both native/Wasm package floors.
 Each native log records 50 arithmetic units, 16 stable units and eight doctests
-per package. [The released-source receipt](../evidence/release-0100.md) binds
+per package. [The released-source receipt](../evidence/releases/release-0100.md) binds
 the source, registry archives and all three native diagnostics. Owning consumer
 acceptance and earlier IC performance experiments retain their separate scope.
 

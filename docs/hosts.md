@@ -37,7 +37,7 @@ collection or turn a failed check into a successful one.
 
 ## Prerequisites and focused checks
 
-The committed Shared Tooling 0.30.0 refresh (`b37a882`) preserves the selected
+The committed Shared Tooling 0.30.4 refresh (`2aa41c7`) preserves the selected
 tool catalogs and compiler. `make tools-check check-pins` admits prepared tools;
 no reinstall or store cleanup is part of this adoption. Earlier source-bound
 receipts retain their original snapshots. Explicit setup still uses
@@ -56,6 +56,10 @@ Fixture-only retained consumers declare their role and inherit the compiler floo
 The snapshot includes the upstream documentation-closure repair from
 [#355 — Complete exported documentation closure for LOC classification and audit guidance](https://github.com/dragginzgame/shared-tooling/issues/355);
 its canonical export and this repository's normal documentation gate both pass.
+The text report labels unclassified source `???`; JSON retains `unclassified`.
+Formatter/LOC scratch defaults to the selected consumer's target directory.
+Explicit `TMPDIR` routes remain supported; the formatter log wrapper additionally
+honors `RUNNER_TEMP` first and preserves failed logs and original statuses.
 The shared release runner now admits bounded Git-side recovery state before and
 around adapter steps. The [retention contract](releases.md#artifact-retention-and-exact-push-scope)
 owns limits and refusal behavior; admission preserves all inputs and authorizes
@@ -167,7 +171,7 @@ libraries; select direct Cargo commands when only one package or test is affecte
 | Native evidence scenario | `bash scripts/ci/test-native-evidence.sh --scenario collection-archive-failure`; runs the named workflow recovery case with substituted effects, excluding standalone host/compiler setup checks |
 | Compiler-policy fixture | `bash scripts/ci/test-rust-compiler.sh`; compiler/version refusals and linked-Wasm evidence custody with substituted compiler commands |
 | Publication-policy fixture | `bash scripts/release/test-publication-policy.sh`; local tag/source/archive/registry-refusal checks with substituted network observations and no uploads |
-| Frozen evidence integrity | `make evidence-check` (checksums only; no replay or payload-privacy qualification) |
+| Owned Rust encoding boundary | `make candid-boundary-check` (lexical source inspection; no Cargo or macro expansion) |
 | Maintained docs | `make check-doc-links`, consistency review and `git diff --check` |
 
 Default-feature commands above cover fixed instrumentation. Recording is
@@ -221,12 +225,19 @@ The native matrix still covers Linux x86_64, macOS x86_64 and macOS arm64.
 Service owners retain browser/schema qualification. No required-check dependency in this
 repository selects the retired `msrv` job. Optional installed-runtime evidence
 retains its own tooling and scope. Historical evidence keeps its original compiler.
-`make evidence-check` is also included in CI and
-release validation. Five historical checksum manifests use archive-directory
-paths; the Makefile records those working directories without rewriting receipts.
-The gate checks distributed archives and retained inspection reports. Historical
-source-hash receipts describe their original checkout, not today's source tree,
-and are not compared with current files.
+Experimental evidence follows the [compact topic index](evidence/README.md).
+Historical raw bundles/checksums and obsolete source/report snapshots were retired
+under the authorized cleanup, so the input-free `evidence-check` Make/CI stage is
+retired too. Release receipts retain source and observed-outcome identities under
+their separate contract. No checksum of missing raw bytes is treated as proof of
+current availability; maintained product checks and tool-download integrity remain.
+
+`make candid-boundary-check` runs Shared's read-only lexical check over the real
+crate and retained-consumer sources, with an empty allowance policy. It is included
+once through `production-dependencies-check`; selected group scope reaches the
+matching crate and retained contract source. The checker does not inspect macro
+expansion or perform Rust type resolution. These libraries own no external Candid
+DTO or codec-comparison exception.
 
 ### Dependency roles and production graphs
 
@@ -267,8 +278,9 @@ builds before source mutation or compilation. Bare Cargo commands select both
 libraries; use `-p ic-metrics` or `-p ic-logging` for focused work. Builds use
 locked dependencies. Both libraries have no production dependencies. Neither owns platform readers or a server harness.
 Stable storage qualification belongs to IC Persistence.
-The inspector's CLI checks stay at IC Host; existing smoke artifacts under
-`target/evidence/wasm-inspector/` remain retained historical evidence.
+The inspector's CLI checks stay at IC Host. Historical smoke paths under
+`target/evidence/wasm-inspector/` do not establish current artifact availability
+or qualify the current source.
 
 Formatting fixtures use Shared Tooling's current-source selector for maintained
 Rust sources and Cargo manifests, including pending additions and deletions.
@@ -524,11 +536,12 @@ runner command, and explicit `TMPDIR` overrides remain unchanged. Shared helper
 payloads and historical outside-target evidence remain intact. `make help` labels
 workspace gates separately; use the package/test selections above for focused work.
 
-[Released 0.8.1 acceptance](evidence/release-081.md) verifies all three native
-receipts and the complete Rust-floor run on its exact published source.
+[Released 0.8.1 acceptance](evidence/releases/release-081.md) records the three native
+receipts and complete Rust-floor run observed for its exact published source.
 [The current handoff](status/current.md) binds pending work to separate local
 qualification. Earlier host/reader/release observations remain in their evidence
-owners and the verbatim guides retained by [the cleanup receipt](evidence/cleanup-082.md).
+owners and compact [topic summaries](evidence/README.md); retired prose/raw inputs
+remain historical Git records rather than current-tree evidence.
 They are not current platform readers, validation commands or acceptance of a
 later dependency graph. Actual IC execution and callback attribution belong to
 the owning consumers under [the extraction contract](extraction.md#downstream-contract-checks).

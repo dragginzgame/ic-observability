@@ -5,7 +5,7 @@ This inventory implements the maintainer decision in
 The scope is the Canic application tree: Canic, IcyDB, Backup, Blob and participating
 libraries. General arithmetic, statistics, numeric validation and report decoding
 are outside Metrics. This is the breaking Metrics 0.29 source contract.
-The [delivery receipt](evidence/metrics-0290-delivery-20261103.md) records producer
+The [delivery receipt](evidence/releases/metrics-0290-delivery-20261103.md) records producer
 publication separately from pending downstream acceptance.
 
 ## Retained public API

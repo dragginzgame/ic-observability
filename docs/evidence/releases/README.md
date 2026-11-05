@@ -1,0 +1,18 @@
+# Protected release receipts
+
+These compact records retain exact historical release/publication identities,
+source/tool selections and observed outcomes under the separate release and
+recovery contract. They are preserved during evidence compaction; they are not
+new qualification of later sources or a permanent raw-experiment archive.
+
+- [Latest delivery: Metrics 0.29.2 / Logging 0.24.7](observability-patches-20261105.md)
+- [Previous delivery: Metrics 0.29.1 / Logging 0.24.6](observability-patches-20261104.md)
+- [Metrics 0.29 producer cut](metrics-0290-delivery-20261103.md)
+- [Historical native 0.8.1 acceptance](release-081.md)
+
+The remaining receipts keep their original filenames, release source identities
+and scopes in this directory. The [retention notice](../README.md#retired-raw-evidence)
+explains which supporting notes were compacted and why an old archive hash is not
+proof of current-tree raw availability. Referenced target caches or hosted
+artifacts must be freshly observed before relying on them. Active deployment and
+private custody records outside `docs/evidence` were not cleaned.

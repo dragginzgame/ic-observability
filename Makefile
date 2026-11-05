@@ -24,17 +24,6 @@ publish-check: override OBSERVABILITY_PUBLICATION_MODE := check
 # Publication admits and lints only the explicitly selected independent group.
 publish publish-check: override export OBSERVABILITY_RELEASE_VALIDATION_SCOPE := group
 
-# These frozen manifests use archive-directory paths; retain their original bytes.
-# All other maintained checksum manifests use repository-root paths.
-# The inspection report receipt is current payload; its source receipt binds an
-# old checkout and must not be compared with today's source files.
-EVIDENCE_LOCAL_MANIFESTS := \
-	docs/evidence/arithmetic-convergence-0112.tar.gz.sha256 \
-	docs/evidence/checkpoint-cleanup-092.tar.gz.sha256 \
-	docs/evidence/equality-owner-0111.tar.gz.sha256 \
-	docs/evidence/identity-storage-0116.tar.gz.sha256 \
-	docs/evidence/owner-convergence-091.tar.gz.sha256
-
 # Common commands use this checkout's reviewed snapshot, including scratch exports.
 override SHARED_TOOLING_ROOT := $(CURDIR)
 export SHARED_TOOLING_ROOT
@@ -74,7 +63,7 @@ release-files:
 	@bash scripts/release/metadata.sh files
 
 .PHONY: help install-hooks hook-check check check-wasm clippy docs-check check-doc-links test msrv compiler-check compiler-policy-check shared-tooling-check check-pins release-tools-check ci
-.PHONY: ci-evidence-check evidence-check
+.PHONY: ci-evidence-check candid-boundary-check
 .PHONY: production-dependencies-check
 .PHONY: allocation-free-check
 .PHONY: publication-source-check verify-publication publish-verified
@@ -126,7 +115,7 @@ help:
 	@echo "Renew matched full/selected mapping qualification: release-validation-qualify (on relevant changes)"
 	@echo "Tooling fixtures: hook-check, release-tools-check (no release Git effects)"
 	@echo "CI evidence fixture: ci-evidence-check (substitute action results and Make effects, no hosted run)"
-	@echo "Frozen evidence archive checksums (read-only): evidence-check"
+	@echo "Owned Rust source encoding boundary: candid-boundary-check"
 	@echo "Named tests: cargo test -p PACKAGE --locked <test-name> (ic-metrics or ic-logging)"
 	@echo "Recording tests: cargo test -p $(PACKAGE) --features recording --locked <test-name>"
 	@echo "Maintenance task definitions: tasks/README.md (adoption does not activate a schedule)"
@@ -139,6 +128,7 @@ help:
 # Only the release adapter selects group scope. Ordinary commands and full CI
 # retain workspace scope, even when RELEASE_GROUP is inherited.
 override validation_cargo_selection = $(if $(filter group,$(OBSERVABILITY_RELEASE_VALIDATION_SCOPE)),-p ic-$(RELEASE_GROUP),--workspace)
+override validation_candid_sources = $(if $(filter group,$(OBSERVABILITY_RELEASE_VALIDATION_SCOPE)),crates/ic-$(RELEASE_GROUP) scripts/release/fixtures/retained-consumer/tests/$(RELEASE_GROUP).rs,crates scripts/release/fixtures/retained-consumer/tests)
 .PHONY: validation-scope-check release-validation-check release-validation-qualify logging-profiles-check
 validation-scope-check:
 	@case '$(OBSERVABILITY_RELEASE_VALIDATION_SCOPE)' in ''|workspace) ;; group) bash scripts/release/metadata.sh selection ;; *) exit 2 ;; esac
@@ -155,9 +145,8 @@ ci-evidence-check:
 	bash scripts/ci/test-native-evidence.sh
 	bash scripts/ci/test-native-recovery-evidence.sh
 
-evidence-check:
-	bash scripts/ci/verify-evidence-checksums.sh $(filter-out $(EVIDENCE_LOCAL_MANIFESTS),$(wildcard docs/evidence/*.sha256)) docs/evidence/wasm-inspection-0215/reports.sha256
-	cd docs/evidence && bash ../../scripts/ci/verify-evidence-checksums.sh $(notdir $(EVIDENCE_LOCAL_MANIFESTS))
+candid-boundary-check: | validation-scope-check
+	perl scripts/ci/check-candid-boundary.pl "$(CURDIR)" ci/candid-boundary.json $(validation_candid_sources)
 
 check:
 	+cargo check -p $(PACKAGE) --lib --no-default-features --locked
@@ -178,7 +167,7 @@ docs-check:
 check-doc-links:
 	perl scripts/ci/check-documentation-links.pl --root "$(CURDIR)" \
 		README.md AGENTS.md DRAGGINZGAME.md CHANGELOG.md releases/*/*.md releases/history.md docs/*.md \
-		docs/principles/*.md docs/evidence/*.md docs/status/*.md rules/*.md audits/*.md tasks/*.md \
+		docs/principles/*.md docs/evidence/*.md docs/evidence/releases/*.md docs/status/*.md rules/*.md audits/*.md tasks/*.md \
 		qualification/*/README.md
 	perl scripts/ci/check-documentation-links.pl --root "$(CURDIR)" \
 		crates/ic-metrics/src/*.md crates/ic-metrics/README.md crates/ic-metrics/CHANGELOG.md \
@@ -221,7 +210,7 @@ compiler-policy-check:
 check-pins:
 	bash scripts/ci/check-dependency-pins.sh --cargo-inheritance
 
-production-dependencies-check:
+production-dependencies-check: candid-boundary-check
 	perl scripts/ci/tests/check-process.t
 	perl scripts/ci/check-production-dependencies.pl
 	bash scripts/ci/test-production-dependencies.sh

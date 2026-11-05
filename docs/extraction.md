@@ -121,7 +121,8 @@ remaining original Canic qualification stays with
 [Metrics #10](https://github.com/dragginzgame/ic-observability/issues/10) retains the
 retired root coordination history, and [Toko #49](https://github.com/dragginzgame/toko-miner/issues/49)
 owns the database quality bridge/UI. The
-[six-consumer review](evidence/consumer-review-082.md) retains its observed sources.
+[consumer summary](evidence/consumer-history.md) retains the ownership conclusions;
+the detailed source-search diaries are retired.
 
 Distribution adoption needs admitted observations, not reconstructed counts,
 maxima or chronological histories. Backup's reviewed four-bound histogram owns
@@ -140,28 +141,25 @@ changes and required caller actions. Metrics never automatically resets retained
 and retained-data disposition stay at their owner.
 
 [The current handoff](status/current.md) separates local preparation, package
-publication and hosted qualification. [Published 0.8.2](evidence/release-082.md)
-retains its exact source and initial CI observation; [released 0.8.1](evidence/release-081.md)
-has complete source-bound native acceptance; historical cancelled runs keep
-their original status. [The tracked cut](evidence/tracked-080.md),
-[durable IC experiment](evidence/stable-cost-072.md) and
-[consumer closeout](evidence/consumer-closeout-0210.md) retain their own graphs,
-workloads and acceptance scope. Raw Wasm bytes, IC instructions and actual cycle
-charges are separate measurements; native execution supplies none of those IC
-costs. No frozen experiment proves a later consumer's performance.
+publication and hosted qualification. Protected [0.8.2](evidence/releases/release-082.md)
+and [0.8.1](evidence/releases/release-081.md) receipts retain their original source
+and observed acceptance identities; historical cancelled runs keep their status.
+They do not qualify a later source or establish that old hosted artifacts remain
+available. Current release receipts live under [the protected index](evidence/releases/README.md).
 
-The separate [frozen durability receipt](evidence/stable-current-0146.md)
-uses published Platform/Wire/Testkit interfaces and the governed Memory/Storage
-map. Its source, graph, compiler and workload identities bound the result;
-earlier durability archives retain their original identities.
-The separate [Memory 0.49 comparison](evidence/memory-0147.md) qualifies that
-version-bound retained upgrade with matched raw Wasm and IC cost observations.
+The [recorder](evidence/metrics-history.md), [persistence](evidence/persistence-history.md)
+and [consumer](evidence/consumer-history.md) summaries retain useful design and
+ownership conclusions. Superseded raw experiments, including the older governed
+Memory comparisons, are retired from the current tree under the
+[evidence policy](evidence/README.md#retired-raw-evidence). Their old hashes or
+selected results are not independently verifiable current-tree qualification.
+Required retained-codec or installed-canister acceptance belongs at its owning
+adapter with its actual source, graph and workload.
 
-Older release-by-release extraction prose is preserved verbatim in
-[the cleanup receipt](evidence/cleanup-082.md), rather than mixed into this current
-contract. The [pre-0.2 extraction record](evidence/extraction-through-019.md)
-retains the retired reader's scope. Existing evidence and changelog history stay
-unchanged.
+Raw Wasm bytes, IC instructions and actual cycle charges remain separate units;
+native substitutes provide none of those IC costs. No old experiment proves a
+later consumer's performance. Historical extraction prose and removed inputs can
+be read in Git history; the current summaries do not claim to preserve them verbatim.
 
 ## Bounded recording extension
 

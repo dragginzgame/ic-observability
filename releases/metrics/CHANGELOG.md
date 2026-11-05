@@ -5,6 +5,26 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.29.3] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt committed Shared Tooling 0.30.4: keep formatter and LOC scratch under
+  the owning target directory, preserve explicit overrides and failed diagnostics,
+  and use the updated LOC scanner and complete documentation companions.
+- Refresh canonical release-draft handling without enabling final-candidate
+  stage reuse or changing package/dependency versions.
+- Enforce the shared Candid source boundary through the existing dependency gate,
+  with no allowances and group scope carried to actual crate/fixture sources.
+
+### 🧹 Cleanup
+
+- Replace superseded evidence bundles, source snapshots and per-run diaries with
+  compact topic summaries. Preserve release receipts and distribution custody,
+  repair historical links and explicitly retire unavailable raw qualification.
+- Remove the obsolete experimental archive-checksum command and CI stage after
+  retiring its inputs; retain product/recovery and tool-download integrity checks.
+
 ## [0.29.2] - 2026-11-05
 
 ### 🛠️ Tooling
@@ -146,7 +166,7 @@ Metrics and Logging each own their package version and release notes.
 - Qualify published Wire/Derive 0.14.2 for native metadata and both independent
   identity consumers. Preserve the Wire 0.14.0 minimum, canonical Types 0.16.0 /
   Platform 0.17.0 pairing, schemas, encoded bytes and arithmetic-only isolation.
-  See [patch qualification](../../docs/evidence/wire-0142.md).
+  See [patch qualification](../../docs/evidence/wire-history.md).
 
 ## [0.25.0] - 2026-11-01
 
@@ -189,7 +209,7 @@ Metrics and Logging each own their package version and release notes.
   0.15.1/facade 0.15.2 pairing, schemas, bytes and arithmetic-only isolation.
   Compare generated TypeScript and vectors against an executed 0.13.2 baseline;
   leave the new fixed-byte-array representation opt-in and unselected.
-  See [qualification evidence](../../docs/evidence/wire-0133.md).
+  See [qualification evidence](../../docs/evidence/wire-history.md).
 
 ## [0.24.4] - 2026-11-01
 

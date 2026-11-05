@@ -27,10 +27,9 @@ Wire 0.12 separates endpoint integration into `ic-wire-endpoint`. Endpoint owner
 migrate their imports and select that package only when needed. This repository
 has no endpoint consumer and adds no endpoint package or Platform runtime.
 
-The [identity qualification receipt](evidence/wire-stable-identities-0121/README.md)
-distinguishes published Wire/Types/Platform dependencies from the temporary source
-copy used for the original pre-publication qualification. That historical receipt
-retains its own 0.22.0 source identity; it does not qualify later dependency lines.
+The [historical identity summary](evidence/wire-history.md) distinguishes the
+published pairing from temporary pre-publication source alignment. Its old source
+copies and raw qualification inputs are retired; it does not qualify later graphs.
 
 The [pending 0.24 migration](../releases/metrics/0.24.md) adopts Wire 0.13 and Types
 0.15. Arithmetic-only users can retain their existing compatible Metrics version;
