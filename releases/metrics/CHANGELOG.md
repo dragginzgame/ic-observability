@@ -5,6 +5,13 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.29.4] - Unreleased
+
+### 🛠️ Tooling
+
+- Keep publication scope overrides compatible with macOS's system Make, and
+  check their exported values before tool installation or publication effects.
+
 ## [0.29.3] - 2026-11-05
 
 ### 🛠️ Tooling

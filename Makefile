@@ -22,7 +22,8 @@ export OBSERVABILITY_PUBLICATION_MODE
 publish: override OBSERVABILITY_PUBLICATION_MODE := publish
 publish-check: override OBSERVABILITY_PUBLICATION_MODE := check
 # Publication admits and lints only the explicitly selected independent group.
-publish publish-check: override export OBSERVABILITY_RELEASE_VALIDATION_SCOPE := group
+export OBSERVABILITY_RELEASE_VALIDATION_SCOPE
+publish publish-check: override OBSERVABILITY_RELEASE_VALIDATION_SCOPE := group
 
 # Common commands use this checkout's reviewed snapshot, including scratch exports.
 override SHARED_TOOLING_ROOT := $(CURDIR)

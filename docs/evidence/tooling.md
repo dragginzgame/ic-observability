@@ -4,8 +4,10 @@ The current local snapshot selects committed Shared Tooling 0.30.4,
 `2aa41c7394300302fe802b69b31b855bdc89b671`, matching upstream main when reviewed.
 Its source ledger remains Unreleased; this is not a tagged-release claim.
 The canonical exporter preserves the reviewed entrypoints and derives the Candid
-checker's documented closure. Library versions, Cargo.lock and tool/compiler
-catalogs remain unchanged. Explicit setup and offline admission retain their owners.
+checker's documented closure. The adoption left library versions, Cargo.lock and
+tool/compiler catalogs unchanged; the subsequent [patch delivery](releases/observability-patches-20261105-tooling.md)
+owns version preparation and publication. Explicit setup and offline admission
+retain their owners.
 
 ## Current decisions
 
@@ -61,6 +63,15 @@ and JSON LOC callers agree on 4,438 code lines and zero unclassified lines;
 the allocator fixture's conditional-attribute diagnostic remains for review.
 These are focused local checks, not a new Bash 3.2, macOS, compiler or release
 qualification. No maintained library Rust, dependency graph or compiler changed.
+
+The subsequent macOS run exposed an existing target-specific `override export`
+declaration that GNU Make 3.81 cannot parse. Publication now uses a global export
+and a separate target-specific override. The actual smoke checks both publication
+mode and group scope against hostile command-line values before external effects.
+A locally built GNU Make 3.81 reproduced the original refusal and passed the fix;
+the prepared Make and publication ordering fixture passed too. That Linux parser
+qualification does not establish macOS native acceptance. Published crate contents
+are unchanged by the Make/CI follow-up; future group notes retain this repair.
 
 ## Historical qualification
 

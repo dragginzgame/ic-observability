@@ -27,6 +27,7 @@ release-group-check:
 publish publish-check: observability-setup-mode
 observability-setup-mode:
 	@test "$$OBSERVABILITY_PUBLICATION_MODE" = "$$SETUP_EXPECTED_MODE"
+	@test "$$OBSERVABILITY_RELEASE_VALIDATION_SCOPE" = group
 	@printf '%s\n' setup-mode-admitted
 	@exit 43
 MAKE
@@ -35,7 +36,8 @@ for target in publish publish-check; do
     [[ "$target" != publish-check ]] || mode=check
     status=0
     SETUP_EXPECTED_MODE="$mode" "$executable" --no-print-directory -f Makefile -f "$fixture/probe.mk" \
-        "$target" OBSERVABILITY_PUBLICATION_MODE=hostile > "$fixture/$target.log" 2>&1 || status=$?
+        "$target" OBSERVABILITY_PUBLICATION_MODE=hostile OBSERVABILITY_RELEASE_VALIDATION_SCOPE=hostile \
+        > "$fixture/$target.log" 2>&1 || status=$?
     [[ "$status" == 2 ]]
     grep -Fxq setup-mode-admitted "$fixture/$target.log"
 done

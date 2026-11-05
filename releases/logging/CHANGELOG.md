@@ -6,6 +6,13 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.24.9] - Unreleased
+
+### 🛠️ Tooling
+
+- Keep publication scope overrides compatible with macOS's system Make, and
+  check their exported values before tool installation or publication effects.
+
 ## [0.24.8] - 2026-11-05
 
 ### 🛠️ Tooling
