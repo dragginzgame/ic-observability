@@ -21,8 +21,10 @@ consumer-contract or persistence-boundary changes.
   alone add no dependency edge between the libraries.
   The shared observability contract owns the application-tree instrumentation
   boundary and Canic's reporting authority. The concrete public API and remaining
-  consumer repairs are recorded in [the API inventory](docs/metrics-api.md) and
-  Observability #130; historical receipts retain their original scope.
+  consumer repair map are recorded in [the API inventory](docs/metrics-api.md).
+  [#130 — Restrict Metrics to instrumentation](https://github.com/dragginzgame/ic-observability/issues/130)
+  is closed for its producer scope; consumer acceptance stays with its owner.
+  Historical receipts retain their original scope.
   Release, resume and publication require an explicit RELEASE_GROUP; no default
   group or PACKAGE inference is permitted.
 - Logging owns a dependency-free `no_std` + `alloc` heap engine with explicit

@@ -33,18 +33,24 @@ cleanup() {
 }
 trap cleanup EXIT
 freeze_consumer() {
-    local group="$1" supplier="$2" version="$3"
+    local group="$1" supplier="$2" version="$3" directory
     consumer="$fixture/$group-consumer"
     mkdir -p "$consumer/supplier" "$consumer/client/src" "$consumer/client/tests"
     cp Cargo.toml Cargo.lock rust-toolchain.toml "$consumer/"
-    cp -R "crates/ic-$supplier/src" "crates/ic-$supplier/examples" "crates/ic-$supplier/Cargo.toml" \
+    cp "crates/ic-$supplier/Cargo.toml" \
         "crates/ic-$supplier/README.md" "crates/ic-$supplier/LICENSE" "$consumer/supplier/"
+    cp -R "crates/ic-$supplier/src" "$consumer/supplier/"
+    for directory in examples tests; do
+        if [[ -d "crates/ic-$supplier/$directory" ]]; then
+            cp -R "crates/ic-$supplier/$directory" "$consumer/supplier/"
+        fi
+    done
     # This standalone client owns only the retained supplier, not the product
     # workspace's complete local member catalog or release policy.
     yq -p toml -o json '.' "$consumer/Cargo.toml" > "$consumer/root.json"
     perl scripts/release/render-retained-consumer.pl "$consumer/root.json" \
         "$consumer/Cargo.toml" "$supplier" "$version"
-    printf '[package]\nname = "retained-consumer"\nversion = "0.0.0"\nedition.workspace = true\n[dependencies]\nic-%s.workspace = true\n' "$supplier" > "$consumer/client/Cargo.toml"
+    printf '[package]\nname = "retained-consumer"\nversion = "0.0.0"\nedition.workspace = true\nrust-version.workspace = true\npublish = false\n[package.metadata.shared-tooling.loc]\ncategory = "tests"\n[dependencies]\nic-%s.workspace = true\n' "$supplier" > "$consumer/client/Cargo.toml"
     : > "$consumer/client/src/lib.rs"
     cp "scripts/release/fixtures/retained-consumer/tests/$supplier.rs" \
         "$consumer/client/tests/contract.rs"

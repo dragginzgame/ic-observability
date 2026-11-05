@@ -38,10 +38,10 @@ PATH="$fixture/bin:$PATH" REQUIRE_JOBSERVER=1 make_probe_parallel_dispatch "$rea
 write_expected_lints() {
     local destination="$1" last_phase="$2"
     printf 'publication-admission %s\n' "$mode" > "$destination"
-    printf '%s\n' clippy --workspace --all-targets --all-features --locked -- -D warnings >> "$destination"
+    printf '%s\n' clippy -p "$lint_package" --all-targets --all-features --locked -- -D warnings >> "$destination"
     case "$last_phase" in
         native) ;;
-        wasm) printf '%s\n' clippy --workspace --lib --all-features --locked --target wasm32-unknown-unknown -- -D warnings >> "$destination" ;;
+        wasm) printf '%s\n' clippy -p "$lint_package" --lib --all-features --locked --target wasm32-unknown-unknown -- -D warnings >> "$destination" ;;
         *) return 2 ;;
     esac
 }
@@ -50,9 +50,11 @@ write_expected_lints() {
 # this consumer's two-package roster, one override and both exact lint boundaries.
 export STANDARD_RELEASE_PHASE=publication
 for selection in default ic-logging; do
+    lint_package=ic-metrics
     selectors=(--package ic-metrics@0.1.0)
     package_args=()
     if [[ "$selection" != default ]]; then
+        lint_package=ic-logging
         selectors=(--package ic-logging@0.1.0)
         package_args=("RELEASE_GROUP=logging" "PACKAGE=$selection")
     fi

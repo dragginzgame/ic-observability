@@ -6,6 +6,16 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.24.7] - Unreleased
+
+### 🛠️ Tooling
+
+- Select committed Shared Tooling 0.30.0 and its classified source report.
+  Lint only the explicitly selected publication group on native and Wasm targets,
+  preserving source admission, lint-failure stopping and upload/readback ordering.
+- Declare retained-consumer fixtures as private test packages and preserve their
+  complete source inputs when qualifying the independent package contracts.
+
 ## [0.24.6] - 2026-11-04
 
 ### 🛠️ Tooling

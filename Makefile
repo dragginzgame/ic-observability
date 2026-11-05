@@ -21,6 +21,8 @@ CARGO_PUBLISH_VERIFY_TARGETS := publication-source-check clippy
 export OBSERVABILITY_PUBLICATION_MODE
 publish: override OBSERVABILITY_PUBLICATION_MODE := publish
 publish-check: override OBSERVABILITY_PUBLICATION_MODE := check
+# Publication admits and lints only the explicitly selected independent group.
+publish publish-check: override export OBSERVABILITY_RELEASE_VALIDATION_SCOPE := group
 
 # These frozen manifests use archive-directory paths; retain their original bytes.
 # All other maintained checksum manifests use repository-root paths.
@@ -104,7 +106,7 @@ verify-publication:
 
 help:
 	@echo "Local setup: install-tools; offline verification: tools-check"
-	@echo "Reports: cloc (this workspace); fleet reports run in Shared Tooling"
+	@echo "Reports: cloc (this workspace); CLOC_SUBCRATES=1 adds package detail"
 	@echo "Maintainer releases: release-patch, release-minor, release-major; release-resume VERSION=X.Y.Z"
 	@echo "Normal releases start fresh from committed metadata; exact recovery requires VERSION and RELEASE_GROUP"
 	@echo "Release/publication selection required: RELEASE_GROUP=metrics or logging (no default)"

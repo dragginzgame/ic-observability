@@ -37,23 +37,25 @@ collection or turn a failed check into a successful one.
 
 ## Prerequisites and focused checks
 
-After adopting Shared Tooling 0.28.0, rerun `make install-tools`, then
-`make tools-check`: the changed build-helper policy participates in tool identity.
+The committed Shared Tooling 0.30.0 refresh (`b37a882`) preserves the selected
+tool catalogs and compiler. `make tools-check check-pins` admits prepared tools;
+no reinstall or store cleanup is part of this adoption. Earlier source-bound
+receipts retain their original snapshots. Explicit setup still uses
+`make install-tools`; changed build-helper policies require re-preparation.
 Linux fingerprints retain native tool/header/library providers while excluding
-unrelated applications. Successful tool compilation scratch is discarded after
-admission; selected executables, source archives and receipts remain. Retiring
-old executable generations is explicit owner-operated maintenance under the
-[shared guide](tool-store-maintenance.md), with quiescence and custody checks.
-No store reclamation or application-artifact cleanup is part of this adoption.
-The 0.28.1 snapshot adds script interfaces without changing selected tools or
-their build identities; its adoption checks the prepared tools without reinstalling.
-The released 0.28.2 snapshot retains those same interfaces and tool selections;
-its additional runner regression fix is producer-owned, not another consumer suite.
-The committed 0.29.4 refresh (`628ccc75`) likewise preserves tool catalogs and
-compiler selections. `make tools-check check-pins` admits the existing prepared
-tools; this adoption needs no reinstall. Its source rules prefer external Rust
-test modules. The reset-window cases live in `window/tests.rs`; the export example
-uses `examples/byte-budgeted-export/{main,tests}.rs` under its unchanged Cargo name.
+unrelated applications. Selected executables, source archives and receipts remain;
+obsolete executable retirement follows the [shared guide](tool-store-maintenance.md).
+
+`make cloc CLOC_SUBCRATES=1` reports package detail; `bash scripts/dev/cloc.sh --json`
+emits schema 2 with application/library, test, example, benchmark, tooling and
+unclassified counts. Singular Rust test paths are not retained. The allocation-free
+link fixture lives at `tests/allocation-free/link.rs` with an explicit test role,
+while its Cargo example and Wasm artifact keep their historical names. The
+byte-budgeted export demonstration keeps its ordinary example and test modules.
+Fixture-only retained consumers declare their role and inherit the compiler floor.
+The snapshot includes the upstream documentation-closure repair from
+[#355 — Complete exported documentation closure for LOC classification and audit guidance](https://github.com/dragginzgame/shared-tooling/issues/355);
+its canonical export and this repository's normal documentation gate both pass.
 The shared release runner now admits bounded Git-side recovery state before and
 around adapter steps. The [retention contract](releases.md#artifact-retention-and-exact-push-scope)
 owns limits and refusal behavior; admission preserves all inputs and authorizes
@@ -195,7 +197,7 @@ remain full CI. No release gate uses the shortcut. Focused routing validation is
 `make ci-selection-check`; `make package-doc-links-check` checks Cargo's actual
 package file selection in staging that cannot borrow repository-only link targets.
 
-`make allocation-free-check` links the runtime-input instrumentation example for
+`make allocation-free-check` links the runtime-input instrumentation fixture for
 `wasm32-unknown-unknown`, with no standard library or global allocator. Linker
 exports and dead-code retention keep the exercised recording in the executable.
 The check uses locked offline dependencies and this repository's `target/`;

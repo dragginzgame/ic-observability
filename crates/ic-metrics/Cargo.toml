@@ -13,12 +13,19 @@ publish = ["crates-io"]
 [package.metadata.docs.rs]
 all-features = true
 
+[package.metadata.shared-tooling.loc.paths]
+"tests/allocation-free" = "tests"
+
 [features]
 recording = []
 
 [dev-dependencies]
 num-bigint.workspace = true
 serde.workspace = true
+
+[[example]]
+name = "arithmetic-no-allocator"
+path = "tests/allocation-free/link.rs"
 
 [lints]
 workspace = true

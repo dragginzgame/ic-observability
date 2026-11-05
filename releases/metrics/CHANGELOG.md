@@ -5,6 +5,18 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.29.2] - Unreleased
+
+### 🛠️ Tooling
+
+- Select committed Shared Tooling 0.30.0 and its classified source report.
+  Keep allocator-link qualification under test source with an explicit role,
+  preserving its existing Cargo command and retained Wasm artifact identity.
+- Lint only the explicitly selected publication group on native and Wasm targets.
+  Keep fresh source admission, lint-failure stopping and independent upload/readback.
+- Declare retained-consumer fixtures as private test packages and preserve their
+  complete source inputs when qualifying the independent package contracts.
+
 ## [0.29.1] - 2026-11-04
 
 ### 🛠️ Tooling
