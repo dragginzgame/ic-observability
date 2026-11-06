@@ -6,7 +6,7 @@ Its source ledger remains Unreleased; this is not a tagged-release claim.
 The canonical exporter preserves the reviewed entrypoints and derives the Candid
 checker's documented closure and the common Cargo boundary inventories. This
 refresh left library versions, Cargo.lock and tool/compiler catalogs unchanged.
-The [0.30.6 patch delivery](releases/observability-patches-20261106.md)
+The [0.30.7 patch delivery](releases/observability-patches-20261106-shared0307.md)
 owns subsequent version preparation and publication. Explicit setup and offline admission
 retain their owners. The earlier 0.30.6 delivery excluded the then-uncommitted
 0.30.7 draft; this refresh selects its later committed revision.
@@ -73,7 +73,10 @@ frozen selection refused before either runner. Runner effects were substituted;
 no metadata, tag, push, upload or candidate checkout was created. Documentation
 links and final diff checks passed. This is Linux caller/parser evidence, not
 native macOS or frozen-batch qualification. Library sources, package versions,
-lockfile and tool/compiler catalogs are unchanged; no broad CI or release ran.
+lockfile and tool/compiler catalogs were unchanged in that focused adoption.
+Subsequent Metrics 0.29.5 and Logging 0.24.10 releases each passed all 20 workspace
+stages, final archive compilation, publication dry runs and registry/source/content
+readback. Exact identities and recovery locations belong to the delivery receipt.
 
 ## Previous 0.30.6 qualification
 
