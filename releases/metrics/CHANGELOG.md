@@ -5,6 +5,14 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.29.7] - Unreleased
+
+### 🧪 Testing
+
+- Isolate release fixtures from inherited batch configuration, including CI's
+  empty group roster, so standard command and group recovery checks use their
+  own explicit selection.
+
 ## [0.29.6] - 2026-11-06
 
 ### 🛠️ Tooling

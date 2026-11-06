@@ -1,103 +1,76 @@
 # Current handoff — 2026-11-06
 
-**Shared Tooling 0.31.0 is selected for the authorized captured-batch deployment.** The
-157-file snapshot selects `74313941af2fce4399bec0e6909ca6229673c3f8`, matching
-upstream main when reviewed; its source ledger remains Unreleased. Group increments
-use automatic capture with the new release-batch settings and schema-2 journals.
-No batch journals existed here at adoption; earlier batches require their original
-tooling. Candidate setup uses existing tool owners; recovery and preflight check
-them offline. An explicit group is still required, multiple groups need an explicit roster, and publication
-is explicitly selected. Normal source/lock edits remain deferred; reconcile and
-retire remain explicit. See [independent releases](../independent-releases.md).
+**Metrics 0.29.6 and Logging 0.24.11 are delivered to GitHub and verified on crates.io.**
+The [delivery receipt](../evidence/releases/observability-patches-20261106-shared0310.md)
+owns exact tag/archive identities, validation and recovery locations. Implementation:
+`66a3c75f1568acbfeba333390258057aedc01105`. Releases:
 
-Actual Make smoke passed on prepared Make and Linux-built GNU Make 3.81 with
-runner effects stopped, including retired-setting refusal. Internal release
-dispatch, snapshot, pins, formatting, matched validation-plan mapping and
-docs/diff/syntax checks passed. The schema-2 two-group batch fixture passed real
-setup/editor, native/Wasm lint, archive/content readback, recovery/custody and
-explicit reconcile/retire, using local Git and simulated registry effects; three
-real stages replace the full roster. Earlier .10 rollback/receipt
-and publication-ordering evidence remains reusable for unchanged implementations.
-This is consumer wiring evidence, not live delivery or hosted macOS acceptance.
-The [tooling summary](../evidence/tooling.md) owns details.
-Package versions, lockfile, compiler/tools and unrelated Cargo comments remain
-unchanged. The requested patch delivery selects Metrics 0.29.6, then Logging
-0.24.11, with explicit verified publication through the schema-2 batch runner.
-Full selected release gates and live registry readback remain pending. Preserve
-batch journals and candidate outputs; reconcile the normal branch explicitly
-after completion. Unrelated root Cargo comments will be restored from dedicated
-Git stash custody after reconciliation. Sibling checkouts remain outside scope.
+- Metrics: `79c3c7e9695ed9ce43f7a747c3786d36c301ff5c`, `metrics-v0.29.6`.
+- Logging: `6ddccd2423451f5dd3ae9cb5a3cf96114d185aba`, `logging-v0.24.11`.
 
-**Metrics 0.29.5 and Logging 0.24.10 are delivered to GitHub and verified on crates.io.**
-The [delivery receipt](../evidence/releases/observability-patches-20261106-shared0307.md)
-owns exact source/tag/archive identities and recovery locations. Delivery used
-this normal `main` checkout and `origin/main`, then one verified upload per group
-in Metrics-then-Logging order. Both versions are non-yanked; readback matched
-29 maintained Metrics files and 13 maintained Logging files to their release commits.
-Never upload these versions again. Use `make verify-publication RELEASE_GROUP=metrics`
-or `RELEASE_GROUP=logging` for read-only reconciliation.
+Both packages are non-yanked. Readback matched 29 maintained Metrics files and
+13 maintained Logging files against their exact released source. Never upload
+these versions again; `make verify-publication RELEASE_GROUP=metrics` or `logging`
+is read-only reconciliation, not another upload.
 
-Implementation: `f0725c6be95c3b9eaf746fd1acb1d3cbb86e67e6`.
-Metrics release: `bd822af0d074c3cda28d709aa71b7f6c6b72e72e`, `metrics-v0.29.5`.
-Logging release: `b6457ab30b85ea8dd16e712de9b7e1f6b2f31500`, `logging-v0.24.10`.
-Both plans selected workspace scope because shared inputs changed and passed all
-20 stages, followed by final archive compilation, publication dry runs, upload
-and independent registry/archive/source readback. No stage reuse, version
-projection or gate narrowing ran. Full/selected mapping qualification was renewed
-and passed. Both owning ledgers are finalized; delivery records alone require no
-new pending release. No library implementation, feature, external dependency
-selection, compiler or tool catalog changed. Cargo package-cache lock waits
-occurred; no speed-up is claimed.
+Shared Tooling 0.31.0 selects `74313941af2fce4399bec0e6909ca6229673c3f8`, with all
+157 snapshot files verified; its ledger remains Unreleased. Actual delivery used
+`RELEASE_GROUPS=metrics,logging RELEASE_PUBLISH_TARGET=publish-verified` through
+the schema-2 batch runner. Each group passed all 20 workspace stages, final
+archive compilation and publication lint/verification. No stage reuse, version
+projection or gate narrowing ran. Library implementation, external dependencies,
+compiler and catalogs are unchanged; release metadata advanced only its group.
 
-The delivered batch used Shared Tooling 0.30.7; the delivery receipt retains its
-exact snapshot and prior live-checkout interface. The current adoption supersedes
-that interface. The `group-validation:2` proof contract stays in force;
-cross-group stage/publication caching remains disabled.
-
-The encoding guards are unchanged: zero-allowance Candid/CBOR scanning covers
-workspace/Metrics/Logging inventories of 34/24/10 Rust files. Shared Cargo
-admission checks direct external-IC and CBOR declarations, including renamed dev
-packages, through the existing production-dependency gate. Generated retained
-clients separately check declarations and source roots before public contract tests.
-Macro expansion, dynamic code and type resolution remain separate review obligations.
-Serde remains development-only for trait-refusal doctests; both production graphs
-are dependency-free. No browser root or production codec migration was introduced.
-
-Hosted Linux/Intel macOS/ARM macOS CI continues asynchronously with ordinary
-supersession; inspect the retained full run. Pending/cancelled runs are not passes.
-The previous main revision `016f615761ba351d0a2e1846398d665bba9cfb1b` has successful
-[CI run 42216362684](https://github.com/dragginzgame/ic-observability/actions/runs/42216362684),
-which does not qualify the new snapshot. Local release and registry evidence
-also does not qualify installed siblings or deployed IC runtime.
-
-Protected Git-side plans for both versions are complete. Sealed plans, proofs
-and logs are `target/release-validation/metrics-0.29.5.QPNutC/` and
-`target/release-validation/logging-0.24.10.jDFZTY/`. Registry readbacks are
-`target/publication/verification.ds1mF6/` and `verification.FLy36O/`.
-Transcripts and mapping qualification are under
-`target/deploy/observability-0307-20261106/`. Retention admission preserves active
-recovery state and authorizes no cleanup.
+Batch `batch-z30yB8KG` is complete at index 2. Its managed checkout is
+`target/release-frozen/batch-z30yB8KG`, with durable Git/recovery state at
+`.git/release-state/frozen/batch-z30yB8KG/`. Standard group plans there are complete.
+The normal `main` branch was explicitly fast-forwarded after batch completion.
+Candidate outputs, source pin, proofs and journals remain retained; no retirement
+or cleanup ran. Do not remove evidence while recovery is still required.
+Normal transcripts are under `target/deploy/observability-0310-20261106/`.
 
 The pre-existing lowercase root Cargo comments are restored and unstaged, with
-both new versions retained. Dedicated stash
-`e5bedde93b31a520a4ff282071099152cb04c555` and the original diff in the deployment
-directory remain. Earlier stashes, including
-`bf5bb360125866c3b6a3e2c3337ce08842e1f458`,
-`31c35843bcbd2ef89e2aa4ccc701509a4951755e`,
-`a8d87d1f41fa48a784c56ccef7302b9ed0dd12ef` and
-`06ee2eaf4bf79bc230b27c702fbdd62d7acd9e44`, and all earlier recovery evidence
-remain intact. No private-original, target, artifact/store or sibling cleanup ran.
+published package versions intact. Dedicated stash
+`a7dbbac568a37876f37f8a89607545a5fba389b2` preserves them. Earlier stashes, including
+`e5bedde93b31a520a4ff282071099152cb04c555`, earlier release evidence, private
+originals and tool stores remain untouched. Prior custody and release identities
+remain in the [previous receipt](../evidence/releases/observability-patches-20261106-shared0307.md)
+and Git history. No sibling checkout was mutated.
 
-The [evidence retention index](../evidence/README.md) owns compact topic summaries
-and removed-raw-availability notices. Earlier release receipts and the unchanged
-source-distribution JSON ledger remain preserved; old stage results and hashes
-retain their original scope, not current raw availability. The
-[previous delivery](../evidence/releases/observability-patches-20261106.md)
-retains its exact identities and 0.30.6 adoption evidence.
+**Hosted CI has known failures; local release passes do not qualify every host.**
+[Metrics CI 42263818593](https://github.com/dragginzgame/ic-observability/actions/runs/42263818593)
+failed before application checks on both macOS hosts: Shared's checksum helper
+reports an unmatched single quote under system Bash. The selected Shared main
+still contains that defect. It needs repair at Shared Tooling and canonical
+snapshot adoption; do not locally patch the exported payload or weaken integrity.
+[Logging CI 42265412695](https://github.com/dragginzgame/ic-observability/actions/runs/42265412695)
+uses the same tooling and is not a qualification pass.
 
-**#130 is closed for its delivered producer scope.** Remaining Profiler work is
-owned by [#17 — Remove Metrics from Profiler subtotals and qualify native integration](https://github.com/dragginzgame/ic-profiler/issues/17).
+Linux CI also exposed an inherited empty `RELEASE_GROUPS` in independent release
+fixtures. The follow-up clears inherited batch configuration in both owning
+fixtures. Standard Make dispatch and both groups' metadata/rollback/receipt/resume
+checks passed with `RELEASE_GROUPS=`. This CI-only repair changes no published
+crate content and requires no repeat upload. Pending notes are Metrics 0.29.7
+and Logging 0.24.12; package versions remain 0.29.6 and 0.24.11.
+
+The CI-only repair and delivery receipt need a follow-up `origin/main` push.
+Automatic approval review rejected that push as separate from package deployment;
+explicit user approval is required before retrying. The packages are already
+published and verified; no second upload is needed.
+
+Hosted checks continue asynchronously with normal supersession. Pending, failed
+and cancelled jobs are not passes. The [tooling summary](../evidence/tooling.md)
+owns focused qualification and its Linux/substitution boundaries. No current
+native macOS, installed sibling or deployed IC acceptance is inferred.
+
+The [evidence retention index](../evidence/README.md) owns compact summaries,
+retired-raw availability and the unchanged source-distribution ledger. Protected
+release receipts retain their original scope; no archive/private-original cleanup
+or source export was authorized.
+
+**#130 remains closed for its delivered producer scope.** Remaining Profiler work
+belongs to [Profiler #17](https://github.com/dragginzgame/ic-profiler/issues/17).
 The [API inventory](../metrics-api.md) and [0.29 migration](../../releases/metrics/0.29.md)
 retain the instrumentation/persistence cut and consumer map. Canic owns reporting;
 Storage owns retained codecs and governed stable adapters. Other consumer and
-endpoint acceptance remains with those owners. No new sibling qualification is claimed.
+endpoint acceptance remains with those owners.

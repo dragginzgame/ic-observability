@@ -6,6 +6,14 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.24.12] - Unreleased
+
+### 🧪 Testing
+
+- Isolate release fixtures from inherited batch configuration, including CI's
+  empty group roster, so standard command and group recovery checks use their
+  own explicit selection.
+
 ## [0.24.11] - 2026-11-06
 
 ### 🛠️ Tooling

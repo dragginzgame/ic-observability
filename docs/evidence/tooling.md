@@ -89,9 +89,13 @@ Git and simulates registry effects. Successful fixture inputs are removed; failu
 are retained. These checks do not establish the full production gate, native macOS
 or live publication. Raw logs belong to `target/evidence/shared-tooling-0310/`.
 Matched validation-plan mapping, docs/diff and shell/Perl syntax checks passed.
-Library versions, locks and compiler/tool catalogs remain unchanged. No maintained
-checkout commit, release, publication or sibling mutation ran. Earlier saved-state
-probes and historical release receipts retain their original tooling and scope.
+The [0.31 delivery](releases/observability-patches-20261106-shared0310.md) records
+both real 20-stage workspace gates, atomic pushes and live registry readback.
+Hosted CI then exposed a macOS parse error in Shared's checksum helper and an
+empty inherited roster in Linux release fixtures. The local fixture repair passes
+standard/group admission with `RELEASE_GROUPS=`; the macOS supplier defect remains
+unfixed in the selected snapshot. No exported payload or sibling was patched.
+Earlier saved-state probes and release receipts retain their original scope.
 
 ## Previous 0.30.6 qualification
 
