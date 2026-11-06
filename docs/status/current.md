@@ -1,19 +1,7 @@
 # Current handoff — 2026-11-06
 
-**Shared Tooling 0.30.6 is adopted locally; this batch is uncommitted.** The
-155-file snapshot selects `45c0295e23d3d23225e31f47c018c30ff0c75581`, matching
-upstream main when reviewed. Its source ledger remains Unreleased; the sibling's
-uncommitted 0.30.7 work was left untouched. The [tooling summary](../evidence/tooling.md)
-owns current decisions and focused evidence. Actual Cargo/source Make callers,
-CBOR import and renamed-dev-dependency refusals, group source isolation and both
-independently generated retained-consumer contracts passed. Snapshot, pins and
-formatting passed; docs/diff admission covers the finished batch. No production
-codec migration or browser root was found. Library versions, dependency locks,
-compiler/tools and the unrelated root Cargo comments are unchanged. No commit,
-release, publication or broad native/CI matrix ran for this adoption.
-
-**Metrics 0.29.3 and Logging 0.24.8 are delivered to GitHub and verified on crates.io.**
-The [delivery receipt](../evidence/releases/observability-patches-20261105-tooling.md)
+**Metrics 0.29.4 and Logging 0.24.9 are delivered to GitHub and verified on crates.io.**
+The [delivery receipt](../evidence/releases/observability-patches-20261106.md)
 owns exact source/tag/archive identities and recovery locations. Delivery used
 this normal `main` checkout and `origin/main`, then one verified upload per group
 in Metrics-then-Logging order. Both versions are non-yanked; readback matched
@@ -21,64 +9,64 @@ in Metrics-then-Logging order. Both versions are non-yanked; readback matched
 Never upload these versions again. Use `make verify-publication RELEASE_GROUP=metrics`
 or `RELEASE_GROUP=logging` for read-only reconciliation.
 
-Implementation: `45c1566a8b92782246390bc9c5c3a782a64ddacf`.
-Metrics release: `61e1e743863fea892cb868c6a3e481de892a8330`, `metrics-v0.29.3`.
-Logging release: `b07e0540ea31375a794ea9025f7588292b8136eb`, `logging-v0.24.8`.
+Implementation: `ed825cb256a737b2a896e364b87bd926bde414f9`.
+Metrics release: `c29b292a5a3da67dc0aa2c34ef1ea3e79af83a5c`, `metrics-v0.29.4`.
+Logging release: `e3bf868b6d941f5944606480e39a2da35b824d37`, `logging-v0.24.9`.
 Both workspace plans passed all 20 stages, followed by final archive compilation,
 publication dry runs, upload and independent registry/archive/source readback.
 No stage reuse, version projection or gate narrowing ran. The full/selected mapping
-qualification was separately renewed and passed. Local release evidence does not
-establish hosted or installed downstream acceptance.
+qualification was separately renewed and passed. Both owning ledgers are finalized;
+delivery records alone require no new pending release. No library implementation,
+feature, external dependency selection, compiler or tool catalog changed.
 
-**The macOS setup-smoke failure is repaired in the repository.** The Metrics
-[hosted run](https://github.com/dragginzgame/ic-observability/actions/runs/42064849516)
-passed Linux but failed both macOS jobs before tools were installed: GNU Make 3.81
-rejected the existing combined target-specific `override export` declaration.
-Export and override are now separate. Smoke asserts both publication mode and
-validation scope against hostile command-line values, stopping before real effects.
-A locally built GNU Make 3.81 reproduced the error and passed the repaired caller;
-prepared-Make smoke and publication ordering also passed. This Linux parser proof
-is not macOS native acceptance; hosted qualification of the repair is asynchronous.
-The Make/CI follow-up changes neither published payload. Future notes are pending
-under Metrics 0.29.4 and Logging 0.24.9; package versions remain 0.29.3 and 0.24.8.
+**Shared Tooling 0.30.6 is selected at the reviewed committed revision**
+`45c0295e23d3d23225e31f47c018c30ff0c75581`, with all 155 selected files verified.
+Its source ledger remains Unreleased; no Shared tag is inferred. The sibling's
+uncommitted 0.30.7 work was left untouched. The [tooling summary](../evidence/tooling.md)
+owns decisions and focused results. Zero-allowance Candid/CBOR scanning covers
+workspace/Metrics/Logging inventories of 34/24/10 Rust files. Shared Cargo
+admission checks direct external-IC and CBOR declarations, including renamed dev
+packages, once through the existing production-dependency gate. Independently
+generated retained clients check their resolved declarations and source roots
+before public contract tests; both pass (25 Metrics and 11 Logging Rust files).
+Actual Make caller refusals and group source isolation passed. Macro expansion,
+dynamic code and type resolution remain separate review obligations. No browser
+root or production codec migration was found. Serde remains development-only for
+recorder trait-refusal doctests; both libraries' production graphs are dependency-free.
 
-The published batch selected Shared Tooling 0.30.4 at
-`2aa41c7394300302fe802b69b31b855bdc89b671`, with all 152 selected files verified.
-Its source ledger remains Unreleased; no Shared release tag is inferred.
-The current Candid/CBOR lexical guard uses zero allowances through the
-production-dependency gate; workspace/Metrics/Logging select 34/24/10 Rust files.
-The same gate admits Shared's Cargo declarations once, and generated retained
-clients separately check their own resolved workspaces and Rust roots. Macro
-expansion, dynamic code and type resolution remain separate review obligations.
+**The previous macOS Make repair has successful hosted CI.**
+[Run 42066741583](https://github.com/dragginzgame/ic-observability/actions/runs/42066741583)
+passed at `96de8655cbe5cf545176a867e414ed1c9aecfe18`. Export and target-specific
+publication override remain separate; smoke asserts mode and group scope before
+effects. This older result does not qualify the new snapshot. Current hosted
+Linux/Intel macOS/ARM macOS CI continues asynchronously with ordinary supersession;
+inspect the retained full run. Pending/cancelled runs are not passes. Local release
+and registry evidence does not qualify sibling installations or deployed IC runtime.
 
-**The authorized evidence cleanup reduced 342 files/about 43 MiB to 77 files
-under 0.5 MiB before this delivery receipt.** Six compact topic summaries replace
-superseded diaries and raw attachments. All 67 earlier release/delivery receipts
-are under `docs/evidence/releases/`; their prose and identities are preserved apart
-from repaired links and retention notices. The distribution JSON ledger is byte-identical.
-The [retention index](../evidence/README.md) explains removed raw availability.
-The obsolete archive-checksum stage is retired; tool-download, product and recovery
-checks remain. No new bulk archive, private-original cleanup, target cleanup,
-history rewrite or sibling mutation ran. Earlier release receipts retain their
-original 21-stage results, not the new roster.
-
-Protected Git-side release plans for both versions are complete. Sealed plans,
-proofs and logs are at `target/release-validation/metrics-0.29.3.rC7ZFF/` and
-`target/release-validation/logging-0.24.8.JBcZDF/`. Registry readbacks are
-`target/publication/verification.ApHXEP/` and `verification.b46hlB/`.
-Transcripts and the mapping/parser checks are under
-`target/deploy/observability-tooling-20261105/`. Retention admission preserves
-active recovery state and authorizes no cleanup. Cross-group stage/publication
-caching remains disabled; the `group-validation:2` proof contract stays in force.
+Protected Git-side plans for both versions are complete. Sealed plans, proofs
+and logs are `target/release-validation/metrics-0.29.4.O3FJy5/` and
+`target/release-validation/logging-0.24.9.Uq2bYK/`. Registry readbacks are
+`target/publication/verification.ZdjwlE/` and `verification.icTN8j/`.
+Transcripts and mapping qualification are under
+`target/deploy/observability-0306-20261106/`. Retention admission preserves active
+recovery state and authorizes no cleanup. Cross-group stage/publication caching
+remains disabled; the `group-validation:2` proof contract stays in force.
 
 The pre-existing lowercase root Cargo comments are restored and unstaged, with
 both new versions retained. Dedicated stash
-`31c35843bcbd2ef89e2aa4ccc701509a4951755e` and the original diff under
-`target/evidence/docs-cleanup-20261105/` remain. Earlier stashes, including
+`bf5bb360125866c3b6a3e2c3337ce08842e1f458` and the original diff in the deployment
+directory remain. Earlier stashes, including
+`31c35843bcbd2ef89e2aa4ccc701509a4951755e`,
 `a8d87d1f41fa48a784c56ccef7302b9ed0dd12ef` and
 `06ee2eaf4bf79bc230b27c702fbdd62d7acd9e44`, and all earlier recovery evidence
-remain intact. The [previous delivery](../evidence/releases/observability-patches-20261105.md)
-retains its exact identities and Shared #355 remediation history.
+remain intact. No private-original, target, artifact/store or sibling cleanup ran.
+
+The [evidence retention index](../evidence/README.md) owns compact topic summaries
+and removed-raw-availability notices. All earlier release receipts and the unchanged
+source-distribution JSON ledger remain preserved. Their old identities and 21-stage
+results retain their original scope; hashes do not establish current raw availability.
+The [previous delivery](../evidence/releases/observability-patches-20261105-tooling.md)
+retains its source identities and Make failure/repair history.
 
 **#130 is closed for its delivered producer scope.** Remaining Profiler work is
 owned by [#17 — Remove Metrics from Profiler subtotals and qualify native integration](https://github.com/dragginzgame/ic-profiler/issues/17).

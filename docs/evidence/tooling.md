@@ -5,9 +5,9 @@ The current local snapshot selects committed Shared Tooling 0.30.6,
 Its source ledger remains Unreleased; this is not a tagged-release claim.
 The canonical exporter preserves the reviewed entrypoints and derives the Candid
 checker's documented closure and the common Cargo boundary inventories. This
-adoption leaves library versions, Cargo.lock and tool/compiler catalogs unchanged.
-The earlier [0.30.4 patch delivery](releases/observability-patches-20261105-tooling.md)
-owns its version preparation and publication. Explicit setup and offline admission
+refresh left library versions, Cargo.lock and tool/compiler catalogs unchanged.
+The [0.30.6 patch delivery](releases/observability-patches-20261106.md)
+owns subsequent version preparation and publication. Explicit setup and offline admission
 retain their owners. The sibling's uncommitted 0.30.7 work was not exported.
 
 ## Current decisions
@@ -64,7 +64,10 @@ admission (25 Metrics and 11 Logging Rust files, including empty client roots).
 Source scanning and root discovery found no current CBOR migration or browser
 work. The declaration and lexical guards are complementary; neither proves
 protocol bytes or arbitrary macro/dynamic coverage. No broad CI/native matrix,
-library changes, dependency upgrade, commit, release or publication ran.
+library changes or dependency upgrade ran in that focused adoption. Subsequent
+Metrics 0.29.4 and Logging 0.24.9 releases each passed all 20 workspace stages,
+archive compilation, publication dry run and independent registry/source/content
+readback. Exact identities and retained evidence belong to the delivery receipt.
 
 ## Previous 0.30.4 qualification
 
