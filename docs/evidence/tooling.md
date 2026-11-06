@@ -1,15 +1,14 @@
 # Contributor tooling
 
-The current local snapshot selects committed Shared Tooling 0.30.7,
-`22a853e26c05ec323f06c57fa316c08b808f252b`, matching upstream main when reviewed.
+The current local snapshot selects committed Shared Tooling 0.31.0,
+`74313941af2fce4399bec0e6909ca6229673c3f8`, matching upstream main when reviewed.
 Its source ledger remains Unreleased; this is not a tagged-release claim.
 The canonical exporter preserves the reviewed entrypoints and derives the Candid
 checker's documented closure and the common Cargo boundary inventories. This
 refresh left library versions, Cargo.lock and tool/compiler catalogs unchanged.
-The [0.30.7 patch delivery](releases/observability-patches-20261106-shared0307.md)
-owns subsequent version preparation and publication. Explicit setup and offline admission
-retain their owners. The earlier 0.30.6 delivery excluded the then-uncommitted
-0.30.7 draft; this refresh selects its later committed revision.
+The [previous 0.30.7 delivery](releases/observability-patches-20261106-shared0307.md)
+owns its version preparation and publication. Explicit setup and offline admission
+retain their owners.
 
 ## Current decisions
 
@@ -20,10 +19,18 @@ retain their owners. The earlier 0.30.6 delivery excluded the then-uncommitted
 - Source, formatting, hooks, release metadata and publication reuse the reviewed
   Shared helpers. The existing `group-validation:2` adapter delegates proof
   verification; optional final-candidate caching and stage reuse remain disabled.
-- Frozen-batch helpers are exported, but this consumer's independent-checkout
-  hooks are not qualified. Make rejects nonempty `RELEASE_FROZEN_GROUPS` before
-  either runner; ordinary direct delivery still uses the normal checkout and an
-  explicit group. The supported workflow creates no managed delivery checkout.
+- Group increments automatically capture committed source. An explicit group
+  selects itself; multiple groups need an explicit ordered roster. Publication
+  remains explicit. Candidate setup uses captured catalogs and managed owners;
+  recovery and standard preflight check those tools offline without reinstalling.
+  Normal edits remain deferred until explicit clean fast-forward reconciliation.
+  Status/resume/reconcile/retire use Shared's saved batch context and custody.
+- The 0.31 hard cut uses `RELEASE_GROUPS`, `RELEASE_PUBLISH_TARGET`,
+  `RELEASE_SETUP_TARGET`, `RELEASE_SETUP_MODE` and `RELEASE_BATCH_ACTIVE`.
+  Schema-2 journals record publication identity; old settings refuse. No batch
+  journals existed in this checkout at adoption. Storage paths/source pins remain
+  unchanged. New exports require version/entrypoint annotations; checksum readers
+  reject NUL bytes before shell capture. There are no npm lockfiles to migrate.
 - Both groups already classify isolated implementation paths and carry group
   selection into native/Wasm and archive argv. Shared/unknown changes retain full
   validation. The full gate has no duplicate `cargo check` after Clippy; compiler
@@ -66,17 +73,25 @@ investigations, recovery state and Git history were outside the cleanup.
 
 ## Current focused checks
 
-The 157-file snapshot, pins and formatting checks passed. Actual Make smoke and
-direct dispatch/status probes passed with the prepared Make and locally built
-GNU Make 3.81: normal release dispatch selected the existing runner; unsupported
-frozen selection refused before either runner. Runner effects were substituted;
-no metadata, tag, push, upload or candidate checkout was created. Documentation
-links and final diff checks passed. This is Linux caller/parser evidence, not
-native macOS or frozen-batch qualification. Library sources, package versions,
-lockfile and tool/compiler catalogs were unchanged in that focused adoption.
-Subsequent Metrics 0.29.5 and Logging 0.24.10 releases each passed all 20 workspace
-stages, final archive compilation, publication dry runs and registry/source/content
-readback. Exact identities and recovery locations belong to the delivery receipt.
+The 157-file 0.31.0 snapshot, pins and formatting passed. Actual automatic-capture
+Make smoke passed with prepared Make and locally built GNU Make 3.81, with both
+runners stopped before effects; every retired setting refused even when empty.
+Internal standard-release dispatch passed, including offline captured admission
+and the standalone recovery preparation lane. An obsolete preparation assertion
+was corrected to match those distinct contracts. Earlier 0.30.10 metadata rollback,
+wrong-group/altered-receipt and publication-ordering qualification remains reusable
+for unchanged implementations. The schema-2 two-group batch fixture passed real
+setup/lint/archives/readback, recorded publication identity, offline/interrupted
+recovery, deferred lock custody, no repeat upload and explicit reconcile/retire.
+
+The outer fixture substitutes the full roster with three real stages, uses local
+Git and simulates registry effects. Successful fixture inputs are removed; failures
+are retained. These checks do not establish the full production gate, native macOS
+or live publication. Raw logs belong to `target/evidence/shared-tooling-0310/`.
+Matched validation-plan mapping, docs/diff and shell/Perl syntax checks passed.
+Library versions, locks and compiler/tool catalogs remain unchanged. No maintained
+checkout commit, release, publication or sibling mutation ran. Earlier saved-state
+probes and historical release receipts retain their original tooling and scope.
 
 ## Previous 0.30.6 qualification
 
@@ -126,12 +141,5 @@ was fixed and pushed there: the exported documentation regression and normal
 consumer link checks passed without fleet-inventory copies. That repair is
 included in the current selection.
 
-The uncommitted 0.30.1 selection was
-`0c5eebc49534e99b09326c49b003a0adfd2348cb`. Snapshot/pin/formatting and actual
-hook checks passed, LOC source hashes/classifications matched the preceding
-report, custom-target scratch retained the same totals, and both draft callers
-rendered into scratch. The expected formatter failure retained status 43 and its
-log. Those local observations do not establish hosted/macOS or release acceptance.
-Raw local logs under `target/shared-tooling-0301/` were not cleaned by this task.
 Older tooling-selection diaries are retired; exact released identities remain in
 release receipts and Git history rather than another current pin catalog.

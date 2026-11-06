@@ -15,6 +15,9 @@ unset VALIDATION_REPOSITORY_ROOT VALIDATION_RUNNER_SNAPSHOT_PATH VALIDATION_LOG_
 unset VALIDATION_FAILURE_LOG_DIR GITHUB_STEP_SUMMARY RELEASE_MAKE
 unset VALIDATION_INPUT_ROOT VALIDATION_INPUT_BASELINE
 unset OBSERVABILITY_RELEASE_VALIDATION_SCOPE OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT
+# This fixture owns the standard hooks inside a captured checkout. The frozen
+# fixture separately qualifies outer capture, deferred edits and publication.
+export RELEASE_BATCH_ACTIVE=1
 root="${BASH_SOURCE[0]}"
 [[ "$root" == /* ]] || root="$PWD/$root"
 root="$(cd -P "${root%/*}/../.." && printf '%s/.' "$PWD")"

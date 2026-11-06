@@ -32,19 +32,26 @@ override RELEASE_DELIVERY_POLICY := $(CURDIR)/ci/release-delivery.txt
 include make/consumer.mk
 include make/cargo-publication.mk
 
-# Exported batch helpers do not qualify this consumer's independent-checkout hooks.
-ifneq ($(strip $(RELEASE_FROZEN_GROUPS)),)
-$(error Frozen release batches are not qualified in IC Observability; use explicit RELEASE_GROUP with normal direct delivery)
-endif
+# Shared owns capture/default selection; this consumer owns candidate preparation.
+export RELEASE_GROUPS
+override RELEASE_SETUP_TARGET := release-candidate-setup
 
 .PHONY: $(SHARED_RELEASE_TARGETS)
 
 .PHONY: release-group-check
-$(SHARED_RELEASE_TARGETS) publish publish-check: | release-group-check
+$(SHARED_RELEASE_TARGETS) release-batch-resume publish publish-check: | release-group-check
 release-group-check:
 	@bash scripts/release/metadata.sh selection
 
+.PHONY: release-candidate-setup
+release-candidate-setup:
+	+@RELEASE_MAKE="$(MAKE_COMMAND)" HOST_TOOL_VERSIONS="$(HOST_TOOL_VERSIONS)" RUST_TOOL_VERSIONS="$(RUST_TOOL_VERSIONS)" bash scripts/release/candidate-setup.sh
+
+ifeq ($(RELEASE_BATCH_ACTIVE),1)
+release-patch release-minor release-major release-resume: export IC_METRICS_RELEASE_CACHE_PREPARE := 0
+else
 release-patch release-minor release-major release-resume: export IC_METRICS_RELEASE_CACHE_PREPARE := 1
+endif
 
 release-version:
 	@bash scripts/release/metadata.sh version
@@ -233,6 +240,7 @@ release-tools-check:
 	bash scripts/release/test-retained-consumer.sh
 	bash scripts/release/test-fixture-retention.sh
 	bash scripts/release/test-publication-policy.sh
+	bash scripts/release/test-release-batch.sh
 
 # One full stage roster drives CI and release selection.
 include make/validation.mk

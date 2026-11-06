@@ -37,7 +37,7 @@ collection or turn a failed check into a successful one.
 
 ## Prerequisites and focused checks
 
-The committed Shared Tooling 0.30.7 refresh (`22a853e`) preserves the selected
+The committed Shared Tooling 0.31.0 refresh (`7431394`) preserves the selected
 tool catalogs and compiler. `make tools-check check-pins` admits prepared tools;
 no reinstall or store cleanup is part of this adoption. Earlier source-bound
 receipts retain their original snapshots. Explicit setup still uses
@@ -317,8 +317,9 @@ adding library dependencies. Current manifests, lock and context are below
 Metrics' small `release-editor.sh` adapter supplies only that selection.
 `make install-tools` runs `install-release-editor` after common setup, and
 `make tools-check` runs `release-editor-check`. Standalone targets are available
-after host parsers are prepared. Standard release preflight prepares/checks the
-editor before offline validation; standalone preflight only checks it. Metadata
+after host parsers are prepared. Fresh captured candidate setup prepares/checks
+the editor before version lookup; captured and standalone preflight only check
+it offline. Metadata
 preparation resolves its absolute admitted path without installation, then Shared
 Tooling owns candidate preparation, validation and failure restoration. Missing
 selections refuse before metadata mutation. The instrumentation library requires no IC Build.
@@ -371,29 +372,33 @@ Release and publication use separate commands under
 both through [delegated delivery](../rules/contributions.md#delegated-delivery).
 Normal release commands start fresh from
 clean committed metadata without scanning or replaying historical plans.
-The snapshot includes optional frozen-batch mechanics, but this consumer's hooks
-are not qualified in a managed delivery checkout. Nonempty
-`RELEASE_FROZEN_GROUPS` refuses during Make parsing; no candidate is created.
-Normal direct releases, complete gates and the existing proof contract remain.
+Group increments automatically capture committed source into the managed delivery
+checkout. The consumer candidate setup and actual group hooks are qualified for
+the captured catalogs and default context; publication remains explicit. The
+normal checkout retains later source/lock edits until explicit reconciliation.
+Complete selected gates and the existing proof contract remain.
 Select `RELEASE_GROUP=metrics` or `RELEASE_GROUP=logging` explicitly; see
 [independent releases](independent-releases.md) for the version/ledger map.
-Use `make release-resume RELEASE_GROUP=logging VERSION=X.Y.Z` for recovery of a
-specific saved Logging attempt.
+Use `make release-batch-resume RELEASE_GROUP=logging BATCH=batch-XXXXXXXX` for
+batch recovery. Earlier standalone attempts retain their recorded adapter and
+exact-version recovery contract.
 Standard release preflight first runs `setup-smoke-check`. Release validation
 selects the qualified [group plan](independent-releases.md), with full workspace
 fallback for shared or uncertain changes. Package Cargo recipes use the admitted
 scope; plain `make ci` forces workspace scope even through recursive Make
 overrides. Neither group requires Node/npm tooling.
 The Make smoke parses the actual consumer and tests exported publication-mode
-overrides and unsupported frozen-mode refusal, then deliberately stops before
-metadata, compiler or upload recipes.
+overrides, automatic single-group capture, retired-setting and explicit-empty
+roster refusal, and missing/unknown group refusal. Runner sentinels stop before candidate creation,
+compiler or upload effects.
 Native CI runs it before tool installation on all three declared hosts, including
 macOS's system Make. To qualify another already prepared Make binary directly,
 run `bash scripts/ci/check-setup-smoke.sh /absolute/path/to/make`; this does not
 install or select another workspace tool. A Linux parser check does not establish
-native macOS execution. Standard preflight otherwise prepares the
-locked dependency cache, common Cargo tools and the selected release editor before offline validation;
-standalone preflight only fetches/checks offline. Preparation and late checks
+native macOS execution. Fresh candidate setup prepares host tools, admits the
+compiler, and delegates locked fetch and common Rust/editor preparation to the
+shared preflight helper once. Captured preflight and recovery admit prepared
+selections offline without installation. Preparation and late checks
 bind the selected release commit rather than newer working-tree metadata.
 Late metadata checks use Shared's `--manifest-order-grouped` option to check ordering
 in that same selected source; literal version preparation never sorts it.
@@ -464,10 +469,12 @@ actual callers; it does not replay those generic matrices in its own gates.
 | Local entrypoint | Metrics-owned qualification |
 | --- | --- |
 | `make release-tools-check` | Separate release/publication Make dispatch, grouped release admission, hook and failure/custody fixtures. The actual group adapter, renderer and runner exercise local Git releases, exact staging/commits, rollback, receipts/resume, publication selection and consumers pinned to the unaffected identity. Broad gates and registry uploads are substituted. |
+| `bash scripts/release/test-release-batch.sh` | Actual two-group capture, managed candidate setup, native/Wasm lint, archive compilation and content readback, interrupted delivery/publication, offline recovery, deferred lock custody and explicit reconcile/retire. Three real stages replace the full production roster; Git is local and registry effects are simulated. |
 | `make hook-check` | Standalone hook adoption; the actual baseline formatter failure must retain and replay its diagnostic log. |
 | `make ci-evidence-check` | Source selection/hash inputs, actual workflow setup bodies, collector wiring and direct collector/recovery-packager execution with substituted external effects. |
 
-Retention is the single CI entry for release, publication and hook bodies. Each
+Retention is the single CI entry for the internal release, publication and hook bodies;
+the frozen outer-workflow fixture runs separately once. Each
 full success route runs once; publication-specific child/assertion failures run
 only its focused fixture, keeping unrelated release checks out of those probes. The admission fixture isolates inherited parent
 validation/failure logs and summaries. Each group checks source and tool refusal,

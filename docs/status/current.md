@@ -1,5 +1,33 @@
 # Current handoff — 2026-11-06
 
+**Shared Tooling 0.31.0 is selected for the authorized captured-batch deployment.** The
+157-file snapshot selects `74313941af2fce4399bec0e6909ca6229673c3f8`, matching
+upstream main when reviewed; its source ledger remains Unreleased. Group increments
+use automatic capture with the new release-batch settings and schema-2 journals.
+No batch journals existed here at adoption; earlier batches require their original
+tooling. Candidate setup uses existing tool owners; recovery and preflight check
+them offline. An explicit group is still required, multiple groups need an explicit roster, and publication
+is explicitly selected. Normal source/lock edits remain deferred; reconcile and
+retire remain explicit. See [independent releases](../independent-releases.md).
+
+Actual Make smoke passed on prepared Make and Linux-built GNU Make 3.81 with
+runner effects stopped, including retired-setting refusal. Internal release
+dispatch, snapshot, pins, formatting, matched validation-plan mapping and
+docs/diff/syntax checks passed. The schema-2 two-group batch fixture passed real
+setup/editor, native/Wasm lint, archive/content readback, recovery/custody and
+explicit reconcile/retire, using local Git and simulated registry effects; three
+real stages replace the full roster. Earlier .10 rollback/receipt
+and publication-ordering evidence remains reusable for unchanged implementations.
+This is consumer wiring evidence, not live delivery or hosted macOS acceptance.
+The [tooling summary](../evidence/tooling.md) owns details.
+Package versions, lockfile, compiler/tools and unrelated Cargo comments remain
+unchanged. The requested patch delivery selects Metrics 0.29.6, then Logging
+0.24.11, with explicit verified publication through the schema-2 batch runner.
+Full selected release gates and live registry readback remain pending. Preserve
+batch journals and candidate outputs; reconcile the normal branch explicitly
+after completion. Unrelated root Cargo comments will be restored from dedicated
+Git stash custody after reconciliation. Sibling checkouts remain outside scope.
+
 **Metrics 0.29.5 and Logging 0.24.10 are delivered to GitHub and verified on crates.io.**
 The [delivery receipt](../evidence/releases/observability-patches-20261106-shared0307.md)
 owns exact source/tag/archive identities and recovery locations. Delivery used
@@ -21,16 +49,10 @@ new pending release. No library implementation, feature, external dependency
 selection, compiler or tool catalog changed. Cargo package-cache lock waits
 occurred; no speed-up is claimed.
 
-**Shared Tooling 0.30.7 is selected at the reviewed committed revision**
-`22a853e26c05ec323f06c57fa316c08b808f252b`, with all 157 selected files verified.
-Its source ledger remains Unreleased; no Shared tag is inferred. The
-[tooling summary](../evidence/tooling.md) owns decisions and focused evidence.
-Actual Make smoke and direct dispatch/status probes passed with prepared Make
-and locally built GNU Make 3.81, with runner effects substituted. Normal direct
-release uses the existing runner. Nonempty `RELEASE_FROZEN_GROUPS` refuses before
-either runner: independent-checkout hooks remain unqualified and no managed
-delivery checkout was created. The `group-validation:2` proof contract stays in
-force; cross-group stage/publication caching remains disabled.
+The delivered batch used Shared Tooling 0.30.7; the delivery receipt retains its
+exact snapshot and prior live-checkout interface. The current adoption supersedes
+that interface. The `group-validation:2` proof contract stays in force;
+cross-group stage/publication caching remains disabled.
 
 The encoding guards are unchanged: zero-allowance Candid/CBOR scanning covers
 workspace/Metrics/Logging inventories of 34/24/10 Rust files. Shared Cargo

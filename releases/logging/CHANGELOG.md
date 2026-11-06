@@ -6,6 +6,17 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.24.11] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt committed Shared Tooling 0.31.0 with automatic captured delivery for
+  explicit release groups, candidate tool setup and offline recovery. Use the
+  new release-batch settings and schema-2 journals with recorded publication
+  identity; retired settings refuse. Keep publication and reconciliation explicit.
+- Adopt hardened snapshot/checksum admission, including rejection of NUL-containing
+  checksum output. [Shared #360](https://github.com/dragginzgame/shared-tooling/issues/360).
+
 ## [0.24.10] - 2026-11-06
 
 ### 🛠️ Tooling

@@ -33,8 +33,8 @@ at 0.23.1. There is no default release group.
 
 Prepare tools explicitly with `make install-tools` after adopting this snapshot.
 The managed release editor is published IC Build 0.73.0 with its cli feature.
-Validation never installs tools except the standard release preflight's selected
-preparation lane; checks admit the already prepared selection.
+Fresh captured delivery prepares its own tools through the existing managed
+owners before version lookup. Recovery and validation admit that selection offline.
 
 ```sh
 make release-version RELEASE_GROUP=metrics   # Metrics current version
@@ -42,24 +42,55 @@ make release-version RELEASE_GROUP=logging   # Logging current version
 make release-files RELEASE_GROUP=logging     # NUL-delimited exact file plan
 make release-patch RELEASE_GROUP=metrics     # Metrics release
 make release-patch RELEASE_GROUP=logging
-make release-resume RELEASE_GROUP=logging VERSION=X.Y.Z
 make publish-check RELEASE_GROUP=logging
 make publish-verified RELEASE_GROUP=logging
 make verify-publication RELEASE_GROUP=logging  # Readback only; never uploads
 ```
 
-Every release, resume, publication and group metadata command requires an explicit
+Every release, batch resume, publication and group metadata command requires an explicit
 RELEASE_GROUP on the command line or in the environment. Missing, empty and
 unknown selections refuse before setup, Cargo, validation or mutation. PACKAGE
 never supplies an implicit group. Workspace-wide read-only checks need no group.
 
-Shared Tooling's [frozen batches](frozen-releases.md) are available in the snapshot
-but are not qualified for this consumer. Nonempty `RELEASE_FROZEN_GROUPS` refuses
-before release or publication recipes. Keep ordinary direct delivery in the normal
-checkout, with one explicit `RELEASE_GROUP`. Enabling batches requires qualifying
-the actual metadata, group proof, archive and publication hooks in the managed
-delivery checkout, including normal-lock drift and recovery. Snapshot integrity
-or Shared's synthetic runner tests do not establish that qualification.
+Shared Tooling 0.31.0's [release batches](release-batches.md) capture committed
+source automatically for group increments. A single explicit `RELEASE_GROUP`
+selects that group; a multiple-group batch requires an explicit ordered roster:
+
+```sh
+# Both groups, with verified publication explicitly selected:
+make release-patch RELEASE_GROUP=metrics RELEASE_GROUPS=metrics,logging \
+  RELEASE_PUBLISH_TARGET=publish-verified
+make release-batch-status BATCH=batch-XXXXXXXX
+make release-batch-resume RELEASE_GROUP=metrics BATCH=batch-XXXXXXXX
+make release-batch-reconcile BATCH=batch-XXXXXXXX
+make release-batch-retire BATCH=batch-XXXXXXXX
+```
+
+Omitting the publication target selects Git-only delivery. Never infer the roster
+from workspace membership or clear it to request live delivery. The captured
+checkout under `target/release-frozen/BATCH` uses its own tools and the saved
+source, group, remote and branch. Candidate setup prepares host parsers, admits
+the compiler, then delegates locked fetch and Rust/editor preparation to Shared.
+Subsequent preflight and resumed setup only check prepared tools offline. External
+tool-catalog overrides refuse; Shared also rejects unsupported Git/Cargo contexts.
+This qualifies the captured catalogs and default context, not arbitrary host inputs.
+
+The normal branch remains at its starting commit while the batch delivers. Later
+source or lock edits remain deferred there and cannot alter the captured candidate.
+Status is read-only; resume selects the saved batch and hooks. Reconcile explicitly
+fast-forwards a clean normal branch after completion. Preserve deferred work on a
+durable branch first, then reapply it deliberately. Retirement explicitly deletes
+the selected completed batch's candidate and recovery state; it is never automatic.
+The shared guide owns uncertain-publication acknowledgement and retention rules.
+
+The 0.31 interface is a hard cut: use `RELEASE_GROUPS`, `RELEASE_PUBLISH_TARGET`,
+`RELEASE_SETUP_TARGET`, `RELEASE_SETUP_MODE` and `RELEASE_BATCH_ACTIVE`.
+Retired settings refuse, including explicitly empty values. New batch journals
+use schema 2 and must record the delivered commit before publication. Complete,
+reconcile and retire any pre-0.31 batch with its original reviewed tooling before
+adopting this interface; do not convert its journal or infer a publication commit
+from current HEAD. Existing `release-frozen`/`frozen` storage paths and source pins
+retain their identities. This checkout had no batch journals at adoption.
 
 Release and publication retain separate commands and evidence. A scoped
 [ship/deploy request](../rules/contributions.md#delegated-delivery) can authorize
@@ -70,8 +101,10 @@ change republishes an existing package version. Select a new numbered candidate
 through the maintainer release flow when publishing changed package metadata.
 
 Upload from the clean checkout of the selected group's annotated release tag,
-after its exact tag has reached the declared repository. Publish each group
-immediately after its release, or explicitly check out its tag before uploading.
+after its exact tag has reached the declared repository. The explicitly selected
+batch publication target runs immediately after each group's release in the
+captured checkout. For standalone publication, explicitly check out the selected
+tag; the unreconciled normal branch does not contain the delivered release.
 The shared publisher retains the upload command and status; `publish-verified`
 then checks the non-yanked registry entry, archive checksum and clean source
 identity through Shared's observation/provenance helpers. If readback fails, use
@@ -122,7 +155,8 @@ the Metrics 0.29 hard cut does not imply sibling acceptance.
 
 ## Plans, transactions and recovery
 
-The existing shared runner and group-capable editor own metadata rendering,
+The frozen runner owns capture and orchestration; the existing standard runner
+and group-capable editor inside that checkout own metadata rendering,
 selected-package lock updates, staging, commits, tags, push and resume. The local
 adapter supplies group policy, existing tool preparation, planned validation and
 source/receipt admission. There is no second release implementation.
@@ -165,6 +199,9 @@ new file plan. Exact old-attempt recovery belongs to its recorded source, policy
 and adapter. The completed 0.28.1/0.24.4 deliveries retain their version-1 consumer
 receipts and recorded adapter; the new format does not reinterpret them. Both
 recorded 0.23.1 attempts were complete before the group-ledger change.
+New batch recovery uses `release-batch-resume`; it delegates exact-version
+`release-resume` to the captured standard journal when needed. Earlier standalone
+attempts retain their recorded source and adapter; do not reinterpret them as batches.
 
 Independent releases do not make incompatible integration stacks compatible.
 Services coordinate their own Wire identities and schemas; persistence
@@ -173,7 +210,9 @@ encoded bytes and Logging's retained-data contract do not change in this split.
 
 ## Focused qualification
 
-`make release-tools-check` exercises the actual adapter, shared runner/editor and
+`make release-tools-check` is an aggregate of the consumer-owned fixtures below.
+The standard/internal-hook and group admission fixtures exercise the actual
+adapter, shared runner/editor and
 local Git remotes in disposable repositories. It checks both group directions,
 missing/empty/unknown group refusal, unrelated versions/requirements/ledgers,
 selected root catalog updates, unchanged index/history inputs, exact changed files, rollback, receipts, resume
@@ -183,6 +222,18 @@ source copies pinned to their prior compatible identities; this is source-level
 consumer evidence, not publication of the simulated releases. Successful group
 receipts and all failures remain retained at the printed evidence directory.
 Other standard Make, hook and retention fixtures keep their distinct scopes.
+
+`bash scripts/release/test-release-batch.sh` qualifies the outer automatic capture
+with both groups' real candidate setup, metadata editor, source/proof admission,
+native/Wasm Clippy, final archive compilation and publication content readback.
+It substitutes the production validation roster with those three real stages,
+uses a local bare Git remote and simulates registry upload/HTTP effects. It tests
+interrupted push, offline recovery with missing tools, uncertain publication,
+completed resume without another upload, deferred normal-lock custody, dirty
+reconciliation refusal, clean fast-forward and explicit retirement. Successful
+fixture inputs are removed; failures remain at the reported path. This proves
+consumer wiring, not the full production gate, hosted macOS or live registry
+delivery. Release validation still runs the complete selected production plan.
 
 For changes confined to generated consumer code or its test layout, use
 `bash scripts/release/test-release-admission.sh --consumers-only`. It freezes the

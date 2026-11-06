@@ -4,6 +4,8 @@ unset MAKEFLAGS MFLAGS MAKEOVERRIDES GNUMAKEFLAGS MAKEFILES
 unset VALIDATION_REPOSITORY_ROOT VALIDATION_RUNNER_SNAPSHOT_PATH
 export RELEASE_DELIVERY=direct
 export RELEASE_GROUP=metrics
+# Standard-runner projection inside a captured checkout, not outer capture.
+export RELEASE_BATCH_ACTIVE=1
 root="${BASH_SOURCE[0]}"
 [[ "$root" == /* ]] || root="$PWD/$root"
 root="$(cd -P "${root%/*}/../.." && printf '%s/.' "$PWD")"
@@ -95,12 +97,12 @@ for policy in pr invalid ''; do
 done
 export STANDARD_RELEASE_PHASE=real
 
-# Every standard entry selects preparation, retaining explicit caller offline mode.
+# Captured standard entries admit prepared tools and retain caller offline mode.
 mkdir -p scripts/ci
 cat > scripts/ci/run-release.sh <<'RUNNER'
 #!/usr/bin/env bash
 set -euo pipefail
-[[ "${IC_METRICS_RELEASE_CACHE_PREPARE:-}" == 1 ]] || exit 1
+[[ "${IC_METRICS_RELEASE_CACHE_PREPARE:-}" == "${EXPECTED_CACHE_PREPARE:-0}" ]] || exit 1
 [[ "${CARGO_NET_OFFLINE:-}" == true ]] || exit 1
 printf '%s\n' "$@" > "$EVENTS"
 exit "${CACHE_ENTRY_RESULT:-0}"
@@ -118,6 +120,14 @@ for target in patch minor major resume; do
         cmp "$fixture/cache-entry-expected" "$EVENTS"
     done
 done
+
+# Earlier standalone recovery keeps its preparation lane; outer increments use
+# the separately qualified batch runner instead.
+CARGO_NET_OFFLINE=true EXPECTED_CACHE_PREPARE=1 "$real_make" --no-print-directory \
+    -f "$root/Makefile" release-resume RELEASE_BATCH_ACTIVE= VERSION=0.1.2 \
+    RELEASE_REMOTE=review RELEASE_BRANCH=main > "$fixture/output" 2>&1
+printf '%s\n' resume 0.1.2 review main > "$fixture/cache-entry-expected"
+cmp "$fixture/cache-entry-expected" "$EVENTS"
 
 # Recursive MAKE arguments belong to the real invocation, not the admission probe.
 cat > "$fixture/recursive.mk" <<'MAKE'

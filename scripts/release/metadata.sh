@@ -15,11 +15,18 @@ if [[ -z "${RELEASE_GROUP:-}" ]]; then
     exit 2
 fi
 export RELEASE_GROUP
-if ! jq -e --arg group "$RELEASE_GROUP" '[.groups[] | select(.name == $group)] | length == 1' \
-    "$root/ci/cargo-release-groups.json" > /dev/null; then
-    echo 'Unknown RELEASE_GROUP; see ci/cargo-release-groups.json' >&2
-    exit 2
-fi
+# Selection also runs before candidate host-tool preparation. Core Perl admits
+# membership; Shared owns capture defaults, roster syntax and execution order.
+perl -MJSON::PP -e '
+    use strict; use warnings; local $/;
+    open my $f, "<", $ARGV[0] or die $!;
+    my $policy=decode_json(<$f>); close $f or die $!;
+    my %known; $known{$_->{name}}++ for @{$policy->{groups}};
+    my @selected=($ARGV[1], length($ARGV[2]) ? split(/,/, $ARGV[2], -1) : ());
+    for my $group (@selected) {
+        ($known{$group}//0)==1 or die "Unknown release group; see ci/cargo-release-groups.json\n";
+    }
+' "$root/ci/cargo-release-groups.json" "$RELEASE_GROUP" "${RELEASE_GROUPS:-}"
 [[ "$operation" != selection ]] || exit 0
 bash "$root/scripts/ci/check-release-delivery.sh" "$root/ci/release-delivery.txt" "${RELEASE_DELIVERY-direct}"
 # Initial admission precedes Cargo, tooling preparation and validation effects.
