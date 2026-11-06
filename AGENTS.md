@@ -84,7 +84,8 @@ consumer-contract or persistence-boundary changes.
   authorized PRs and release effects.
 - This consumer supports `RELEASE_DELIVERY=direct` only. PR release delivery
   needs separately adopted merged-checkout adapters and qualification; ordinary
-  contribution PRs retain the shared contribution rules.
+  contribution PRs retain the shared contribution rules. Frozen release batches
+  are not qualified here; exported helpers do not enable that delivery mode.
 - Use Rust edition 2024. No string matching on errors or production panics.
 - Check for active builds before source edits or compilation. Use this repo's
   `target/` and locked dependencies; do not upgrade dependencies as a side effect.

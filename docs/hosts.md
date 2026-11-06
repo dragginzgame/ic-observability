@@ -37,7 +37,7 @@ collection or turn a failed check into a successful one.
 
 ## Prerequisites and focused checks
 
-The committed Shared Tooling 0.30.6 refresh (`45c0295`) preserves the selected
+The committed Shared Tooling 0.30.7 refresh (`22a853e`) preserves the selected
 tool catalogs and compiler. `make tools-check check-pins` admits prepared tools;
 no reinstall or store cleanup is part of this adoption. Earlier source-bound
 receipts retain their original snapshots. Explicit setup still uses
@@ -371,6 +371,10 @@ Release and publication use separate commands under
 both through [delegated delivery](../rules/contributions.md#delegated-delivery).
 Normal release commands start fresh from
 clean committed metadata without scanning or replaying historical plans.
+The snapshot includes optional frozen-batch mechanics, but this consumer's hooks
+are not qualified in a managed delivery checkout. Nonempty
+`RELEASE_FROZEN_GROUPS` refuses during Make parsing; no candidate is created.
+Normal direct releases, complete gates and the existing proof contract remain.
 Select `RELEASE_GROUP=metrics` or `RELEASE_GROUP=logging` explicitly; see
 [independent releases](independent-releases.md) for the version/ledger map.
 Use `make release-resume RELEASE_GROUP=logging VERSION=X.Y.Z` for recovery of a
@@ -381,7 +385,8 @@ fallback for shared or uncertain changes. Package Cargo recipes use the admitted
 scope; plain `make ci` forces workspace scope even through recursive Make
 overrides. Neither group requires Node/npm tooling.
 The Make smoke parses the actual consumer and tests exported publication-mode
-overrides, then deliberately stops before metadata, compiler or upload recipes.
+overrides and unsupported frozen-mode refusal, then deliberately stops before
+metadata, compiler or upload recipes.
 Native CI runs it before tool installation on all three declared hosts, including
 macOS's system Make. To qualify another already prepared Make binary directly,
 run `bash scripts/ci/check-setup-smoke.sh /absolute/path/to/make`; this does not

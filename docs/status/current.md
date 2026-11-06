@@ -1,5 +1,19 @@
 # Current handoff — 2026-11-06
 
+**Shared Tooling 0.30.7 is adopted locally; this batch is uncommitted.** The
+157-file snapshot selects `22a853e26c05ec323f06c57fa316c08b808f252b`, matching
+upstream main when reviewed. Its source ledger remains Unreleased; no tag is
+inferred. The [tooling summary](../evidence/tooling.md) records focused results.
+Actual Make smoke and direct release dispatch/status probes passed on prepared
+Make and locally built GNU Make 3.81 with runner effects substituted. Nonempty
+`RELEASE_FROZEN_GROUPS` refuses before either runner: independent-checkout hooks
+remain unqualified and normal direct delivery remains supported. No managed
+checkout, stage reuse or version projection was enabled. Snapshot/pin/format,
+documentation-link and diff checks passed. Package versions, library Rust,
+lockfile, tools and the unrelated Cargo comment edits are unchanged. Pending
+notes are Metrics 0.29.5 and Logging 0.24.10. No commit, release, publication,
+broad CI/native matrix or sibling mutation ran for this adoption.
+
 **Metrics 0.29.4 and Logging 0.24.9 are delivered to GitHub and verified on crates.io.**
 The [delivery receipt](../evidence/releases/observability-patches-20261106.md)
 owns exact source/tag/archive identities and recovery locations. Delivery used
@@ -15,15 +29,15 @@ Logging release: `e3bf868b6d941f5944606480e39a2da35b824d37`, `logging-v0.24.9`.
 Both workspace plans passed all 20 stages, followed by final archive compilation,
 publication dry runs, upload and independent registry/archive/source readback.
 No stage reuse, version projection or gate narrowing ran. The full/selected mapping
-qualification was separately renewed and passed. Both owning ledgers are finalized;
+qualification was separately renewed and passed. Both released entries are finalized;
 delivery records alone require no new pending release. No library implementation,
 feature, external dependency selection, compiler or tool catalog changed.
 
-**Shared Tooling 0.30.6 is selected at the reviewed committed revision**
+The delivered batch selected Shared Tooling 0.30.6 at
 `45c0295e23d3d23225e31f47c018c30ff0c75581`, with all 155 selected files verified.
-Its source ledger remains Unreleased; no Shared tag is inferred. The sibling's
-uncommitted 0.30.7 work was left untouched. The [tooling summary](../evidence/tooling.md)
-owns decisions and focused results. Zero-allowance Candid/CBOR scanning covers
+Its source ledger remains Unreleased; no Shared tag is inferred. The later
+snapshot refresh leaves the encoding guards unchanged. Zero-allowance Candid/CBOR
+scanning covers
 workspace/Metrics/Logging inventories of 34/24/10 Rust files. Shared Cargo
 admission checks direct external-IC and CBOR declarations, including renamed dev
 packages, once through the existing production-dependency gate. Independently

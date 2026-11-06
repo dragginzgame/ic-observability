@@ -32,6 +32,11 @@ override RELEASE_DELIVERY_POLICY := $(CURDIR)/ci/release-delivery.txt
 include make/consumer.mk
 include make/cargo-publication.mk
 
+# Exported batch helpers do not qualify this consumer's independent-checkout hooks.
+ifneq ($(strip $(RELEASE_FROZEN_GROUPS)),)
+$(error Frozen release batches are not qualified in IC Observability; use explicit RELEASE_GROUP with normal direct delivery)
+endif
+
 .PHONY: $(SHARED_RELEASE_TARGETS)
 
 .PHONY: release-group-check

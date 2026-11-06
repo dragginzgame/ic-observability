@@ -53,6 +53,14 @@ RELEASE_GROUP on the command line or in the environment. Missing, empty and
 unknown selections refuse before setup, Cargo, validation or mutation. PACKAGE
 never supplies an implicit group. Workspace-wide read-only checks need no group.
 
+Shared Tooling's [frozen batches](frozen-releases.md) are available in the snapshot
+but are not qualified for this consumer. Nonempty `RELEASE_FROZEN_GROUPS` refuses
+before release or publication recipes. Keep ordinary direct delivery in the normal
+checkout, with one explicit `RELEASE_GROUP`. Enabling batches requires qualifying
+the actual metadata, group proof, archive and publication hooks in the managed
+delivery checkout, including normal-lock drift and recovery. Snapshot integrity
+or Shared's synthetic runner tests do not establish that qualification.
+
 Release and publication retain separate commands and evidence. A scoped
 [ship/deploy request](../rules/contributions.md#delegated-delivery) can authorize
 both; ordinary implementation does not. Publication selects

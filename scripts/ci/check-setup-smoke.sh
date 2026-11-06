@@ -41,4 +41,10 @@ for target in publish publish-check; do
     [[ "$status" == 2 ]]
     grep -Fxq setup-mode-admitted "$fixture/$target.log"
 done
+status=0
+"$executable" --no-print-directory -f Makefile -f "$fixture/probe.mk" \
+    release-patch RELEASE_GROUP=metrics RELEASE_FROZEN_GROUPS=metrics,logging \
+    > "$fixture/frozen-refusal.log" 2>&1 || status=$?
+[[ "$status" == 2 ]]
+grep -Fq 'Frozen release batches are not qualified' "$fixture/frozen-refusal.log"
 printf 'Actual consumer Make parsing and publication environment passed (no publication effects).\n'

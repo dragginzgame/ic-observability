@@ -5,6 +5,14 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.29.5] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt committed Shared Tooling 0.30.7 and its release-efficiency guidance.
+  Preserve normal direct delivery and reject unqualified frozen-batch selection
+  before release effects; keep stage reuse disabled.
+
 ## [0.29.4] - 2026-11-06
 
 ### 🛠️ Tooling

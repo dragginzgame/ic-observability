@@ -1,14 +1,15 @@
 # Contributor tooling
 
-The current local snapshot selects committed Shared Tooling 0.30.6,
-`45c0295e23d3d23225e31f47c018c30ff0c75581`, matching upstream main when reviewed.
+The current local snapshot selects committed Shared Tooling 0.30.7,
+`22a853e26c05ec323f06c57fa316c08b808f252b`, matching upstream main when reviewed.
 Its source ledger remains Unreleased; this is not a tagged-release claim.
 The canonical exporter preserves the reviewed entrypoints and derives the Candid
 checker's documented closure and the common Cargo boundary inventories. This
 refresh left library versions, Cargo.lock and tool/compiler catalogs unchanged.
 The [0.30.6 patch delivery](releases/observability-patches-20261106.md)
 owns subsequent version preparation and publication. Explicit setup and offline admission
-retain their owners. The sibling's uncommitted 0.30.7 work was not exported.
+retain their owners. The earlier 0.30.6 delivery excluded the then-uncommitted
+0.30.7 draft; this refresh selects its later committed revision.
 
 ## Current decisions
 
@@ -19,6 +20,15 @@ retain their owners. The sibling's uncommitted 0.30.7 work was not exported.
 - Source, formatting, hooks, release metadata and publication reuse the reviewed
   Shared helpers. The existing `group-validation:2` adapter delegates proof
   verification; optional final-candidate caching and stage reuse remain disabled.
+- Frozen-batch helpers are exported, but this consumer's independent-checkout
+  hooks are not qualified. Make rejects nonempty `RELEASE_FROZEN_GROUPS` before
+  either runner; ordinary direct delivery still uses the normal checkout and an
+  explicit group. The supported workflow creates no managed delivery checkout.
+- Both groups already classify isolated implementation paths and carry group
+  selection into native/Wasm and archive argv. Shared/unknown changes retain full
+  validation. The full gate has no duplicate `cargo check` after Clippy; compiler
+  admission, allocator-free linking and archive compilation prove distinct inputs.
+  No gate was removed or measured speed-up claimed in this refresh.
 - Formatter and LOC scratch belong under the selected consumer target. Explicit
   temporary-directory overrides remain supported, with original failure status
   and diagnostics preserved. The 0.30.2 update handles empty options on Bash 3.2.
@@ -55,6 +65,17 @@ the distribution JSON ledger is byte-identical. Private originals, ignored
 investigations, recovery state and Git history were outside the cleanup.
 
 ## Current focused checks
+
+The 157-file snapshot, pins and formatting checks passed. Actual Make smoke and
+direct dispatch/status probes passed with the prepared Make and locally built
+GNU Make 3.81: normal release dispatch selected the existing runner; unsupported
+frozen selection refused before either runner. Runner effects were substituted;
+no metadata, tag, push, upload or candidate checkout was created. Documentation
+links and final diff checks passed. This is Linux caller/parser evidence, not
+native macOS or frozen-batch qualification. Library sources, package versions,
+lockfile and tool/compiler catalogs are unchanged; no broad CI or release ran.
+
+## Previous 0.30.6 qualification
 
 The 155-file snapshot, pins, formatting and actual Cargo/source Make callers
 passed. Scratch caller checks rejected a CBOR import and renamed development
