@@ -9,6 +9,9 @@ Metrics and Logging each own their package version and release notes.
 
 ### 🛠️ Tooling
 
+- Adopt committed Shared Tooling 0.30.6 and enforce its shared Cargo and Rust CBOR
+  boundaries, including independently generated retained-consumer workspaces.
+  Keep the existing Candid checks and empty allowance policy.
 - Keep publication scope overrides compatible with macOS's system Make, and
   check their exported values before tool installation or publication effects.
 

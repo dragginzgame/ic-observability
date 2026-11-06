@@ -1,13 +1,14 @@
 # Contributor tooling
 
-The current local snapshot selects committed Shared Tooling 0.30.4,
-`2aa41c7394300302fe802b69b31b855bdc89b671`, matching upstream main when reviewed.
+The current local snapshot selects committed Shared Tooling 0.30.6,
+`45c0295e23d3d23225e31f47c018c30ff0c75581`, matching upstream main when reviewed.
 Its source ledger remains Unreleased; this is not a tagged-release claim.
 The canonical exporter preserves the reviewed entrypoints and derives the Candid
-checker's documented closure. The adoption left library versions, Cargo.lock and
-tool/compiler catalogs unchanged; the subsequent [patch delivery](releases/observability-patches-20261105-tooling.md)
-owns version preparation and publication. Explicit setup and offline admission
-retain their owners.
+checker's documented closure and the common Cargo boundary inventories. This
+adoption leaves library versions, Cargo.lock and tool/compiler catalogs unchanged.
+The earlier [0.30.4 patch delivery](releases/observability-patches-20261105-tooling.md)
+owns its version preparation and publication. Explicit setup and offline admission
+retain their owners. The sibling's uncommitted 0.30.7 work was not exported.
 
 ## Current decisions
 
@@ -25,11 +26,16 @@ retain their owners.
   library/application, tests, examples, benches, tooling and unclassified source.
   The existing report totals 4,438 code lines with zero unclassified source; the
   allocator-link fixture is tests despite its historical Cargo example identity.
-- The shared lexical Candid checker selects actual crate and retained-consumer
-  Rust sources. Both libraries need zero allowances. Group selection reaches
+- The shared lexical checker selects Candid and CBOR enforcement over actual
+  crate and retained-consumer Rust sources. Both libraries need zero allowances.
+  Group selection reaches
   matching roots; full CI inspects the complete workspace once through the
   existing production-dependency gate. Macro expansion and type resolution are
-  separate review obligations.
+  separate review obligations. Shared Cargo declarations independently reject
+  forbidden codecs and external IC dependencies, including development aliases.
+  The retained-client generator checks its own resolved workspace and generated
+  Rust roots. There are no maintained browser or additional Cargo workspace roots;
+  synthetic fixtures and dynamic/generated code retain the limits in the host guide.
 
 ## Evidence cleanup
 
@@ -49,6 +55,18 @@ the distribution JSON ledger is byte-identical. Private originals, ignored
 investigations, recovery state and Git history were outside the cleanup.
 
 ## Current focused checks
+
+The 155-file snapshot, pins, formatting and actual Cargo/source Make callers
+passed. Scratch caller checks rejected a CBOR import and renamed development
+dependency, and preserved Metrics/Logging source isolation. Both generated public
+consumer contract tests passed after their independent declaration and source
+admission (25 Metrics and 11 Logging Rust files, including empty client roots).
+Source scanning and root discovery found no current CBOR migration or browser
+work. The declaration and lexical guards are complementary; neither proves
+protocol bytes or arbitrary macro/dynamic coverage. No broad CI/native matrix,
+library changes, dependency upgrade, commit, release or publication ran.
+
+## Previous 0.30.4 qualification
 
 The 152-file snapshot, prepared pins and formatting checks passed. Documentation
 checking includes nested release receipts. Receipt-preservation and validation

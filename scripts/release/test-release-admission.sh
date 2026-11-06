@@ -55,6 +55,11 @@ freeze_consumer() {
     cp "scripts/release/fixtures/retained-consumer/tests/$supplier.rs" \
         "$consumer/client/tests/contract.rs"
     cargo metadata --manifest-path "$consumer/Cargo.toml" --offline --format-version 1 > "$fixture/$group-consumer-before.json"
+    # Admit the independently resolved client as well as the source workspace.
+    bash "$root/scripts/ci/check-cargo-dependency-boundaries.sh" --consumer "$consumer" --external-ic
+    mkdir -p "$consumer/ci"
+    cp "$root/ci/candid-boundary.json" "$consumer/ci/"
+    perl "$root/scripts/ci/check-candid-boundary.pl" --cbor "$consumer" ci/candid-boundary.json supplier client
     cp "$consumer/Cargo.lock" "$fixture/$group-consumer.lock"
 }
 

@@ -1,4 +1,16 @@
-# Current handoff — 2026-11-05
+# Current handoff — 2026-11-06
+
+**Shared Tooling 0.30.6 is adopted locally; this batch is uncommitted.** The
+155-file snapshot selects `45c0295e23d3d23225e31f47c018c30ff0c75581`, matching
+upstream main when reviewed. Its source ledger remains Unreleased; the sibling's
+uncommitted 0.30.7 work was left untouched. The [tooling summary](../evidence/tooling.md)
+owns current decisions and focused evidence. Actual Cargo/source Make callers,
+CBOR import and renamed-dev-dependency refusals, group source isolation and both
+independently generated retained-consumer contracts passed. Snapshot, pins and
+formatting passed; docs/diff admission covers the finished batch. No production
+codec migration or browser root was found. Library versions, dependency locks,
+compiler/tools and the unrelated root Cargo comments are unchanged. No commit,
+release, publication or broad native/CI matrix ran for this adoption.
 
 **Metrics 0.29.3 and Logging 0.24.8 are delivered to GitHub and verified on crates.io.**
 The [delivery receipt](../evidence/releases/observability-patches-20261105-tooling.md)
@@ -30,15 +42,14 @@ is not macOS native acceptance; hosted qualification of the repair is asynchrono
 The Make/CI follow-up changes neither published payload. Future notes are pending
 under Metrics 0.29.4 and Logging 0.24.9; package versions remain 0.29.3 and 0.24.8.
 
-**Shared Tooling 0.30.4 is adopted at the reviewed committed revision**
+The published batch selected Shared Tooling 0.30.4 at
 `2aa41c7394300302fe802b69b31b855bdc89b671`, with all 152 selected files verified.
 Its source ledger remains Unreleased; no Shared release tag is inferred.
-The [tooling summary](../evidence/tooling.md) owns current decisions and focused
-results. Tool/compiler catalogs and library implementations remain unchanged.
-The Candid lexical guard uses zero allowances through the production-dependency
-gate; workspace/Metrics/Logging select 34/24/10 Rust files. Actual Make callers
-and a retained-Metrics refusal fixture passed, including Logging isolation.
-Macro expansion and type resolution remain separate review obligations.
+The current Candid/CBOR lexical guard uses zero allowances through the
+production-dependency gate; workspace/Metrics/Logging select 34/24/10 Rust files.
+The same gate admits Shared's Cargo declarations once, and generated retained
+clients separately check their own resolved workspaces and Rust roots. Macro
+expansion, dynamic code and type resolution remain separate review obligations.
 
 **The authorized evidence cleanup reduced 342 files/about 43 MiB to 77 files
 under 0.5 MiB before this delivery receipt.** Six compact topic summaries replace

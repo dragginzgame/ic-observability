@@ -37,7 +37,7 @@ collection or turn a failed check into a successful one.
 
 ## Prerequisites and focused checks
 
-The committed Shared Tooling 0.30.4 refresh (`2aa41c7`) preserves the selected
+The committed Shared Tooling 0.30.6 refresh (`45c0295`) preserves the selected
 tool catalogs and compiler. `make tools-check check-pins` admits prepared tools;
 no reinstall or store cleanup is part of this adoption. Earlier source-bound
 receipts retain their original snapshots. Explicit setup still uses
@@ -171,7 +171,8 @@ libraries; select direct Cargo commands when only one package or test is affecte
 | Native evidence scenario | `bash scripts/ci/test-native-evidence.sh --scenario collection-archive-failure`; runs the named workflow recovery case with substituted effects, excluding standalone host/compiler setup checks |
 | Compiler-policy fixture | `bash scripts/ci/test-rust-compiler.sh`; compiler/version refusals and linked-Wasm evidence custody with substituted compiler commands |
 | Publication-policy fixture | `bash scripts/release/test-publication-policy.sh`; local tag/source/archive/registry-refusal checks with substituted network observations and no uploads |
-| Owned Rust encoding boundary | `make candid-boundary-check` (lexical source inspection; no Cargo or macro expansion) |
+| Owned Rust encoding boundary | `make candid-boundary-check` (Candid and CBOR lexical source inspection; no Cargo or macro expansion) |
+| Shared Cargo declaration boundary | `make cargo-boundaries-check` (locked, offline metadata; includes development, optional and inactive target declarations) |
 | Maintained docs | `make check-doc-links`, consistency review and `git diff --check` |
 
 Default-feature commands above cover fixed instrumentation. Recording is
@@ -232,12 +233,25 @@ retired too. Release receipts retain source and observed-outcome identities unde
 their separate contract. No checksum of missing raw bytes is treated as proof of
 current availability; maintained product checks and tool-download integrity remain.
 
-`make candid-boundary-check` runs Shared's read-only lexical check over the real
-crate and retained-consumer sources, with an empty allowance policy. It is included
+`make candid-boundary-check` runs Shared's read-only Candid and CBOR lexical check
+over the real crate and retained-consumer sources, with an empty allowance policy. It is included
 once through `production-dependencies-check`; selected group scope reaches the
 matching crate and retained contract source. The checker does not inspect macro
 expansion or perform Rust type resolution. These libraries own no external Candid
 DTO or codec-comparison exception.
+
+`make cargo-boundaries-check` selects Shared's common external-IC and CBOR
+declaration inventories. The production-dependency gate runs it once alongside
+the local, stricter no-production-dependencies policy. Cargo metadata catches
+renamed packages and all declaration kinds; source checking covers literal codec
+imports/re-exports but cannot resolve arbitrary aliases, macros or generated strings.
+The retained-client generator also checks each independently resolved workspace
+and its generated Rust roots before running its public contract tests. There are
+no current browser roots or other independently maintained Cargo workspaces;
+the retired Wire fixture directories contain historical guides only. Other
+synthetic release/declaration fixtures substitute product behavior and do not
+establish native codec or platform acceptance. New executable roots need explicit
+coverage; passing these checks is not proof of byte/protocol compatibility.
 
 ### Dependency roles and production graphs
 
@@ -284,9 +298,9 @@ or qualify the current source.
 
 Formatting fixtures use Shared Tooling's current-source selector for maintained
 Rust sources and Cargo manifests, including pending additions and deletions.
-Metrics selects its instrumentation Rust entrypoint. Its single development dependency
-has no pair to reorder, so the hook fixture uses Shared's explicit mode without
-dependency-table perturbation. Generic manifest sorting remains qualified at
+Metrics selects its instrumentation Rust entrypoint. The hook fixture uses
+Shared's explicit mode without dependency-table perturbation. Generic manifest
+sorting remains qualified at
 Shared Tooling; the local fixture retains Rust formatting, preservation, failure
 diagnostics and installation checks. Failed nested checker evidence stays retained;
 explicit non-Rust overlays remain local.

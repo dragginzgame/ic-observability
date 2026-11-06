@@ -65,7 +65,7 @@ release-files:
 
 .PHONY: help install-hooks hook-check check check-wasm clippy docs-check check-doc-links test msrv compiler-check compiler-policy-check shared-tooling-check check-pins release-tools-check ci
 .PHONY: ci-evidence-check candid-boundary-check
-.PHONY: production-dependencies-check
+.PHONY: production-dependencies-check cargo-boundaries-check
 .PHONY: allocation-free-check
 .PHONY: publication-source-check verify-publication publish-verified
 .PHONY: ci-selection-check package-doc-links-check
@@ -117,6 +117,7 @@ help:
 	@echo "Tooling fixtures: hook-check, release-tools-check (no release Git effects)"
 	@echo "CI evidence fixture: ci-evidence-check (substitute action results and Make effects, no hosted run)"
 	@echo "Owned Rust source encoding boundary: candid-boundary-check"
+	@echo "Shared Cargo declaration boundaries: cargo-boundaries-check"
 	@echo "Named tests: cargo test -p PACKAGE --locked <test-name> (ic-metrics or ic-logging)"
 	@echo "Recording tests: cargo test -p $(PACKAGE) --features recording --locked <test-name>"
 	@echo "Maintenance task definitions: tasks/README.md (adoption does not activate a schedule)"
@@ -147,7 +148,10 @@ ci-evidence-check:
 	bash scripts/ci/test-native-recovery-evidence.sh
 
 candid-boundary-check: | validation-scope-check
-	perl scripts/ci/check-candid-boundary.pl "$(CURDIR)" ci/candid-boundary.json $(validation_candid_sources)
+	perl scripts/ci/check-candid-boundary.pl --cbor "$(CURDIR)" ci/candid-boundary.json $(validation_candid_sources)
+
+cargo-boundaries-check:
+	bash scripts/ci/check-cargo-dependency-boundaries.sh --consumer "$(CURDIR)" --external-ic
 
 check:
 	+cargo check -p $(PACKAGE) --lib --no-default-features --locked
@@ -211,7 +215,7 @@ compiler-policy-check:
 check-pins:
 	bash scripts/ci/check-dependency-pins.sh --cargo-inheritance
 
-production-dependencies-check: candid-boundary-check
+production-dependencies-check: candid-boundary-check cargo-boundaries-check
 	perl scripts/ci/tests/check-process.t
 	perl scripts/ci/check-production-dependencies.pl
 	bash scripts/ci/test-production-dependencies.sh
