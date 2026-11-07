@@ -8,6 +8,11 @@ belong here.
 
 ## [0.24.12] - Unreleased
 
+### 🛠️ Tooling
+
+- Adopt committed Shared Tooling 0.31.1 to restore checksum-helper parsing on
+  Bash 3.2 while preserving NUL rejection and backend failure status.
+
 ### 🧪 Testing
 
 - Isolate release fixtures from inherited batch configuration, including CI's

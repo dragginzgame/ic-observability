@@ -1,11 +1,10 @@
 # Contributor tooling
 
-The current local snapshot selects committed Shared Tooling 0.31.0,
-`74313941af2fce4399bec0e6909ca6229673c3f8`, matching upstream main when reviewed.
+The current local snapshot selects committed Shared Tooling 0.31.1,
+`5efbda2ab81ad84e30f490f3137d8ef083c303d2`, matching upstream main when reviewed.
 Its source ledger remains Unreleased; this is not a tagged-release claim.
-The canonical exporter preserves the reviewed entrypoints and derives the Candid
-checker's documented closure and the common Cargo boundary inventories. This
-refresh left library versions, Cargo.lock and tool/compiler catalogs unchanged.
+This refresh preserves library versions, Cargo.lock and tool/compiler catalogs;
+the canonical exporter retains the reviewed entrypoints and companion closure.
 The [previous 0.30.7 delivery](releases/observability-patches-20261106-shared0307.md)
 owns its version preparation and publication. Explicit setup and offline admission
 retain their owners.
@@ -36,17 +35,15 @@ retain their owners.
   validation. The full gate has no duplicate `cargo check` after Clippy; compiler
   admission, allocator-free linking and archive compilation prove distinct inputs.
   No gate was removed or measured speed-up claimed in this refresh.
-- Formatter and LOC scratch belong under the selected consumer target. Explicit
-  temporary-directory overrides remain supported, with original failure status
-  and diagnostics preserved. The 0.30.2 update handles empty options on Bash 3.2.
+- Formatter and LOC scratch use the selected consumer target; explicit temporary
+  overrides and original failure status/diagnostics remain supported.
 - Source LOC is inventory, not shipped Wasm or IC cost. JSON schema 2 classifies
   library/application, tests, examples, benches, tooling and unclassified source.
   The existing report totals 4,438 code lines with zero unclassified source; the
   allocator-link fixture is tests despite its historical Cargo example identity.
 - The shared lexical checker selects Candid and CBOR enforcement over actual
   crate and retained-consumer Rust sources. Both libraries need zero allowances.
-  Group selection reaches
-  matching roots; full CI inspects the complete workspace once through the
+  Group selection reaches matching roots; full CI inspects the workspace through the
   existing production-dependency gate. Macro expansion and type resolution are
   separate review obligations. Shared Cargo declarations independently reject
   forbidden codecs and external IC dependencies, including development aliases.
@@ -73,28 +70,32 @@ investigations, recovery state and Git history were outside the cleanup.
 
 ## Current focused checks
 
-The 157-file 0.31.0 snapshot, pins and formatting passed. Actual automatic-capture
-Make smoke passed with prepared Make and locally built GNU Make 3.81, with both
-runners stopped before effects; every retired setting refused even when empty.
-Internal standard-release dispatch passed, including offline captured admission
-and the standalone recovery preparation lane. An obsolete preparation assertion
-was corrected to match those distinct contracts. Earlier 0.30.10 metadata rollback,
-wrong-group/altered-receipt and publication-ordering qualification remains reusable
-for unchanged implementations. The schema-2 two-group batch fixture passed real
-setup/lint/archives/readback, recorded publication identity, offline/interrupted
-recovery, deferred lock custody, no repeat upload and explicit reconcile/retire.
+The 157-file 0.31.1 snapshot, pins and formatting passed. The repaired helper
+matched both retained registry archive checksums and refused a mismatched digest.
+Prepared host/Rust/editor checks passed after explicit setup rebound the unchanged
+pins to this host's changed native build identity. Raw output belongs to
+`target/evidence/shared-tooling-0311/`; no broad consumer gate ran for this fix.
+[Upstream CI 42274707843](https://github.com/dragginzgame/shared-tooling/actions/runs/42274707843)
+passed macOS tool preparation, then failed `test-release-editor-setup.sh` in its
+portable suite. This is not a full upstream or Observability native pass.
+
+Earlier 0.31.0 actual Make smoke passed with prepared Make and Linux-built GNU
+Make 3.81, including retired-setting refusal. Internal standard dispatch and both
+groups' recovery fixtures passed. The schema-2 batch fixture passed real setup,
+lint, archives/readback, publication identity, offline/interrupted recovery,
+deferred lock custody, no repeat upload and explicit reconcile/retire.
 
 The outer fixture substitutes the full roster with three real stages, uses local
 Git and simulates registry effects. Successful fixture inputs are removed; failures
 are retained. These checks do not establish the full production gate, native macOS
-or live publication. Raw logs belong to `target/evidence/shared-tooling-0310/`.
+or live publication. Its logs belong to `target/evidence/shared-tooling-0310/`.
 Matched validation-plan mapping, docs/diff and shell/Perl syntax checks passed.
 The [0.31 delivery](releases/observability-patches-20261106-shared0310.md) records
 both real 20-stage workspace gates, atomic pushes and live registry readback.
 Hosted CI then exposed a macOS parse error in Shared's checksum helper and an
 empty inherited roster in Linux release fixtures. The local fixture repair passes
-standard/group admission with `RELEASE_GROUPS=`; the macOS supplier defect remains
-unfixed in the selected snapshot. No exported payload or sibling was patched.
+standard/group admission with `RELEASE_GROUPS=`. The 0.31.1 canonical refresh now
+adopts the upstream parser fix; no exported payload or sibling was locally patched.
 Earlier saved-state probes and release receipts retain their original scope.
 
 ## Previous 0.30.6 qualification

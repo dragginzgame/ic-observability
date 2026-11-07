@@ -1,4 +1,4 @@
-# Current handoff — 2026-11-06
+# Current handoff — 2026-11-07
 
 **Metrics 0.29.6 and Logging 0.24.11 are delivered to GitHub and verified on crates.io.**
 The [delivery receipt](../evidence/releases/observability-patches-20261106-shared0310.md)
@@ -13,8 +13,23 @@ Both packages are non-yanked. Readback matched 29 maintained Metrics files and
 these versions again; `make verify-publication RELEASE_GROUP=metrics` or `logging`
 is read-only reconciliation, not another upload.
 
-Shared Tooling 0.31.0 selects `74313941af2fce4399bec0e6909ca6229673c3f8`, with all
-157 snapshot files verified; its ledger remains Unreleased. Actual delivery used
+**The requested deployment selects Shared Tooling 0.31.1 at
+`5efbda2ab81ad84e30f490f3137d8ef083c303d2`.** Its VERSION and pending ledger say
+0.31.1 despite the commit title saying 0.31.2; no tagged-release claim is made.
+The canonical exporter replaces only the checksum helper in the 157-file payload.
+Its reader moves outside quoted command substitution for Bash 3.2 parsing;
+NUL rejection and backend failure status remain. Package versions, lockfile,
+compiler and catalogs are unchanged by adoption. The current deploy request
+includes the prior CI repair in local commit `9043c2a`, source follow-up, patch
+releases Metrics 0.29.7 then Logging 0.24.12, and verified registry publication.
+The captured release gates and live publication for those versions are pending.
+Snapshot integrity, pins, formatting, host/Rust/editor checks and both retained
+registry archive checksums passed; a wrong checksum refused. Explicit setup
+rebound unchanged tool pins after a host-native input change. Logs are under
+`target/evidence/shared-tooling-0311/`. No broad consumer/native gate was run.
+
+Actual delivery used Shared Tooling 0.31.0 at
+`74313941af2fce4399bec0e6909ca6229673c3f8`, with
 `RELEASE_GROUPS=metrics,logging RELEASE_PUBLISH_TARGET=publish-verified` through
 the schema-2 batch runner. Each group passed all 20 workspace stages, final
 archive compilation and publication lint/verification. No stage reuse, version
@@ -37,12 +52,16 @@ originals and tool stores remain untouched. Prior custody and release identities
 remain in the [previous receipt](../evidence/releases/observability-patches-20261106-shared0307.md)
 and Git history. No sibling checkout was mutated.
 
-**Hosted CI has known failures; local release passes do not qualify every host.**
+**Hosted CI failed on the prior snapshot; new native acceptance remains pending.**
 [Metrics CI 42263818593](https://github.com/dragginzgame/ic-observability/actions/runs/42263818593)
 failed before application checks on both macOS hosts: Shared's checksum helper
-reports an unmatched single quote under system Bash. The selected Shared main
-still contains that defect. It needs repair at Shared Tooling and canonical
-snapshot adoption; do not locally patch the exported payload or weaken integrity.
+reports an unmatched single quote under system Bash. The upstream fix is now
+selected by the local 0.31.1 snapshot above; its adoption does not turn historical
+failed jobs into passes. The frozen delivery source and its receipts remain intact.
+[Upstream CI 42274707843](https://github.com/dragginzgame/shared-tooling/actions/runs/42274707843)
+passed macOS tool preparation but failed the portable release-editor setup
+fixture; the complete upstream matrix is not a pass. Actual prepared editor
+admission passes here. Fresh Observability native acceptance remains pending.
 [Logging CI 42265412695](https://github.com/dragginzgame/ic-observability/actions/runs/42265412695)
 uses the same tooling and is not a qualification pass.
 
@@ -53,10 +72,10 @@ checks passed with `RELEASE_GROUPS=`. This CI-only repair changes no published
 crate content and requires no repeat upload. Pending notes are Metrics 0.29.7
 and Logging 0.24.12; package versions remain 0.29.6 and 0.24.11.
 
-The CI-only repair and delivery receipt need a follow-up `origin/main` push.
-Automatic approval review rejected that push as separate from package deployment;
-explicit user approval is required before retrying. The packages are already
-published and verified; no second upload is needed.
+The latest deploy request authorizes the pending source and CI-repair delivery.
+The existing Cargo comment casing edits will be included unchanged so the normal
+checkout can finish clean. Published 0.29.6/0.24.11 identities remain immutable;
+this deployment selects fresh versions rather than repeating those uploads.
 
 Hosted checks continue asynchronously with normal supersession. Pending, failed
 and cancelled jobs are not passes. The [tooling summary](../evidence/tooling.md)

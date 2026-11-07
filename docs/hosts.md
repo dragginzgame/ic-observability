@@ -37,7 +37,7 @@ collection or turn a failed check into a successful one.
 
 ## Prerequisites and focused checks
 
-The committed Shared Tooling 0.31.0 refresh (`7431394`) preserves the selected
+The committed Shared Tooling 0.31.1 refresh (`5efbda2`) preserves the selected
 tool catalogs and compiler. `make tools-check check-pins` admits prepared tools;
 no reinstall or store cleanup is part of this adoption. Earlier source-bound
 receipts retain their original snapshots. Explicit setup still uses
