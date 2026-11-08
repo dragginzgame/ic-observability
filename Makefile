@@ -108,7 +108,7 @@ verify-publication:
 
 help:
 	@echo "Local setup: install-tools; offline verification: tools-check"
-	@echo "Reports: cloc (this workspace); CLOC_SUBCRATES=1 adds package detail"
+	@echo "Reports: cloc (this workspace); CLOC_DEPTH=0 adds packages, CLOC_DEPTH=1 adds modules"
 	@echo "Maintainer releases: release-patch, release-minor, release-major; release-resume VERSION=X.Y.Z"
 	@echo "Normal releases start fresh from committed metadata; exact recovery requires VERSION and RELEASE_GROUP"
 	@echo "Release/publication selection required: RELEASE_GROUP=metrics or logging (no default)"

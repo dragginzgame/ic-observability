@@ -1,7 +1,7 @@
 # Contributor tooling
 
-The current local snapshot selects committed Shared Tooling 0.31.1,
-`5efbda2ab81ad84e30f490f3137d8ef083c303d2`, matching upstream main when reviewed.
+The current local snapshot selects committed Shared Tooling 0.31.9,
+`d95f271bc7b49951ccf286c3655cef7446b8cf56`, matching upstream main when reviewed.
 Its source ledger remains Unreleased; this is not a tagged-release claim.
 This refresh preserves library versions, Cargo.lock and tool/compiler catalogs;
 the canonical exporter retains the reviewed entrypoints and companion closure.
@@ -70,6 +70,26 @@ investigations, recovery state and Git history were outside the cleanup.
 
 ## Current focused checks
 
+The 159-file 0.31.9 snapshot passed canonical source verification and
+`make shared-tooling-check check-pins fmt-check cargo-boundaries-check`.
+`make hook-check` passed real formatting, preservation and failure handling.
+`RELEASE_GROUPS= bash scripts/release/test-standard-release.sh` passed the actual
+consumer Make adapters with substituted release effects. `make cloc CLOC_DEPTH=0`
+and `CLOC_DEPTH=2` passed with unchanged totals of 4,438 lines and no unclassified
+source. Documentation links and `git diff --check` passed. Raw logs were written
+under `target/evidence/shared-tooling-0319/`, but `target/` disappeared after the
+checks completed; the successful results were observed before that removal.
+This adoption did not request or perform that cleanup.
+
+The release roster and bootstrap ordering were reviewed: the refresh changes no
+compiler, tool catalog, installer or native prerequisite. No release gate was
+removed, no generic producer matrix was replayed, and no full CI/native macOS or
+publication acceptance is inferred. Hashing admission uses the existing root and
+generated-consumer checker routes; these dependency-free libraries need no hash
+dependency or algorithm migration. Local overlay safeguards remain compatible.
+
+### Previous 0.31.1 checks
+
 The 157-file 0.31.1 snapshot, pins and formatting passed. The repaired helper
 matched both retained registry archive checksums and refused a mismatched digest.
 Prepared host/Rust/editor checks passed after explicit setup rebound the unchanged
@@ -94,7 +114,7 @@ The [0.31 delivery](releases/observability-patches-20261106-shared0310.md) recor
 both real 20-stage workspace gates, atomic pushes and live registry readback.
 Hosted CI then exposed a macOS parse error in Shared's checksum helper and an
 empty inherited roster in Linux release fixtures. The local fixture repair passes
-standard/group admission with `RELEASE_GROUPS=`. The 0.31.1 canonical refresh now
+standard/group admission with `RELEASE_GROUPS=`. The 0.31.1 canonical refresh
 adopts the upstream parser fix; no exported payload or sibling was locally patched.
 Earlier saved-state probes and release receipts retain their original scope.
 

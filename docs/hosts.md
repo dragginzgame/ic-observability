@@ -37,7 +37,7 @@ collection or turn a failed check into a successful one.
 
 ## Prerequisites and focused checks
 
-The committed Shared Tooling 0.31.1 refresh (`5efbda2`) preserves the selected
+The committed Shared Tooling 0.31.9 refresh (`d95f271`) preserves the selected
 tool catalogs and compiler. `make tools-check check-pins` admits prepared tools;
 no reinstall or store cleanup is part of this adoption. Earlier source-bound
 receipts retain their original snapshots. Explicit setup still uses
@@ -46,7 +46,8 @@ Linux fingerprints retain native tool/header/library providers while excluding
 unrelated applications. Selected executables, source archives and receipts remain;
 obsolete executable retirement follows the [shared guide](tool-store-maintenance.md).
 
-`make cloc CLOC_SUBCRATES=1` reports package detail; `bash scripts/dev/cloc.sh --json`
+`make cloc CLOC_DEPTH=0` reports package detail; `CLOC_DEPTH=1` adds source modules.
+`bash scripts/dev/cloc.sh --json`
 emits schema 2 with application/library, test, example, benchmark, tooling and
 unclassified counts. Singular Rust test paths are not retained. The allocation-free
 link fixture lives at `tests/allocation-free/link.rs` with an explicit test role,

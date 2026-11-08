@@ -9,8 +9,10 @@ Metrics and Logging each own their package version and release notes.
 
 ### 🛠️ Tooling
 
-- Adopt committed Shared Tooling 0.31.1 to restore checksum-helper parsing on
-  Bash 3.2 while preserving NUL rejection and backend failure status.
+- Adopt committed Shared Tooling 0.31.9: retain the Bash 3.2 checksum repair,
+  restrict formatting to owned workspace members, isolate release command checks,
+  and admit the shared hashing inventory. LOC detail now uses `CLOC_DEPTH=0`
+  for packages and larger depths for source modules.
 
 ### 🧪 Testing
 

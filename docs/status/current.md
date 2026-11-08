@@ -1,4 +1,31 @@
-# Current handoff — 2026-11-07
+# Current handoff — 2026-11-08
+
+**Shared Tooling 0.31.9 is adopted locally at
+`d95f271bc7b49951ccf286c3655cef7446b8cf56`.** This supersedes the 0.31.1 selection
+below. The canonical exporter refreshed the existing roots to 159 files, including
+the shared hashing policy/catalog. Upstream main matched this revision on review;
+its ledger remains Unreleased. Local LOC help now uses `CLOC_DEPTH`.
+
+Snapshot integrity, pins, formatting, hook preservation/failure checks, Cargo
+boundaries, standard release Make adapters and package/module LOC reports passed.
+The tooling summary records the focused evidence. Package versions, Cargo.lock,
+compiler and tool pins remain unchanged. Pending notes stay in both group ledgers.
+The subsequent deploy request selects commit/push delivery to `origin/main` from
+the normal checkout. No public release is selected: both crate trees match their
+published tags (`metrics-v0.29.6`, `logging-v0.24.11`), and locked/offline Cargo
+package inventories include no changed maintenance files. Shared inherited
+manifest settings and external dependencies are unchanged. The intervening
+Logging version advance adds no dependency to Metrics; current root changes
+relative to the latest release are comment casing only. Metrics remains 0.29.6
+and Logging 0.24.11, with no new tags or uploads. This publication-impact decision
+supersedes the historical patch-release plan below. The GitHub
+description now reflects shipped instrumentation and bounded logging libraries.
+Native macOS and full release qualification are not established by these checks.
+
+## Prior delivery and recovery context — 2026-11-07
+
+The following preserves prior delivery requests and custody; it is historical
+context, not a fresh deployment selection for this adoption.
 
 **Metrics 0.29.6 and Logging 0.24.11 are delivered to GitHub and verified on crates.io.**
 The [delivery receipt](../evidence/releases/observability-patches-20261106-shared0310.md)
