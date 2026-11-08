@@ -18,6 +18,29 @@ defaults:
     shell: /bin/bash --noprofile --norc -e -o pipefail {0}
 
 jobs:
+  security:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Restore pinned tool downloads
+        uses: ./.github/actions/cache-tool-downloads
+      - name: Install pinned secret scanner
+        id: scanner
+        run: |
+          scanner="$(bash scripts/ci/install-ci-tool.sh gitleaks --install-dir "$RUNNER_TEMP/security-bin")"
+          echo "GITLEAKS_BIN=$scanner" >> "$GITHUB_ENV"
+      - name: Save pinned tool downloads
+        uses: ./.github/actions/cache-tool-downloads
+        with:
+          mode: save
+      - name: Scan repository history
+        id: secrets
+        run: '"$GITLEAKS_BIN" git --redact=100 --no-banner --no-color --log-level error'
+
   changes:
     runs-on: ubuntu-24.04
     outputs:
@@ -110,6 +133,10 @@ jobs:
             Darwin) brew install xz ;;
             *) echo 'unsupported native host' >&2; exit 1 ;;
           esac 2>&1 | tee target/evidence/native-ci/prerequisites.log
+      - name: Restore pinned tool downloads
+        if: env.CI_SCOPE != 'docs'
+        id: restore_downloads
+        uses: ./.github/actions/cache-tool-downloads
       - name: Prepare host parsers
         if: env.CI_SCOPE != 'docs'
         id: host_tools
@@ -131,6 +158,12 @@ jobs:
         if: env.CI_SCOPE != 'docs'
         id: tools
         uses: ./.github/actions/prepare-common-tools
+      - name: Save pinned tool downloads
+        if: env.CI_SCOPE != 'docs'
+        id: save_downloads
+        uses: ./.github/actions/cache-tool-downloads
+        with:
+          mode: save
       - name: Record installed tool versions
         if: env.CI_SCOPE != 'docs'
         id: tool_inputs

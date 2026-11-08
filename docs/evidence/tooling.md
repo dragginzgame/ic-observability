@@ -1,10 +1,11 @@
 # Contributor tooling
 
-The current local snapshot selects committed Shared Tooling 0.31.9,
-`d95f271bc7b49951ccf286c3655cef7446b8cf56`, matching upstream main when reviewed.
+The current local snapshot selects committed Shared Tooling 0.31.10,
+`c5285791991c731d266fb5c85dc3ee876d29f6b9`, matching upstream main when reviewed.
 Its source ledger remains Unreleased; this is not a tagged-release claim.
 This refresh preserves library versions, Cargo.lock and tool/compiler catalogs;
-the canonical exporter retains the reviewed entrypoints and companion closure.
+the canonical exporter retains the reviewed entrypoints and adds the pinned CI
+installer for the new repository security job, with its complete companion closure.
 The [previous 0.30.7 delivery](releases/observability-patches-20261106-shared0307.md)
 owns its version preparation and publication. Explicit setup and offline admission
 retain their owners.
@@ -69,6 +70,19 @@ the distribution JSON ledger is byte-identical. Private originals, ignored
 investigations, recovery state and Git history were outside the cleanup.
 
 ## Current focused checks
+
+The 161-file 0.31.10 snapshot and dependency pins passed. Actionlint and sourced
+ShellCheck passed for the changed workflow/local fixture. The actual CI selection
+fixture verifies unconditional full-history security ownership, redacted scan
+arguments and failure propagation, plus download-cache ordering around native
+setup. The native evidence `success` scenario passed with external effects
+substituted. Crate/module LOC selections matched the full report's classified
+counts, and an unknown module refused. Raw output belongs under
+`target/evidence/shared-tooling-03110/`. Hosted cache-service behavior and a live
+Gitleaks scan remain CI obligations; these local checks do not claim either.
+No release gate, tool pin, package version or dependency was changed.
+
+### Previous 0.31.9 checks
 
 The 159-file 0.31.9 snapshot passed canonical source verification and
 `make shared-tooling-check check-pins fmt-check cargo-boundaries-check`.

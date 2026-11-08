@@ -1,10 +1,26 @@
 # Current handoff — 2026-11-08
 
-**Shared Tooling 0.31.9 is adopted locally at
-`d95f271bc7b49951ccf286c3655cef7446b8cf56`.** This supersedes the 0.31.1 selection
-below. The canonical exporter refreshed the existing roots to 159 files, including
-the shared hashing policy/catalog. Upstream main matched this revision on review;
-its ledger remains Unreleased. Local LOC help now uses `CLOC_DEPTH`.
+**Shared Tooling 0.31.10 is adopted locally at
+`c5285791991c731d266fb5c85dc3ee876d29f6b9`.** The canonical exporter refreshed
+the snapshot to 161 files, adding the pinned CI installer and download-cache
+action. Upstream main matched this revision on review; its ledger remains
+Unreleased. CI now restores authenticated downloads before host/scanner setup,
+saves after setup, and runs one independent Linux full-history Gitleaks scan,
+including documentation-only changes. LOC supports crate/module selectors.
+
+Snapshot/pin checks, workflow lint, sourced ShellCheck, actual CI selection and
+scan-failure propagation, native evidence success wiring, and LOC count/refusal
+checks passed. Hosted caching and the live secret scan remain unverified locally.
+The deploy request selects commit/push delivery of this refresh to `origin/main`
+from the normal `main` checkout. The publication-impact comparison remains valid:
+crate contents, package manifests, lockfile and dependencies are unchanged since
+the prior adoption. Metrics stays at 0.29.6 and Logging at 0.24.11, without new
+tags or registry uploads. Hosted CI runs asynchronously after delivery.
+
+## Previous 0.31.9 adoption and delivery
+
+The 0.31.9 adoption was delivered to `origin/main` as
+`664f7584ea3c46bf2e09604e3c9b51b706eb0c69`. Its focused evidence follows.
 
 Snapshot integrity, pins, formatting, hook preservation/failure checks, Cargo
 boundaries, standard release Make adapters and package/module LOC reports passed.

@@ -20,6 +20,34 @@ jq -e '
   all(.native.steps[];
     (.if | contains("env.CI_SCOPE")))
 ' "$fixture/jobs.json" > /dev/null
+# Security runs once even when native work selects documentation-only scope.
+jq -e '
+  .security as $security |
+  ($security | has("needs") or has("if") or has("strategy") | not) and
+  ($security.steps[0].with["fetch-depth"] == 0) and
+  all($security.steps[]; has("if") or has("continue-on-error") | not) and
+  ([.[] | .steps[] | select(.id == "secrets")] | length == 1) and
+  (.native.steps | map(.id) |
+    index("restore_downloads") < index("host_tools") and
+    index("tools") < index("save_downloads") and
+    index("save_downloads") < index("application_sources"))
+' "$fixture/jobs.json" > /dev/null
+jq '.security.steps' "$fixture/jobs.json" > "$fixture/security.json"
+bash "$root/scripts/ci/extract-workflow-step.sh" "$fixture/security.json" secrets > "$fixture/scan.sh"
+cat > "$fixture/scanner" <<'SCANNER'
+#!/usr/bin/env bash
+printf '%s\n' "$@" > "$SCAN_ARGUMENTS"
+exit "$SCAN_RESULT"
+SCANNER
+chmod +x "$fixture/scanner"
+printf '%s\n' git --redact=100 --no-banner --no-color --log-level error > "$fixture/scan-expected"
+for result in 0 1; do
+    status=0
+    GITLEAKS_BIN="$fixture/scanner" SCAN_ARGUMENTS="$fixture/scan-args" SCAN_RESULT="$result" \
+        bash -e "$fixture/scan.sh" || status=$?
+    [[ "$status" == "$result" ]] || exit 1
+    cmp "$fixture/scan-expected" "$fixture/scan-args"
+done
 mkdir -p "$fixture/repo/scripts/ci" "$fixture/repo/ci" "$fixture/repo/docs/status"
 bash "$root/scripts/ci/prepare-script-fixture.sh" "$root" "$fixture/repo" \
     scripts/ci/classify-ci-change.pl scripts/ci/select-ci.sh

@@ -37,7 +37,15 @@ collection or turn a failed check into a successful one.
 
 ## Prerequisites and focused checks
 
-The committed Shared Tooling 0.31.9 refresh (`d95f271`) preserves the selected
+Repository CI owns one Linux security job with a full-history, fully redacted
+Gitleaks scan, including documentation-only runs. The pinned shared installer
+prepares the scanner only there; release and publication rosters do not scan.
+Both that job and native setup restore the shared authenticated download cache
+before their first tool installation and save after setup, before product checks.
+Cache service failures permit download fallback; downloaded bytes still require
+the selected checksum. The existing native prerequisite/compiler order is retained.
+
+The committed Shared Tooling 0.31.10 refresh (`c528579`) preserves the selected
 tool catalogs and compiler. `make tools-check check-pins` admits prepared tools;
 no reinstall or store cleanup is part of this adoption. Earlier source-bound
 receipts retain their original snapshots. Explicit setup still uses
@@ -47,6 +55,8 @@ unrelated applications. Selected executables, source archives and receipts remai
 obsolete executable retirement follows the [shared guide](tool-store-maintenance.md).
 
 `make cloc CLOC_DEPTH=0` reports package detail; `CLOC_DEPTH=1` adds source modules.
+`bash scripts/dev/cloc.sh -d 1 ic-metrics::recording` drills into one source branch;
+the depth is relative to the selected crate or module.
 `bash scripts/dev/cloc.sh --json`
 emits schema 2 with application/library, test, example, benchmark, tooling and
 unclassified counts. Singular Rust test paths are not retained. The allocation-free
