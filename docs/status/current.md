@@ -25,39 +25,28 @@ not resolve the application graph. Offline admission checks every member, pin,
 lock checksum and snapshot. Common CI/release Make targets and custom candidate,
 metadata and publication adapters retain admission before effects.
 
-Focused installation, tooling checks, snapshot/pin/Cargo admission, production
-graphs, native all-targets Clippy for both packages, formatting/hooks, CI selection,
-standard release dispatch, publication policy and retained public consumer tests
-passed. A copied consumer missing a member declaration refused. Evidence is under
-`target/evidence/toko-tooling-036/`. Product release gates remain unchanged; full
-CI/native macOS acceptance is not inferred. The deploy request selects this
-repository only: commit the migration, then release Metrics 0.29.7 followed by
-Logging 0.24.12 through the captured batch with verified crates.io publication.
-Unlike the earlier tooling-only delivery, both public package manifests now
-carry new dev requirements and cargo-machete metadata, so both payloads need
-fresh patch identities. Shared inputs require the complete product release gate.
-The normal checkout starts on main; delivery targets origin/main and both group
-tags. Candidate and durable recovery paths follow the qualified batch contract.
+Both affected package groups are now delivered and published: Metrics 0.29.7
+and Logging 0.24.12. Each passed the full 20-stage workspace release plan, final
+archive compilation and independent registry readback. The
+[delivery receipt](../evidence/releases/observability-patches-20261108-toko036.md)
+owns exact source/tag/archive identities and validation locations.
 
-Batch `batch-C8a10ddy` captured `cd0e89a` and stopped at the release-tools gate
-before any release push/publication. Its admission fixture exposed tooling checks
-running Cargo before missing-group rejection. The normal Makefile now orders both
-tooling admission and source cleanup after group selection for release commands.
-Read-only metadata receipt checks retain their committed-source contract instead
-of parsing potentially newer live manifest bytes; effectful preparation still
-requires tooling admission.
-Both groups' full admission fixtures and custom before-effects refusal checks
-passed after correction. Logs are under `target/deploy/toko-tooling-036/`.
-The failed batch and its validation evidence remain retained. Delivery uses a
-fresh capture of the corrected source; do not resume the old source as repaired.
+Batch `batch-gfJA5IMg` is complete at index 2; execution is retained under
+`target/release-frozen/batch-gfJA5IMg` with durable recovery at
+`.git/release-state/frozen/batch-gfJA5IMg/`. The normal main checkout was cleanly
+fast-forwarded to the Logging release. The failed pre-delivery batch
+`batch-C8a10ddy` remains retained and must not be resumed as repaired source.
+Its admission-order failure was fixed in `cdf8b13` and qualified before the fresh
+batch. No retirement or artifact cleanup ran; no sibling repository changed.
+Hosted CI remains asynchronous; missing/failed/cancelled native checks are not passes.
 
 ## Published packages and recovery custody
 
-Metrics 0.29.6 (`metrics-v0.29.6`, `79c3c7e`) and Logging 0.24.11
-(`logging-v0.24.11`, `6ddccd2`) are published and non-yanked. Never re-upload them.
-The [delivery receipt](../evidence/releases/observability-patches-20261106-shared0310.md)
+Metrics 0.29.7 (`metrics-v0.29.7`, `ede2825`) and Logging 0.24.12
+(`logging-v0.24.12`, `eadaaa1`) are published and non-yanked. Never re-upload them.
+The [current receipt](../evidence/releases/observability-patches-20261108-toko036.md)
 owns exact source/tag/archive identities and publication verification.
-Pending notes remain 0.29.7 and 0.24.12 for the next actual package releases.
+The completed 0.29.7 and 0.24.12 ledger entries are dated; no next release is selected.
 
 Completed batch `batch-z30yB8KG` used
 `target/release-frozen/batch-z30yB8KG`; durable recovery state is under

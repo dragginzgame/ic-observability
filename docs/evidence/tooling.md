@@ -11,7 +11,11 @@ The 0.34 metadata/dedicated-lock scheme is removed, with no selection-only packa
 new import or release-group member. Cargo.lock adds only toko-tooling and the two
 dev edges. Every member carries the cargo-machete exemption; a narrowly documented
 exact-pin exception satisfies the generic pinning gate. No unrelated dependency,
-compiler/tool pin or public package version changed.
+compiler/tool pin changed. Deployment subsequently released Metrics 0.29.7 and
+Logging 0.24.12 because their public manifests changed. Both passed complete
+20-stage workspace gates, Git delivery and verified registry publication; the
+[delivery receipt](releases/observability-patches-20261108-toko036.md) owns exact
+identities and recovery custody.
 
 After intentionally editing the root pin and resolving Cargo.lock, run
 `make shared-tooling-update` or `make shared-tooling-install`. Common CI/release
