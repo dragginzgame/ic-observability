@@ -37,6 +37,15 @@ collection or turn a failed check into a successful one.
 
 ## Prerequisites and focused checks
 
+Root `[workspace.metadata.toko-tooling]` selects exact release 0.34.0;
+`toko-tooling.lock` records its registry archive checksum. There is no Cargo
+dependency or tooling-only package. `make shared-tooling-update` resolves the
+declared tooling version and installs it; `make shared-tooling-install` reinstalls
+the existing tooling lock. Application Cargo updates are independent. Installation
+runs `install-tools` and `tools-check`; offline `shared-tooling-check` admits the
+declaration, tooling lock and installed snapshot. CI/release Make entrypoints and
+the custom candidate, metadata and publication scripts check tooling before effects.
+
 Repository CI owns one Linux security job with a full-history, fully redacted
 Gitleaks scan, including documentation-only runs. The pinned shared installer
 prepares the scanner only there; release and publication rosters do not scan.
@@ -45,7 +54,7 @@ before their first tool installation and save after setup, before product checks
 Cache service failures permit download fallback; downloaded bytes still require
 the selected checksum. The existing native prerequisite/compiler order is retained.
 
-The committed Shared Tooling 0.31.12 refresh (`eb3c8e0`) preserves the selected
+The crates.io toko-tooling 0.34.0 refresh preserves the selected
 tool catalogs and compiler. `make tools-check check-pins` admits prepared tools;
 no reinstall or store cleanup is part of this adoption. Earlier source-bound
 receipts retain their original snapshots. Explicit setup still uses

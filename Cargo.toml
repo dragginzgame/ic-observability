@@ -1,7 +1,14 @@
 [workspace]
-members = ["crates/ic-logging", "crates/ic-metrics"]
+members = [
+    # Production packages
+    "crates/ic-logging",
+    "crates/ic-metrics",
+]
 default-members = ["crates/ic-logging", "crates/ic-metrics"]
 resolver = "3"
+
+[workspace.metadata.toko-tooling]
+version = "0.34.0"
 
 [workspace.package]
 edition = "2024"

@@ -4,6 +4,7 @@ root="$(cd "${BASH_SOURCE[0]%/*}/../.." && pwd -P)"
 cd "$root"
 [[ "${RELEASE_BATCH_ACTIVE:-}" == 1 ]] || { echo 'Candidate setup requires captured delivery context' >&2; exit 2; }
 bash scripts/release/metadata.sh selection
+bash scripts/dev/shared-tooling.sh check --consumer "$root"
 mode="${RELEASE_SETUP_MODE:-}"
 case "$mode" in prepare|check) ;; *) echo 'Select candidate setup mode prepare or check' >&2; exit 2 ;; esac
 [[ "${HOST_TOOL_VERSIONS:-$root/ci/tool-versions.env}" == "$root/ci/tool-versions.env" &&

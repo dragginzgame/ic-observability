@@ -15,7 +15,9 @@ converted to a literal version; Metrics followed at its released 0.23.1 version.
 Neither conversion changes a package's numeric identity.
 Earlier coordinated releases remain once in [shared history](../releases/history.md), through 0.23.0;
 both group ledgers link to that history. Existing tags and receipts are retained.
-There are no private workspace members today. Each public member has a root
+Tooling has no Cargo package or release-group membership: root metadata selects
+toko-tooling 0.34.0 and `toko-tooling.lock` owns its archive checksum independently
+of Cargo.lock. Each public member has a root
 catalog entry with its local path and full current version, registered in its
 group's dependency roster. These unused catalog aliases provide a readable
 version map without adding dependencies between the libraries. Each group appears
@@ -24,7 +26,7 @@ comment; grouped formatting preserves these blocks. Only member dependency
 declarations create edges.
 
 Both groups own their versions and active release notes at the same level. The
-root has no `workspace.package.version`; it supplies common metadata, dependency
+root is virtual and has no package or aggregate product version. It supplies common metadata, dependency
 selections and validation policy. Its changelog is an index linking both group
 ledgers and the historical ledger. A Logging release to 0.24.0 can leave Metrics
 at 0.23.1. There is no default release group.

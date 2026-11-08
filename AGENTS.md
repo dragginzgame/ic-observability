@@ -16,6 +16,14 @@ consumer-contract or persistence-boundary changes.
   releases/metrics or releases/logging. The root has shared metadata and changelog
   navigation, with no aggregate version. Coordinated history is in releases/history.md.
   Membership is explicit in ci/cargo-release-groups.json and root Cargo comments.
+  Repository tooling is selected independently in root
+  `[workspace.metadata.toko-tooling]` at version 0.34.0. `toko-tooling.lock` pins
+  its registry archive checksum and the snapshot records installed files.
+  Use `make shared-tooling-update` after changing the declared tooling version,
+  or `make shared-tooling-install` to reinstall the existing selection. There is
+  no tooling Cargo dependency, package or release-group member. Custom deployment
+  adapters must run `shared-tooling-check` before effects. Application Cargo
+  updates do not select or install repository tooling.
   The root dependency catalog lists both members with full current versions and
   paths; each alias belongs to its group's dependency roster. Catalog entries
   alone add no dependency edge between the libraries.

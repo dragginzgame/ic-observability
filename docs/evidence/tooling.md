@@ -1,15 +1,16 @@
 # Contributor tooling
 
-The current local snapshot selects committed Shared Tooling 0.31.12,
-`eb3c8e0d2274d2c7babb2c15b3355bb80a796f0f`, matching upstream main when reviewed.
-Its source ledger remains Unreleased; this is not a tagged-release claim.
-This refresh preserves library versions, Cargo.lock and tool/compiler catalogs;
-the canonical exporter retains the reviewed entrypoints and companion closure.
-The refresh retains 0.31.11 issue-closure guidance and adds the now-committed
-0.31.12 LOC presentation changes through the pinned export.
-The [previous 0.30.7 delivery](releases/observability-patches-20261106-shared0307.md)
-owns its version preparation and publication. Explicit setup and offline admission
-retain their owners.
+The local snapshot selects crates.io toko-tooling 0.34.0 through root workspace
+metadata and the dedicated `toko-tooling.lock`. The lock and snapshot bind archive
+SHA-256 `5ca8ad09ad9359bc4945a4afdaafce301dd5a4b4955cd5c9f5058d7a54ffcf10`.
+No application dependency or tooling-only package selects this payload. The
+producer installer bootstrapped the migration; all 97 roots were preserved and
+167 files are installed. Application Cargo.lock and public versions are unchanged.
+Future updates use `make shared-tooling-update` after editing the exact metadata
+version; installation without resolution uses `make shared-tooling-install`.
+Custom candidate, metadata and publication adapters check tooling before effects;
+product release gates remain unchanged. Current logs are under
+`target/evidence/toko-tooling-034/`.
 
 ## Current decisions
 
@@ -71,6 +72,22 @@ the distribution JSON ledger is byte-identical. Private originals, ignored
 investigations, recovery state and Git history were outside the cleanup.
 
 ## Current focused checks
+
+The 0.34.0 installation and managed tool admission passed. Offline snapshot,
+pin and Cargo-boundary checks passed; the application lock graph is restored.
+Custom deployment drift-refusal fixtures passed before effects. Matched group
+validation and the dependency-free product guard passed. The root-only tooling
+package is removed and direct LOC again reports 4,438 lines without warnings.
+Standard release Make dispatch, early setup smoke, publication policy, CI selection,
+documentation and changed local shell lint passed. A real declaration/lock version
+mismatch also refused offline. Application Cargo.lock is byte-identical to the
+pre-migration graph; no tooling-only package/dependency references remain in
+maintained consumer inputs. Historical reports and snapshot-owned migration
+guidance retain their original scope. No cargo-machete exception was present.
+Earlier 0.32/0.33 logs retain historical scope; no old dependency instructions
+remain current. Full product release gates, hosted CI and native macOS were not run.
+
+### Previous 0.31.12 checks
 
 The 161-file 0.31.12 snapshot passed integrity, documentation and diff checks.
 Actual `make cloc CLOC_DEPTH=1` terminal output emitted workspace/crate/module

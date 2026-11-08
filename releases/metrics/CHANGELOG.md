@@ -9,6 +9,10 @@ Metrics and Logging each own their package version and release notes.
 
 ### 🛠️ Tooling
 
+- Select toko-tooling 0.34.0 through root metadata and `toko-tooling.lock`,
+  independently of application dependencies. Remove the tooling-only package and
+  its release/dependency-policy scaffolding. Preserve recorded entrypoints and
+  product release gates; custom deployment scripts reject tooling drift before effects.
 - Adopt committed Shared Tooling 0.31.12: retain the Bash 3.2 checksum repair,
   restrict formatting to owned workspace members, isolate release command checks,
   and admit the shared hashing inventory. LOC detail now uses `CLOC_DEPTH=0`

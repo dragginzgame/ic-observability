@@ -19,6 +19,10 @@ executable="${1:-make}"
 "$executable" --version > "$fixture/make-version.txt"
 cat > "$fixture/probe.mk" <<'MAKE'
 .PHONY: observability-setup-mode
+# Setup smoke runs before host parsers exist and substitutes all release effects.
+# Tooling drift admission is qualified separately by the owning adapter fixture.
+shared-tooling-check clean-empty-source-dirs:
+	@:
 release-group-check:
 	@:
 publish publish-check: observability-setup-mode
@@ -42,7 +46,9 @@ done
 # push or publish from a setup-smoke regression test.
 mkdir "$fixture/bin"
 export SETUP_SMOKE_ROOT="$root" SETUP_SMOKE_ARGS="$fixture/arguments"
-export SETUP_SMOKE_REAL_PERL="$(command -v perl)" SETUP_SMOKE_REAL_BASH="$(command -v bash)"
+SETUP_SMOKE_REAL_PERL="$(command -v perl)"
+SETUP_SMOKE_REAL_BASH="$(command -v bash)"
+export SETUP_SMOKE_REAL_PERL SETUP_SMOKE_REAL_BASH
 cat > "$fixture/bin/perl" <<'PERL'
 #!/bin/bash
 if [[ "${1:-}" == "$SETUP_SMOKE_ROOT/scripts/ci/run-release-batch.pl" ]]; then

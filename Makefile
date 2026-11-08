@@ -43,6 +43,9 @@ $(SHARED_RELEASE_TARGETS) release-batch-resume publish publish-check: | release-
 release-group-check:
 	@bash scripts/release/metadata.sh selection
 
+# Captured recovery can bypass the common increment/preflight entrypoints.
+release-batch-resume: shared-tooling-check
+
 .PHONY: release-candidate-setup
 release-candidate-setup:
 	+@RELEASE_MAKE="$(MAKE_COMMAND)" HOST_TOOL_VERSIONS="$(HOST_TOOL_VERSIONS)" RUST_TOOL_VERSIONS="$(RUST_TOOL_VERSIONS)" bash scripts/release/candidate-setup.sh
@@ -237,6 +240,7 @@ allocation-free-check:
 
 # Retention owns the separate release/publication/hook bodies and custody cases.
 release-tools-check:
+	bash scripts/release/test-tooling-admission.sh
 	bash scripts/release/test-retained-consumer.sh
 	bash scripts/release/test-fixture-retention.sh
 	bash scripts/release/test-publication-policy.sh
