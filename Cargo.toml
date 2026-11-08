@@ -7,9 +7,6 @@ members = [
 default-members = ["crates/ic-logging", "crates/ic-metrics"]
 resolver = "3"
 
-[workspace.metadata.toko-tooling]
-version = "0.34.0"
-
 [workspace.package]
 edition = "2024"
 rust-version = "1.99.1"
@@ -30,6 +27,7 @@ ic-metrics = { path = "crates/ic-metrics", version = "0.29.6" }
 # External restoration oracle and public API trait-refusal checks.
 num-bigint = { version = "0.5.1", default-features = false }
 serde = { version = "1.0", default-features = false }
+toko-tooling = "=0.36.0"
 
 [workspace.lints.rust]
 missing_docs = "warn"

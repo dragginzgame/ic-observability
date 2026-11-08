@@ -1,16 +1,22 @@
 # Contributor tooling
 
-The local snapshot selects crates.io toko-tooling 0.34.0 through root workspace
-metadata and the dedicated `toko-tooling.lock`. The lock and snapshot bind archive
-SHA-256 `5ca8ad09ad9359bc4945a4afdaafce301dd5a4b4955cd5c9f5058d7a54ffcf10`.
-No application dependency or tooling-only package selects this payload. The
-producer installer bootstrapped the migration; all 97 roots were preserved and
-167 files are installed. Application Cargo.lock and public versions are unchanged.
-Future updates use `make shared-tooling-update` after editing the exact metadata
-version; installation without resolution uses `make shared-tooling-install`.
-Custom candidate, metadata and publication adapters check tooling before effects;
-product release gates remain unchanged. Current logs are under
-`target/evidence/toko-tooling-034/`.
+The local snapshot selects crates.io toko-tooling 0.36.0 through one exact root
+workspace dependency and unconditional inherited dev-dependencies in both real
+packages. Cargo.lock and the snapshot bind archive SHA-256
+`de0dd05b6437061622a76942baa25d40d2181497e7ba66d9fd809132a3082936`.
+All 97 roots are preserved; 168 installed files were exported from the authenticated
+registry package. Managed installation and tool checks passed.
+
+The 0.34 metadata/dedicated-lock scheme is removed, with no selection-only package,
+new import or release-group member. Cargo.lock adds only toko-tooling and the two
+dev edges. Every member carries the cargo-machete exemption; a narrowly documented
+exact-pin exception satisfies the generic pinning gate. No unrelated dependency,
+compiler/tool pin or public package version changed.
+
+After intentionally editing the root pin and resolving Cargo.lock, run
+`make shared-tooling-update` or `make shared-tooling-install`. Common CI/release
+and custom deployment admission remain enforced. Logs are under
+`target/evidence/toko-tooling-036/`; older receipts retain historical scope.
 
 ## Current decisions
 
@@ -72,6 +78,17 @@ the distribution JSON ledger is byte-identical. Private originals, ignored
 investigations, recovery state and Git history were outside the cleanup.
 
 ## Current focused checks
+
+0.36.0 installation/tools, member/pin/lock/snapshot checks, exact-pin admission,
+Cargo boundaries and CI selection passed. Both public production profiles remain
+dependency-free; all-targets native Clippy with all features passed for both
+packages. Formatting/hooks, custom drift-refusal, standard release dispatch,
+publication policy and retained public consumers passed. A copied consumer missing
+Logging inheritance refused. Entry roots are unchanged; no obsolete tooling
+selector or selection-only package remains in maintained consumer inputs.
+Full product release gates, hosted CI and native macOS were not run.
+
+### Previous 0.34.0 checks
 
 The 0.34.0 installation and managed tool admission passed. Offline snapshot,
 pin and Cargo-boundary checks passed; the application lock graph is restored.

@@ -10,6 +10,12 @@ description = "Bounded application logs with explicit retention and scan limits"
 readme = "README.md"
 publish = true
 
+[package.metadata.cargo-machete]
+ignored = ["toko-tooling"]
+
+[dev-dependencies]
+toko-tooling.workspace = true
+
 [[example]]
 name = "byte-budgeted-export"
 test = true

@@ -13,6 +13,9 @@ publish = ["crates-io"]
 [package.metadata.docs.rs]
 all-features = true
 
+[package.metadata.cargo-machete]
+ignored = ["toko-tooling"]
+
 [package.metadata.shared-tooling.loc.paths]
 "tests/allocation-free" = "tests"
 
@@ -22,6 +25,7 @@ recording = []
 [dev-dependencies]
 num-bigint.workspace = true
 serde.workspace = true
+toko-tooling.workspace = true
 
 [[example]]
 name = "arithmetic-no-allocator"

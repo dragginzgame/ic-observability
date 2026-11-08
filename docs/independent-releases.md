@@ -15,9 +15,9 @@ converted to a literal version; Metrics followed at its released 0.23.1 version.
 Neither conversion changes a package's numeric identity.
 Earlier coordinated releases remain once in [shared history](../releases/history.md), through 0.23.0;
 both group ledgers link to that history. Existing tags and receipts are retained.
-Tooling has no Cargo package or release-group membership: root metadata selects
-toko-tooling 0.34.0 and `toko-tooling.lock` owns its archive checksum independently
-of Cargo.lock. Each public member has a root
+Tooling has no selection-only package or release-group membership. One exact
+root dependency pins toko-tooling 0.36.0; both libraries inherit it only for
+development, and Cargo.lock owns its registry checksum. Each public member has a root
 catalog entry with its local path and full current version, registered in its
 group's dependency roster. These unused catalog aliases provide a readable
 version map without adding dependencies between the libraries. Each group appears

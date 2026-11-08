@@ -37,13 +37,15 @@ collection or turn a failed check into a successful one.
 
 ## Prerequisites and focused checks
 
-Root `[workspace.metadata.toko-tooling]` selects exact release 0.34.0;
-`toko-tooling.lock` records its registry archive checksum. There is no Cargo
-dependency or tooling-only package. `make shared-tooling-update` resolves the
-declared tooling version and installs it; `make shared-tooling-install` reinstalls
-the existing tooling lock. Application Cargo updates are independent. Installation
-runs `install-tools` and `tools-check`; offline `shared-tooling-check` admits the
-declaration, tooling lock and installed snapshot. CI/release Make entrypoints and
+Root `[workspace.dependencies]` declares `toko-tooling = "=0.36.0"` once.
+Both real members inherit it unconditionally as a dev-dependency and merge the
+name into cargo-machete ignored metadata, without a Rust import. Cargo.lock pins
+the registry version/checksum; no selection-only package or separate tooling
+lock is used. After intentionally changing the root pin, resolve Cargo.lock with
+Cargo and run `make shared-tooling-update` or `make shared-tooling-install`.
+Neither installer edits manifests or Cargo.lock. Installation runs `install-tools`
+and `tools-check`; offline `shared-tooling-check` admits all member declarations,
+the exact root pin, Cargo.lock and installed snapshot. CI/release Make entrypoints and
 the custom candidate, metadata and publication scripts check tooling before effects.
 
 Repository CI owns one Linux security job with a full-history, fully redacted
@@ -54,7 +56,7 @@ before their first tool installation and save after setup, before product checks
 Cache service failures permit download fallback; downloaded bytes still require
 the selected checksum. The existing native prerequisite/compiler order is retained.
 
-The crates.io toko-tooling 0.34.0 refresh preserves the selected
+The crates.io toko-tooling 0.36.0 refresh preserves the selected
 tool catalogs and compiler. `make tools-check check-pins` admits prepared tools;
 no reinstall or store cleanup is part of this adoption. Earlier source-bound
 receipts retain their original snapshots. Explicit setup still uses

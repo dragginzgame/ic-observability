@@ -10,9 +10,9 @@ belong here.
 
 ### 🛠️ Tooling
 
-- Select the toko-tooling 0.34.0 bundle with root metadata and its dedicated lock,
-  removing Cargo selection-only scaffolding while preserving Logging's public
-  dependency boundary and product release requirements.
+- Select published toko-tooling 0.36.0 with an inherited dev-dependency and
+  cargo-machete exemption, using the exact root pin and Cargo.lock. Remove the
+  metadata/lock selector while preserving Logging's production graph and release gates.
 - Adopt committed Shared Tooling 0.31.12: retain the Bash 3.2 checksum repair,
   restrict formatting to owned workspace members, isolate release command checks,
   and admit the shared hashing inventory. LOC detail now uses `CLOC_DEPTH=0`

@@ -1,0 +1,10 @@
+[
+  {
+    "file": "Cargo.toml",
+    "rule": "cargo-exact",
+    "subject": "toko-tooling",
+    "value": "=0.36.0",
+    "reason": "The maintainer-selected 0.36 tooling contract requires an exact root pin so Cargo reports newer releases without adopting them implicitly.",
+    "evidence": "AGENTS.md"
+  }
+]

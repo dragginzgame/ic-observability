@@ -11,6 +11,9 @@ checksum = "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
 [[package]]
 name = "ic-logging"
 version = "0.24.11"
+dependencies = [
+ "toko-tooling",
+]
 
 [[package]]
 name = "ic-metrics"
@@ -18,6 +21,7 @@ version = "0.29.6"
 dependencies = [
  "num-bigint",
  "serde",
+ "toko-tooling",
 ]
 
 [[package]]
@@ -105,6 +109,12 @@ dependencies = [
  "quote",
  "unicode-ident",
 ]
+
+[[package]]
+name = "toko-tooling"
+version = "0.36.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "de0dd05b6437061622a76942baa25d40d2181497e7ba66d9fd809132a3082936"
 
 [[package]]
 name = "unicode-ident"

@@ -1,41 +1,43 @@
 # Current handoff — 2026-11-08
 
-## Installed root-owned toko-tooling 0.34.0
+## Installed Cargo-selected toko-tooling 0.36.0
 
-Root `[workspace.metadata.toko-tooling]` declares exact version 0.34.0.
-`toko-tooling.lock` pins registry archive SHA-256
-`5ca8ad09ad9359bc4945a4afdaafce301dd5a4b4955cd5c9f5058d7a54ffcf10`.
-The installed snapshot records the same identity with all 97 prior entrypoints
-and 167 files. The new producer installer bootstrapped this registry-to-registry
-update; no Git ownership source was needed. Installation and tool checks passed.
+Root `[workspace.dependencies]` declares `toko-tooling = "=0.36.0"` once.
+Both real workspace packages inherit it unconditionally as a dev-dependency and
+include the cargo-machete exemption, without artificial Rust imports. Cargo.lock
+selects the crates.io archive SHA-256
+`de0dd05b6437061622a76942baa25d40d2181497e7ba66d9fd809132a3082936`.
+The installed snapshot agrees, preserving all 97 roots with 168 files. The released
+producer installer downloaded authenticated registry bytes and ran tool setup
+and admission. No sibling repository was changed.
 
-The old Cargo-dependency scheme is completely undone: the root is virtual,
-only Metrics and Logging are workspace members, Cargo.lock matches its original
-application graph, and no tooling-only package, source, dependency, group entry
-or dependency-policy exception remains. No real product tools or tests were removed.
-The earlier root-package LOC inflation and catalog-alias blocker are resolved by
-removing that package; the direct LOC report returns 4,438 lines.
+The 0.34 metadata selector and `toko-tooling.lock` are removed. The root remains
+a virtual workspace with only Metrics and Logging. There is no tooling-only
+package or release-group member. Cargo.lock changed only for toko-tooling and its
+two dev-dependency edges; unrelated selections and public versions are unchanged.
+The exact-pin exception in `ci/dependency-pinning-exceptions.json` is scoped to
+this required tooling pin and backed by AGENTS.md. Intentional fixture workspaces
+are isolated test inputs, not additional maintained packages.
 
-Change the root metadata version and run `make shared-tooling-update` to resolve
-and install; `make shared-tooling-install` reinstalls the selected tooling lock.
-Application Cargo updates no longer affect tooling selection. Offline
-`make shared-tooling-check` admits the declaration, tooling lock and snapshot.
-The custom candidate, metadata and publication adapters now call this check
-before effects; the standard Make CI and release commands inherit the shared guard.
+After changing the root pin deliberately, resolve Cargo.lock with Cargo, then run
+`make shared-tooling-update` or `make shared-tooling-install`. The installer does
+not resolve the application graph. Offline admission checks every member, pin,
+lock checksum and snapshot. Common CI/release Make targets and custom candidate,
+metadata and publication adapters retain admission before effects.
 
-Focused checks and evidence are in `target/evidence/toko-tooling-034/`.
-Snapshot/pin/Cargo boundaries, custom drift-refusal tests, application dependency
-admission, matched release-plan mapping and direct LOC checks passed.
-Standard release dispatch, setup smoke, publication policy, CI selection, changed
-local shell lint and documentation checks also passed. No obsolete dependency or
-tooling-only package references remain in maintained consumer configuration;
-snapshot-owned migration guides and older reports retain historical explanations.
-Product release requirements remain unchanged; no broad CI or native macOS acceptance
-is inferred. The deploy request selects commit/push delivery to `origin/main`
-from the normal `main` checkout. Published package trees, dependency contracts
-and Cargo.lock are unchanged; Metrics remains 0.29.6 and Logging 0.24.11.
-No new package tags or crates.io uploads are selected. Hosted CI runs
-asynchronously after delivery.
+Focused installation, tooling checks, snapshot/pin/Cargo admission, production
+graphs, native all-targets Clippy for both packages, formatting/hooks, CI selection,
+standard release dispatch, publication policy and retained public consumer tests
+passed. A copied consumer missing a member declaration refused. Evidence is under
+`target/evidence/toko-tooling-036/`. Product release gates remain unchanged; full
+CI/native macOS acceptance is not inferred. The deploy request selects this
+repository only: commit the migration, then release Metrics 0.29.7 followed by
+Logging 0.24.12 through the captured batch with verified crates.io publication.
+Unlike the earlier tooling-only delivery, both public package manifests now
+carry new dev requirements and cargo-machete metadata, so both payloads need
+fresh patch identities. Shared inputs require the complete product release gate.
+The normal checkout starts on main; delivery targets origin/main and both group
+tags. Candidate and durable recovery paths follow the qualified batch contract.
 
 ## Published packages and recovery custody
 
