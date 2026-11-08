@@ -43,6 +43,12 @@ $(SHARED_RELEASE_TARGETS) release-batch-resume publish publish-check: | release-
 release-group-check:
 	@bash scripts/release/metadata.sh selection
 
+# Reject a missing/unknown group before Cargo-based tooling admission. Routine
+# CI and explicit tooling checks remain independent of release selection.
+ifneq ($(filter $(SHARED_RELEASE_TARGETS) release-batch-resume publish publish-check,$(MAKECMDGOALS)),)
+shared-tooling-check clean-empty-source-dirs: | release-group-check
+endif
+
 # Captured recovery can bypass the common increment/preflight entrypoints.
 release-batch-resume: shared-tooling-check
 

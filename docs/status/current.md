@@ -39,6 +39,18 @@ fresh patch identities. Shared inputs require the complete product release gate.
 The normal checkout starts on main; delivery targets origin/main and both group
 tags. Candidate and durable recovery paths follow the qualified batch contract.
 
+Batch `batch-C8a10ddy` captured `cd0e89a` and stopped at the release-tools gate
+before any release push/publication. Its admission fixture exposed tooling checks
+running Cargo before missing-group rejection. The normal Makefile now orders both
+tooling admission and source cleanup after group selection for release commands.
+Read-only metadata receipt checks retain their committed-source contract instead
+of parsing potentially newer live manifest bytes; effectful preparation still
+requires tooling admission.
+Both groups' full admission fixtures and custom before-effects refusal checks
+passed after correction. Logs are under `target/deploy/toko-tooling-036/`.
+The failed batch and its validation evidence remain retained. Delivery uses a
+fresh capture of the corrected source; do not resume the old source as repaired.
+
 ## Published packages and recovery custody
 
 Metrics 0.29.6 (`metrics-v0.29.6`, `79c3c7e`) and Logging 0.24.11

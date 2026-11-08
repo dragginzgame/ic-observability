@@ -30,7 +30,7 @@ perl -MJSON::PP -e '
 [[ "$operation" != selection ]] || exit 0
 bash "$root/scripts/ci/check-release-delivery.sh" "$root/ci/release-delivery.txt" "${RELEASE_DELIVERY-direct}"
 case "$operation" in
-    preflight|verify|prepare|check|commit-check)
+    preflight|verify|prepare)
         bash "$root/scripts/dev/shared-tooling.sh" check --consumer "$root" ;;
 esac
 # Initial admission precedes Cargo, tooling preparation and validation effects.

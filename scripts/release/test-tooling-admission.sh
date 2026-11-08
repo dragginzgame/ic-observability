@@ -36,7 +36,7 @@ for entry in candidate-setup publication metadata; do
     case "$entry" in
         candidate-setup) operations=('') ;;
         publication) operations=(admit verify) ;;
-        metadata) operations=(preflight verify prepare check commit-check) ;;
+        metadata) operations=(preflight verify prepare) ;;
     esac
     for operation in "${operations[@]}"; do
         : > "$EVENTS"

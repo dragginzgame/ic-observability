@@ -13,6 +13,7 @@ Metrics and Logging each own their package version and release notes.
   inherited dev-dependencies with cargo-machete exemptions. Remove the metadata
   selector and separate tooling lock; preserve production dependency boundaries,
   recorded entrypoints and complete product release requirements.
+- Reject missing or unknown release groups before Cargo-based tooling admission.
 - Adopt committed Shared Tooling 0.31.12: retain the Bash 3.2 checksum repair,
   restrict formatting to owned workspace members, isolate release command checks,
   and admit the shared hashing inventory. LOC detail now uses `CLOC_DEPTH=0`
