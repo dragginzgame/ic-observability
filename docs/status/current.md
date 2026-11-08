@@ -1,7 +1,23 @@
 # Current handoff — 2026-11-08
 
-**Shared Tooling 0.31.10 is adopted locally at
-`c5285791991c731d266fb5c85dc3ee876d29f6b9`.** The canonical exporter refreshed
+**Shared Tooling 0.31.12 is adopted locally at
+`eb3c8e0d2274d2c7babb2c15b3355bb80a796f0f`.** The 161-file snapshot retains the
+0.31.11 issue-closure policy and adds terminal LOC colours and a single updating
+sibling progress line. Actual Make terminal/redirected output and a two-repository
+progress fixture passed; totals remain 4,438 with no unclassified source.
+Snapshot, documentation and diff checks passed. The deploy request selects
+commit/push delivery to `origin/main` from the normal `main` checkout. Package
+contents, manifests, dependencies and lockfile remain unchanged; Metrics stays
+at 0.29.6 and Logging at 0.24.11, with no new tags or registry uploads. Hosted
+CI runs asynchronously after delivery. Tool versions are unchanged.
+The HTTP 504 setup failures in [CI 42470507602](https://github.com/dragginzgame/ic-observability/actions/runs/42470507602)
+remain unresolved: native tests and the secret scan did not run.
+
+## Previous 0.31.10 adoption and delivery
+
+Shared Tooling 0.31.10 was delivered as `5c9911196ece063d43e52b348574301f76f9a191`.
+Its snapshot selected
+`c5285791991c731d266fb5c85dc3ee876d29f6b9`. The canonical exporter refreshed
 the snapshot to 161 files, adding the pinned CI installer and download-cache
 action. Upstream main matched this revision on review; its ledger remains
 Unreleased. CI now restores authenticated downloads before host/scanner setup,

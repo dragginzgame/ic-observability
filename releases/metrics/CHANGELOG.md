@@ -9,13 +9,15 @@ Metrics and Logging each own their package version and release notes.
 
 ### 🛠️ Tooling
 
-- Adopt committed Shared Tooling 0.31.10: retain the Bash 3.2 checksum repair,
+- Adopt committed Shared Tooling 0.31.12: retain the Bash 3.2 checksum repair,
   restrict formatting to owned workspace members, isolate release command checks,
   and admit the shared hashing inventory. LOC detail now uses `CLOC_DEPTH=0`
   for packages and larger depths for source modules.
 - Cache authenticated CI tool downloads before setup and run one full-history,
   redacted Gitleaks scan per repository CI run, including documentation changes.
   Support selecting a crate or source module in the LOC report.
+- Colour LOC names in terminals and show sibling scan progress on one updating
+  line, preserving plain redirected output and existing counts.
 
 ### 🧪 Testing
 

@@ -1,11 +1,12 @@
 # Contributor tooling
 
-The current local snapshot selects committed Shared Tooling 0.31.10,
-`c5285791991c731d266fb5c85dc3ee876d29f6b9`, matching upstream main when reviewed.
+The current local snapshot selects committed Shared Tooling 0.31.12,
+`eb3c8e0d2274d2c7babb2c15b3355bb80a796f0f`, matching upstream main when reviewed.
 Its source ledger remains Unreleased; this is not a tagged-release claim.
 This refresh preserves library versions, Cargo.lock and tool/compiler catalogs;
-the canonical exporter retains the reviewed entrypoints and adds the pinned CI
-installer for the new repository security job, with its complete companion closure.
+the canonical exporter retains the reviewed entrypoints and companion closure.
+The refresh retains 0.31.11 issue-closure guidance and adds the now-committed
+0.31.12 LOC presentation changes through the pinned export.
 The [previous 0.30.7 delivery](releases/observability-patches-20261106-shared0307.md)
 owns its version preparation and publication. Explicit setup and offline admission
 retain their owners.
@@ -70,6 +71,26 @@ the distribution JSON ledger is byte-identical. Private originals, ignored
 investigations, recovery state and Git history were outside the cleanup.
 
 ## Current focused checks
+
+The 161-file 0.31.12 snapshot passed integrity, documentation and diff checks.
+Actual `make cloc CLOC_DEPTH=1` terminal output emitted workspace/crate/module
+colours; redirected and NO_COLOR output matched with no ANSI escapes. JSON
+retained 4,438 total lines and zero unclassified lines. A two-repository disposable
+fixture showed one updating progress line, with both counters and final clearing.
+Raw output is under `target/evidence/shared-tooling-03112/`. This presentation
+refresh changes no compiler, pins, dependencies, CI or library implementation.
+
+### Previous 0.31.11 checks
+
+The 161-file 0.31.11 refresh changes four governance documents and its manifest.
+Snapshot integrity, documentation links, overlay consistency and diff checks
+qualify this adoption; unchanged code checks retain their prior scope. This
+revision does not repair the HTTP 504 tool-download failures observed in
+[CI 42470507602](https://github.com/dragginzgame/ic-observability/actions/runs/42470507602).
+Native tests and Gitleaks were skipped after setup failed. No issue maintenance,
+release or publication is selected by this governance refresh.
+
+### Previous 0.31.10 checks
 
 The 161-file 0.31.10 snapshot and dependency pins passed. Actionlint and sourced
 ShellCheck passed for the changed workflow/local fixture. The actual CI selection

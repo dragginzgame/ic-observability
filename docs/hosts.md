@@ -45,7 +45,7 @@ before their first tool installation and save after setup, before product checks
 Cache service failures permit download fallback; downloaded bytes still require
 the selected checksum. The existing native prerequisite/compiler order is retained.
 
-The committed Shared Tooling 0.31.10 refresh (`c528579`) preserves the selected
+The committed Shared Tooling 0.31.12 refresh (`eb3c8e0`) preserves the selected
 tool catalogs and compiler. `make tools-check check-pins` admits prepared tools;
 no reinstall or store cleanup is part of this adoption. Earlier source-bound
 receipts retain their original snapshots. Explicit setup still uses
@@ -57,6 +57,8 @@ obsolete executable retirement follows the [shared guide](tool-store-maintenance
 `make cloc CLOC_DEPTH=0` reports package detail; `CLOC_DEPTH=1` adds source modules.
 `bash scripts/dev/cloc.sh -d 1 ic-metrics::recording` drills into one source branch;
 the depth is relative to the selected crate or module.
+Terminal reports colour workspace, crate and module names; redirected or
+`NO_COLOR=1` reports stay plain. Sibling scans use one updating progress line.
 `bash scripts/dev/cloc.sh --json`
 emits schema 2 with application/library, test, example, benchmark, tooling and
 unclassified counts. Singular Rust test paths are not retained. The allocation-free
