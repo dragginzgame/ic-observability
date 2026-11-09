@@ -5,6 +5,16 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.29.8] - Unreleased
+
+### ➕ Added
+
+- Record typed first-admitted scalar identities and typed lexical-prefix
+  measurements with borrowed updates and complete eviction/omission accounting.
+  Lexical limits require a checked worst-case key budget to preserve deterministic
+  identity selection. Existing string-table, fixed-recorder and report boundaries
+  are unchanged. [#132](https://github.com/dragginzgame/ic-observability/issues/132).
+
 ## [0.29.7] - 2026-11-08
 
 ### 🛠️ Tooling

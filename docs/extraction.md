@@ -51,6 +51,8 @@ No general math crate replaces the removed API.
 | `MeasurementSummary` | Aggregate plus latest ordered observation; no unordered merge |
 | `MeasurementHistogram<N>` | Immutable configured bounds, disjoint counts, overflow and aggregate; same-bound merging |
 | `BoundedMeasurementTable` (`recording`) | Bounded first-admitted keys with explicit omission accounting |
+| `BoundedCounterTable<K>` (`recording`) | First-admitted typed diagnostic scalar identities; omitted original increments |
+| `LexicalMeasurementTable<K>` (`recording`) | Typed lexical-prefix identities; complete evicted aggregate and refused-observation accounting |
 | `MeasurementWindow<T>` | Host-selected measurement composition and nonwrapping local reset sequence |
 
 Zero is a valid observation, separate from no samples. Empty maxima/latest values
@@ -181,3 +183,15 @@ Equal sequences from different instances never establish continuity. Restart and
 persistence remain at their existing owners; this is not a durable registry.
 Authoritative database debt, quotas and balances never move into this recorder.
 No change to inclusive versus exclusive attribution or public DTOs is implied.
+
+The additive typed counter table applies the same first-admitted entry/per-key/
+combined-byte policy to scalar increments without inventing observation samples.
+The typed lexical table instead retains the smallest eligible identities by
+consumer `Ord`. It requires a combined key budget covering every slot at its
+per-key maximum; insufficient/overflowing configuration refuses before a table
+exists. This prevents byte-pressure arrival-order dependence. Every evicted
+aggregate moves completely into omitted accounting; rejected observations enter
+it once. Borrowed existing-key updates allocate no key. These tables own no
+DTO, endpoint roster, platform sampling or persistence contract. The original
+string table keeps its existing behavior. Canic owns its endpoint/checkpoint
+partition and adoption under [#756](https://github.com/dragginzgame/canic/issues/756).

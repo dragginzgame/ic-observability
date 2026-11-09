@@ -6,6 +6,16 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.24.13] - Unreleased
+
+### ➕ Added
+
+- Retain structured diagnostic rows in a typed bounded heap history with
+  count/payload-byte limits, oldest-row eviction receipts and intact refused
+  inputs. Consumers retain sanitization, timestamp semantics and schema ownership;
+  existing text logs and checkpoints are unchanged.
+  [#131](https://github.com/dragginzgame/ic-observability/issues/131).
+
 ## [0.24.12] - 2026-11-08
 
 ### 🛠️ Tooling

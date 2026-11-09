@@ -8,7 +8,12 @@
 
 extern crate alloc;
 
+mod history;
 mod log;
+
+pub use history::{
+    BoundedHistory, HistoryAppend, HistoryLimits, HistoryRejection, HistoryRejectionReason,
+};
 
 pub use log::{
     AppendError, AppendReceipt, Entry, EntryInput, Filter, Label, Level, Limits, Log,

@@ -6,6 +6,22 @@ Logging remains dependency-free `no_std` + `alloc`.
 
 ## Heap engine and checkpoints
 
+The additive `BoundedHistory<T>` API retains opaque typed rows under fixed count
+and caller-accounted payload-byte ceilings. Append evicts oldest rows, reporting
+their count and payload charge; disabled or individually oversized inputs return
+intact without mutating history. Borrowed double-ended iteration supports both
+append order and newest-first projection. Clear drops rows/charges and keeps
+limits. Rows need no codec or `Clone` implementation.
+
+This history imposes no timestamp, sequence, schema, sanitization or checkpoint
+contract. Consumers bound fields, charge retained content consistently, preserve
+privacy and timestamp semantics, and must not grow charged content through
+interior mutability. Byte limits do not automatically measure fixed metadata,
+spare capacity or allocator overhead. The existing text `Log` and its stable
+checkpoint representation are unchanged. Producer [#131](https://github.com/dragginzgame/ic-observability/issues/131)
+supplies the primitive; Canic [#755](https://github.com/dragginzgame/canic/issues/755)
+retains structured-diagnostic adoption and qualification.
+
 Logging owns bounded append admission, UTF-8 truncation, explicit age-retention
 batches and scan-bounded cursor pages. Callers supply time and choose limits,
 labels, authorization, scheduling and instance identity. Paging borrows retained

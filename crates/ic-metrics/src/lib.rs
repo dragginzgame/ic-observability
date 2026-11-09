@@ -19,7 +19,8 @@ extern crate alloc;
 mod recording;
 #[cfg(feature = "recording")]
 pub use recording::{
-    BoundedMeasurementTable, MeasurementAttribution, MeasurementOmission, MeasurementTableLimits,
+    BoundedCounterTable, BoundedMeasurementTable, LexicalMeasurementTable, LexicalTableLimitsError,
+    MeasurementAttribution, MeasurementOmission, MeasurementTableLimits,
 };
 
 mod aggregate;

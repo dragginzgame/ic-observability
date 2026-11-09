@@ -35,6 +35,37 @@ retention with explicit entry/key budgets and omitted-observation accounting;
 that feature uses `alloc` and adds no dependencies. `MeasurementWindow<T>` provides
 local nonwrapping reset bookkeeping for application-selected measurement state.
 
+With `recording`, `BoundedCounterTable<K>` retains the first admitted typed
+identities and records original `u128` scalar increments. `LexicalMeasurementTable<K>`
+retains the lexically smallest eligible keys and moves complete evicted histories
+into its omitted aggregate. Both accept consumer-accounted key-payload byte
+charges and support borrowed updates without constructing repeated keys.
+Lexical construction requires `total_key_bytes >= entries * key_bytes` (with
+checked multiplication), so byte pressure cannot change identity selection by
+arrival order. The existing string-keyed `BoundedMeasurementTable` keeps its
+first-admitted policy and independent combined-byte budget unchanged.
+
+```rust
+# #[cfg(feature = "recording")] {
+use ic_metrics::{BoundedCounterTable, LexicalMeasurementTable, MeasurementTableLimits};
+let limits = MeasurementTableLimits { entries: 1, key_bytes: 8, total_key_bytes: 8 };
+let mut calls = BoundedCounterTable::new(limits);
+calls.add((7_u64, "read"), 4, 1);
+calls.add((8, "read"), 4, 2);
+assert_eq!(calls.omitted().exact_total(), Ok(2));
+let mut instructions = LexicalMeasurementTable::new(limits).unwrap();
+instructions.record("z", 1, 10);
+instructions.record("a", 1, 0);
+assert_eq!(instructions.entries().next().unwrap().0, &"a");
+assert_eq!(instructions.omitted().total(), 10);
+# }
+```
+
+Typed ordering and payload charges must remain stable while keys are retained;
+byte charges exclude fixed metadata, map nodes and allocator overhead. Omitted
+state counts increments or observations, never distinct lost identities. These
+heap tables own neither endpoint schemas nor persistence formats.
+
 Exactly reaching a cap remains exact. Actual overflow clips the total/count and
 sets a sticky flag. Empty observations differ from measured zero; zero counters
 are exact. Applications own units, platform reads, attribution, labels, admission,

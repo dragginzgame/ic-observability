@@ -1,4 +1,40 @@
-# Current handoff — 2026-11-08
+# Current handoff — 2026-11-09
+
+## Local typed recording APIs for Canic
+
+Producer [#131](https://github.com/dragginzgame/ic-observability/issues/131)
+adds `BoundedHistory<T>` to Logging: immutable count/accounted-payload limits,
+oldest-row eviction receipts, intact typed refusals, borrowed reversible rows
+and clear. Callers own sanitization, field bounds, timestamp precision/order,
+privacy and lifecycle. There is no typed-history checkpoint or codec; existing
+`Log`/checkpoint behavior is unchanged. Canic
+[#755](https://github.com/dragginzgame/canic/issues/755) owns adoption.
+
+Producer [#132](https://github.com/dragginzgame/ic-observability/issues/132)
+adds `BoundedCounterTable<K>` and `LexicalMeasurementTable<K>` under `recording`.
+Typed first-admitted scalars preserve original increments; lexical measurements
+merge complete evicted histories into omitted accounting. Both support borrowed
+existing-key updates. Lexical construction requires checked `entries * key_bytes`
+covered by the total key budget to preserve arrival-order-independent identity
+selection. Consumer charges exclude automatic metadata/allocator measurement.
+Canic [#756](https://github.com/dragginzgame/canic/issues/756) retains attribution,
+partitioning and report/installed acceptance; no sibling was edited.
+
+Deployment is authorized for the additive Logging 0.24.13 and Metrics 0.29.8
+patches, based on `f08c0ef`. The source commit excludes the pre-existing syn
+3.0.10 Cargo.lock edit; captured release validation uses the committed graph.
+The explicit ordered batch selects Metrics then Logging, direct delivery to
+origin/main and verified crates.io publication. Both groups retain their full
+20-stage plan because this batch touches shared and both-package inputs.
+
+Focused Linux Rust 1.99.1 checks pass: native library/test and Wasm library Clippy
+with warnings denied; four history tests; eighteen recording tests (including
+the independent scalar model and all 120 lexical arrival orders per capacity);
+two external typed API tests; eight positive/thirty negative doctests; six
+dependency-free production graphs; documentation links and whitespace checks.
+Existing fixed recorders, text logging and other consumer contracts retain their
+previous evidence. Native macOS and Canic's real graph/installed qualification
+are separate; these source-level checks provide no IC cost measurement.
 
 ## Installed Cargo-selected toko-tooling 0.36.0
 

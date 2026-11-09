@@ -7,12 +7,38 @@ The library is `no_std` with `alloc`; it has no dependency on Metrics or any oth
 
 ```toml
 [dependencies]
-ic-logging = "0.23"
+ic-logging = "0.24.13"
 ```
 
 Logging has its own version and [changelog](https://github.com/dragginzgame/ic-observability/blob/main/releases/logging/CHANGELOG.md). Maintainers select
 `RELEASE_GROUP=logging` for release and publication; see
 [independent releases](https://github.com/dragginzgame/ic-observability/blob/main/docs/independent-releases.md).
+
+For structured diagnostics, `BoundedHistory<T>` retains opaque consumer-owned
+rows with fixed count and caller-accounted payload-byte limits. It evicts oldest
+rows, reports evicted row/byte counts, and returns individually refused inputs
+intact. Iteration borrows oldest-first rows and can be reversed. Payloads need
+neither `Clone` nor a codec. Callers retain field bounds, sanitization, privacy,
+timestamp precision/order and lifecycle; no timestamp conversion or sequence ID
+is imposed. Zero row capacity disables admission. This API has no checkpoint or
+stable codec and does not change the existing `Log` engine or snapshot contract.
+
+```rust
+use ic_logging::{BoundedHistory, HistoryLimits};
+let mut history = BoundedHistory::new(HistoryLimits { entries: 1, payload_bytes: 16 });
+// The caller chooses and consistently charges retained payload content.
+history.append((9_000_000_001_u64, "failure"), 7).unwrap();
+let receipt = history.append((1, "next"), 4).unwrap();
+assert_eq!(receipt.evicted, 1);
+assert_eq!(receipt.evicted_payload_bytes, 7);
+assert_eq!(history.entries().next_back().unwrap().0, 1);
+```
+
+Payload-byte accounting is a caller contract, not automatic heap measurement.
+Fixed row metadata, spare capacity and allocator overhead are excluded unless
+explicitly charged. Bound every payload field before append, and do not grow
+charged content through interior mutability while retained. The history owns
+immutable per-row charges and enforces their sum; it never normalizes payloads.
 
 ```rust
 use ic_logging::{EntryInput, Filter, Level, Limits, Log, PageRequest};

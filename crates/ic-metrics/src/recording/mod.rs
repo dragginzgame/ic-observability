@@ -4,6 +4,11 @@ use alloc::{boxed::Box, collections::BTreeMap};
 
 use crate::MeasurementAggregate;
 
+mod counter_table;
+mod lexical;
+pub use counter_table::BoundedCounterTable;
+pub use lexical::{LexicalMeasurementTable, LexicalTableLimitsError};
+
 #[cfg(test)]
 mod tests;
 

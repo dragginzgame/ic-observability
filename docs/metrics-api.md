@@ -24,6 +24,9 @@ the complete instrumentation surface; their fields are private unless listed.
 | `HistogramMergeError` | `index` | Typed differing-bound refusal, with no partial merge |
 | `MeasurementWindow<T>` | `new`, `state`, `state_mut`, `sequence`, `reset` | Application combinations of measurement state share a nonwrapping local reset sequence; no clock/global/durable identity |
 | `BoundedMeasurementTable` (`recording`) | `new`, `record`, `entries`, `omitted`, `retained_key_bytes`, `limits`, `clear` | Opt-in application instrumentation retains bounded identities and accounts for omitted observations |
+| `BoundedCounterTable<K>` (`recording`) | `new`, `add`, `add_existing`, `entries`, `omitted`, `retained_key_bytes`, `limits`, `clear` | First-admitted typed diagnostic identities, original scalar units and complete scalar omission accounting |
+| `LexicalMeasurementTable<K>` (`recording`) | `new`, `record`, `record_existing`, `entries`, `omitted`, `retained_key_bytes`, `limits`, `clear` | Typed lexical-prefix retention; complete evicted aggregates and rejected observations contribute once to omitted state |
+| `LexicalTableLimitsError` (`recording`) | `KeyBudgetOverflow`, `KeyBudgetTooSmall` | Refuse limits that cannot guarantee arrival-order-independent lexical identity retention |
 | `MeasurementTableLimits` (`recording`) | public fields `entries`, `key_bytes`, `total_key_bytes` | Caller selects explicit registry budgets |
 | `MeasurementAttribution` (`recording`) | `Retained`, `Omitted(MeasurementOmission)` | Caller can observe recording admission without losing the omitted sample |
 | `MeasurementOmission` (`recording`) | `KeyBytes`, `Entries`, `TotalKeyBytes` | Typed bounded-key refusal reasons |
@@ -37,6 +40,20 @@ without exposing internal fields. Error types derive the five value traits and
 implement `Display` and `core::error::Error`. No recorder implements numeric
 operators, ordering, conversions, Serde, Wire or a generic numeric trait. Normal
 Rust auto traits follow owned fields; no custom auto-trait implementation exists.
+
+The two typed tables derive `Clone`/`Debug` conditional on their keys. Their
+operations require `K: Ord`; borrowed updates also require `K: Borrow<Q>` and
+`Q: Ord`. Entries borrow keys and copy recorders without exposing mutation.
+The lexical limit error derives `Clone`, `Copy`, `Debug`, `Eq`, `PartialEq` and
+implements `Display`/`core::error::Error`. No new recorder transport traits exist.
+Consumer key-payload byte charges exclude metadata/map/allocator overhead and
+must stay consistent. Lexical construction requires a checked worst-case key
+budget of `entries * key_bytes`, covered by `total_key_bytes`; it cannot use a
+smaller weighted-byte budget without losing its identity-selection guarantee.
+The existing first-admitted string table and all fixed recorder contracts stay
+unchanged. Canic owns adoption under
+[#756](https://github.com/dragginzgame/canic/issues/756); producer capability is
+tracked in [#132](https://github.com/dragginzgame/ic-observability/issues/132).
 
 ## Explicit governed persistence
 
