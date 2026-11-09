@@ -37,7 +37,7 @@ collection or turn a failed check into a successful one.
 
 ## Prerequisites and focused checks
 
-Root `[workspace.dependencies]` declares `toko-tooling = "=0.37.5"` once.
+Root `[workspace.dependencies]` declares `toko-tooling = "=0.38.2"` once.
 Both real members inherit it unconditionally as a dev-dependency and merge the
 name into cargo-machete ignored metadata, without a Rust import. Cargo.lock pins
 the registry version/checksum; no selection-only package or separate tooling
@@ -56,7 +56,7 @@ before their first tool installation and save after setup, before product checks
 Cache service failures permit download fallback; downloaded bytes still require
 the selected checksum. The existing native prerequisite/compiler order is retained.
 
-The crates.io toko-tooling 0.37.5 refresh preserves the selected
+The crates.io toko-tooling 0.38.2 refresh preserves the selected
 tool catalogs and compiler. `make tools-check check-pins` admits prepared tools;
 setup admits the renamed catalog contract without store cleanup. Earlier source-bound
 receipts retain their original snapshots. Explicit setup still uses

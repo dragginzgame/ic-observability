@@ -17,7 +17,7 @@ consumer-contract or persistence-boundary changes.
   releases/metrics or releases/logging. The root has shared metadata and changelog
   navigation, with no aggregate version. Coordinated history is in releases/history.md.
   Membership is explicit in ci/cargo-release-groups.json and root Cargo comments.
-  Root `[workspace.dependencies]` pins crates.io `toko-tooling = "=0.37.5"`.
+  Root `[workspace.dependencies]` pins crates.io `toko-tooling = "=0.38.2"`.
   Every real member inherits it as a dev-dependency and lists `toko-tooling` in
   its cargo-machete ignored metadata; no Rust import or selection-only package
   is needed. Cargo.lock owns its version/checksum, and the snapshot records
@@ -30,6 +30,10 @@ consumer-contract or persistence-boundary changes.
   The root dependency catalog lists both members with full current versions and
   paths; each alias belongs to its group's dependency roster. Catalog entries
   alone add no dependency edge between the libraries.
+  Both product packages remain under `crates/` in the virtual root workspace,
+  which explicitly excludes `qualification`. No maintained qualification package
+  or workspace exists here; the two `qualification/` README files retain retired
+  history only. Unit tests, integration tests and examples remain package-local.
   The shared observability contract owns the application-tree instrumentation
   boundary and Canic's reporting authority. The concrete public API and remaining
   consumer repair map are recorded in [the API inventory](docs/metrics-api.md).

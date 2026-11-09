@@ -6,6 +6,15 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.24.15] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt authenticated toko-tooling 0.38.2 and its product/qualification placement
+  rules. Retain both libraries and their package-local tests in the product
+  workspace, with qualification explicitly excluded.
+  [Tooling #369](https://github.com/dragginzgame/toko-tooling/issues/369).
+
 ## [0.24.14] - 2026-11-09
 
 ### 🛠️ Tooling

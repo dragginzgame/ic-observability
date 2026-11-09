@@ -5,6 +5,7 @@ members = [
     "crates/ic-metrics",
 ]
 default-members = ["crates/ic-logging", "crates/ic-metrics"]
+exclude = ["qualification"]
 resolver = "3"
 
 [workspace.package]
@@ -27,7 +28,7 @@ ic-metrics = { path = "crates/ic-metrics", version = "0.29.9" }
 # External restoration oracle and public API trait-refusal checks.
 num-bigint = { version = "0.5.1", default-features = false }
 serde = { version = "1.0", default-features = false }
-toko-tooling = "=0.37.5"
+toko-tooling = "=0.38.2"
 
 [workspace.lints.rust]
 missing_docs = "warn"

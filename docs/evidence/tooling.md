@@ -1,11 +1,41 @@
 # Contributor tooling
 
-The current local selection is crates.io toko-tooling **0.37.5**, pinned once
+The current local selection is crates.io toko-tooling **0.38.2**, pinned once
 at the root and inherited as a dev-dependency by both real packages. Cargo.lock
 and `.toko-tooling.snapshot` select archive SHA-256
-`9fc1a752f4f8203d999c4cd593afb9ea18717b28d407492fc98aab5722526be3`.
-Authenticated preview preserves all 99 roots and 169 payload files. Only the
-Cargo boundary checker and its owning dependency guide change from 0.37.4.
+`45c12cc2aa598d14e137dd7db50f12e943470b4ce351dfcaffeccde6821c1876`.
+Authenticated preview preserves all 99 roots and selects 171 payload files.
+From the local 0.38.0 snapshot, five existing payloads change and the shared
+qualification shell/jq companions are added. This adoption
+is local and uncommitted, with pending Metrics 0.29.10 and Logging 0.24.15 notes;
+package versions remain at their published 0.29.9 and 0.24.14 identities.
+
+Cargo metadata and the maintained manifest inventory identify one virtual product
+root with `ic-logging` at `crates/ic-logging` and `ic-metrics` at
+`crates/ic-metrics`. Both locations already conform; no package moves are needed.
+The root explicitly excludes `qualification`, which contains only two historical
+README files, no packages, manifest or lock. No empty qualification workspace is
+created. Package-local tests/examples remain with their products; generated
+workspaces beneath `target/` remain disposable fixtures. Both product release
+groups and all 20 gate obligations are preserved. Future separate qualification
+packages belong to the independent workspace and neither product group.
+
+Current evidence is under `target/evidence/toko-tooling-0382/`: authenticated
+preview/update and tool admission, locked membership, actual group plans and
+Make `release-files` inventories, validation roster, snapshot/pins, formatting,
+links and diff checks. The new multi-lock support requires an explicit
+`qualification_workspace` policy field; this repository has none and keeps its
+original four-file plan per group. No qualification workspace, lock or renderer
+is introduced, and no intent-to-add entry is needed for the exported companions.
+General multi-lock implementation cases remain with Toko Tooling.
+
+The preceding 0.38.0 placement/package-inventory and production-boundary evidence
+is under `target/evidence/toko-tooling-0380/`. No product paths, sources, features,
+groups or caller wiring changed in this refresh. Cargo updates only toko-tooling;
+the deferred syn selection and all product source files remain intact. No sibling
+change, commit or deployment belongs to this adoption.
+
+The preceding 0.37.5 refresh changed the Cargo boundary checker and its guide.
 The new allowance is limited to unconditional Candid dev-dependencies of the
 unpublished `ic-wire-benchmarks` package; neither Observability package is that
 owner. Both remain subject to their existing external-dependency and zero-
@@ -15,7 +45,7 @@ installation, tooling admission, pins, formatting, links and diff checks.
 Other caller qualification remains applicable to unchanged inputs. Cargo changes
 only the tooling selection; the API fix and deferred syn selection were
 preserved. Focused evidence is under `target/evidence/toko-tooling-0375/`.
-The accumulated adoption is delivered with Metrics 0.29.9 and Logging 0.24.14;
+The adoption through 0.37.5 is delivered with Metrics 0.29.9 and Logging 0.24.14;
 the [release receipt](releases/omission-toko0375-20261109.md) records both full
 20-stage gates, registry readback and deferred-lock custody.
 

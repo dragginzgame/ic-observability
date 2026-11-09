@@ -10,13 +10,25 @@ Cargo.toml dependency catalog identify every member:
 | metrics | ic-metrics | crates/ic-metrics/Cargo.toml package.version | [Metrics changelog](../releases/metrics/CHANGELOG.md) |
 | logging | ic-logging | crates/ic-logging/Cargo.toml package.version | [Logging changelog](../releases/logging/CHANGELOG.md) |
 
+The root is the only maintained Cargo workspace. Both product packages already
+use the standard `crates/<package-name>/` locations; their ordinary tests and
+examples remain with them. The root explicitly excludes `qualification`.
+That tree contains two historical README files and no maintained packages,
+manifest or lock, so no qualification workspace or package move is needed.
+Generated release-test workspaces beneath `target/` are disposable fixtures,
+not maintained qualification packages. Cargo metadata supplies actual members;
+the release policy maps those product identities to their independent groups.
+Any future separate qualification package must use the independent workspace
+under the [placement rule](../rules/rust-workspaces.md#standard-layout), without
+adding it to either product group or removing required validation.
+
 The groups were separated at the existing 0.23.0 numeric version. Logging first
 converted to a literal version; Metrics followed at its released 0.23.1 version.
 Neither conversion changes a package's numeric identity.
 Earlier coordinated releases remain once in [shared history](../releases/history.md), through 0.23.0;
 both group ledgers link to that history. Existing tags and receipts are retained.
 Tooling has no selection-only package or release-group membership. One exact
-root dependency pins toko-tooling 0.37.5; both libraries inherit it only for
+root dependency pins toko-tooling 0.38.2; both libraries inherit it only for
 development, and Cargo.lock owns its registry checksum. Each public member has a root
 catalog entry with its local path and full current version, registered in its
 group's dependency roster. These unused catalog aliases provide a readable

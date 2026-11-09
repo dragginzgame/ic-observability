@@ -5,6 +5,15 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.29.10] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt authenticated toko-tooling 0.38.2 and its product/qualification placement
+  rules. Retain both libraries and their package-local tests in the product
+  workspace, with qualification explicitly excluded.
+  [Tooling #369](https://github.com/dragginzgame/toko-tooling/issues/369).
+
 ## [0.29.9] - 2026-11-09
 
 ### ➕ Added

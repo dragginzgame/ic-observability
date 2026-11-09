@@ -24,11 +24,13 @@ Metrics **0.29.9** and Logging **0.24.14** are delivered to origin/main and
 published, non-yanked and independently verified against their source archives.
 The [delivery receipt](../evidence/releases/omission-toko0375-20261109.md) owns
 exact commits, annotated tags, archive hashes, plans and publication evidence.
-Never re-upload these versions. Both ledger entries are finalized; Metrics
+Never re-upload these versions. Both published ledger entries are finalized; Metrics
 includes the omission APIs and tooling, while Logging includes the changed
 development-tooling requirement. The normal checkout is reconciled with the
 completed batch. Earlier typed APIs and their original delivery identities are
 retained in the [preceding receipt](../evidence/releases/typed-recording-20261109.md).
+Pending Metrics 0.29.10 and Logging 0.24.15 notes cover the local 0.38.2 tooling/
+placement adoption below; package versions remain unchanged until release.
 
 Logging supplies `BoundedHistory<T>`: fixed count/accounted-payload limits,
 oldest-row eviction receipts, intact typed refusals, borrowed reversible rows
@@ -79,29 +81,35 @@ owns those source and admission-repair identities. Earlier stashes, including
 [evidence retention index](../evidence/README.md) owns private-source custody
 and historical evidence; no source/export authority is implied by read access.
 
-## Installed Cargo-selected toko-tooling 0.37.5
+## Local Cargo-selected toko-tooling 0.38.2 and crate placement
 
-Root `[workspace.dependencies]` declares `toko-tooling = "=0.37.5"` once. Both real
+Root `[workspace.dependencies]` declares `toko-tooling = "=0.38.2"` once. Both real
 members inherit it unconditionally as a dev-dependency with cargo-machete ignored
 metadata and no artificial Rust import. The root remains virtual, with no
 selection-only package, metadata selector or separate tooling lock. Cargo.lock
 and the snapshot select registry archive SHA-256
-`9fc1a752f4f8203d999c4cd593afb9ea18717b28d407492fc98aab5722526be3`; all 99 roots
-and 169 installed files agree. Production library graphs remain dependency-free.
+`45c12cc2aa598d14e137dd7db50f12e943470b4ce351dfcaffeccde6821c1876`; all 99 roots
+and 171 installed files agree. Production library graphs remain dependency-free.
 
-The 0.37.5 refresh is committed and delivered. Cargo updated only toko-tooling
-relative to the incoming lock, preserving the deferred syn 3.0.10 selection and
-the omitted-only API fix. Authenticated export preserves all 99 roots and
-169 files, including explicit offline engineering/RPC guides. Only the Cargo
-boundary checker and dependency guide change: the unpublished Wire benchmark's
-Candid dev-only allowance does not apply to either Observability package.
-Focused checks cover the actual Cargo and zero-allowance Candid/CBOR boundary
-callers; other unchanged inputs retain their prior qualification.
-Binding rules are adopted without exceptions; product architecture, limits,
-commands and full release gates remain local choices. The baseline now pins its
-detailed policy links and selects latest stable direct dependencies during scoped
-maintenance; no unrelated dependency refresh is implied. Refresh evidence is under
-`target/evidence/toko-tooling-0375/`.
+The 0.38.2 adoption is local and uncommitted. Cargo updated only toko-tooling,
+preserving the deferred syn 3.0.10 selection and local placement work. The exporter
+adds two qualification helper companions and updates five existing payloads from
+0.38.0. Qualification release preparation remains unselected: there is no
+`qualification_workspace` declaration or qualification package here. Actual
+group plans and Make file inventories retain the same four files per group.
+Binding rules apply without exceptions. Evidence is under
+`target/evidence/toko-tooling-0382/`; the preceding placement checks remain under
+`target/evidence/toko-tooling-0380/`.
+
+The maintained manifest inventory and Cargo metadata identify only the virtual
+root and its two product libraries, already correctly placed under `crates/`.
+The root explicitly excludes `qualification`; its two README files are retired
+history, not maintained packages. No package move or empty qualification
+workspace is needed. Unit/integration tests and examples remain package-local.
+Generated workspaces under `target/` are disposable fixtures. Product groups,
+versions, APIs, features and all 20 release obligations remain intact. Focused
+checks cover locked membership/defaults, package inventories, release rosters,
+production declarations and documentation; unchanged caller evidence is reused.
 
 The preceding 0.37.1 published-package bootstrap refreshed all 97 mapped roots,
 then the receipt moved to `.toko-tooling.snapshot`. The baseline is now
