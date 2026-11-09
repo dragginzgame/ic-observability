@@ -47,6 +47,58 @@ fn lexical_retention_merges_complete_evicted_history_and_rejections_once() {
 }
 
 #[test]
+fn lexical_explicit_omission_records_zero_maximum_and_clear() {
+    let limits = MeasurementTableLimits {
+        entries: 0,
+        key_bytes: 0,
+        total_key_bytes: 0,
+    };
+    let mut table = LexicalMeasurementTable::<String>::new(limits).unwrap();
+    assert_eq!(table.omitted(), MeasurementAggregate::EMPTY);
+    table.record_omitted(0);
+    assert_eq!(table.omitted().samples(), 1);
+    assert_eq!(table.omitted().maximum(), Some(0));
+    table.record_omitted(u64::MAX);
+    table.record_omitted(1);
+    assert_eq!(table.omitted().samples(), 3);
+    assert_eq!(table.omitted().total(), u128::from(u64::MAX) + 1);
+    assert_eq!(table.omitted().maximum(), Some(u64::MAX));
+    assert!(!table.omitted().samples_overflowed());
+    assert!(!table.omitted().total_overflowed());
+    assert_eq!(table.entries().len(), 0);
+    assert_eq!(table.retained_key_bytes(), 0);
+    assert_eq!(table.limits(), limits);
+    table.clear();
+    assert_eq!(table.omitted(), MeasurementAggregate::EMPTY);
+    assert_eq!(table.limits(), limits);
+}
+
+#[test]
+fn lexical_explicit_omission_distinguishes_exact_caps_and_sticky_overflow() {
+    let mut table = LexicalMeasurementTable::<u8>::new(limits()).unwrap();
+    table.omitted =
+        MeasurementAggregate::from_parts(u64::MAX, u128::from(u64::MAX), Some(1), false, false)
+            .unwrap();
+    assert!(!table.omitted().samples_overflowed());
+    table.record_omitted(0);
+    assert!(table.omitted().samples_overflowed());
+    assert!(!table.omitted().total_overflowed());
+    assert_eq!(table.omitted().maximum(), Some(1));
+
+    table.omitted =
+        MeasurementAggregate::from_parts(u64::MAX, u128::MAX, Some(u64::MAX), true, false).unwrap();
+    table.record_omitted(0);
+    assert!(!table.omitted().total_overflowed());
+    table.record_omitted(1);
+    table.record_omitted(0);
+    assert!(table.omitted().samples_overflowed());
+    assert!(table.omitted().total_overflowed());
+    assert_eq!(table.omitted().samples(), u64::MAX);
+    assert_eq!(table.omitted().total(), u128::MAX);
+    assert_eq!(table.omitted().maximum(), Some(u64::MAX));
+}
+
+#[test]
 fn lexical_eviction_preserves_actual_overflow_quality() {
     let mut table = LexicalMeasurementTable::new(limits()).unwrap();
     table.record(3, 1, 0);

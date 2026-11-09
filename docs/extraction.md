@@ -195,3 +195,11 @@ it once. Borrowed existing-key updates allocate no key. These tables own no
 DTO, endpoint roster, platform sampling or persistence contract. The original
 string table keeps its existing behavior. Canic owns its endpoint/checkpoint
 partition and adoption under [#756](https://github.com/dragginzgame/canic/issues/756).
+
+Typed tables also expose omitted-only recording: `add_omitted(u128)` preserves
+scalar units, while `record_omitted(u64)` records one observation, including zero.
+Both delegate only to canonical arithmetic, without constructing/comparing a key,
+allocating or changing retained state. The caller can reject an oversized borrowed
+identity before copying it. It owns eligibility and must not also admit the same
+event. No sentinel identity, separate omitted recorder, new trait or codec is
+needed; existing admission and complete-eviction behavior are unchanged.

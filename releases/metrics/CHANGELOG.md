@@ -5,6 +5,25 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.29.9] - Unreleased
+
+### ➕ Added
+
+- Account omitted typed diagnostics without constructing rejected identities.
+  New scalar and measurement methods preserve canonical zero/overflow quality
+  and retained state while avoiding key comparison or allocation.
+  [#133](https://github.com/dragginzgame/ic-observability/issues/133).
+
+### 🛠️ Tooling
+
+- Adopt authenticated toko-tooling 0.37.5, including accurate test-only LOC
+  classification and refusal of obsolete LOC metadata. Migrate the baseline,
+  receipt, tooling commands, variables and metadata to Toko names. Preserve
+  inherited development selection and complete product release requirements.
+  Explicitly protect consumer validation and metadata recipes under the new
+  recipe-scoped Make admission guard.
+  [Tooling #367](https://github.com/dragginzgame/toko-tooling/issues/367).
+
 ## [0.29.8] - 2026-11-09
 
 ### ➕ Added

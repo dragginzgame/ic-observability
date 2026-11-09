@@ -16,7 +16,7 @@ bash "$root/scripts/ci/prepare-script-fixture.sh" "$root" "$fixture/repo" \
 cd "$fixture/repo"
 mkdir -p scripts/dev
 # This fixture isolates publication policy; tooling refusal is tested separately.
-printf '#!/usr/bin/env bash\nexit 0\n' > scripts/dev/shared-tooling.sh
+printf '#!/usr/bin/env bash\nexit 0\n' > scripts/dev/toko-tooling.sh
 printf '/target/\n' > .gitignore
 printf '[workspace.package]\nrepository = "%s/remote.git"\n' "$fixture" > Cargo.toml
 mkdir -p crates/ic-metrics/src

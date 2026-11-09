@@ -70,7 +70,7 @@ Any `PACKAGE` override must belong to the selected group. See
 release commands and recovery.
 Each command runs the native/Wasm Clippy gate before Cargo publication. Neither
 package depends on the other, so there is no publication-order dependency.
-Shared Tooling owns package-selection mechanics and dispatch. This repository
+Toko Tooling owns package-selection mechanics and dispatch. This repository
 declares its group policy, registry and validation target. Exact versions come
 from locked offline workspace metadata; undeclared
 packages are refused. Selection and attempt evidence is retained under

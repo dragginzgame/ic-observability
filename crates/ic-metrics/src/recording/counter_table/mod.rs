@@ -54,7 +54,7 @@ impl<K: Ord> BoundedCounterTable<K> {
             None
         };
         if let Some(reason) = reason {
-            self.omitted.add(increment);
+            self.add_omitted(increment);
             return MeasurementAttribution::Omitted(reason);
         }
         let mut counter = MeasurementCounter::ZERO;
@@ -62,6 +62,16 @@ impl<K: Ord> BoundedCounterTable<K> {
         self.entries.insert(key, counter);
         self.retained_key_bytes += key_bytes;
         MeasurementAttribution::Retained
+    }
+
+    /// Add one original scalar increment whose identity the caller cannot retain.
+    ///
+    /// No key is constructed or compared, no allocation occurs, and retained
+    /// entries, charges and limits are unchanged. Zero is an exact increment;
+    /// actual overflow remains sticky. The caller owns why identity was omitted.
+    /// Use this instead of admission for that increment, never in addition to it.
+    pub const fn add_omitted(&mut self, increment: u128) {
+        self.omitted.add(increment);
     }
 
     /// Update an admitted borrowed identity without constructing or allocating a key.

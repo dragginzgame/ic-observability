@@ -24,8 +24,8 @@ the complete instrumentation surface; their fields are private unless listed.
 | `HistogramMergeError` | `index` | Typed differing-bound refusal, with no partial merge |
 | `MeasurementWindow<T>` | `new`, `state`, `state_mut`, `sequence`, `reset` | Application combinations of measurement state share a nonwrapping local reset sequence; no clock/global/durable identity |
 | `BoundedMeasurementTable` (`recording`) | `new`, `record`, `entries`, `omitted`, `retained_key_bytes`, `limits`, `clear` | Opt-in application instrumentation retains bounded identities and accounts for omitted observations |
-| `BoundedCounterTable<K>` (`recording`) | `new`, `add`, `add_existing`, `entries`, `omitted`, `retained_key_bytes`, `limits`, `clear` | First-admitted typed diagnostic identities, original scalar units and complete scalar omission accounting |
-| `LexicalMeasurementTable<K>` (`recording`) | `new`, `record`, `record_existing`, `entries`, `omitted`, `retained_key_bytes`, `limits`, `clear` | Typed lexical-prefix retention; complete evicted aggregates and rejected observations contribute once to omitted state |
+| `BoundedCounterTable<K>` (`recording`) | `new`, `add`, `add_omitted`, `add_existing`, `entries`, `omitted`, `retained_key_bytes`, `limits`, `clear` | First-admitted typed diagnostic identities, original scalar units and complete scalar omission accounting |
+| `LexicalMeasurementTable<K>` (`recording`) | `new`, `record`, `record_omitted`, `record_existing`, `entries`, `omitted`, `retained_key_bytes`, `limits`, `clear` | Typed lexical-prefix retention; complete evicted aggregates and rejected observations contribute once to omitted state |
 | `LexicalTableLimitsError` (`recording`) | `KeyBudgetOverflow`, `KeyBudgetTooSmall` | Refuse limits that cannot guarantee arrival-order-independent lexical identity retention |
 | `MeasurementTableLimits` (`recording`) | public fields `entries`, `key_bytes`, `total_key_bytes` | Caller selects explicit registry budgets |
 | `MeasurementAttribution` (`recording`) | `Retained`, `Omitted(MeasurementOmission)` | Caller can observe recording admission without losing the omitted sample |
@@ -54,6 +54,15 @@ The existing first-admitted string table and all fixed recorder contracts stay
 unchanged. Canic owns adoption under
 [#756](https://github.com/dragginzgame/canic/issues/756); producer capability is
 tracked in [#132](https://github.com/dragginzgame/ic-observability/issues/132).
+
+The const-capable `add_omitted(u128)` and `record_omitted(u64)` methods account
+one original scalar increment or measurement without receiving, constructing or
+comparing a key. They perform only canonical recorder arithmetic, allocate
+nothing and leave retained rows, charges and limits unchanged. The consumer owns
+why a borrowed identity is ineligible and calls explicit omission instead of
+admission for that event, never both. Zero, maximum, actual overflow and clear
+semantics are unchanged. This narrow capability is tracked in
+[#133](https://github.com/dragginzgame/ic-observability/issues/133).
 
 ## Explicit governed persistence
 

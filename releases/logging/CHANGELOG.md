@@ -6,6 +6,18 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.24.14] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt authenticated toko-tooling 0.37.5, including accurate test-only LOC
+  classification and refusal of obsolete LOC metadata. Migrate the baseline,
+  receipt, tooling commands, variables and metadata to Toko names. Preserve
+  inherited development selection and complete product release requirements.
+  Explicitly protect consumer validation and metadata recipes under the new
+  recipe-scoped Make admission guard.
+  [Tooling #367](https://github.com/dragginzgame/toko-tooling/issues/367).
+
 ## [0.24.13] - 2026-11-09
 
 ### ➕ Added

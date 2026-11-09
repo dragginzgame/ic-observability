@@ -13,7 +13,7 @@ cp "$root/ci/cargo-release-groups.json" "$fixture/ci/"
 cp "$root/ci/release-delivery.txt" "$fixture/ci/"
 cp "$root/scripts/ci/check-release-delivery.sh" "$fixture/scripts/ci/"
 git init -q "$fixture"
-cat > "$fixture/scripts/dev/shared-tooling.sh" <<'CHECK'
+cat > "$fixture/scripts/dev/toko-tooling.sh" <<'CHECK'
 set -euo pipefail
 [[ "$1" == check && "$2" == --consumer && "$3" == "$EXPECTED_ROOT" ]]
 printf 'check\n' >> "$EVENTS"

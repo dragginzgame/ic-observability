@@ -21,7 +21,7 @@ cat > "$fixture/probe.mk" <<'MAKE'
 .PHONY: observability-setup-mode
 # Setup smoke runs before host parsers exist and substitutes all release effects.
 # Tooling drift admission is qualified separately by the owning adapter fixture.
-shared-tooling-check clean-empty-source-dirs:
+toko-tooling-check clean-empty-source-dirs:
 	@:
 release-group-check:
 	@:

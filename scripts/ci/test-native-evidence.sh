@@ -315,7 +315,7 @@ while IFS='|' read -r scenario FIXTURE_FAILURE FIXTURE_FORMATTING \
     export GIT_DIR="$git_dir" GIT_WORK_TREE="$worktree"
     export GITHUB_WORKSPACE="$worktree" GITHUB_RUN_ID=123 GITHUB_RUN_ATTEMPT=2 GITHUB_EVENT_NAME=fixture
     export GITHUB_PATH="$worktree/github-path" TMPDIR="$worktree/scratch"
-    export SHARED_TOOLING_STORE="$worktree/shared-store"
+    export TOKO_TOOLING_STORE="$worktree/shared-store"
     export RUNNER_TEMP="$worktree/runner temp"
     mkdir -p "$RUNNER_TEMP" "$TMPDIR"
     export FIXTURE_COMMANDS="$worktree/commands.log" FIXTURE_FAILURE FIXTURE_FORMATTING

@@ -26,11 +26,17 @@ export OBSERVABILITY_RELEASE_VALIDATION_SCOPE
 publish publish-check: override OBSERVABILITY_RELEASE_VALIDATION_SCOPE := group
 
 # Common commands use this checkout's reviewed snapshot, including scratch exports.
-override SHARED_TOOLING_ROOT := $(CURDIR)
-export SHARED_TOOLING_ROOT
+override TOKO_TOOLING_ROOT := $(CURDIR)
+export TOKO_TOOLING_ROOT
 override RELEASE_DELIVERY_POLICY := $(CURDIR)/ci/release-delivery.txt
 include make/consumer.mk
 include make/cargo-publication.mk
+
+# These consumer-owned gates retain execution/failure admission now that the
+# common guard runs only for protected recipes. Help and completion remain inert.
+ci compiler-check check check-wasm clippy docs-check test package-check allocation-free-check \
+release-verify release-prepare-version release-commit-check release-prepared-check \
+release-committed-check release-tagged-check release-push-check: | toko-execution-check
 
 # Shared owns capture/default selection; this consumer owns candidate preparation.
 export RELEASE_GROUPS
@@ -46,11 +52,11 @@ release-group-check:
 # Reject a missing/unknown group before Cargo-based tooling admission. Routine
 # CI and explicit tooling checks remain independent of release selection.
 ifneq ($(filter $(SHARED_RELEASE_TARGETS) release-batch-resume publish publish-check,$(MAKECMDGOALS)),)
-shared-tooling-check clean-empty-source-dirs: | release-group-check
+toko-tooling-check clean-empty-source-dirs: | release-group-check
 endif
 
 # Captured recovery can bypass the common increment/preflight entrypoints.
-release-batch-resume: shared-tooling-check
+release-batch-resume: toko-tooling-check
 
 .PHONY: release-candidate-setup
 release-candidate-setup:
@@ -84,7 +90,7 @@ release-prepared-check release-committed-check release-tagged-check release-push
 release-files:
 	@bash scripts/release/metadata.sh files
 
-.PHONY: help install-hooks hook-check check check-wasm clippy docs-check check-doc-links test msrv compiler-check compiler-policy-check shared-tooling-check check-pins release-tools-check ci
+.PHONY: help install-hooks hook-check check check-wasm clippy docs-check check-doc-links test msrv compiler-check compiler-policy-check toko-tooling-check check-pins release-tools-check ci
 .PHONY: ci-evidence-check candid-boundary-check
 .PHONY: production-dependencies-check cargo-boundaries-check
 .PHONY: allocation-free-check
@@ -128,7 +134,7 @@ help:
 	@echo "Release editor (also in install-tools/tools-check): install-release-editor, release-editor-check"
 	@echo "Clone setup: install-hooks (requires prepared manifest formatter and rustfmt)"
 	@echo "Workspace gates: check, check-wasm, clippy, docs-check, test (both packages; see docs/hosts.md for focused Cargo commands)"
-	@echo "Formatting and admission: format-tools-check, fmt, fmt-check, check-doc-links, shared-tooling-check, check-pins"
+	@echo "Formatting and admission: format-tools-check, fmt, fmt-check, check-doc-links, toko-tooling-check, check-pins"
 	@echo "Dependency declarations and boundary fixtures: production-dependencies-check"
 	@echo "Link fixed Metrics recording without an allocator: allocation-free-check"
 	@echo "Early setup: setup-smoke-check"
@@ -192,7 +198,7 @@ docs-check:
 
 check-doc-links:
 	perl scripts/ci/check-documentation-links.pl --root "$(CURDIR)" \
-		README.md AGENTS.md DRAGGINZGAME.md CHANGELOG.md releases/*/*.md releases/history.md docs/*.md \
+		README.md AGENTS.md TOKO-TOOLING.md CHANGELOG.md releases/*/*.md releases/history.md docs/*.md \
 		docs/principles/*.md docs/evidence/*.md docs/evidence/releases/*.md docs/status/*.md rules/*.md audits/*.md tasks/*.md \
 		qualification/*/README.md
 	perl scripts/ci/check-documentation-links.pl --root "$(CURDIR)" \

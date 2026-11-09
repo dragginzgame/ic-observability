@@ -1,13 +1,33 @@
 # Current handoff — 2026-11-09
 
+## Local omitted-only diagnostics
+
+[#133](https://github.com/dragginzgame/ic-observability/issues/133) is implemented
+locally: `BoundedCounterTable::add_omitted(u128)` and
+`LexicalMeasurementTable::record_omitted(u64)` are const-capable, return unit,
+and reuse canonical arithmetic without a key, comparison, allocation or retained
+state change. Consumers decide eligibility and call omission instead of admission
+for that event. This addition is uncommitted and unpublished; Metrics 0.29.8
+does not contain it. Pending Metrics 0.29.9 notes link the issue.
+
+Focused Linux/Rust 1.99.1 validation passes: 21 recording tests, three external
+typed API tests (including const evaluation and comparison refusal), native
+library/test and Wasm library Clippy with warnings denied, warnings-denied
+Rustdoc, four dependency-free production graphs, formatting, links and diff
+checks. No dependency/feature or sibling change belongs to this fix; existing
+tooling adoption and deferred syn work remain preserved. No release or broad
+product matrix was run. Canic #756 retains adoption and installed qualification.
+
 ## Published typed recording APIs
 
 Metrics **0.29.8** and Logging **0.24.13** are delivered to origin/main and
 published, non-yanked and independently verified against their source archives.
 The [delivery receipt](../evidence/releases/typed-recording-20261109.md) owns
 exact commits, annotated tags, archive hashes, plans and publication evidence.
-Never re-upload these versions. Both ledgers are finalized; no next release is
-selected. The normal checkout was explicitly reconciled with the completed batch.
+Never re-upload these versions. Both published entries are finalized. Pending
+notes select Metrics 0.29.9 (omission APIs and tooling) and Logging 0.24.14
+(tooling) without changing package versions. The normal checkout was reconciled
+with the completed batch.
 
 Logging supplies `BoundedHistory<T>`: fixed count/accounted-payload limits,
 oldest-row eviction receipts, intact typed refusals, borrowed reversible rows
@@ -58,18 +78,45 @@ owns those source and admission-repair identities. Earlier stashes, including
 [evidence retention index](../evidence/README.md) owns private-source custody
 and historical evidence; no source/export authority is implied by read access.
 
-## Installed Cargo-selected toko-tooling 0.36.0
+## Installed Cargo-selected toko-tooling 0.37.5
 
-Root `[workspace.dependencies]` declares `toko-tooling = "=0.36.0"` once. Both real
+Root `[workspace.dependencies]` declares `toko-tooling = "=0.37.5"` once. Both real
 members inherit it unconditionally as a dev-dependency with cargo-machete ignored
 metadata and no artificial Rust import. The root remains virtual, with no
 selection-only package, metadata selector or separate tooling lock. Cargo.lock
 and the snapshot select registry archive SHA-256
-`de0dd05b6437061622a76942baa25d40d2181497e7ba66d9fd809132a3082936`; all 97 roots
-and 168 installed files agree. Production library graphs remain dependency-free.
+`9fc1a752f4f8203d999c4cd593afb9ea18717b28d407492fc98aab5722526be3`; all 99 roots
+and 169 installed files agree. Production library graphs remain dependency-free.
+
+The 0.37.5 refresh is local and uncommitted. Cargo updated only toko-tooling
+relative to the incoming lock, preserving the deferred syn 3.0.10 selection and
+the pending omitted-only API fix. Authenticated export preserves all 99 roots and
+169 files, including explicit offline engineering/RPC guides. Only the Cargo
+boundary checker and dependency guide change: the unpublished Wire benchmark's
+Candid dev-only allowance does not apply to either Observability package.
+Focused checks cover the actual Cargo and zero-allowance Candid/CBOR boundary
+callers; other unchanged inputs retain their prior qualification.
+Binding rules are adopted without exceptions; product architecture, limits,
+commands and full release gates remain local choices. The baseline now pins its
+detailed policy links and selects latest stable direct dependencies during scoped
+maintenance; no unrelated dependency refresh is implied. Refresh evidence is under
+`target/evidence/toko-tooling-0375/`.
+
+The preceding 0.37.1 published-package bootstrap refreshed all 97 mapped roots,
+then the receipt moved to `.toko-tooling.snapshot`. The baseline is now
+`TOKO-TOOLING.md`; live commands, CI, custom deployment admission, catalog variables
+and LOC metadata use Toko names without aliases. Tool setup/admission, snapshot,
+pins, formatting and documentation checks pass; focused caller evidence is under
+`target/evidence/toko-tooling-0371/`. Product versions and all 20 release
+obligations are preserved. Matched group/full traces, Make dispatch and unsafe-mode
+refusals, custom drift admission, generated consumers and LOC roles, hook checks,
+CI selection and the selected native-evidence success scenario pass. The new
+recipe-scoped guard explicitly covers consumer compiler/Cargo and metadata gates.
+Historical receipts retain their recorded names and identities.
+No new commit, push or release is implied.
 
 After intentionally changing the pin, resolve Cargo.lock with Cargo, then run
-`make shared-tooling-update` or `make shared-tooling-install`. Neither installer
+`make toko-tooling-update` or `make toko-tooling-install`. Neither installer
 resolves the application graph. Offline admission checks declarations, lock and
 installed bytes. Common CI/release targets and custom candidate, metadata and
 publication adapters retain tooling admission before effects. The

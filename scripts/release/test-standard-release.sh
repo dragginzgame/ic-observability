@@ -55,11 +55,11 @@ exit 0
 EXTERNAL
 : > "$EVENTS"
 "$real_make" --no-print-directory -f "$root/Makefile" help \
-    "SHARED_TOOLING_ROOT=$fixture/external" > "$fixture/output" 2>&1
+    "TOKO_TOOLING_ROOT=$fixture/external" > "$fixture/output" 2>&1
 [[ ! -s "$EVENTS" ]] || exit 1
 
 # Unsupported inherited and command-line policies must fail before runner or
-# metadata dispatch. The parse-time Make execution probe remains real.
+# metadata dispatch. The recipe-scoped Make execution guard remains real.
 export STANDARD_RELEASE_PHASE=metadata
 # Preflight binds the same independently selected Rust catalog as installation;
 # a host-only override must not change it. Exercise actual Make child routing.

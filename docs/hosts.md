@@ -15,7 +15,7 @@ The [shared host rules](supported-hosts.md) own the common support contract.
 Native input hashing and workflow fixture copies use
 `scripts/ci/native-source-files.sh`, which emits NUL-delimited maintained paths
 including pending source. The workflow records common managed tool paths, hashes
-and observed versions through Shared Tooling; compiler selection stays local. Failed observations retain partial diagnostics.
+and observed versions through Toko Tooling; compiler selection stays local. Failed observations retain partial diagnostics.
 
 CI prepares pinned host parsers before reading Rust policy from TOML. The
 separate `host-tools.log` and outcome survive setup failure; Rust and subsequent
@@ -26,7 +26,7 @@ offline checking and PATH publication after success. The always-run
 its `RUNNER_TEMP/tools-install.log` and `tools-check.log` into
 the retained `tools-setup.log` and `tools-check.log` names. Setup failures keep
 their actual stdout/stderr; skipped setup does not select unrelated temp logs.
-Shared Tooling tests the action's installation and PATH mechanics; Metrics tests
+Toko Tooling tests the action's installation and PATH mechanics; Metrics tests
 its action reference, outcome/log projection and complete recovery evidence.
 
 Diagnostic collection failure still allows the independently admitted native
@@ -37,14 +37,14 @@ collection or turn a failed check into a successful one.
 
 ## Prerequisites and focused checks
 
-Root `[workspace.dependencies]` declares `toko-tooling = "=0.36.0"` once.
+Root `[workspace.dependencies]` declares `toko-tooling = "=0.37.5"` once.
 Both real members inherit it unconditionally as a dev-dependency and merge the
 name into cargo-machete ignored metadata, without a Rust import. Cargo.lock pins
 the registry version/checksum; no selection-only package or separate tooling
 lock is used. After intentionally changing the root pin, resolve Cargo.lock with
-Cargo and run `make shared-tooling-update` or `make shared-tooling-install`.
+Cargo and run `make toko-tooling-update` or `make toko-tooling-install`.
 Neither installer edits manifests or Cargo.lock. Installation runs `install-tools`
-and `tools-check`; offline `shared-tooling-check` admits all member declarations,
+and `tools-check`; offline `toko-tooling-check` admits all member declarations,
 the exact root pin, Cargo.lock and installed snapshot. CI/release Make entrypoints and
 the custom candidate, metadata and publication scripts check tooling before effects.
 
@@ -56,9 +56,9 @@ before their first tool installation and save after setup, before product checks
 Cache service failures permit download fallback; downloaded bytes still require
 the selected checksum. The existing native prerequisite/compiler order is retained.
 
-The crates.io toko-tooling 0.36.0 refresh preserves the selected
+The crates.io toko-tooling 0.37.5 refresh preserves the selected
 tool catalogs and compiler. `make tools-check check-pins` admits prepared tools;
-no reinstall or store cleanup is part of this adoption. Earlier source-bound
+setup admits the renamed catalog contract without store cleanup. Earlier source-bound
 receipts retain their original snapshots. Explicit setup still uses
 `make install-tools`; changed build-helper policies require re-preparation.
 Linux fingerprints retain native tool/header/library providers while excluding
@@ -116,7 +116,7 @@ Make targets do not parse Cargo to choose a compiler.
 `make msrv` remains a compatibility alias for compiler admission. `make ci`
 provides the compilation proof once on this same compiler; see the coverage map
 below. Both Metrics and Logging require Rust 1.99.1 on native and Wasm. The adopted
-Shared Tooling baseline now owns this same compiler policy;
+Toko Tooling baseline now owns this same compiler policy;
 no local exception or temporary policy-reference override is needed.
 
 Use Git, GNU Make, Bash 3.2 or newer and standard Unix utilities. The
@@ -159,7 +159,7 @@ Existing experiment sources, executable identities and artifacts remain frozen.
 The reviewed snapshot owns default pins in `ci/tool-versions.env` and
 `ci/ic-tools.tsv`; host, Rust and IC exceptions are independently selected
 under the shared catalog contract. Use the same optional
-`SHARED_TOOLING_STORE` setting for setup, checking and evidence collection.
+`TOKO_TOOLING_STORE` setting for setup, checking and evidence collection.
 Host/IC/Cargo paths select admitted shared generations; earlier sets and failed
 candidates remain retained. Build-policy/compiler/native identity changes require
 explicit Cargo-tool setup. Application flags and wrappers remain separate from
@@ -186,7 +186,7 @@ libraries; select direct Cargo commands when only one package or test is affecte
 | Allocator-free fixed recording link | `make allocation-free-check` |
 | Recording library checks | `cargo check -p ic-metrics --lib --features recording --locked`; Wasm: `cargo check -p ic-metrics --lib --features recording --locked --target wasm32-unknown-unknown`; lint: `cargo clippy -p ic-metrics --lib --tests --features recording --locked -- -D warnings` |
 | Recording tests and examples | `cargo test -p ic-metrics --lib --features recording --locked <test-name>`; doctests: `cargo test -p ic-metrics --doc --features recording --locked` |
-| Snapshot/pins | `make shared-tooling-check check-pins` |
+| Snapshot/pins | `make toko-tooling-check check-pins` |
 | Local process capture | `perl scripts/ci/tests/check-process.t`; byte limits, child status, timeout, interruption and reaping without product compilation |
 | Packaged documentation admission | `perl scripts/ci/tests/package-doc-links.t`; rejects missing, symlink and directory inputs while admitting known Cargo-generated absences |
 | Local tools/hooks | `make tools-check hook-check` |
@@ -284,7 +284,7 @@ The root catalog's `Tests and tooling only` group selects `num-bigint` for the
 restoration overflow oracle and Serde for public API trait-refusal checks. Neither
 enters production. IC Storage owns adapter graph and retained-format qualification.
 
-The root catalog uses Shared Tooling's grouped sort order.
+The root catalog uses Toko Tooling's grouped sort order.
 `make fmt`, `make fmt-check` and hooks use that shared default; every release
 adapter ordering check uses `--manifest-order-grouped` against its current or
 selected committed source. No paired formatter override is needed here.
@@ -320,12 +320,12 @@ The inspector's CLI checks stay at IC Host. Historical smoke paths under
 `target/evidence/wasm-inspector/` do not establish current artifact availability
 or qualify the current source.
 
-Formatting fixtures use Shared Tooling's current-source selector for maintained
+Formatting fixtures use Toko Tooling's current-source selector for maintained
 Rust sources and Cargo manifests, including pending additions and deletions.
 Metrics selects its instrumentation Rust entrypoint. The hook fixture uses
 Shared's explicit mode without dependency-table perturbation. Generic manifest
 sorting remains qualified at
-Shared Tooling; the local fixture retains Rust formatting, preservation, failure
+Toko Tooling; the local fixture retains Rust formatting, preservation, failure
 diagnostics and installation checks. Failed nested checker evidence stays retained;
 explicit non-Rust overlays remain local.
 The shared locked release-preflight helper owns fetch/tool sequencing and pin
@@ -369,7 +369,7 @@ selection includes both contracts in `make fmt`, `make fmt-check` and the hook.
 ## Full release validation
 
 Focused checks for changed behavior and directly affected callers are sufficient
-for ordinary handoff under [the validation policy](../DRAGGINZGAME.md#validation-and-evidence).
+for ordinary handoff under [the validation policy](../TOKO-TOOLING.md#validation-and-evidence).
 Run full local suites only for an explicitly authorized release or an explicit
 request for those checks. The full gate is `make ci`; `make msrv` is the same
 compiler admission already included there. Reuse passing evidence only for
@@ -457,7 +457,7 @@ refuse before setup, validation or mutation. A `PACKAGE` override must belong to
 that group and never selects it implicitly. Group release tags advance only
 the selected version, without uploading either package. The focused publication
 Make fixture checks explicitly selected Metrics and Logging rosters and
-both exact lint-failure boundaries before delegation. Shared Tooling owns generic
+both exact lint-failure boundaries before delegation. Toko Tooling owns generic
 selection, metadata, upload-status and retained-attempt fixtures. Local effects
 are substituted and do not publish packages.
 
@@ -482,7 +482,7 @@ payload, source tree, scratch directory or nested archive is selected. It is
 collected before the complete archive so full collection failures still leave
 readable diagnostics; neither archive silently truncates selected logs.
 
-Shared Tooling owns generic installer, formatting, metadata, release-engine and
+Toko Tooling owns generic installer, formatting, metadata, release-engine and
 fixture mechanics. Its [producer/consumer boundaries](verification-helpers.md#producer-and-consumer-fixture-boundaries),
 [flow qualification](verification-helpers.md#consumer-flow-qualification),
 [retention probes](verification-helpers.md#consumer-fixture-retention-probes) and

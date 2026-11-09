@@ -1,6 +1,76 @@
 # Contributor tooling
 
-The local snapshot selects crates.io toko-tooling 0.36.0 through one exact root
+The current local selection is crates.io toko-tooling **0.37.5**, pinned once
+at the root and inherited as a dev-dependency by both real packages. Cargo.lock
+and `.toko-tooling.snapshot` select archive SHA-256
+`9fc1a752f4f8203d999c4cd593afb9ea18717b28d407492fc98aab5722526be3`.
+Authenticated preview preserves all 99 roots and 169 payload files. Only the
+Cargo boundary checker and its owning dependency guide change from 0.37.4.
+The new allowance is limited to unconditional Candid dev-dependencies of the
+unpublished `ic-wire-benchmarks` package; neither Observability package is that
+owner. Both remain subject to their existing external-dependency and zero-
+allowance Candid/CBOR source gates. Focused validation selects their actual
+`cargo-boundaries-check` and `candid-boundary-check` Make callers alongside
+installation, tooling admission, pins, formatting, links and diff checks.
+Other caller qualification remains applicable to unchanged inputs. Cargo changes
+only the tooling selection; the pending API fix and deferred syn selection are
+preserved. Current evidence is under `target/evidence/toko-tooling-0375/`.
+
+The preceding 0.37.4 refresh explicitly retained engineering and RPC guides for
+offline links when the baseline became standalone. It preserved all prior 97
+roots, added those two roots and changed five policy/guide files. Executable
+payloads were unchanged; evidence remains under `target/evidence/toko-tooling-0374/`.
+
+The adoption review applies binding rules without exceptions or alternative
+defaults. Independent package boundaries, product bounds, commands, hosts and full
+release gates remain consumer-owned choices. The baseline's detailed references
+are pinned to `626da7cd9626cc2e152594862a2d82ea82ef51da`; packaged dependency guides
+also reflect the new core rule to select latest stable direct dependencies during
+authorized scoped maintenance. No unrelated dependency update or audit is needed.
+
+The preceding 0.37.2 authenticated refresh changed no payload bytes. Its admission
+and LOC evidence remains under `target/evidence/toko-tooling-0372/`. The observed
+5,490 lines include the pending omitted-only API fix and have no unclassified LOC;
+the earlier 0.37.1 observation predates that fix.
+
+The preceding 0.37.1 released-package installer previewed the migration against the prior
+0.36.1 receipt, then authenticated and exported all 97 mapped roots and 169 files.
+Unchanged old baseline/helper payloads retired through the exporter. The receipt
+was moved only after refresh and admission succeeded; no hashes were edited.
+
+The baseline is `TOKO-TOOLING.md`, commands use `toko-tooling-*`, and tooling
+variables and LOC metadata use the Toko namespace. CI, custom deployment checks,
+source selection, release fixtures and generated consumer metadata follow that
+contract. There are no compatibility aliases. Historical receipts/source diaries
+and their recorded commands remain historical; generic upstream helper names
+such as `shared-companions.sh` retain their canonical producer filenames.
+
+Installation and tool admission pass. Offline member/pin/lock/snapshot admission,
+dependency pins, formatting and documentation checks pass. The normal root is
+still virtual with two real packages; no carrier crate or Rust import was added.
+Cargo changed only toko-tooling relative to the incoming graph; the pre-existing
+syn 3.0.10 edit is preserved. Product versions and the complete 20-stage release
+roster remain unchanged apart from the renamed tooling admission stage. Pending
+notes remain Metrics 0.29.9 and Logging 0.24.14 for developer-tooling changes.
+The 0.37.1 caller evidence is under `target/evidence/toko-tooling-0371/`. The adoption is local and
+uncommitted; no release, broad product suite or sibling mutation is implied.
+
+Focused consumer checks also pass: matched full/group validation traces, actual
+Make release routing and unsafe-mode refusals, custom drift refusal before
+effects, publication policy with uploads substituted, generated public consumers
+and their LOC roles, formatting-hook preservation/installation, CI selection,
+native receipt/source selection and the selected native-evidence success row.
+The dispatch fixture exposed the compiler gate's former reliance on global Make
+admission; the consumer now explicitly protects compiler/Cargo and metadata
+recipes under the upstream recipe-scoped guard. Diagnostic help dry runs remain
+available. Existing native macOS and installed consumer acceptance are separate.
+
+Earlier 0.36.1 local installation and unchanged LOC inventory/totals checks retain
+their original evidence under `target/evidence/toko-tooling-0361/`.
+
+## Previous 0.36.0 adoption
+
+The 0.36.0 adoption selected crates.io toko-tooling through one exact root
 workspace dependency and unconditional inherited dev-dependencies in both real
 packages. Cargo.lock and the snapshot bind archive SHA-256
 `de0dd05b6437061622a76942baa25d40d2181497e7ba66d9fd809132a3082936`.
@@ -52,8 +122,8 @@ and custom deployment admission remain enforced. Logs are under
   overrides and original failure status/diagnostics remain supported.
 - Source LOC is inventory, not shipped Wasm or IC cost. JSON schema 2 classifies
   library/application, tests, examples, benches, tooling and unclassified source.
-  The existing report totals 4,438 code lines with zero unclassified source; the
-  allocator-link fixture is tests despite its historical Cargo example identity.
+  Run the current report for current-tree totals; the allocator-link fixture is
+  tests despite its historical Cargo example identity.
 - The shared lexical checker selects Candid and CBOR enforcement over actual
   crate and retained-consumer Rust sources. Both libraries need zero allowances.
   Group selection reaches matching roots; full CI inspects the workspace through the
@@ -81,7 +151,7 @@ and identities apart from repaired link destinations and retention notices;
 the distribution JSON ledger is byte-identical. Private originals, ignored
 investigations, recovery state and Git history were outside the cleanup.
 
-## Current focused checks
+## Previous 0.36.0 focused checks
 
 0.36.0 installation/tools, member/pin/lock/snapshot checks, exact-pin admission,
 Cargo boundaries and CI selection passed. Both public production profiles remain

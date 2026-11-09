@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Shared companions: scripts/dev/shared-tooling.sh scripts/ci/cargo-release-group.sh scripts/ci/cargo-release-metadata.sh scripts/ci/check-release-source.sh scripts/ci/check-release-delivery.sh scripts/ci/check-release-changelog.sh scripts/ci/cargo-release-preflight.sh scripts/ci/release-receipts.sh scripts/dev/release-editor.sh scripts/ci/check-setup-smoke.sh scripts/ci/fixture-lifecycle.sh ci/tool-versions.env ci/release-delivery.txt ci/release-tools.env
+# Shared companions: scripts/dev/toko-tooling.sh scripts/ci/cargo-release-group.sh scripts/ci/cargo-release-metadata.sh scripts/ci/check-release-source.sh scripts/ci/check-release-delivery.sh scripts/ci/check-release-changelog.sh scripts/ci/cargo-release-preflight.sh scripts/ci/release-receipts.sh scripts/dev/release-editor.sh scripts/ci/check-setup-smoke.sh scripts/ci/fixture-lifecycle.sh ci/tool-versions.env ci/release-delivery.txt ci/release-tools.env
 set -euo pipefail
 [[ $# == 1 ]] || exit 2
 operation="$1"
@@ -31,7 +31,7 @@ perl -MJSON::PP -e '
 bash "$root/scripts/ci/check-release-delivery.sh" "$root/ci/release-delivery.txt" "${RELEASE_DELIVERY-direct}"
 case "$operation" in
     preflight|verify|prepare)
-        bash "$root/scripts/dev/shared-tooling.sh" check --consumer "$root" ;;
+        bash "$root/scripts/dev/toko-tooling.sh" check --consumer "$root" ;;
 esac
 # Initial admission precedes Cargo, tooling preparation and validation effects.
 if [[ "$operation" == preflight || "$operation" == verify ]]; then

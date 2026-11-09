@@ -18,6 +18,7 @@ printf '/target/\n/.tools/\n' > "$fixture/.gitignore"
 printf 'tracked\n' > "$fixture/Cargo.toml"
 git -C "$fixture" add Cargo.toml
 printf 'packaged pending README\n' > "$fixture/README.md"
+printf 'installed snapshot identity\n' > "$fixture/.toko-tooling.snapshot"
 printf 'pending\n' > "$fixture/crates/example/pending.rs"
 printf 'qualification\n' > "$fixture/qualification/probe/lib.rs"
 printf 'installed compiler\n' > "$fixture/ci/typescript/node_modules/tsc"
@@ -25,10 +26,10 @@ for directory in docs/evidence .tools .private-evidence target crates/example/ta
 bash "$fixture/scripts/ci/native-source-files.sh" > "$fixture/selected.nul"
 count=0
 while IFS= read -r -d '' file; do
-    case "$file" in README.md|Cargo.toml|scripts/ci/native-source-files.sh|crates/example/*|qualification/probe/lib.rs) ;; *) exit 1 ;; esac
+    case "$file" in README.md|Cargo.toml|.toko-tooling.snapshot|scripts/ci/native-source-files.sh|crates/example/*|qualification/probe/lib.rs) ;; *) exit 1 ;; esac
     count=$((count + 1))
 done < "$fixture/selected.nul"
-[[ "$count" == 5 ]]
+[[ "$count" == 6 ]]
 # Missing tracked source stays selected so the hash boundary cannot silently omit it.
 rm "$fixture/Cargo.toml"
 bash "$fixture/scripts/ci/native-source-files.sh" > "$fixture/missing.nul"

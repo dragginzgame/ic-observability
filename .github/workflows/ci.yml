@@ -86,7 +86,7 @@ jobs:
         id: docs
         if: env.CI_SCOPE == 'docs' && matrix.runner == 'ubuntu-24.04'
         run: |
-          make shared-tooling-check check-doc-links
+          make toko-tooling-check check-doc-links
           git diff --check
       - name: Record documentation-only scope
         if: env.CI_SCOPE == 'docs'

@@ -1,10 +1,11 @@
 # IC Observability Agent Rules
 
-Read [DRAGGINZGAME.md](DRAGGINZGAME.md) first, then
+Read [TOKO-TOOLING.md](TOKO-TOOLING.md) first, then
 [the current handoff](docs/status/current.md). The
-[snapshot manifest](.shared-tooling.snapshot) records the reviewed Shared Tooling
-files and exact revision. This is the local overlay; there are no baseline
-exceptions. Product-specific safeguards and scoped permissions below remain binding.
+[snapshot manifest](.toko-tooling.snapshot) records the reviewed Toko Tooling
+files and exact revision. Binding baseline rules apply with no exceptions or
+alternative defaults. This overlay retains consumer-owned architecture, product
+bounds, commands and release inputs, including the safeguards below.
 Read [the extraction contract](docs/extraction.md) before recording,
 consumer-contract or persistence-boundary changes.
 
@@ -16,14 +17,14 @@ consumer-contract or persistence-boundary changes.
   releases/metrics or releases/logging. The root has shared metadata and changelog
   navigation, with no aggregate version. Coordinated history is in releases/history.md.
   Membership is explicit in ci/cargo-release-groups.json and root Cargo comments.
-  Root `[workspace.dependencies]` pins crates.io `toko-tooling = "=0.36.0"`.
+  Root `[workspace.dependencies]` pins crates.io `toko-tooling = "=0.37.5"`.
   Every real member inherits it as a dev-dependency and lists `toko-tooling` in
   its cargo-machete ignored metadata; no Rust import or selection-only package
   is needed. Cargo.lock owns its version/checksum, and the snapshot records
   installed files. The exact pin is intentional: updates report availability
   without silently adopting tooling. Change the root pin, resolve Cargo.lock,
-  then run `make shared-tooling-update` or `make shared-tooling-install`.
-  Custom deployment adapters must run `shared-tooling-check` before effects.
+  then run `make toko-tooling-update` or `make toko-tooling-install`.
+  Custom deployment adapters must run `toko-tooling-check` before effects.
   Tooling remains outside both libraries' production graphs and independent
   release groups; there is no separate tooling lock or metadata selector.
   The root dependency catalog lists both members with full current versions and
@@ -107,7 +108,7 @@ consumer-contract or persistence-boundary changes.
   check requests. Releases select the qualified
   [group validation plan](docs/independent-releases.md); shared or uncertain inputs
   retain the full roster. Repository CI still covers both packages.
-  Follow [the validation policy](DRAGGINZGAME.md#validation-and-evidence)
+  Follow [the validation policy](TOKO-TOOLING.md#validation-and-evidence)
   for batched focused checks and evidence reuse. Documentation-only work needs
   link, consistency and diff checks.
 - Fix warnings in the selected Clippy gate before later validation.

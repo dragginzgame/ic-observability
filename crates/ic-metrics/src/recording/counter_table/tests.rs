@@ -42,6 +42,33 @@ fn typed_counters_use_original_scalar_units_and_first_admission() {
 }
 
 #[test]
+fn typed_explicit_omission_preserves_scalar_caps_and_clear() {
+    let limits = MeasurementTableLimits {
+        entries: 0,
+        key_bytes: 0,
+        total_key_bytes: 0,
+    };
+    let mut table = BoundedCounterTable::<String>::new(limits);
+    assert_eq!(table.omitted(), MeasurementCounter::ZERO);
+    table.add_omitted(0);
+    assert_eq!(table.omitted().exact_total(), Ok(0));
+    table.add_omitted(u128::MAX);
+    assert_eq!(table.omitted().exact_total(), Ok(u128::MAX));
+    table.add_omitted(0);
+    assert!(!table.omitted().total_overflowed());
+    table.add_omitted(1);
+    table.add_omitted(0);
+    assert_eq!(table.omitted().total(), u128::MAX);
+    assert!(table.omitted().total_overflowed());
+    assert_eq!(table.entries().len(), 0);
+    assert_eq!(table.retained_key_bytes(), 0);
+    assert_eq!(table.limits(), limits);
+    table.clear();
+    assert_eq!(table.omitted(), MeasurementCounter::ZERO);
+    assert_eq!(table.limits(), limits);
+}
+
+#[test]
 fn typed_counter_budget_refusals_and_borrowed_updates_count_once() {
     let mut table = BoundedCounterTable::<String>::new(limits());
     assert!(!table.add_existing("missing", 10));

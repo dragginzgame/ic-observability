@@ -55,7 +55,7 @@ cp "$root/ci/docs-only-paths.txt" "$fixture/repo/ci/"
 # The actual allowlist must not admit packaged/embedded/companion inputs.
 while IFS= read -r path; do
     case "$path" in ''|'#'*) continue ;; esac
-    case "$path" in crates/*|README.md|AGENTS.md|DRAGGINZGAME.md|.github/*|scripts/*|ci/*|make/*) exit 1 ;; esac
+    case "$path" in crates/*|README.md|AGENTS.md|TOKO-TOOLING.md|.github/*|scripts/*|ci/*|make/*) exit 1 ;; esac
     [[ -f "$root/$path" ]] || exit 1
     if rg -q 'Shared companions:' "$root/$path"; then exit 1; fi
 done < "$root/ci/docs-only-paths.txt"

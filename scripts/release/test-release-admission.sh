@@ -54,7 +54,7 @@ freeze_consumer() {
     yq -p toml -o json '.' "$consumer/Cargo.toml" > "$consumer/root.json"
     perl scripts/release/render-retained-consumer.pl "$consumer/root.json" \
         "$consumer/Cargo.toml" "$supplier" "$version"
-    printf '[package]\nname = "retained-consumer"\nversion = "0.0.0"\nedition.workspace = true\nrust-version.workspace = true\npublish = false\n[package.metadata.shared-tooling.loc]\ncategory = "tests"\n[dependencies]\nic-%s.workspace = true\n' "$supplier" > "$consumer/client/Cargo.toml"
+    printf '[package]\nname = "retained-consumer"\nversion = "0.0.0"\nedition.workspace = true\nrust-version.workspace = true\npublish = false\n[package.metadata.toko-tooling.loc]\ncategory = "tests"\n[dependencies]\nic-%s.workspace = true\n' "$supplier" > "$consumer/client/Cargo.toml"
     : > "$consumer/client/src/lib.rs"
     cp "scripts/release/fixtures/retained-consumer/tests/$supplier.rs" \
         "$consumer/client/tests/contract.rs"

@@ -11,7 +11,7 @@ prepare_make_fixture() {
     # This fixture isolates Make routing. Direct deployment tooling admission
     # and refusal-before-effects are exercised by test-tooling-admission.sh.
     mkdir -p "$destination/scripts/dev"
-    printf '#!/usr/bin/env bash\nexit 0\n' > "$destination/scripts/dev/shared-tooling.sh"
+    printf '#!/usr/bin/env bash\nexit 0\n' > "$destination/scripts/dev/toko-tooling.sh"
     printf 'print "Cleanup substituted for Make dispatch qualification.\\n";\n' > "$destination/scripts/dev/clean-empty-source-dirs.pl"
     # Compilation/admission semantics are tested separately; keep pipe propagation.
     cat > "$destination/scripts/ci/check-rust-compiler.sh" <<'COMPILER'

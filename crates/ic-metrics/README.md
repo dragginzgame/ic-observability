@@ -45,6 +45,13 @@ checked multiplication), so byte pressure cannot change identity selection by
 arrival order. The existing string-keyed `BoundedMeasurementTable` keeps its
 first-admitted policy and independent combined-byte budget unchanged.
 
+For an ineligible borrowed identity, call `add_omitted(u128)` on the typed counter
+table or `record_omitted(u64)` on the lexical measurement table. These const-capable
+methods need no owned key, compare no keys and allocate nothing; retained rows,
+charges and limits stay unchanged. Consumers own the eligibility decision and
+call omission instead of admission for that event, never both. Scalar zero stays
+exact; measured zero is a sample with a maximum. Actual overflow remains sticky.
+
 ```rust
 # #[cfg(feature = "recording")] {
 use ic_metrics::{BoundedCounterTable, LexicalMeasurementTable, MeasurementTableLimits};

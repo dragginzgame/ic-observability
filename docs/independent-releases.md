@@ -16,7 +16,7 @@ Neither conversion changes a package's numeric identity.
 Earlier coordinated releases remain once in [shared history](../releases/history.md), through 0.23.0;
 both group ledgers link to that history. Existing tags and receipts are retained.
 Tooling has no selection-only package or release-group membership. One exact
-root dependency pins toko-tooling 0.36.0; both libraries inherit it only for
+root dependency pins toko-tooling 0.37.5; both libraries inherit it only for
 development, and Cargo.lock owns its registry checksum. Each public member has a root
 catalog entry with its local path and full current version, registered in its
 group's dependency roster. These unused catalog aliases provide a readable
@@ -54,7 +54,7 @@ RELEASE_GROUP on the command line or in the environment. Missing, empty and
 unknown selections refuse before setup, Cargo, validation or mutation. PACKAGE
 never supplies an implicit group. Workspace-wide read-only checks need no group.
 
-Shared Tooling 0.31.0's [release batches](release-batches.md) capture committed
+Toko Tooling 0.31.0's [release batches](release-batches.md) capture committed
 source automatically for group increments. A single explicit `RELEASE_GROUP`
 selects that group; a multiple-group batch requires an explicit ordered roster:
 
@@ -113,7 +113,7 @@ identity through Shared's observation/provenance helpers. If readback fails, use
 `verify-publication` to reconcile without repeating the upload. No automatic
 retry, release or version change is part of either verification command.
 
-Preflight admits prepared tools. Release validation adopts Shared Tooling's
+Preflight admits prepared tools. Release validation adopts Toko Tooling's
 [group-plan contract](release-group-validation.md). The consumer-owned
 [roster](../ci/release-validation.json) is the single ordered declaration for full
 CI and release selection. Shared's roster helper admits the projected Cargo group

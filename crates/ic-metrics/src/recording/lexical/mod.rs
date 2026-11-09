@@ -121,12 +121,23 @@ impl<K: Ord> LexicalMeasurementTable<K> {
         })
     }
 
+    /// Record one measurement whose identity the caller cannot retain.
+    ///
+    /// No key is constructed or compared, no allocation occurs, and retained
+    /// entries, charges and limits are unchanged. Measured zero is a sample;
+    /// maximum and actual-overflow quality follow canonical aggregate recording.
+    /// The caller owns why identity was omitted. Use this instead of admission
+    /// for that observation, never in addition to it.
+    pub const fn record_omitted(&mut self, observation: u64) {
+        self.omitted.record(observation);
+    }
+
     const fn omit(
         &mut self,
         observation: u64,
         reason: MeasurementOmission,
     ) -> MeasurementAttribution {
-        self.omitted.record(observation);
+        self.record_omitted(observation);
         MeasurementAttribution::Omitted(reason)
     }
 

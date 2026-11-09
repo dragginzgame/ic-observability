@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Shared companions: scripts/dev/shared-tooling.sh
+# Shared companions: scripts/dev/toko-tooling.sh
 set -euo pipefail
 # Observability owns the tag/package policy; Shared owns observation/provenance.
 [[ $# == 1 && ( "$1" == admit || "$1" == verify ) ]] || exit 2
 operation="$1"
 root="$(git rev-parse --show-toplevel)"
 cd "$root"
-bash scripts/dev/shared-tooling.sh check --consumer "$root"
+bash scripts/dev/toko-tooling.sh check --consumer "$root"
 plan="$(bash scripts/release/metadata.sh plan)"
 package="$(jq -er .primary <<< "$plan")"
 version="$(jq -er .previous <<< "$plan")"
