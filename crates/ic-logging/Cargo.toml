@@ -2,7 +2,7 @@
 name = "ic-logging"
 edition.workspace = true
 rust-version.workspace = true
-version = "0.24.14"
+version = "0.24.15"
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
