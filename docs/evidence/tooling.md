@@ -6,9 +6,10 @@ and `.toko-tooling.snapshot` select archive SHA-256
 `45c12cc2aa598d14e137dd7db50f12e943470b4ce351dfcaffeccde6821c1876`.
 Authenticated preview preserves all 99 roots and selects 171 payload files.
 From the local 0.38.0 snapshot, five existing payloads change and the shared
-qualification shell/jq companions are added. This adoption
-is local and uncommitted, with pending Metrics 0.29.10 and Logging 0.24.15 notes;
-package versions remain at their published 0.29.9 and 0.24.14 identities.
+qualification shell/jq companions are added. This adoption is committed and
+delivered with Metrics 0.29.10 and Logging 0.24.15. The
+[release receipt](releases/toko0382-placement-20261109.md) owns both complete
+20-stage workspace gates, exact tags, registry readback and deferred-lock custody.
 
 Cargo metadata and the maintained manifest inventory identify one virtual product
 root with `ic-logging` at `crates/ic-logging` and `ic-metrics` at
@@ -32,8 +33,9 @@ General multi-lock implementation cases remain with Toko Tooling.
 The preceding 0.38.0 placement/package-inventory and production-boundary evidence
 is under `target/evidence/toko-tooling-0380/`. No product paths, sources, features,
 groups or caller wiring changed in this refresh. Cargo updates only toko-tooling;
-the deferred syn selection and all product source files remain intact. No sibling
-change, commit or deployment belongs to this adoption.
+the deferred syn selection and all product source files remain intact. Delivery
+used syn 3.0.9 and restored the deferred 3.0.10 edit afterwards. No sibling source
+change or deployment belongs to this adoption.
 
 The preceding 0.37.5 refresh changed the Cargo boundary checker and its guide.
 The new allowance is limited to unconditional Candid dev-dependencies of the

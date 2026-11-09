@@ -20,17 +20,16 @@ Canic #756 retains adoption and installed qualification.
 
 ## Published typed recording APIs
 
-Metrics **0.29.9** and Logging **0.24.14** are delivered to origin/main and
+Metrics **0.29.10** and Logging **0.24.15** are delivered to origin/main and
 published, non-yanked and independently verified against their source archives.
-The [delivery receipt](../evidence/releases/omission-toko0375-20261109.md) owns
+The [delivery receipt](../evidence/releases/toko0382-placement-20261109.md) owns
 exact commits, annotated tags, archive hashes, plans and publication evidence.
-Never re-upload these versions. Both published ledger entries are finalized; Metrics
-includes the omission APIs and tooling, while Logging includes the changed
-development-tooling requirement. The normal checkout is reconciled with the
-completed batch. Earlier typed APIs and their original delivery identities are
-retained in the [preceding receipt](../evidence/releases/typed-recording-20261109.md).
-Pending Metrics 0.29.10 and Logging 0.24.15 notes cover the local 0.38.2 tooling/
-placement adoption below; package versions remain unchanged until release.
+Never re-upload these versions. Both ledger entries are finalized. These patches
+deliver tooling and workspace-placement rules; recorder APIs remain unchanged.
+The normal checkout is reconciled with the completed batch. The earlier omission
+APIs and their original identities remain in the
+[preceding receipt](../evidence/releases/omission-toko0375-20261109.md), which links
+the original typed-recording delivery.
 
 Logging supplies `BoundedHistory<T>`: fixed count/accounted-payload limits,
 oldest-row eviction receipts, intact typed refusals, borrowed reversible rows
@@ -65,13 +64,14 @@ edit remains preserved in stash `de3f936fd3e93d094ddf5ff5d7129a8104119f0c`, pinn
 by branch `preserved/syn-3.0.10-typed-recording-20261109`. Do not discard it or
 mistake the dirty normal lock for the published graph.
 
-Batch `batch-9DUaDslR` is complete at index 2. Its candidate is retained under
-`target/release-frozen/batch-9DUaDslR`, with durable recovery under
-`.git/release-state/frozen/batch-9DUaDslR/`. Reconciliation completed and the
+Batch `batch-Dvpzy0I1` is complete at index 2. Its candidate is retained under
+`target/release-frozen/batch-Dvpzy0I1`, with durable recovery under
+`.git/release-state/frozen/batch-Dvpzy0I1/`. Reconciliation completed and the
 deferred syn edit was reapplied. No retirement or protected evidence cleanup ran.
 The delivery receipt owns source, publication and recovery identities.
 
-Earlier completed batches `batch-vgM1oJ1f`, `batch-gfJA5IMg` and `batch-z30yB8KG` retain their
+Earlier completed batches `batch-9DUaDslR`, `batch-vgM1oJ1f`, `batch-gfJA5IMg`
+and `batch-z30yB8KG` retain their
 candidates and Git-side recovery. Failed pre-delivery batch `batch-C8a10ddy`
 remains retained and must not be resumed as repaired source. The
 [previous delivery receipt](../evidence/releases/observability-patches-20261108-toko036.md)
@@ -81,7 +81,7 @@ owns those source and admission-repair identities. Earlier stashes, including
 [evidence retention index](../evidence/README.md) owns private-source custody
 and historical evidence; no source/export authority is implied by read access.
 
-## Local Cargo-selected toko-tooling 0.38.2 and crate placement
+## Installed Cargo-selected toko-tooling 0.38.2 and crate placement
 
 Root `[workspace.dependencies]` declares `toko-tooling = "=0.38.2"` once. Both real
 members inherit it unconditionally as a dev-dependency with cargo-machete ignored
@@ -91,8 +91,9 @@ and the snapshot select registry archive SHA-256
 `45c12cc2aa598d14e137dd7db50f12e943470b4ce351dfcaffeccde6821c1876`; all 99 roots
 and 171 installed files agree. Production library graphs remain dependency-free.
 
-The 0.38.2 adoption is local and uncommitted. Cargo updated only toko-tooling,
-preserving the deferred syn 3.0.10 selection and local placement work. The exporter
+The 0.38.2 adoption is committed and delivered. Cargo updated only toko-tooling
+during adoption, preserving the deferred syn selection. Delivery captured syn
+3.0.9 and restored the normal 3.0.10 edit after reconciliation. The exporter
 adds two qualification helper companions and updates five existing payloads from
 0.38.0. Qualification release preparation remains unselected: there is no
 `qualification_workspace` declaration or qualification package here. Actual
@@ -107,7 +108,7 @@ The root explicitly excludes `qualification`; its two README files are retired
 history, not maintained packages. No package move or empty qualification
 workspace is needed. Unit/integration tests and examples remain package-local.
 Generated workspaces under `target/` are disposable fixtures. Product groups,
-versions, APIs, features and all 20 release obligations remain intact. Focused
+APIs, features and all 20 release obligations remain intact. Focused
 checks cover locked membership/defaults, package inventories, release rosters,
 production declarations and documentation; unchanged caller evidence is reused.
 
