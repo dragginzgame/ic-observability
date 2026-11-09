@@ -1,33 +1,34 @@
 # Current handoff — 2026-11-09
 
-## Local omitted-only diagnostics
+## Published omitted-only diagnostics
 
 [#133](https://github.com/dragginzgame/ic-observability/issues/133) is implemented
-locally: `BoundedCounterTable::add_omitted(u128)` and
+in Metrics 0.29.9: `BoundedCounterTable::add_omitted(u128)` and
 `LexicalMeasurementTable::record_omitted(u64)` are const-capable, return unit,
 and reuse canonical arithmetic without a key, comparison, allocation or retained
 state change. Consumers decide eligibility and call omission instead of admission
-for that event. This addition is uncommitted and unpublished; Metrics 0.29.8
-does not contain it. Pending Metrics 0.29.9 notes link the issue.
+for that event. The release is delivered and independently verified on crates.io;
+Metrics 0.29.8 does not contain these methods.
 
 Focused Linux/Rust 1.99.1 validation passes: 21 recording tests, three external
 typed API tests (including const evaluation and comparison refusal), native
 library/test and Wasm library Clippy with warnings denied, warnings-denied
 Rustdoc, four dependency-free production graphs, formatting, links and diff
-checks. No dependency/feature or sibling change belongs to this fix; existing
-tooling adoption and deferred syn work remain preserved. No release or broad
-product matrix was run. Canic #756 retains adoption and installed qualification.
+checks. The subsequent release passed the full workspace gate described below.
+No production dependency/feature or sibling change belongs to this fix.
+Canic #756 retains adoption and installed qualification.
 
 ## Published typed recording APIs
 
-Metrics **0.29.8** and Logging **0.24.13** are delivered to origin/main and
+Metrics **0.29.9** and Logging **0.24.14** are delivered to origin/main and
 published, non-yanked and independently verified against their source archives.
-The [delivery receipt](../evidence/releases/typed-recording-20261109.md) owns
+The [delivery receipt](../evidence/releases/omission-toko0375-20261109.md) owns
 exact commits, annotated tags, archive hashes, plans and publication evidence.
-Never re-upload these versions. Both published entries are finalized. Pending
-notes select Metrics 0.29.9 (omission APIs and tooling) and Logging 0.24.14
-(tooling) without changing package versions. The normal checkout was reconciled
-with the completed batch.
+Never re-upload these versions. Both ledger entries are finalized; Metrics
+includes the omission APIs and tooling, while Logging includes the changed
+development-tooling requirement. The normal checkout is reconciled with the
+completed batch. Earlier typed APIs and their original delivery identities are
+retained in the [preceding receipt](../evidence/releases/typed-recording-20261109.md).
 
 Logging supplies `BoundedHistory<T>`: fixed count/accounted-payload limits,
 oldest-row eviction receipts, intact typed refusals, borrowed reversible rows
@@ -62,13 +63,13 @@ edit remains preserved in stash `de3f936fd3e93d094ddf5ff5d7129a8104119f0c`, pinn
 by branch `preserved/syn-3.0.10-typed-recording-20261109`. Do not discard it or
 mistake the dirty normal lock for the published graph.
 
-Batch `batch-vgM1oJ1f` is complete at index 2. Its candidate is retained under
-`target/release-frozen/batch-vgM1oJ1f`, with durable recovery under
-`.git/release-state/frozen/batch-vgM1oJ1f/`. Reconciliation completed; no retirement
-or protected evidence cleanup ran. The delivery receipt records the initial
-pre-capture clean-source refusal and subsequent preservation/recovery.
+Batch `batch-9DUaDslR` is complete at index 2. Its candidate is retained under
+`target/release-frozen/batch-9DUaDslR`, with durable recovery under
+`.git/release-state/frozen/batch-9DUaDslR/`. Reconciliation completed and the
+deferred syn edit was reapplied. No retirement or protected evidence cleanup ran.
+The delivery receipt owns source, publication and recovery identities.
 
-Earlier completed batches `batch-gfJA5IMg` and `batch-z30yB8KG` retain their
+Earlier completed batches `batch-vgM1oJ1f`, `batch-gfJA5IMg` and `batch-z30yB8KG` retain their
 candidates and Git-side recovery. Failed pre-delivery batch `batch-C8a10ddy`
 remains retained and must not be resumed as repaired source. The
 [previous delivery receipt](../evidence/releases/observability-patches-20261108-toko036.md)
@@ -88,9 +89,9 @@ and the snapshot select registry archive SHA-256
 `9fc1a752f4f8203d999c4cd593afb9ea18717b28d407492fc98aab5722526be3`; all 99 roots
 and 169 installed files agree. Production library graphs remain dependency-free.
 
-The 0.37.5 refresh is local and uncommitted. Cargo updated only toko-tooling
+The 0.37.5 refresh is committed and delivered. Cargo updated only toko-tooling
 relative to the incoming lock, preserving the deferred syn 3.0.10 selection and
-the pending omitted-only API fix. Authenticated export preserves all 99 roots and
+the omitted-only API fix. Authenticated export preserves all 99 roots and
 169 files, including explicit offline engineering/RPC guides. Only the Cargo
 boundary checker and dependency guide change: the unpublished Wire benchmark's
 Candid dev-only allowance does not apply to either Observability package.
@@ -113,7 +114,7 @@ refusals, custom drift admission, generated consumers and LOC roles, hook checks
 CI selection and the selected native-evidence success scenario pass. The new
 recipe-scoped guard explicitly covers consumer compiler/Cargo and metadata gates.
 Historical receipts retain their recorded names and identities.
-No new commit, push or release is implied.
+The latest release receipt owns the subsequent full gates and delivered identities.
 
 After intentionally changing the pin, resolve Cargo.lock with Cargo, then run
 `make toko-tooling-update` or `make toko-tooling-install`. Neither installer

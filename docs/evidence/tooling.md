@@ -13,8 +13,11 @@ allowance Candid/CBOR source gates. Focused validation selects their actual
 `cargo-boundaries-check` and `candid-boundary-check` Make callers alongside
 installation, tooling admission, pins, formatting, links and diff checks.
 Other caller qualification remains applicable to unchanged inputs. Cargo changes
-only the tooling selection; the pending API fix and deferred syn selection are
-preserved. Current evidence is under `target/evidence/toko-tooling-0375/`.
+only the tooling selection; the API fix and deferred syn selection were
+preserved. Focused evidence is under `target/evidence/toko-tooling-0375/`.
+The accumulated adoption is delivered with Metrics 0.29.9 and Logging 0.24.14;
+the [release receipt](releases/omission-toko0375-20261109.md) records both full
+20-stage gates, registry readback and deferred-lock custody.
 
 The preceding 0.37.4 refresh explicitly retained engineering and RPC guides for
 offline links when the baseline became standalone. It preserved all prior 97
@@ -50,10 +53,11 @@ dependency pins, formatting and documentation checks pass. The normal root is
 still virtual with two real packages; no carrier crate or Rust import was added.
 Cargo changed only toko-tooling relative to the incoming graph; the pre-existing
 syn 3.0.10 edit is preserved. Product versions and the complete 20-stage release
-roster remain unchanged apart from the renamed tooling admission stage. Pending
-notes remain Metrics 0.29.9 and Logging 0.24.14 for developer-tooling changes.
-The 0.37.1 caller evidence is under `target/evidence/toko-tooling-0371/`. The adoption is local and
-uncommitted; no release, broad product suite or sibling mutation is implied.
+roster remained unchanged during adoption apart from the renamed tooling admission
+stage. Metrics 0.29.9 and Logging 0.24.14 ledger entries are now finalized by their
+subsequent releases. The 0.37.1 caller evidence is under
+`target/evidence/toko-tooling-0371/`; full release qualification belongs to the
+linked delivery receipt. No sibling mutation is implied.
 
 Focused consumer checks also pass: matched full/group validation traces, actual
 Make release routing and unsafe-mode refusals, custom drift refusal before
