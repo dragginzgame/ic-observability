@@ -18,7 +18,7 @@ authors = ["borovan <84897664+borovan@users.noreply.github.com>"]
 [workspace.dependencies]
 # logging
 # Changelog : releases/logging/CHANGELOG.md
-ic-logging = { path = "crates/ic-logging", version = "0.24.15" }
+ic-logging = { path = "crates/ic-logging", version = "0.24.16" }
 
 # metrics
 # Changelog : releases/metrics/CHANGELOG.md
