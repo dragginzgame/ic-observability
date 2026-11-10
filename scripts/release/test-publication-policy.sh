@@ -18,6 +18,7 @@ mkdir -p scripts/dev
 # This fixture isolates publication policy; tooling refusal is tested separately.
 printf '#!/usr/bin/env bash\nexit 0\n' > scripts/dev/toko-tooling.sh
 printf '/target/\n' > .gitignore
+cp "$root/LICENSE.md" LICENSE.md
 printf '[workspace.package]\nrepository = "%s/remote.git"\n' "$fixture" > Cargo.toml
 mkdir -p crates/ic-metrics/src
 printf 'pub const VALUE: u8 = 1;\n' > crates/ic-metrics/src/lib.rs
@@ -56,6 +57,7 @@ jq -n --arg source "$source" '{git:{sha1:$source,dirty:false},path_in_vcs:"crate
 cp -R crates/ic-metrics/src "$fixture/archive/ic-metrics-0.1.0/"
 cp crates/ic-metrics/Cargo.toml "$fixture/archive/ic-metrics-0.1.0/Cargo.toml.orig"
 cp crates/ic-metrics/Cargo.toml "$fixture/archive/ic-metrics-0.1.0/Cargo.toml"
+cp LICENSE.md "$fixture/archive/ic-metrics-0.1.0/LICENSE.md"
 printf '# generated lock\n' > "$fixture/archive/ic-metrics-0.1.0/Cargo.lock"
 tar -czf "$fixture/valid.crate" -C "$fixture/archive" ic-metrics-0.1.0
 checksum="$(bash scripts/ci/verify-file-checksum.sh --print sha256 "$fixture/valid.crate")"
@@ -86,7 +88,7 @@ verified="$(find target/publication -name verified -type f)"
 source_git="${verified%/*}/provenance/source.git"
 # Check content policy directly against the independently retrieved source.
 # Each variant must reach its intended refusal, not fail at an earlier boundary.
-for kind in content missing extra empty-directory manifest symlink duplicate; do
+for kind in content missing extra empty-directory manifest distribution-input missing-distribution symlink duplicate; do
     variant="$fixture/$kind"
     mkdir "$variant"
     cp -R "$fixture/archive/ic-metrics-0.1.0" "$variant/"
@@ -106,6 +108,12 @@ for kind in content missing extra empty-directory manifest symlink duplicate; do
         manifest)
             printf '# changed\n' >> "$variant/ic-metrics-0.1.0/Cargo.toml.orig"
             expected='package content differs from source: Cargo.toml.orig' ;;
+        distribution-input)
+            printf '\nmodified\n' >> "$variant/ic-metrics-0.1.0/LICENSE.md"
+            expected='package content differs from source: LICENSE.md' ;;
+        missing-distribution)
+            rm "$variant/ic-metrics-0.1.0/LICENSE.md"
+            expected='maintained package roster differs from source' ;;
         symlink)
             mv "$variant/ic-metrics-0.1.0/src/lib.rs" "$variant/original.rs"
             ln -s ../../original.rs "$variant/ic-metrics-0.1.0/src/lib.rs"

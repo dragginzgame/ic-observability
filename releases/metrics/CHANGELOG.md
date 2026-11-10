@@ -14,6 +14,7 @@ Metrics and Logging each own their package version and release notes.
   Clarify product navigation, current release-line guidance and adapter ownership.
   Organise native guides by topic, repair caller links and compact the tooling summary.
   Use pinned online release-setting diagnostics in the trimmed snapshot.
+  Qualify publication readback with complete distribution inputs and altered/missing-input refusals.
   [Tooling #373](https://github.com/dragginzgame/toko-tooling/issues/373).
 
 ## [0.29.10] - 2026-11-09

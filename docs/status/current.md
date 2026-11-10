@@ -22,7 +22,11 @@ evidence; the current delivery will run both complete release plans.
 Fresh adoption checks and records are under `target/evidence/toko-tooling-0397/`;
 the [tooling summary](../evidence/tooling.md) records their scope. Delivery is selected for Metrics 0.29.11 and Logging 0.24.16, with verified
 publication through the frozen batch workflow. Their release notes are pending
-until the standard release runner finalises each group.
+until the standard release runner finalises each group. Batch `batch-9uizEjhh`
+stopped before delivery when its publication-policy fixture omitted a required
+distribution input. The normal checkout repairs that fixture and adds missing
+and altered-input coverage; do not resume the failed source as repaired code.
+Its candidate and recovery state remain retained.
 
 Native documentation is organised under architecture, development, releases,
 governance and migrations. The documentation index, caller links and CI's exact
