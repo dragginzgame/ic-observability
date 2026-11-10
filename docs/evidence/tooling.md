@@ -19,19 +19,23 @@ explicit `TOKO_TOOLING_RELEASE := 1` selection; all 20 workspace obligations and
 product/qualification placement remain intact. Consumer documentation checking
 now scans maintained local directories without the retired reference roots.
 
-Metrics 0.29.11 and Logging 0.24.16 are selected for delivery through the frozen
-batch workflow; the standard runner owns their pending metadata and notes.
-The incoming AGENTS.md
-ownership edits and deferred syn selection remain preserved. Fresh tool
-installation/admission, snapshot, pin, formatting and documentation
-checks are recorded under `target/evidence/toko-tooling-0397/`. The unchanged
-package-document input and release file/version/roster checks retain their
-0.39.5 evidence under `target/evidence/toko-tooling-0395/`. Unchanged executable,
-hook, drift-refusal and archive-checker evidence is reused from
-`target/evidence/toko-tooling-0392/` and
-`target/evidence/toko-tooling-0393/`; no broad product gate ran for this refresh.
+Metrics 0.29.11 and Logging 0.24.16 are delivered with this selection. Both
+passed all 20 workspace stages, final-version archive compilation, atomic
+branch/tag delivery and independent registry/source-content readback. The
+[delivery receipt](releases/toko0397-docs-20261110.md) owns exact identities,
+plans, verification directories and recovery custody. Installation/admission and
+focused checks are under `target/evidence/toko-tooling-0397/`; documentation
+organisation and CI-selection checks are under
+`target/evidence/docs-cleanup-20261110/`.
+
+The first batch stopped before delivery on an incomplete synthetic package.
+Its fixture repair adds complete distribution inputs and missing/altered-input
+refusals. The new batch reran both complete release plans. Failed and completed
+candidates remain retained. The normal checkout is reconciled, with only the
+separately preserved syn 3.0.10 edit reapplied; the delivered graph uses 3.0.9.
 The [source inventory](../governance/source-origins.md) records component origins.
-Deployment is scoped to this repository; no sibling change or delivery is selected.
+No sibling change or delivery was selected. Hosted native and installed consumer
+acceptance remain separate from the local release gate.
 
 ## Earlier qualification
 

@@ -1,55 +1,31 @@
 # Current handoff — 2026-11-10
 
-## Local tooling adoption
+## Published products and tooling
 
-Published toko-tooling **0.39.7** is installed locally through its authenticated
-exporter. The exact root Cargo pin, inherited member dev-dependencies, lock and
-snapshot agree on archive SHA-256
-`fd795f6ef878496ac27a990a9208b87fa786a9148c18580338ef8ac79df501d7`.
-The receipt selects 54 roots and 109 files. The preceding 0.39.5 refresh retired
-71 unchanged files outside the retained baseline, executable and runtime selection. Shared
-reference docs, rules, audits and task guides stay upstream; consumer links pin
-the reviewed release commit. Product documentation and canonical root files stay
-local. The [documentation index](../README.md) links the current contracts and
-shared references. The previous managed-doc namespace plan is superseded.
-
-The consumer explicitly sets `TOKO_TOOLING_RELEASE := 1` before its common Make
-include. `validation-evidence.pl` remains explicitly selected because local release
-validation calls it. Release requirements remain unchanged, including all 20
-workspace stages. The 0.39.7 refresh changes the baseline and the Make/batch diagnostics for
-retired release settings. Other executable payloads retain their earlier focused
-evidence; the current delivery will run both complete release plans.
-Fresh adoption checks and records are under `target/evidence/toko-tooling-0397/`;
-the [tooling summary](../evidence/tooling.md) records their scope. Delivery is selected for Metrics 0.29.11 and Logging 0.24.16, with verified
-publication through the frozen batch workflow. Their release notes are pending
-until the standard release runner finalises each group. Batch `batch-9uizEjhh`
-stopped before delivery when its publication-policy fixture omitted a required
-distribution input. The normal checkout repairs that fixture and adds missing
-and altered-input coverage; do not resume the failed source as repaired code.
-Its candidate and recovery state remain retained.
-
-Native documentation is organised under architecture, development, releases,
-governance and migrations. The documentation index, caller links and CI's exact
-prose path list follow those paths. Shared reference docs stay upstream. The
-tooling evidence summary is compacted; protected receipts, distribution records,
-historical handoffs and audit artifacts retain their original scope and custody.
-
-The [source inventory](../governance/source-origins.md) records current component origins.
-Incoming AGENTS.md edits, including the IC Storage adapter ownership changes,
-remain preserved with shared reference links retargeted upstream. Only
-toko-tooling changed in the incoming dependency selection; the deferred syn
-3.0.10 edit remains separate.
-
-## Published products
-
-Metrics **0.29.10** and Logging **0.24.15** are delivered and independently
-verified on crates.io. Never re-upload those versions. The
-[delivery receipt](../evidence/releases/toko0382-placement-20261109.md) owns exact
+Metrics **0.29.11** and Logging **0.24.16** are delivered to GitHub and
+independently verified on crates.io. Never re-upload those versions. The
+[delivery receipt](../evidence/releases/toko0397-docs-20261110.md) owns exact
 commits, annotated tags, archive hashes, complete plans and registry readback.
 Both passed all 20 workspace stages without narrowing or stage reuse, followed
 by final archive compilation and matching maintained source (34 Metrics and
-16 Logging files). Hosted/native macOS and installed consumer acceptance remain
-separate and asynchronous; pending or cancelled checks are not passes.
+16 Logging files). Hosted macOS and installed consumer acceptance remain separate
+and asynchronous; pending or cancelled checks are not passes.
+
+The root Cargo pin, inherited dev-dependencies, lock and snapshot select published
+toko-tooling **0.39.7**, archive SHA-256
+`fd795f6ef878496ac27a990a9208b87fa786a9148c18580338ef8ac79df501d7`.
+The receipt retains 54 roots and 109 files. Shared reference docs stay upstream
+at reviewed commit-pinned URLs; native guides are organised by topic through the
+[documentation index](../README.md). The earlier managed-document namespace plan
+is superseded. Current installation and focused evidence are under
+`target/evidence/toko-tooling-0397/`; the [tooling summary](../evidence/tooling.md)
+records the scope. Product Rust, public APIs and release obligations are unchanged.
+The consumer retains `TOKO_TOOLING_RELEASE := 1` and explicitly selects
+`validation-evidence.pl` for its actual release caller.
+
+The [source inventory](../governance/source-origins.md) records component origins.
+The IC Storage adapter ownership edits and current product links are delivered.
+The deferred syn 3.0.10 edit remains separate from the released syn 3.0.9 graph.
 
 The product crates remain independent, under `crates/`, in one virtual root
 workspace excluding `qualification`. That tree contains historical README files,
@@ -70,17 +46,22 @@ endpoint/report/installed acceptance. No sibling deployment is implied.
 ## Deferred work and recovery custody
 
 The syn 3.0.10 Cargo.lock edit is restored and excluded from the published
-syn 3.0.9 graph. Its original stash is
-`de3f936fd3e93d094ddf5ff5d7129a8104119f0c`, pinned by branch
-`preserved/syn-3.0.10-typed-recording-20261109`. Do not discard or mistake it for
-the released selection.
+syn 3.0.9 graph. Its current stash is
+`39f97a10b8ecd7f567b3b69696b7c71fb549ab01`, pinned by branch
+`preserved/syn-3.0.10-toko0397-20261110`. The earlier stash
+`de3f936fd3e93d094ddf5ff5d7129a8104119f0c` and its preservation branch remain
+retained. Do not discard this work or mistake it for the released selection.
 
-Batch `batch-Dvpzy0I1` is complete at index 2. Execution remains under
-`target/release-frozen/batch-Dvpzy0I1`, with durable recovery under
-`.git/release-state/frozen/batch-Dvpzy0I1/`. Reconciliation completed and the
+Batch `batch-ic09DJmB` is complete at index 2. Execution remains under
+`target/release-frozen/batch-ic09DJmB`, with durable recovery under
+`.git/release-state/frozen/batch-ic09DJmB/`. Reconciliation completed and the
 syn edit was reapplied. No retirement or protected cleanup ran.
 
-Earlier completed batches `batch-9DUaDslR`, `batch-vgM1oJ1f`, `batch-gfJA5IMg`
+Failed pre-delivery batch `batch-9uizEjhh` retains its original source and evidence;
+do not resume it as repaired source. Its publication-policy fixture was fixed in
+the normal checkout before the completed batch reran all required checks.
+
+Earlier completed batches `batch-Dvpzy0I1`, `batch-9DUaDslR`, `batch-vgM1oJ1f`, `batch-gfJA5IMg`
 and `batch-z30yB8KG` retain their candidates/recovery. Failed pre-delivery batch
 `batch-C8a10ddy` must not be resumed as repaired source. The delivery-receipt
 chain and [retention index](../evidence/README.md) own their identities and
