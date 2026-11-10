@@ -5,6 +5,17 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.29.11] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt toko-tooling 0.39.7, explicitly enable the shared release interface and
+  retire shared reference copies through the exporter in favour of pinned upstream links.
+  Clarify product navigation, current release-line guidance and adapter ownership.
+  Organise native guides by topic, repair caller links and compact the tooling summary.
+  Use pinned online release-setting diagnostics in the trimmed snapshot.
+  [Tooling #373](https://github.com/dragginzgame/toko-tooling/issues/373).
+
 ## [0.29.10] - 2026-11-09
 
 ### 🛠️ Tooling
@@ -390,7 +401,7 @@ Metrics and Logging each own their package version and release notes.
   and this ledger; the workspace root holds common metadata and navigation.
   Release, resume and publication require explicit `RELEASE_GROUP=metrics`.
   Coordinated history is preserved separately. Package versions and runtime
-  contracts are unchanged. See [group commands](../../docs/independent-releases.md).
+  contracts are unchanged. See [group commands](../../docs/releases/independent-releases.md).
 
 ## [0.23.1] - 2026-10-31
 
@@ -399,7 +410,7 @@ Metrics and Logging each own their package version and release notes.
 - Release Metrics and Logging independently in one workspace. Select
   `RELEASE_GROUP=metrics` (default) or `logging` for release, resume and
   publication. Existing numeric versions remain 0.23.0; arithmetic, log behavior
-  and dependency boundaries are unchanged. See [group ownership and commands](../../docs/independent-releases.md)
+  and dependency boundaries are unchanged. See [group ownership and commands](../../docs/releases/independent-releases.md)
   and [#104 — Version Metrics and Logging independently](https://github.com/dragginzgame/ic-observability/issues/104).
 - Adopt the committed Shared Tooling group machinery and published IC Build
   0.73.0 metadata editor through managed setup; prepare the new editor before

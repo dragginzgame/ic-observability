@@ -3,6 +3,9 @@
 Portable measurement and diagnostic logging in one Rust workspace, with separate
 application-selected crates.
 
+The [documentation index](docs/README.md) separates product contracts, development
+commands, shared tooling references and historical evidence.
+
 | Crate | Responsibility | Status |
 | --- | --- | --- |
 | [ic-metrics](crates/ic-metrics/README.md) | Application instrumentation and optional bounded heap recording | Independent Metrics release group |
@@ -26,28 +29,21 @@ For the currently published Metrics API and separately selected heap logs:
 ```toml
 [dependencies]
 ic-metrics = "0.29"
-ic-logging = "0.23"
+ic-logging = "0.24"
 ```
 
 Enable `recording` for bounded Metrics retention. Metrics follows
 the [0.29 instrumentation boundary](releases/metrics/0.29.md): no general numeric
 helpers or recorder Serde traits. Governed storage uses explicit restoration;
 Canic's adapter owns report DTOs, validation, Wire schemas and generated clients.
-Earlier 0.28 releases retain their previous Serde API.
-The [0.28 migration](releases/metrics/0.28.md) removes Metrics' earlier
-`native-wire` feature and schema implementations without changing numeric records.
-The [0.24 migration](releases/metrics/0.24.md) describes the historical Wire 0.13
-cohort. The Logging example selects an older release line; its compiler floor and
-dependencies can differ from the current checkout.
-The [0.18 migration guide](docs/migration-018.md) covers combined Logging
-text budgets, append receipts, explicit topic matching, borrowed checkpoints,
-visitor paging and validated summary/histogram transport, available in the
-published 0.24 Metrics and 0.23 Logging lines.
+The [API inventory](docs/architecture/metrics-api.md) and [Logging contract](docs/architecture/logging.md)
+describe current behavior. Earlier migration guides retain their recorded scope
+and are grouped in the [documentation index](docs/README.md#earlier-contracts).
 
-[IC Persistence](https://github.com/dragginzgame/ic-persistence) continues to own
-governed Memory/Storage integration, `ic-metrics-stable` and the separately selected
-`ic-logging-stable` adapter. Logging's passive checkpoints carry validated state;
-its heap engine acquires no storage dependency. See [the boundary](docs/logging.md)
+[IC Storage](https://github.com/dragginzgame/ic-storage) owns
+governed Storage integration, `ic-metrics-storage` and the separately selected
+`ic-logging-storage` adapter. Logging's passive checkpoints carry validated state;
+its heap engine acquires no storage dependency. See [the boundary](docs/architecture/logging.md)
 for checkpoint, persistence and consumer qualification responsibilities.
 
 ## Release and package publication
@@ -66,7 +62,7 @@ make publish-check RELEASE_GROUP=logging
 ```
 
 Any `PACKAGE` override must belong to the selected group. See
-[independent releases](docs/independent-releases.md) for version/ledger ownership,
+[independent releases](docs/releases/independent-releases.md) for version/ledger ownership,
 release commands and recovery.
 Each command runs the native/Wasm Clippy gate before Cargo publication. Neither
 package depends on the other, so there is no publication-order dependency.
@@ -88,7 +84,7 @@ readback never retries the upload; retain and reconcile the separate receipts.
 ## Development
 
 Use the pinned Rust 1.99.1 toolchain with rustfmt and Clippy. Both library floors
-are Rust 1.99.1 on native and Wasm. [Local setup](docs/local-setup.md) owns explicit
+are Rust 1.99.1 on native and Wasm. [Local setup](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/docs/adoption/local-setup.md) owns explicit
 common-tool preparation through `make install-tools` and offline admission with
 `make tools-check`. Checks do not install tools or change dependency selections.
 
@@ -101,11 +97,18 @@ cargo run --locked --offline -p ic-logging --example worker
 ```
 
 Use `-p ic-metrics` for Metrics checks and select `--features recording` for its
-optional recorder. The [host guide](docs/hosts.md) owns focused commands and
+optional recorder. The [host guide](docs/development/hosts.md) owns focused commands and
 evidence limits. Aggregate Make checks and full release gates cover both members
 and retain their explicit validation authority. Registry publication remains a
 separately selected action per package.
 
-[Ownership](docs/extraction.md) · [Logging boundary](docs/logging.md) ·
+[Ownership](docs/architecture/extraction.md) · [Logging boundary](docs/architecture/logging.md) ·
 [Changelogs](CHANGELOG.md) · [Current handoff](docs/status/current.md) ·
-[Contribution rules](rules/contributions.md)
+[Contribution rules](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/rules/contributions.md)
+
+## Licence
+
+[Toko Studios Network Licence 1.0](LICENSE.md).
+
+The [source inventory](docs/governance/source-origins.md) records current component origins
+and the distinction between maintained source and external build inputs.

@@ -21,8 +21,8 @@ retired under the [evidence cleanup](README.md#retired-raw-evidence).
 - Publication, a dependency update, source inspection and a local substitute do
   not establish installed application or retained-codec qualification.
 
-The [current API inventory](../metrics-api.md) and
-[extraction contract](../extraction.md) map the concrete owning boundaries.
+The [current API inventory](../architecture/metrics-api.md) and
+[extraction contract](../architecture/extraction.md) map the concrete owning boundaries.
 Observability #130 is closed for the producer cut; remaining consumer acceptance
 stays at the relevant owner. No fresh sibling source or private feedback is
 exported by this summary, and no stale issue status is inferred from an old search.

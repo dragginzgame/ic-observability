@@ -1,7 +1,7 @@
 # Recorder design history
 
-Current behavior is defined by [the extraction contract](../extraction.md),
-[the API inventory](../metrics-api.md) and the two package guides, not by old
+Current behavior is defined by [the extraction contract](../architecture/extraction.md),
+[the API inventory](../architecture/metrics-api.md) and the two package guides, not by old
 experiment notes. This summary retains the useful decisions from the superseded
 arithmetic, histogram, restoration and lookup investigations.
 

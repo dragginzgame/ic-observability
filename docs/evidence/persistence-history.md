@@ -28,7 +28,7 @@ explains the distinction between historical records and available raw evidence.
 - Old one-map/raw-memory tests and native substitutes do not establish governed
   production allocation or installed-canister acceptance.
 
-The [extraction contract](../extraction.md) and [logging boundary](../logging.md)
+The [extraction contract](../architecture/extraction.md) and [logging boundary](../architecture/logging.md)
 retain current ownership. No stable format, backing, library API or sibling was
 changed by this documentation cleanup. Required durable compatibility evidence
 stays with the adapter that owns the codec, not a historical experimental archive.

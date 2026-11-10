@@ -12,7 +12,7 @@ ic-logging = "0.24.13"
 
 Logging has its own version and [changelog](https://github.com/dragginzgame/ic-observability/blob/main/releases/logging/CHANGELOG.md). Maintainers select
 `RELEASE_GROUP=logging` for release and publication; see
-[independent releases](https://github.com/dragginzgame/ic-observability/blob/main/docs/independent-releases.md).
+[independent releases](https://github.com/dragginzgame/ic-observability/blob/main/docs/releases/independent-releases.md).
 
 For structured diagnostics, `BoundedHistory<T>` retains opaque consumer-owned
 rows with fixed count and caller-accounted payload-byte limits. It evicts oldest
@@ -151,7 +151,7 @@ assert_eq!(restored.into_snapshot(), checkpoint);
 ```
 
 The library performs no authorization, timer registration, IC calls, serialization
-or stable writes. IC Persistence owns the separately selected `ic-logging-stable`
+or stable writes. IC Storage owns the separately selected `ic-logging-storage`
 adapter, its durable format and governed Memory/Storage integration. Hosts own
 checkpoint cadence, lifecycle, retention scheduling and stable identity; linking
 the heap crate selects no persistence. Diagnostic logs must not be treated as
@@ -160,3 +160,9 @@ evidence that a paid effect completed.
 Applications may count Logging receipts and refusals with Metrics while keeping
 the libraries and their reset lifetimes independent. The host owns those counters
 and any report DTOs; linking Logging adds no Metrics or schema dependency.
+
+## Licence
+
+[Toko Studios Network Licence 1.0](https://github.com/dragginzgame/ic-observability/blob/main/LICENSE.md).
+
+Copyright (c) 2024 Canic contributors

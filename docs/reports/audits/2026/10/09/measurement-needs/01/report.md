@@ -7,7 +7,7 @@ The review establishes two bounded reporting candidates, not a product correctne
 or performance verdict. Neither is an implemented or accepted feature.
 
 Trigger: maintainer request to audit sibling repositories for useful Metrics additions.
-Method: [flow convergence and duplication](../../../../../../../../audits/flow-convergence-and-duplication.md),
+Method: [flow convergence and duplication](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/audits/flow-convergence-and-duplication.md),
 reviewed Shared Tooling `4e274a2219c0b0cc3af68ec65658b373253518fb`, with the Metrics
 AGENTS overlay. Root source is released 0.2.16
 `d8276daa3ae8603a5b4e196d0bb5369de54c1216`, plus existing dirty documentation and

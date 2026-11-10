@@ -20,7 +20,7 @@ consumer was edited or released.
 - Official archive SHA-256:
   `0e6e2af9b83339bc8377c659a4106e3dafc3446181dea974d3e8ac0974490060`.
 
-The [API inventory](../../metrics-api.md) accounts for the retained instrumentation
+The [API inventory](../../architecture/metrics-api.md) accounts for the retained instrumentation
 and governed persistence surface, removed arithmetic/report APIs and consumer
 repairs. The [migration guide](../../../releases/metrics/0.29.md) describes the
 breaking source cut. Recorder Serde is removed; production graphs are dependency-free.

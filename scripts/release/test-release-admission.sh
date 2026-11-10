@@ -40,9 +40,9 @@ freeze_consumer() {
     local group="$1" supplier="$2" version="$3" directory
     consumer="$fixture/$group-consumer"
     mkdir -p "$consumer/supplier" "$consumer/client/src" "$consumer/client/tests"
-    cp Cargo.toml Cargo.lock rust-toolchain.toml "$consumer/"
+    cp Cargo.toml Cargo.lock rust-toolchain.toml LICENSE.md "$consumer/"
     cp "crates/ic-$supplier/Cargo.toml" \
-        "crates/ic-$supplier/README.md" "crates/ic-$supplier/LICENSE" "$consumer/supplier/"
+        "crates/ic-$supplier/README.md" "$consumer/supplier/"
     cp -R "crates/ic-$supplier/src" "$consumer/supplier/"
     for directory in examples tests; do
         if [[ -d "crates/ic-$supplier/$directory" ]]; then

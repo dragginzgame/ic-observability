@@ -14,7 +14,7 @@ preserved; relative links are rebased for this historical location.
   Principal/Account metadata uses canonical Platform Types 0.1, also reexported by
   Platform 0.14. Arithmetic, typed errors, schema shapes and encoded bytes remain
   unchanged. Metrics adds no identity, Platform runtime or endpoint dependency.
-  See [migration](../docs/migration-023.md).
+  See [migration](../docs/migrations/0.23.md).
 
 ## [0.22.0] - 2026-10-31
 
@@ -23,12 +23,12 @@ preserved; relative links are rebased for this historical location.
 - Make native Wire metadata optional through the default-enabled `native-wire`
   feature. Callers disabling defaults must explicitly select it for schemas;
   arithmetic and validated Serde transport remain available without Wire.
-  See [migration](../docs/migration-022.md) and [#101 — Allow native arithmetic consumers to exclude Wire metadata dependencies](https://github.com/dragginzgame/ic-observability/issues/101).
+  See [migration](../docs/migrations/0.22.md) and [#101 — Allow native arithmetic consumers to exclude Wire metadata dependencies](https://github.com/dragginzgame/ic-observability/issues/101).
 - Adopt IC Wire 0.11 for native metadata. Consumers composing Metrics in native
   Wire reports must align their direct Wire dependency to 0.11. Numeric layouts,
   arithmetic and Logging behavior are unchanged. This workspace enables neither
   Platform schemas nor endpoints; applications selecting those integrations
-  coordinate Platform 0.12 separately. See [migration](../docs/migration-022.md).
+  coordinate Platform 0.12 separately. See [migration](../docs/migrations/0.22.md).
 
 ### 🧪 Testing
 
@@ -69,7 +69,7 @@ preserved; relative links are rebased for this historical location.
 
 - Repeat the 0.20.0 release under 0.21.0 after an accidental second minor release.
   IC Wire remains at 0.10.0; there are no additional API, behavior or dependency
-  changes. The [0.20 migration guide](../docs/migration-020.md) also applies to 0.21.
+  changes. The [0.20 migration guide](../docs/migrations/0.20.md) also applies to 0.21.
 
 ## [0.20.0] - 2026-10-30
 
@@ -80,7 +80,7 @@ preserved; relative links are rebased for this historical location.
   direct Wire dependency to 0.10. Numeric layouts, arithmetic and Logging behavior
   are unchanged. Endpoint applications separately coordinate Platform 0.11;
   this workspace enables no endpoint runtime. See the
-  [native metadata migration guide](../docs/migration-020.md).
+  [native metadata migration guide](../docs/migrations/0.20.md).
 
 ## [0.19.0] - 2026-10-30
 
@@ -91,7 +91,7 @@ preserved; relative links are rebased for this historical location.
   0.7's metadata trait is a different Rust dependency identity. Arithmetic,
   Serde layouts and Logging behavior are unchanged. Endpoint users separately
   coordinate Platform 0.9; this workspace enables no endpoint runtime.
-  See the [native metadata migration guide](../docs/migration-019.md).
+  See the [native metadata migration guide](../docs/migrations/0.19.md).
 
 ## [0.18.1] - 2026-10-30
 
@@ -110,7 +110,7 @@ preserved; relative links are rebased for this historical location.
   receipts with identity, truncation and eviction count. Topic filters now choose
   any, absent or exact topics. Update callers and coordinate durable checkpoint
   adoption with IC Persistence; existing stored layouts are not reinterpreted.
-  See the [0.18 migration guide](../docs/migration-018.md).
+  See the [0.18 migration guide](../docs/migrations/0.18.md).
 
 ### ➕ Added
 
@@ -2112,7 +2112,7 @@ preserved; relative links are rebased for this historical location.
 
 ### Fixed
 
-- Include the MIT license text and repository URL in the Cargo package, with
+- Include the repository URL in the Cargo package, with
   README documentation links usable outside the workspace.
 - Rerun the same release target after interruption: early failures repeat
   validation and prepared releases reconcile the saved candidate without another
@@ -2167,6 +2167,6 @@ consumer adoption, and the Cargo package remains unpublished.
   checksum verification and snapshot integrity checks.
 - Focused formatting, compilation, Clippy, documentation and MSRV commands;
   native CI for Ubuntu 24.04 and macOS 15 on Intel and Apple Silicon.
-- MIT license, development documentation and a public
+- Development documentation and a public
   [GitHub repository](https://github.com/dragginzgame/ic-metrics) with `main`
   tracking `origin/main`.

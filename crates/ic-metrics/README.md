@@ -90,7 +90,7 @@ of retained counters, aggregates, summaries and histograms. Storage owns durable
 encoding/bytes, governed allocation, namespace/configuration identity, continuity,
 checkpoint cadence and same-release reopening. Public raw constructors and
 transport reconstruction are absent; restoration never infers lost provenance.
-See the [complete API inventory](https://github.com/dragginzgame/ic-observability/blob/main/docs/metrics-api.md)
+See the [complete API inventory](https://github.com/dragginzgame/ic-observability/blob/main/docs/architecture/metrics-api.md)
 and [compiled application guide](https://github.com/dragginzgame/ic-observability/blob/main/crates/ic-metrics/src/application.md).
 
 Rust 1.99.1 is the floor and pinned compiler on native and Wasm. Focused checks:
@@ -102,14 +102,20 @@ cargo test -p ic-metrics --all-features --locked --offline
 make metrics-profiles-check allocation-free-check
 ```
 
-The [host guide](https://github.com/dragginzgame/ic-observability/blob/main/docs/hosts.md)
+The [host guide](https://github.com/dragginzgame/ic-observability/blob/main/docs/development/hosts.md)
 owns command scope and evidence limits. Raw Wasm bytes, IC instructions and actual
 cycles are separate measurements; native checks do not provide IC cost evidence.
 
 Metrics and Logging have independent versions and publication. No release or
 publication is implied by preparing an API cut. Maintainer delivery requires an
 explicit `RELEASE_GROUP=metrics` and the
-[independent-release workflow](https://github.com/dragginzgame/ic-observability/blob/main/docs/independent-releases.md).
+[independent-release workflow](https://github.com/dragginzgame/ic-observability/blob/main/docs/releases/independent-releases.md).
 The [Metrics ledger](https://github.com/dragginzgame/ic-observability/blob/main/releases/metrics/CHANGELOG.md)
 owns current and historical release notes. Historical receipts retain their
 original source, package, schema and runtime qualification identities.
+
+## Licence
+
+[Toko Studios Network Licence 1.0](https://github.com/dragginzgame/ic-observability/blob/main/LICENSE.md).
+
+Copyright (c) 2026 ic-metrics contributors

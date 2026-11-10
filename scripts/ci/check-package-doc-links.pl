@@ -6,6 +6,7 @@ use Cwd qw(abs_path);
 use File::Basename qw(dirname);
 use File::Path qw(make_path);
 use File::Copy qw(copy);
+use File::Spec;
 use File::Temp qw(tempdir);
 use JSON::PP qw(decode_json);
 use FindBin qw($RealBin);
@@ -31,6 +32,12 @@ for my $package (@{$metadata->{packages}}) {
     for my $path (split /\n/, $files) {
         $path !~ m{\A/|(?:\A|/)\.\.(?:/|\z)|[\r\0]} or die "invalid packaged path\n";
         my $source = "$directory/$path";
+        if ($path eq 'LICENSE.md') {
+            my $licence = abs_path(File::Spec->rel2abs($package->{license_file} // '', $directory));
+            defined($licence) && $licence eq "$root/LICENSE.md" && !-l "$root/LICENSE.md"
+                or die "package does not select the canonical root licence\n";
+            $source = $licence;
+        }
         if (!-e $source && !-l $source) {
             # Only Cargo's generated lock, original-manifest and provenance
             # entries may lack a maintained source file.

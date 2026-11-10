@@ -5,7 +5,7 @@
 Verdict: **PASS WITH FINDINGS**. Local remnants are corrected; the intended
 Testkit write observer is not yet available as a published dependency.
 
-Method: [flow convergence and duplication](../../../../../../../../audits/flow-convergence-and-duplication.md),
+Method: [flow convergence and duplication](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/audits/flow-convergence-and-duplication.md),
 Shared Tooling `88d398f01c9be74bd71d1ad67c27bf0ede87cc9b`, with the current
 [Metrics overlay](../../../../../../../../AGENTS.md). Trigger: maintainer-requested
 repository audit and cleanup. Source: release commit

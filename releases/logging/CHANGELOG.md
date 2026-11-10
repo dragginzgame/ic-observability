@@ -6,6 +6,17 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.24.16] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt toko-tooling 0.39.7, explicitly enable the shared release interface and
+  retire shared reference copies through the exporter in favour of pinned upstream links.
+  Clarify product navigation, current release-line guidance and adapter ownership.
+  Organise native guides by topic, repair caller links and compact the tooling summary.
+  Use pinned online release-setting diagnostics in the trimmed snapshot.
+  [Tooling #373](https://github.com/dragginzgame/toko-tooling/issues/373).
+
 ## [0.24.15] - 2026-11-09
 
 ### 🛠️ Tooling
@@ -263,7 +274,7 @@ belong here.
 - Adopt Shared Tooling's complete member-catalog admission and 0.27.22 catalog
   layout. Logging release preparation updates its root requirement while
   preserving Metrics' version, requirement and release notes.
-- Clarify [delivery policy](../../rules/contributions.md#delegated-delivery) and
+- Clarify [delivery policy](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/rules/contributions.md#delegated-delivery) and
   explicit Cargo cleanup scope. Logging's dependency-free engine, compiler floor
   and public contracts are unchanged.
 
@@ -274,7 +285,7 @@ belong here.
 - Require explicit `RELEASE_GROUP=logging` for release, resume and publication.
   Logging's canonical notes now live in this group ledger under releases/logging;
   the former crate-local path links here. Runtime contracts and the current
-  package version are unchanged. See [group commands](../../docs/independent-releases.md).
+  package version are unchanged. See [group commands](../../docs/releases/independent-releases.md).
 
 ## [0.23.1] - 2026-10-31
 
@@ -283,5 +294,5 @@ belong here.
 - Give Logging its independent release and publication selection through
   `RELEASE_GROUP=logging`, preserving its current 0.23.0 identity and runtime
   contract. Metrics versions and pending notes remain untouched by Logging
-  releases. See [group commands](../../docs/independent-releases.md) and
+  releases. See [group commands](../../docs/releases/independent-releases.md) and
   [#104 — Version Metrics and Logging independently](https://github.com/dragginzgame/ic-observability/issues/104).

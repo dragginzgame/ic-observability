@@ -11,7 +11,7 @@ current authority. All text below is preserved from the earlier handoff.
 
 ic-metrics owns allocation-free, dependency-free `no_std` arithmetic. Consumers
 own platform reads, attribution, identities, registries, persistence and endpoints.
-See [the extraction contract](../extraction.md).
+See [the extraction contract](../architecture/extraction.md).
 
 ## Pending 0.7.4 snapshot selection cleanup
 
@@ -1964,6 +1964,6 @@ or private setup policy. Frozen replay inputs retain their historical server
 identity; current Testkit defaults are not substituted into that experiment.
 
 No sibling files were edited. Historical evidence stays under `docs/evidence/`;
-[the host record](../hosts.md) separates focused Linux checks from native CI.
+[the host record](../development/hosts.md) separates focused Linux checks from native CI.
 No full local CI/product-test gate, dependency upgrade, package version change,
 commit, push, tag or release command ran.

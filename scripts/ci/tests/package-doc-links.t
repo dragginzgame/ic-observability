@@ -54,4 +54,15 @@ for my $case ('valid', 'missing', 'symlink', 'directory') {
     unlink "$fixture/package/src/required.rs" if $case eq 'symlink';
     rmdir "$fixture/package/src/required.rs" if $case eq 'directory';
 }
+write_file("$fixture/metadata.json", encode_json({workspace_members => ['fixture'], packages => [{
+    id => 'fixture', name => 'fixture', manifest_path => "$fixture/package/Cargo.toml",
+    license_file => '../LICENSE.md',
+}]}));
+write_file("$fixture/LICENSE.md", "Fixture distribution notice.\n");
+write_file("$fixture/roster", $roster . "LICENSE.md\n");
+ok(eval { observe($^X, "$fixture/scripts/ci/check-package-doc-links.pl"); 1 },
+    'Cargo root-licence copy is staged from its canonical source');
+unlink "$fixture/LICENSE.md" or die $!;
+ok(!eval { observe($^X, "$fixture/scripts/ci/check-package-doc-links.pl"); 1 },
+    'missing canonical root licence refuses');
 done_testing();

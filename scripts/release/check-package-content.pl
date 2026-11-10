@@ -28,6 +28,16 @@ for my $record (split /\0/, observe('git', '--git-dir', $git, 'ls-tree', '-rz', 
     $expected{$name eq 'Cargo.toml' ? 'Cargo.toml.orig' : $name} = $object;
 }
 keys(%expected) && exists($expected{'Cargo.toml.orig'}) or die "missing maintained package source\n";
+my $licence = observe('git', '--git-dir', $git, 'ls-tree', '-z', $commit, '--', 'LICENSE.md');
+if (length($licence)) {
+    $licence =~ /\A100644 blob ([0-9a-f]+)\tLICENSE\.md\0\z/
+        or die "invalid canonical root licence source\n";
+    !exists($expected{'LICENSE.md'}) or die "duplicate maintained package licence\n";
+    $expected{'LICENSE.md'} = $1;
+} else {
+    # Previously delivered package-owned inputs retain their original source tree.
+    exists($expected{'LICENSE'}) or die "missing package distribution source\n";
+}
 my @names = split /\n/, observe('tar', '-tzf', $archive);
 my @details = split /\n/, observe('tar', '-tzvf', $archive);
 @names == @details or die "inconsistent archive roster\n";

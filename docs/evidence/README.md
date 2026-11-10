@@ -1,7 +1,7 @@
 # Evidence and retention
 
 Keep current decisions and compact results here, following the
-[shared retention contract](../../rules/engineering-details.md#changelogs-and-artifact-preservation).
+[shared retention contract](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/rules/engineering-details.md#changelogs-and-artifact-preservation).
 Routine checks use changelogs, issues and CI results rather than another report.
 Raw experimental output belongs under ignored `target/evidence/` and may be
 removed by explicit workspace cleanup.

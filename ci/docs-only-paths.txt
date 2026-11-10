@@ -1,15 +1,15 @@
 # Exact prose-only inputs; packaged, embedded and companion-controlled Markdown
 # deliberately remain full CI. New paths require a review of their consumers.
 docs/status/current.md
-docs/hosts.md
-docs/independent-releases.md
-docs/extraction.md
-docs/logging.md
-docs/migration-018.md
-docs/migration-019.md
-docs/migration-020.md
-docs/migration-022.md
-docs/migration-023.md
+docs/development/hosts.md
+docs/releases/independent-releases.md
+docs/architecture/extraction.md
+docs/architecture/logging.md
+docs/migrations/0.18.md
+docs/migrations/0.19.md
+docs/migrations/0.20.md
+docs/migrations/0.22.md
+docs/migrations/0.23.md
 releases/metrics/CHANGELOG.md
 releases/metrics/0.24.md
 releases/logging/CHANGELOG.md

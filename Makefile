@@ -29,6 +29,7 @@ publish publish-check: override OBSERVABILITY_RELEASE_VALIDATION_SCOPE := group
 override TOKO_TOOLING_ROOT := $(CURDIR)
 export TOKO_TOOLING_ROOT
 override RELEASE_DELIVERY_POLICY := $(CURDIR)/ci/release-delivery.txt
+TOKO_TOOLING_RELEASE := 1
 include make/consumer.mk
 include make/cargo-publication.mk
 
@@ -133,7 +134,7 @@ help:
 	@echo "Rust setup: install-rust-tools; offline verification: rust-tools-check"
 	@echo "Release editor (also in install-tools/tools-check): install-release-editor, release-editor-check"
 	@echo "Clone setup: install-hooks (requires prepared manifest formatter and rustfmt)"
-	@echo "Workspace gates: check, check-wasm, clippy, docs-check, test (both packages; see docs/hosts.md for focused Cargo commands)"
+	@echo "Workspace gates: check, check-wasm, clippy, docs-check, test (both packages; see docs/development/hosts.md for focused Cargo commands)"
 	@echo "Formatting and admission: format-tools-check, fmt, fmt-check, check-doc-links, toko-tooling-check, check-pins"
 	@echo "Dependency declarations and boundary fixtures: production-dependencies-check"
 	@echo "Link fixed Metrics recording without an allocator: allocation-free-check"
@@ -147,7 +148,7 @@ help:
 	@echo "Shared Cargo declaration boundaries: cargo-boundaries-check"
 	@echo "Named tests: cargo test -p PACKAGE --locked <test-name> (ic-metrics or ic-logging)"
 	@echo "Recording tests: cargo test -p $(PACKAGE) --features recording --locked <test-name>"
-	@echo "Maintenance task definitions: tasks/README.md (adoption does not activate a schedule)"
+	@echo "Maintenance task definitions: https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/tasks/README.md (adoption does not activate a schedule)"
 	@echo "Workspace gates cover Metrics and Logging; compiler admission: msrv"
 	@echo "Full workspace validation (explicit check request): ci; releases select a complete group plan"
 
@@ -198,9 +199,8 @@ docs-check:
 
 check-doc-links:
 	perl scripts/ci/check-documentation-links.pl --root "$(CURDIR)" \
-		README.md AGENTS.md TOKO-TOOLING.md CHANGELOG.md releases/*/*.md releases/history.md docs/*.md \
-		docs/principles/*.md docs/evidence/*.md docs/evidence/releases/*.md docs/status/*.md rules/*.md audits/*.md tasks/*.md \
-		qualification/*/README.md
+		README.md AGENTS.md TOKO-TOOLING.md LICENSE.md CONTRIBUTING.md CHANGELOG.md \
+		releases docs qualification
 	perl scripts/ci/check-documentation-links.pl --root "$(CURDIR)" \
 		crates/ic-metrics/src/*.md crates/ic-metrics/README.md crates/ic-metrics/CHANGELOG.md \
 		crates/ic-logging/README.md crates/ic-logging/CHANGELOG.md
