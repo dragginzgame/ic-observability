@@ -1,26 +1,35 @@
 # Contributor tooling
 
-## Current local selection
+## Current selection and delivery
 
 Published toko-tooling **0.39.17** is selected once in the root catalog and
-inherited by both real members. Cargo.lock and the snapshot select archive
-SHA-256 `aaeab49adb84ea0d66cf86ecc48d826125f9c3ac6eafaf2a362bccfeba7acbfd`.
-The authenticated exporter retains all 55 roots and 111 files, updating only
-the baseline. Five test modules use `tests/mod.rs` instead of sibling
-`tests.rs`/`tests/` pairs under the new layout rule. Their bytes and Rust module
-paths are preserved; package library test inventories and results qualify the
-moves. Production Rust, public APIs, canonical files, tool pins and all existing
-executable payloads remain unchanged.
+inherited by both members. Cargo.lock and the snapshot select archive SHA-256
+`aaeab49adb84ea0d66cf86ecc48d826125f9c3ac6eafaf2a362bccfeba7acbfd`.
+The authenticated snapshot has 55 roots and 111 files. The explicit
+`make deps-update` entrypoint and its Make/hook fixture copies add no CI/release
+prerequisite and perform no freshness audit. Five test modules now use directory
+layout with identical bytes and module paths. Focused checks preserved the 62
+Metrics and 35 Logging test inventories (one pre-existing ignored Logging test)
+and all LOC roles/totals. Production Rust and public APIs are unchanged.
 
-The explicit `make deps-update` command and its fixture wiring retain their
-0.39.15 evidence under `target/evidence/toko-tooling-03915/`; they add no CI or
-release prerequisite and perform no freshness audit. The optional shared Rustdoc
-baseline checker is not selected because this consumer uses warning-denied
-Rustdoc, not a missing-doc baseline. Supplier review remains scoped to the
-selected latest stable, non-yanked toko-tooling release. Installation/admission,
-formatting, library test inventories/results and focused checks are under
-`target/evidence/toko-tooling-03917/`. This work is local and uncommitted; the
-existing licence edit and deferred syn selection remain preserved.
+Metrics **0.29.12** and Logging **0.24.17** are delivered and independently
+verified on crates.io. Both passed all 20 workspace stages, final-version archive
+compilation, atomic branch/tag delivery and registry/source-content readback.
+The [delivery receipt](releases/toko03917-delivery-20261112.md) owns exact source,
+tag and archive identities, complete plans, verification and recovery custody.
+The native release editor is published IC Build **0.83.0**. Both group ledgers
+record supplier registry review and optional-refresh dispositions; pin/tool
+admission is not a claim of supplier freshness.
+
+Focused adoption checks remain under `target/evidence/toko-tooling-03917/`, with
+unchanged LOC/Make caller proofs under the earlier adoption evidence. Native
+editor qualification and release transcripts are under
+`target/deploy/toko03917-20261112/`. The optional shared missing-doc baseline
+checker remains unselected; warning-denied Rustdoc remains the consumer gate.
+The normal checkout is reconciled and only the deferred syn 3.0.10 edit remains
+local; delivery used 3.0.9. All earlier candidates and preservation refs remain
+retained. No sibling repository was changed or deployed. Hosted native and
+installed consumer acceptance remain separate from these local release gates.
 
 ## Delivered 0.39.7 selection
 
