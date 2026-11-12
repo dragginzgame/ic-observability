@@ -37,7 +37,7 @@ collection or turn a failed check into a successful one.
 
 ## Prerequisites and focused checks
 
-Root `[workspace.dependencies]` declares `toko-tooling = "=0.39.7"` once.
+Root `[workspace.dependencies]` declares `toko-tooling = "=0.39.17"` once.
 Both real members inherit it unconditionally as a dev-dependency and merge the
 name into cargo-machete ignored metadata, without a Rust import. Cargo.lock pins
 the registry version/checksum; no selection-only package or separate tooling
@@ -48,6 +48,14 @@ and `tools-check`; offline `toko-tooling-check` admits all member declarations,
 the exact root pin, Cargo.lock and installed snapshot. CI/release Make entrypoints and
 the custom candidate, metadata and publication scripts check tooling before effects.
 
+Use `make deps-update` for explicit Cargo updates (`cargo update -v`), optionally
+with `DEPENDENCY_PACKAGE` and `DEPENDENCY_PRECISE` to select one dependency.
+For example, after editing the root tooling pin, run
+`make deps-update DEPENDENCY_PACKAGE=toko-tooling DEPENDENCY_PRECISE=0.39.17`,
+then `make toko-tooling-update`. This repository has only the root maintained
+workspace. The command preserves manifest requirements and is separate from
+supplier freshness review; it is not called by CI or release admission.
+
 Repository CI owns one Linux security job with a full-history, fully redacted
 Gitleaks scan, including documentation-only runs. The pinned shared installer
 prepares the scanner only there; release and publication rosters do not scan.
@@ -56,7 +64,7 @@ before their first tool installation and save after setup, before product checks
 Cache service failures permit download fallback; downloaded bytes still require
 the selected checksum. The existing native prerequisite/compiler order is retained.
 
-The crates.io toko-tooling 0.39.7 refresh preserves the selected
+The crates.io toko-tooling 0.39.17 refresh preserves the selected
 tool catalogs and compiler. `make tools-check check-pins` admits prepared tools;
 setup admits the renamed catalog contract without store cleanup. Earlier source-bound
 receipts retain their original snapshots. Explicit setup still uses
@@ -69,7 +77,11 @@ obsolete executable retirement follows the [shared guide](https://github.com/dra
 `bash scripts/dev/cloc.sh -d 1 ic-metrics::recording` drills into one source branch;
 the depth is relative to the selected crate or module.
 Terminal reports colour workspace, crate and module names; redirected or
-`NO_COLOR=1` reports stay plain. Sibling scans use one updating progress line.
+`NO_COLOR=1` reports stay plain. Text labels are capped at 44 characters and
+shrink to fit the terminal, with middle truncation and a 120-column fallback
+for redirected output. `bash scripts/dev/cloc.sh --wide -d 1` keeps full names;
+numeric columns and JSON labels are unchanged. Sibling scans use one updating
+progress line.
 `bash scripts/dev/cloc.sh --json`
 emits schema 2 with application/library, test, example, benchmark, tooling and
 unclassified counts. Singular Rust test paths are not retained. The allocation-free
@@ -332,7 +344,7 @@ The shared locked release-preflight helper owns fetch/tool sequencing and pin
 rechecks; Metrics admits source/recovery first and selects preparation authority,
 tool targets and pin files. Checks remain offline and never install tools.
 
-`ci/release-tools.env` selects published IC Build 0.73.0's
+`ci/release-tools.env` selects published IC Build 0.83.0's
 `ic-build-release-metadata` executable with its required `cli` feature and a
 1 MiB allowance for each input document. This selects the current Host artifact,
 filesystem and process implementations through Build's tool graph, without

@@ -39,7 +39,7 @@ cmp "$fixture/expected-release-files" "$fixture/release-files"
 for selection in default direct; do
     if [[ "$selection" == default ]]; then unset RELEASE_DELIVERY; else export RELEASE_DELIVERY=direct; fi
     TMPDIR="$fixture" "$real_bash" "$root/scripts/ci/check-release-commands.sh" "$root" \
-        make/consumer.mk make/tools.mk make/release.mk make/rust-format.mk make/execution.mk make/validation.mk \
+        make/consumer.mk make/tools.mk make/release.mk make/rust-format.mk make/execution.mk make/validation.mk make/cargo-dependencies.mk \
         scripts/ci/check-make-execution.sh scripts/ci/check-release-delivery.sh \
         ci/release-delivery.txt scripts/ci/run-formatting.sh \
         scripts/release/metadata.sh ci/cargo-release-groups.json > "$fixture/output" 2>&1

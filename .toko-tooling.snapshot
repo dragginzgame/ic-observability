@@ -1,8 +1,8 @@
 # Toko Tooling snapshot v1
-# version	0.39.7
+# version	0.39.17
 format	1
 source	https://crates.io/crates/toko-tooling
-revision	fd795f6ef878496ac27a990a9208b87fa786a9148c18580338ef8ac79df501d7
+revision	aaeab49adb84ea0d66cf86ecc48d826125f9c3ac6eafaf2a362bccfeba7acbfd
 # entrypoint	TOKO-TOOLING.md
 # entrypoint	scripts/ci/verify-file-checksum.sh
 # entrypoint	scripts/ci/verify-toko-tooling-snapshot.sh
@@ -57,7 +57,8 @@ revision	fd795f6ef878496ac27a990a9208b87fa786a9148c18580338ef8ac79df501d7
 # entrypoint	LICENSE.md
 # entrypoint	CONTRIBUTING.md
 # entrypoint	scripts/ci/validation-evidence.pl
-file	c04bf9274df49fc32b450834ba1aec0d1efb2f7d11f9c9d88a8010a8dc924a63	-	TOKO-TOOLING.md
+# entrypoint	make/cargo-dependencies.mk
+file	98b06138020e538caefbd3a5666fe6dbb3c2df3936a0b8a504c419eba6dcb8b0	-	TOKO-TOOLING.md
 file	578a5f7217e378280fe378328d39e4b7dcea653bd868159b57362461bd4e8555	x	scripts/ci/verify-file-checksum.sh
 file	be03eb1b1ed6834b4a93a35cea81d2b8e677311a094e851619de8c393b1800e0	x	scripts/ci/verify-toko-tooling-snapshot.sh
 file	d4d73d12601ca093878f8206a41185e383ad30484fa9206d60bfcf78248b865c	x	scripts/ci/run-release.sh
@@ -77,7 +78,7 @@ file	2bb8cd68a0f915cd06550b650625f8ba4497512af140d980792628f4fdcf9c46	x	scripts/
 file	40f31a19d6115411ebffe7c26e3ed30b8af7eead10dd4830de8d5a9312291222	x	scripts/ci/read-cargo-workspace-version.sh
 file	a52db278800a9f02d85a6b8a780a9b1eed860c49d5442cef9db1f7f9d7ddee0a	x	scripts/ci/check-format-tools.sh
 file	3bbcd3458afbeee5803bf4f51e624afd2b11578ee961250522c9332ed0fc7b4f	x	scripts/ci/check-make-execution.sh
-file	92f0d33bdcf5f99ad88b5614bb35055d0128b4ba8026f9ae5cdb97e5cef40393	x	scripts/dev/cloc.sh
+file	d2d43d1876ce29f5e08255ea86f92080ec5db0f9cadeed3b095bdd5d01fdaf1c	x	scripts/dev/cloc.sh
 file	881c7093141527d907dbea4e2a050e1d37ebec9aedd576b6aad6d5c065eae4ab	x	scripts/distribution/refresh-consumer.sh
 file	5f3297399300ab0bd6e486deffbb5b87205e2190db12f9cc40c39e9cfd38e1f7	x	scripts/dev/install-rust-tools.sh
 file	07ff21bc90ad9d9882be78d38af9f659d2e13d1a1e5e5208ed540f93bcfcdfaf	-	scripts/ci/release-pr.sh
@@ -106,11 +107,12 @@ file	99fee41166e07b87e361d0e0d75b67ea75916b5b11e595f964fcafd9ea5e0bc3	x	scripts/
 file	b3764cf05af99fa9c2ad6f8cf8b84aa768bf10a99fd961875139c95f7d12e6cb	x	scripts/ci/check-cargo-package-provenance.sh
 file	06f16c4a6e7f97e13fc568b75b8adca7e7db399efbead9fa806d4a429bd5b742	-	scripts/ci/check-cargo-graph.pl
 file	4ba3a93e5ba61d532fa368d0f264a23f601693a8289e83e82749b09da53cf0e9	-	scripts/ci/check-candid-boundary.pl
-file	1782eec112f61159382411038c658ba964cd70b6b80e0d0e14cadabe98dcc71b	x	scripts/ci/check-cargo-dependency-boundaries.sh
+file	38ff7dec5ac00d527023a4d13b89339f5d4298824ee0193ec785c1c7fc075244	x	scripts/ci/check-cargo-dependency-boundaries.sh
 file	e0f1b194ddbe5e5ae35864edc67727993511e093cff07506b4ffa503681edd52	x	scripts/ci/install-ci-tool.sh
-file	52b9a85c4c1b8d327f23fa9571652db4f5d2adb0d10f7f26e9a0748612385ef2	-	LICENSE.md
+file	3f2971bfefccf71cf4929cabd1fa000e0c7b3d4002b9a08ca58821ccb048c123	-	LICENSE.md
 file	0ae38d62c728fb06f1a2dd2325f99f2277bfdb0cd48ac6df49d4120c0bfe88bd	-	CONTRIBUTING.md
 file	3a3df3b5cb0147ca2a532d963e97b186920a4fa261d1aacc5fa6989f253fb323	-	scripts/ci/validation-evidence.pl
+file	701efc37079afa34e41b490582f20bc3e8419d2dd0f5eca33041a2d333a50354	-	make/cargo-dependencies.mk
 file	4aeaa61c8d04904c8039046bd62e2ae836e59126f5014d45744e95fd6ccaf0a8	-	scripts/ci/release-plan.pl
 file	18240ae231c3056bab5c535f25534dcd5ec0ac65d8d431e88fc3b174c66f2fce	x	scripts/ci/check-release-tag.sh
 file	d2670d079e6fe54ccb72f0f6fab328723bf1baf7829b852ba8157cc9ddebd27b	x	scripts/ci/validate-release-inputs.pl
@@ -125,7 +127,7 @@ file	f1916ce5f9727e437efb2c67252a88ec3fd2ebb91ec34507669ae37e27215aac	-	scripts/
 file	4cfa90a020aefc5115fe5f7103eb5857f837acb9e0cf91f6362947a4abea211c	x	scripts/ci/describe-tool-selection.pl
 file	ec5bb55c605efae8b2acce32fedb7e912ace1cbe375b9962ef187bb6d7191499	-	scripts/ci/select-rust-formatting-sources.sh
 file	523996a3e4eb9dbe87e8daa4285293a28c5e005223feaa84bd5383d430784b09	-	scripts/ci/fixture-lifecycle.sh
-file	a06744d29640837c07b78d8aadeb1d7393ccd558ece6aa42072df1be039abebc	-	scripts/dev/cloc-classify.pl
+file	d973f8f415ece4bfec2abda23f832995246daaeb4b97cc7cd25fdb68c08d847d	-	scripts/dev/cloc-classify.pl
 file	f867fd6250b0a2d475faed5a2d6c7d7feb16c4a9f134aae44d7438ec68bc42a0	-	scripts/ci/shared-package-version.pl
 file	4eeaca14cfce7f551f4b9a66ebecc49a9208a861f56dced344709158dee36736	-	scripts/ci/shared-companions.sh
 file	0e8e5f0eaa605ea97713595d568f420f051458f269eef287bb4756c9592eb387	-	scripts/ci/check-tooling-prerequisites.sh
@@ -149,15 +151,16 @@ file	eeeca9e6e7b92b888fd6547733d6136f0e7e9859d37c983f8048e60551a15c39	-	scripts/
 file	ce27820fc6256fc417d3606dfcc8b850256c3f36a1a29132be587d49aceb82d4	-	scripts/ci/RustSource.pm
 file	e6f6faf964a19009aa00a07bd1cb491fe9bd728be9d07fcde3a0bc6a00f4f568	-	ci/cbor-dependencies.json
 file	94bd2fe49818a11955dcb56f5ff6be26f47f50ae0d947d3eba96c15962db0689	-	ci/external-ic-dependencies.txt
-file	3cd252e070f971d54b8966f81e7917296e31b51aa0a0fa7670a555d47f8e629a	-	ci/hash-dependencies.json
+file	8de4cc409b28314667ddf6af521c421f9abc9be1e937f6f0130815a6861b7421	-	ci/hash-dependencies.json
 file	6c094eb6af59e9071c7fa5e87c917202f866b220a94e59f1b4fffe154ed5f92e	-	scripts/ci/ValidationPlan.pm
+file	f6ecd07a9577b0b307d2bef6c8185125c611e05732c119c63bb474cbf50e18d5	-	make/execution.mk
+file	4a177c60fbf09eccb6a9a70ce9ac7289cb1c25c3595098ac64b141d1325a4dc7	-	scripts/dev/cargo-dependencies.pl
 file	d50eec860f7e4c1f4b44c3414f1f960559e80378ba65aabd268b85ac5f8d5748	-	scripts/ci/cargo-release-groups.jq
 file	b0f12a5031ecb6f4e10c1f6f79989ed9b32e110eec824f83c423d4dc41254def	-	scripts/ci/cargo-qualification-release.sh
 file	6d99677e86759273a88fb4149cbd4c14f2aacc99e1838a0db343d76c776f1aba	-	scripts/ci/ic-tool-pins.awk
 file	ee9ec8f9f45ff2e61ed0287fcac6b2b3c151e802565cacd29c6eeacf32c3b97f	-	scripts/dev/native-package-inputs.pl
 file	efe6acefb807e41e7f2bc3bfe3314deba5647d694ccfd48c3beac4e7956bfb49	-	scripts/dev/OwnedTree.pm
 file	68e88225adfb40ff0807516b682c4882825ebbeaf3b5245ae4642db600a45ea1	-	scripts/dev/tooling-lock.pl
-file	f6ecd07a9577b0b307d2bef6c8185125c611e05732c119c63bb474cbf50e18d5	-	make/execution.mk
 file	c75f2312273eabc31a5b287673b45fa73b0fb0edb76b018b2967a13145375a49	x	scripts/ci/run-release-batch.pl
 file	a1ed6b41c20ec62404a127fa3432a56beb1e76541c08fa7231adc8e0409047e1	-	scripts/dev/clean-empty-source-dirs.pl
 file	be31909f524f1b8efc0065c353101fa793bfcd4cf6004de9f053745550d6f9bf	x	scripts/ci/run-rust-formatting.pl

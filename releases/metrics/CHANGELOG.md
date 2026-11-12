@@ -5,6 +5,30 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.29.12] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt authenticated toko-tooling 0.39.17 and its updated Cargo boundary checks
+  and shared hash catalog.
+  Retain both libraries' dependency-free production graphs and existing
+  tooling placement; no simulator or crypto dependency is added.
+  Bound LOC report labels by default and support full names with `cloc.sh --wide`,
+  preserving numeric counts and full JSON labels.
+  Apply explicit supplier freshness reviews before release capture, including
+  the selected native release editor.
+  Add explicit `make deps-update` with package/precise selectors, preserving
+  normal Cargo output and default Make routing without changing release gates.
+  Use directory test modules with preserved module paths and test coverage,
+  removing sibling `tests.rs`/`tests/` pairs.
+  Update the published release metadata editor to IC Build 0.83.0.
+  Registry review found current toko-tooling 0.39.17, num-bigint 0.5.1,
+  serde 1.0.229 and cargo-sort 2.1.4. Defer optional cargo-sort-derives 0.15.0
+  to the next reviewed Toko tool-catalog adoption; preserve the shared 0.14.1 pin.
+  IC Build 0.83.0 keeps its published IC Host 0.76.4 lock. Defer optional
+  ic-host-artifacts/fs/process 0.76.5 to the next published IC Build editor
+  adoption, retaining authenticated locked builds and revisiting at release review.
+
 ## [0.29.11] - 2026-11-10
 
 ### 🛠️ Tooling

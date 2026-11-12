@@ -31,6 +31,7 @@ export TOKO_TOOLING_ROOT
 override RELEASE_DELIVERY_POLICY := $(CURDIR)/ci/release-delivery.txt
 TOKO_TOOLING_RELEASE := 1
 include make/consumer.mk
+include make/cargo-dependencies.mk
 include make/cargo-publication.mk
 
 # These consumer-owned gates retain execution/failure admission now that the
@@ -137,6 +138,7 @@ help:
 	@echo "Workspace gates: check, check-wasm, clippy, docs-check, test (both packages; see docs/development/hosts.md for focused Cargo commands)"
 	@echo "Formatting and admission: format-tools-check, fmt, fmt-check, check-doc-links, toko-tooling-check, check-pins"
 	@echo "Dependency declarations and boundary fixtures: production-dependencies-check"
+	@echo "Explicit Cargo updates: deps-update (optional DEPENDENCY_PACKAGE and DEPENDENCY_PRECISE)"
 	@echo "Link fixed Metrics recording without an allocator: allocation-free-check"
 	@echo "Early setup: setup-smoke-check"
 	@echo "Dependency-free Metrics graphs: metrics-profiles-check; Logging graphs: logging-profiles-check"

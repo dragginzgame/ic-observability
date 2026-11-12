@@ -178,7 +178,7 @@ when changing interfaces, persistence or installation/recovery behavior.
   releases; after changing the pin and Cargo.lock, run `make toko-tooling-update`.
   Offline admission checks every member, Cargo.lock and installed bytes together.
   See the
-  [tooling selection rule](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/cargo-dependencies.md#toko-tooling-during-dependency-updates).
+  [tooling selection rule](https://github.com/dragginzgame/toko-tooling/blob/d4b09ceb6dd94d825adee2b894fa26dac4618ae0/rules/cargo-dependencies.md#toko-tooling-during-dependency-updates).
 - Give repeated validation one execution owner: selected group scope must reach
   the leaf commands, and aggregate gates must not repeat full lint/setup through
   nested targets. Reuse unchanged release-stage evidence only through the
@@ -295,6 +295,22 @@ guidance, including permission for new licence-adoption changelog notices.
 
 ## Current dependencies and upstream independence
 
+- Freshness review is separate from pin consistency and passing tests. During
+  dependency maintenance, review every direct supplier in the selected scope,
+  including native tools, dev/build dependencies and independent qualification
+  workspaces. Before freezing a release candidate, review first-party suppliers
+  used by that release's product and required qualification graphs. Compare
+  manifest requirements and actual locked selections with current stable,
+  non-yanked registry releases, including versions outside the declared range.
+  Report unavailable registry evidence as incomplete, never current.
+- Give each newer supplier a disposition in the existing change or release
+  notes: adopt within authorized scope, explicitly defer an optional refresh to
+  a named maintenance boundary, or link an approved compatibility hold with its
+  blocker and revisit condition. Revisit that disposition at the next applicable
+  review; a fixed qualification supplier, passing old tests or a previous deferral
+  is not a permanent exemption. Do not claim freshness from an older manifest
+  minimum when the lock already selects the current version, or from an
+  unpublished sibling checkout. No new report file is required.
 - When adding or updating a direct dependency, select its latest stable,
   non-yanked release, including a newer major version where applicable. Verify
   registry availability at selection time and qualify the affected APIs, targets
@@ -454,6 +470,11 @@ hard cut, including references, under the
 Use ordinary Rust module discovery. `#[path]` module attributes, including
 conditional path overrides, are prohibited. Do not inject embedded Rust source
 or patch generated entrypoints to change executable code, including in tests.
+Use either a standalone `foo.rs` or a directory module `foo/mod.rs`; never keep
+`foo.rs` and sibling `foo/` together. If a module needs a directory for children,
+tests, fixtures or support code, move its file to `foo/mod.rs` and preserve its
+public module path. Apply this recursively, including test and generated modules.
+This supersedes older linked guidance permitting `foo.rs` with `foo/tests.rs`.
 Follow the
 [module layout rule](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/docs/principles/rust-code-hygiene.md#ownership-and-module-shape)
 for source, tests and generated code.
@@ -533,12 +554,12 @@ boundary, rather than automatically updating the whole fleet.
 Follow the [adoption planning contract](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/docs/cargo-graph-checks.md#dependency-adoption-planning).
 Use root-owned dependency selections, reviewed toko tooling and explicit setup.
 Rust 1.99.1 is the approved minimum and pinned development/release compiler;
-follow the [compiler support policy](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/cargo-dependencies.md#minimum-supported-rust-version-msrv)
+follow the [compiler support policy](https://github.com/dragginzgame/toko-tooling/blob/d4b09ceb6dd94d825adee2b894fa26dac4618ae0/rules/cargo-dependencies.md#minimum-supported-rust-version-msrv)
 when adopting it and consolidating duplicate compiler checks. Preserve product
 host requirements. Select canonical identities
 from `ic-platform-types`, IC0/execution from `ic-platform-runtime`, and crypto or
 external IC adapters from `ic-platform`, following the
-[Platform ownership rules](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/cargo-dependencies.md#platform-package-owners).
+[Platform ownership rules](https://github.com/dragginzgame/toko-tooling/blob/d4b09ceb6dd94d825adee2b894fa26dac4618ae0/rules/cargo-dependencies.md#platform-package-owners).
 External IC dependencies remain behind that reviewed boundary; Types alone may
 add `ic_principal` for explicit registry conversions. Self-authentication does
 not enable those conversions. npm SDK Core uses

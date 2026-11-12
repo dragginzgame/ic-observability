@@ -18,5 +18,5 @@ trap 'fixture_finish "$?" "$fixture" "Metrics formatting fixture retained"' EXIT
 TMPDIR="$fixture" bash "$root/scripts/ci/check-formatting-hooks.sh" "$root" \
     crates/ic-metrics/src/lib.rs Cargo.toml \
     --no-dependency-tables --rust-sources Cargo.lock LICENSE.md \
-    make/consumer.mk
+    make/consumer.mk make/cargo-dependencies.mk
 fixture_complete=true

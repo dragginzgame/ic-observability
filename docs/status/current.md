@@ -1,4 +1,4 @@
-# Current handoff — 2026-11-10
+# Current handoff — 2026-11-12
 
 ## Published products and tooling
 
@@ -11,21 +11,33 @@ by final archive compilation and matching maintained source (34 Metrics and
 16 Logging files). Hosted macOS and installed consumer acceptance remain separate
 and asynchronous; pending or cancelled checks are not passes.
 
-The root Cargo pin, inherited dev-dependencies, lock and snapshot select published
-toko-tooling **0.39.7**, archive SHA-256
-`fd795f6ef878496ac27a990a9208b87fa786a9148c18580338ef8ac79df501d7`.
-The receipt retains 54 roots and 109 files. Shared reference docs stay upstream
+The local root Cargo pin, inherited dev-dependencies, lock and snapshot select
+published toko-tooling **0.39.17**, archive SHA-256
+`aaeab49adb84ea0d66cf86ecc48d826125f9c3ac6eafaf2a362bccfeba7acbfd`.
+This refresh is local and uncommitted; the published products above retain their
+original 0.39.7 tooling selection and source identities.
+The receipt retains the existing selection and adds the dependency-update module,
+for 55 roots and 111 files. `make deps-update` is explicit Cargo maintenance;
+it is not a CI/release prerequisite or a supplier freshness review. Shared
+reference docs stay upstream
 at reviewed commit-pinned URLs; native guides are organised by topic through the
 [documentation index](../README.md). The earlier managed-document namespace plan
 is superseded. Current installation and focused evidence are under
-`target/evidence/toko-tooling-0397/`; the [tooling summary](../evidence/tooling.md)
-records the scope. Product Rust, public APIs and release obligations are unchanged.
+`target/evidence/toko-tooling-03917/`; the [tooling summary](../evidence/tooling.md)
+records the scope. Five test module files move byte-identically into their owning
+`tests/mod.rs` paths. Production Rust, public APIs and release obligations are
+unchanged; the package library test inventories remain preserved.
 The consumer retains `TOKO_TOOLING_RELEASE := 1` and explicitly selects
 `validation-evidence.pl` for its actual release caller.
 
 The [source inventory](../governance/source-origins.md) records component origins.
 The IC Storage adapter ownership edits and current product links are delivered.
 The deferred syn 3.0.10 edit remains separate from the released syn 3.0.9 graph.
+
+Delivery is selected for Metrics 0.29.12 and Logging 0.24.17 through the frozen
+batch workflow. The native release editor selects published IC Build 0.83.0.
+Supplier registry review and optional-refresh dispositions are recorded in both
+pending group ledgers; the standard runner owns version preparation and notes.
 
 The product crates remain independent, under `crates/`, in one virtual root
 workspace excluding `qualification`. That tree contains historical README files,

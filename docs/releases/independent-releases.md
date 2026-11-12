@@ -28,7 +28,7 @@ Neither conversion changes a package's numeric identity.
 Earlier coordinated releases remain once in [shared history](../../releases/history.md), through 0.23.0;
 both group ledgers link to that history. Existing tags and receipts are retained.
 Tooling has no selection-only package or release-group membership. One exact
-root dependency pins toko-tooling 0.39.7; both libraries inherit it only for
+root dependency pins toko-tooling 0.39.17; both libraries inherit it only for
 development, and Cargo.lock owns its registry checksum. Each public member has a root
 catalog entry with its local path and full current version, registered in its
 group's dependency roster. These unused catalog aliases provide a readable
@@ -45,8 +45,14 @@ at 0.23.1. There is no default release group.
 
 ## Maintainer commands
 
+Before freezing a candidate, perform the baseline's
+[supplier freshness review](../../TOKO-TOOLING.md#current-dependencies-and-upstream-independence).
+Include the selected native `ic-build` release editor alongside the release's
+actual Cargo suppliers; record newer-supplier dispositions in the existing group
+notes. Prepared-tool and pin admission do not supply that review.
+
 Prepare tools explicitly with `make install-tools` after adopting this snapshot.
-The managed release editor is published IC Build 0.73.0 with its cli feature.
+The managed release editor is published IC Build 0.83.0 with its cli feature.
 Fresh captured delivery prepares its own tools through the existing managed
 owners before version lookup. Recovery and validation admit that selection offline.
 
