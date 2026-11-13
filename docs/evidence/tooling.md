@@ -23,12 +23,13 @@ consumer exit-boundary cases passed through the repaired Shared helper. The
 inventory confirms identical entrypoint/file rosters, canonical files matching
 the downloaded package, and only toko-tooling changed from the incoming lock.
 
-Focused adoption records are under `target/evidence/toko-tooling-0425/`. Authorized
-delivery selects Metrics 0.30.5 then Logging 0.25.5 with both complete workspace
-plans; final Git/registry results remain pending. Transcripts and supplier review
-are under `target/deploy/toko0425-20261113/`. The separate syn 3.0.10 edit stays
-outside the release graph; no product dependency, compiler or release-stage change
-is introduced.
+Metrics 0.30.5 and Logging 0.25.5 are delivered and independently verified on
+crates.io. The [protected receipt](releases/toko0425-delivery-20261113.md) owns
+exact selections, both complete 20-stage workspace plans, archive/source readback,
+timings and recovery custody. Focused records remain under
+`target/evidence/toko-tooling-0425/`; delivery transcripts and supplier review are
+under `target/deploy/toko0425-20261113/`. The separate syn 3.0.10 edit stays outside
+the published syn 3.0.9 graph. Hosted native acceptance remains asynchronous.
 
 ## Delivered 0.42.4 selection
 

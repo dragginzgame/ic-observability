@@ -2,26 +2,26 @@
 
 ## Published products
 
-Metrics **0.30.4** and Logging **0.25.4** are delivered to GitHub and independently
-verified on crates.io. Never re-upload them. The [delivery receipt](../evidence/releases/toko0424-delivery-20261113.md)
+Metrics **0.30.5** and Logging **0.25.5** are delivered to GitHub and independently
+verified on crates.io. Never re-upload them. The [delivery receipt](../evidence/releases/toko0425-delivery-20261113.md)
 owns exact commits, annotated tags, archive hashes, complete plans and registry
-readback. Batch `batch-zAj6vbFx` passed both complete 20-stage workspace plans
+readback. Batch `batch-meIy8QET` passed both complete 20-stage workspace plans
 without narrowing or stage reuse, followed by final-version archives, source/tag
 admission and maintained-source readback
-(34 Metrics and 16 Logging files). Stage totals were 511 and 484 seconds;
-release-tool fixtures took 366 and 343 seconds. Hosted native and installed
+(34 Metrics and 16 Logging files). Stage totals were 505 and 521 seconds;
+release-tool fixtures took 356 and 377 seconds. Hosted native and installed
 consumer acceptance remain separate and asynchronous. Logging delivery CI was
 observed pending; pending or cancelled runs are not passes.
 
-## Prepared 0.42.5 delivery
+## Delivered 0.42.5 tooling
 
 The root exact pin, both inherited dev-dependencies, Cargo.lock and authenticated
 snapshot select published **toko-tooling 0.42.5**, archive SHA-256
 `071631f382cbdb682ab04242bb8022bea9f1fa237eaa273456433b95ad6f2aec`.
-The authorized frozen batch will release Metrics 0.30.5 then Logging 0.25.5,
-with both complete workspace plans and verified registry publication. The normal
-checkout remains on `main`; the managed candidate owns release effects to
-`origin/main`. Pending notes record the tooling change and supplier review.
+Source `45689e21ef4cf4dfb2dcd6de82a8124ff9624866` delivered Metrics then
+Logging with both complete workspace plans and verified registry publication.
+The normal `main` reconciled to delivered commit
+`cde4c144601ad802740e9344f43cafa428f36928`; both ledgers record supplier review.
 
 The same 56 entrypoints/110 files remain selected. Only the shared retention
 probe helper changes in the managed payload. The local exit-probe workaround is
@@ -36,9 +36,9 @@ relative to the incoming lock; the separate syn edit remains intact.
 Current records are under `target/evidence/toko-tooling-0425/`. The compiler,
 canonical files, product Rust/APIs and production graphs are unchanged. Preserve
 the separate syn 3.0.10 edit and every previous candidate, stash and recovery ref.
-Delivery is pending until its exact Git and registry identities are recorded. The preceding
-[receipt CI](https://github.com/dragginzgame/ic-observability/actions/runs/43466672076)
-was observed in progress; it does not qualify the new local source.
+Hosted [Logging CI](https://github.com/dragginzgame/ic-observability/actions/runs/43479655848)
+was observed pending; [Metrics CI](https://github.com/dragginzgame/ic-observability/actions/runs/43478036048)
+was in progress. Neither observation is a completed native acceptance claim.
 
 ## Delivered 0.42.4 tooling
 
@@ -86,14 +86,14 @@ or downstream deployment is implied.
 
 The separate syn 3.0.10 edit remains outside the frozen syn 3.0.9 graph.
 Its current durable stash is `64a3d10ee118478dfbb7c5695a0ed5ec8f182d0c`, pinned by
-`preserved/syn-3.0.10-toko0425-20261113`. Reapply it after clean reconciliation.
+`preserved/syn-3.0.10-toko0425-20261113`. It is reapplied locally after clean reconciliation.
 All preceding stashes and preservation refs remain retained; the
 [receipt chain](../evidence/releases/README.md) owns their exact identities.
 
-Batch `batch-zAj6vbFx` completed at index 2 and reconciled cleanly. Execution remains
-under `target/release-frozen/batch-zAj6vbFx`, with durable recovery under
-`.git/release-state/frozen/batch-zAj6vbFx/`. Earlier completed batches, including
-`batch-qiGiRmCY`, `batch-z8nN4ysP` and `batch-4BqGe_7B`, retain their candidates
+Batch `batch-meIy8QET` completed at index 2 and reconciled cleanly. Execution remains
+under `target/release-frozen/batch-meIy8QET`, with durable recovery under
+`.git/release-state/frozen/batch-meIy8QET/`. Earlier completed batches, including
+`batch-zAj6vbFx`, `batch-qiGiRmCY`, `batch-z8nN4ysP` and `batch-4BqGe_7B`, retain their candidates
 and recovery. They keep original source, layout, catalogs, journals and proof
 owners; never reinterpret them with this migration. All 20 release obligations and disabled stage/version-proof reuse remain.
 
