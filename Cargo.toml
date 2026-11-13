@@ -22,7 +22,7 @@ ic-logging = { path = "crates/ic-logging", version = "0.25.0" }
 
 # metrics
 # Changelog : releases/metrics/CHANGELOG.md
-ic-metrics = { path = "crates/ic-metrics", version = "0.30.0" }
+ic-metrics = { path = "crates/ic-metrics", version = "0.30.1" }
 
 # Tests and tooling only
 # External restoration oracle and public API trait-refusal checks.
