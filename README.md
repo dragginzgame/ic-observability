@@ -23,13 +23,16 @@ Applications own attribution, labels, clocks, authorization, lifecycle and
 endpoints. Canic's metrics adapter owns the shared reporting endpoint and DTOs.
 Logging supplies no global recorder, timer or IC exports. The
 [independent worker example](crates/ic-logging/examples/worker.rs) demonstrates
-logging without Canic.
+logging without Canic. The
+[byte-budgeted export example](crates/ic-logging/examples/byte-budgeted-export/main.rs)
+checks exact UTF-8 row lengths before writing accepted rows into a bounded response,
+with typed oversized-row errors and cursor continuation.
 For the currently published Metrics API and separately selected heap logs:
 
 ```toml
 [dependencies]
-ic-metrics = "0.29"
-ic-logging = "0.24"
+ic-metrics = "0.30"
+ic-logging = "0.25"
 ```
 
 Enable `recording` for bounded Metrics retention. Metrics follows

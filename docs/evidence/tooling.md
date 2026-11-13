@@ -1,13 +1,14 @@
 # Contributor tooling
 
-## Current local selection
+## Delivered 0.41.0 selection
 
 Published toko-tooling **0.41.0** is pinned at the root, inherited by both members,
 and locked with archive SHA-256
 `4aaafc699324611501e051132e971288c16392a3ece605e9909e88e0c7e80a2f`.
 The authenticated exporter retains 55 roots/111 files. Relative to local 0.40.2,
-only the baseline and native Cargo tool builder change. Canonical files, package
-versions, Rust 1.100.0 and production Rust/API behavior are unchanged.
+only the baseline and native Cargo tool builder change. Canonical files,
+Rust 1.100.0 and engine APIs are unchanged. Logging's export example writes
+accepted rows directly after checking their exact encoded length.
 
 The 0.40.2 `make deps-list`, removed display aliases and member-manifest-based
 publication are retained. Both packages inherit the 0.41.0 Cargo/Rustdoc minimum.
@@ -31,10 +32,12 @@ admission while relying on Cargo 1.100's default install lock. The
 native/test boundary: no testkit is selected here, and optional upgrade probes
 do not invalidate an existing qualified graph. Required gates and recovery limits
 are unchanged; no new cooldown, skip flag or fleet generation requirement is added.
-Focused evidence is under `target/evidence/toko-tooling-0410/`. No broad CI or
-release suite ran. Adoption remains local and uncommitted; pending Metrics 0.30.2
-and Logging 0.25.2 notes incorporate the earlier 0.40.2 work. The incoming
-syn 3.0.10 edit remains preserved.
+Focused evidence is under `target/evidence/toko-tooling-0410/`. Metrics 0.30.2
+and Logging 0.25.2 are delivered and verified on crates.io after both complete
+20-stage workspace plans, final archive compilation and source/tag admission.
+The [delivery receipt](releases/toko0410-export-20261113.md) retains exact
+identities, timings, registry readback and custody. Both releases incorporate
+the earlier 0.40.2 work. The separate syn 3.0.10 edit remains preserved.
 
 ## Delivered 0.40.1 selection
 
