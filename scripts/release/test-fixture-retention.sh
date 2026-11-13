@@ -175,31 +175,6 @@ done
 echo 'Group admission fixture preserves inherited parent logs and summary; its receipts remain retained'
 fi
 
-# Render the actual consumer prefix and keep its root bound to this checkout.
-# Shared's root-layout exit runner copies helpers from the consumer scripts tree;
-# this caller instead supplies its vendor-aware source context to the renderer.
-probe_consumer_exit() {
-    local script="$1" run="$2" directory_variable="$3" scenario="$4"
-    local injection expected=1 status=0 retained
-    case "$scenario" in
-        nounset) injection='unset RETENTION_UNBOUND; printf "%s\n" "$RETENTION_UNBOUND"' ;;
-        premature) injection='exit 0' ;;
-        completed|retained-completed) injection='fixture_complete=true; exit 0'; expected=0 ;;
-        *) return 2 ;;
-    esac
-    fixture_probe_prefix "$root/$script" "$run/probe.sh" root "$directory_variable" "$injection" || return
-    RETENTION_SOURCE_ROOT="$root" RETENTION_EXIT_PATH="$run/retained.path" TMPDIR="$run" \
-        "$real_bash" "$run/probe.sh" > "$run/result.log" 2>&1 || status=$?
-    [[ "$status" == "$expected" && -f "$run/retained.path" ]] || return 1
-    retained="$(cat "$run/retained.path")" || return
-    [[ "$retained" == "$run/"* ]] || return 1
-    if [[ "$scenario" == completed ]]; then
-        [[ ! -e "$retained" && ! -L "$retained" ]] || return 1
-    else
-        [[ -d "$retained" && "$(cat "$retained/exit-evidence")" == 'retained evidence' ]] || return 1
-    fi
-}
-
 # Probe actual initialization/cleanup prefixes through the shared owner.
 # Consumer rosters and successful diagnostic retention remain explicit here.
 for script in scripts/release/test-standard-release.sh \
@@ -217,9 +192,10 @@ for script in scripts/release/test-standard-release.sh \
     for scenario in nounset premature "$success"; do
         run="$evidence/cleanup-${name%.sh}-$scenario"
         mkdir -p "$run"
-        active_log="$run/result.log"
-        probe_consumer_exit "$script" "$run" "$directory_variable" "$scenario" || {
-            fixture_replay_logs "$run/result.log"
+        active_log="$run/${name%.sh}-$scenario.log"
+        FIXTURE_PROBE_ROOT_VARIABLE=root FIXTURE_PROBE_DIRECTORY_VARIABLE="$directory_variable" \
+            fixture_probe_exit "$root/$script" "$run" "$root" "${name%.sh}" "$scenario" || {
+            fixture_replay_logs "$active_log"
             printf 'Consumer exit boundary failed: %s %s\n' "$script" "$scenario" >&2
             exit 1
         }

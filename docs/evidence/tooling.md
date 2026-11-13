@@ -1,32 +1,42 @@
 # Contributor tooling
 
+## Current 0.42.5 selection
+
+Published toko-tooling **0.42.5** is pinned once at the root, inherited by both
+members and locked with archive SHA-256
+`071631f382cbdb682ab04242bb8022bea9f1fa237eaa273456433b95ad6f2aec`.
+The authenticated exporter retains the same 56 entrypoints and 110 files. Only
+`vendor/toko-tooling/scripts/ci/fixture-retention-probes.sh` changes in the payload;
+canonical files, compiler/lints and product Rust/APIs remain unchanged.
+
+The consumer's local exit-probe workaround is removed. Its existing six-fixture,
+three-outcome roster now calls Shared's repaired `fixture_probe_exit`, preserving
+all 18 checks and explicit consumer-root/directory bindings. The helper resolves
+its own installed companions independently of that consumer context. `--kind exits`
+remains the focused check; the no-argument release gate retains its full roster.
+The [release guide](../releases/independent-releases.md) owns that local mapping.
+
+Setup/tool admission, offline snapshot agreement, pin checks, formatting and local
+documentation links passed. `make deps-list` retained the two real members, and
+custom deployment adapters refused tooling drift before effects. All 18 actual
+consumer exit-boundary cases passed through the repaired Shared helper. The
+inventory confirms identical entrypoint/file rosters, canonical files matching
+the downloaded package, and only toko-tooling changed from the incoming lock.
+
+Focused adoption records are under `target/evidence/toko-tooling-0425/`. Authorized
+delivery selects Metrics 0.30.5 then Logging 0.25.5 with both complete workspace
+plans; final Git/registry results remain pending. Transcripts and supplier review
+are under `target/deploy/toko0425-20261113/`. The separate syn 3.0.10 edit stays
+outside the release graph; no product dependency, compiler or release-stage change
+is introduced.
+
 ## Delivered 0.42.4 selection
 
-Published toko-tooling **0.42.4** is selected once at the root, inherited by both
-real members and locked with archive SHA-256
-`697efc1801f8c8c3f563364984efff1b941e84eef2cfaade40aece5e09bced2b`.
-The authenticated exporter retains the same 56 entrypoints and 110 files under
-the vendor layout. Only the baseline, Rust-tool installer and `OwnedTree` helper
-change. Canonical files, product Rust/APIs, Rust 1.100.0 and the release-stage roster
-remain unchanged. Group metadata advances Metrics to 0.30.4 and Logging to 0.25.4;
-the separate syn 3.0.10 edit is preserved.
-
-Normal installation prepared and admitted the actual cached common tools and
-IC Build 0.83.0. The installer now distinguishes activation from a subsequent
-maintenance failure; recovery remains with the reviewed setup/maintenance owner.
-The shared release-command checker is still unselected: this consumer retains
-its direct dispatch/refusal tests and vendor-aware exit-prefix qualification.
-The domain-library/endpoint policy clarification agrees with this repository's
-existing engine/adapter boundary and adds no product dependency or API.
-
-Snapshot/pin/format/documentation checks, package inventory and custom deployment
-drift-refusal checks passed. Evidence is under `target/evidence/toko-tooling-0424/`.
-Metrics 0.30.4 and Logging 0.25.4 are delivered and independently verified on
-crates.io after both complete 20-stage workspace plans. The
-[delivery receipt](releases/toko0424-delivery-20261113.md) owns exact identities,
-timings, registry readback and recovery custody.
-Current setup/check commands belong to the [host guide](../development/hosts.md);
-release obligations belong to the [release guide](../releases/independent-releases.md).
+Managed tool activation/maintenance recovery and the domain-library/endpoint
+clarification were delivered with Metrics 0.30.4 and Logging 0.25.4. The
+[protected receipt](releases/toko0424-delivery-20261113.md) owns exact selections,
+complete validation, registry readback and recovery custody. Its original source
+retains the local exit-prefix workaround, superseded by the current adoption.
 
 ## Delivered 0.42.1 selection
 

@@ -28,7 +28,7 @@ Neither conversion changes a package's numeric identity.
 Earlier coordinated releases remain once in [shared history](../../releases/history.md), through 0.23.0;
 both group ledgers link to that history. Existing tags and receipts are retained.
 Tooling has no selection-only package or release-group membership. One exact
-root dependency pins toko-tooling 0.42.4; both libraries inherit it only for
+root dependency pins toko-tooling 0.42.5; both libraries inherit it only for
 development, and Cargo.lock owns its registry checksum. Root dependency entries
 serve actual member inheritance; no display-only aliases or lint allowances are
 needed. Both product packages remain in their groups' `members` rosters, with
@@ -277,7 +277,9 @@ encoded bytes and Logging's retained-data contract do not change in this split.
 standard-release body's success/failure custody checks. `publication` and `hook`
 select their corresponding bodies. `--kind exits` checks each maintained
 fixture's initialization/EXIT boundary against the real consumer root using
-Shared's prefix renderer, without root-layout helper copies. These focused forms omit other kinds, nested
+Shared's vendor-aware exit helper, which resolves its companions from its installed
+directory while retaining the consumer root. All 18 checks remain; the consumer
+workaround is removed. These focused forms omit other kinds, nested
 group admission and generic lifecycle probes; the no-argument release gate retains
 the complete roster. Use the group-admission and frozen-batch fixtures separately
 when their actual transaction/capture wiring changes.

@@ -1,9 +1,9 @@
 # Toko Tooling snapshot v1
-# version	0.42.4
+# version	0.42.5
 # layout	vendor
 format	1
 source	https://crates.io/crates/toko-tooling
-revision	697efc1801f8c8c3f563364984efff1b941e84eef2cfaade40aece5e09bced2b
+revision	071631f382cbdb682ab04242bb8022bea9f1fa237eaa273456433b95ad6f2aec
 # entrypoint	vendor/toko-tooling/.githooks/pre-commit
 # entrypoint	vendor/toko-tooling/.github/actions/cache-tool-downloads/action.yml
 # entrypoint	vendor/toko-tooling/.github/actions/prepare-common-tools/action.yml
@@ -96,7 +96,7 @@ file	57a0d0ff82abe26422adb86b8c5f2474b019202e031bedcaf780910d6757f7e0	-	vendor/t
 file	54f5809789964466af8d3f8bdca5a35f9490e11bb6f91a1799908edc3883f772	-	vendor/toko-tooling/scripts/ci/collect-native-diagnostics.sh
 file	e2825c554ea3952515ecb2938f7ad592d6539ec5304c3b3107d32a1bfc6b4eda	-	vendor/toko-tooling/scripts/ci/extract-workflow-step.sh
 file	523996a3e4eb9dbe87e8daa4285293a28c5e005223feaa84bd5383d430784b09	-	vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh
-file	c7d7a7dfd617e785cc770f7fc6835447f49b6dc4568a24db0cf0fdf3362c07a2	-	vendor/toko-tooling/scripts/ci/fixture-retention-probes.sh
+file	b195f1442882fc4f07d671e301aceb04ded3633856c6bb52bc71a1af74baf02d	-	vendor/toko-tooling/scripts/ci/fixture-retention-probes.sh
 file	e0f1b194ddbe5e5ae35864edc67727993511e093cff07506b4ffa503681edd52	x	vendor/toko-tooling/scripts/ci/install-ci-tool.sh
 file	f3ccdd33f1322c6069daedf66669b3d4bac267476f80725d7031c741f20cb278	-	vendor/toko-tooling/scripts/ci/make-adapter-probes.sh
 file	ab1281d30aec5f1e756754da13db27b79f1b07896dc11fa1eae63f69b63cfa02	x	vendor/toko-tooling/scripts/ci/prepare-script-fixture.sh

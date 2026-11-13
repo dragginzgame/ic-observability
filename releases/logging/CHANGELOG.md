@@ -6,6 +6,22 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.25.5] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt published toko-tooling 0.42.5 and use its repaired vendor-aware fixture
+  exit helper ([Toko Tooling #381](https://github.com/dragginzgame/toko-tooling/issues/381)).
+  Remove the consumer workaround while retaining all 18 cleanup/retention checks,
+  the existing vendor selection and the full release-stage roster.
+- Pre-release registry review confirms stable toko-tooling 0.42.5, num-bigint
+  0.5.1, Serde 1.0.229 and cargo-sort 2.1.4. Defer optional cargo-sort-derives
+  0.15.0 to the next reviewed shared catalog adoption, retaining 0.14.1.
+  Defer IC Build 0.84.1 to the next native-editor maintenance batch; retain
+  qualified 0.83.0 and its packaged IC Host 0.76.4 lock rather than forcing
+  current IC Host 0.77.1 into that supplier's graph. Revisit these dispositions
+  at the next applicable release review.
+
 ## [0.25.4] - 2026-11-13
 
 ### 🛠️ Tooling

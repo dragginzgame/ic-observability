@@ -13,37 +13,48 @@ release-tool fixtures took 366 and 343 seconds. Hosted native and installed
 consumer acceptance remain separate and asynchronous. Logging delivery CI was
 observed pending; pending or cancelled runs are not passes.
 
+## Prepared 0.42.5 delivery
+
+The root exact pin, both inherited dev-dependencies, Cargo.lock and authenticated
+snapshot select published **toko-tooling 0.42.5**, archive SHA-256
+`071631f382cbdb682ab04242bb8022bea9f1fa237eaa273456433b95ad6f2aec`.
+The authorized frozen batch will release Metrics 0.30.5 then Logging 0.25.5,
+with both complete workspace plans and verified registry publication. The normal
+checkout remains on `main`; the managed candidate owns release effects to
+`origin/main`. Pending notes record the tooling change and supplier review.
+
+The same 56 entrypoints/110 files remain selected. Only the shared retention
+probe helper changes in the managed payload. The local exit-probe workaround is
+removed: the existing six-fixture/three-outcome roster uses Shared's repaired
+helper with explicit consumer-root and directory bindings, retaining all 18
+cleanup/retention checks. The full release-stage roster remains unchanged.
+
+Setup/tool admission, offline snapshot agreement, pin checks, formatting, docs,
+membership inventory and deployment drift refusal passed. All 18 exit-boundary
+cases passed through the repaired Shared helper. Cargo changed only toko-tooling
+relative to the incoming lock; the separate syn edit remains intact.
+Current records are under `target/evidence/toko-tooling-0425/`. The compiler,
+canonical files, product Rust/APIs and production graphs are unchanged. Preserve
+the separate syn 3.0.10 edit and every previous candidate, stash and recovery ref.
+Delivery is pending until its exact Git and registry identities are recorded. The preceding
+[receipt CI](https://github.com/dragginzgame/ic-observability/actions/runs/43466672076)
+was observed in progress; it does not qualify the new local source.
+
 ## Delivered 0.42.4 tooling
 
-The root exact pin, both inherited development dependencies, Cargo.lock and the
-exporter-owned snapshot select published **toko-tooling 0.42.4**, archive SHA-256
-`697efc1801f8c8c3f563364984efff1b941e84eef2cfaade40aece5e09bced2b`.
-Delivery source is `10bb4b09110b21d319820f96ea4535c8734fe284`. The release
-advances only the selected package versions and their tooling notes; product
-Rust/APIs, compiler policy and production dependencies remain unchanged.
-
-The same 56 entrypoints/110 files remain selected. The exporter changes only the
-baseline, Rust-tool installer and `OwnedTree` helper. Normal setup/admission passed
-with the existing common tools and IC Build 0.83.0. The installer can retain an
-activated tool after maintenance fails and retry owned cleanup without rebuilding.
-Canonical files, product Rust/APIs, compiler/lints and release-stage roster remain
-unchanged. The domain-library/endpoint clarification matches the existing boundary;
-no codec, endpoint or consumer-ownership migration is needed here.
-
-Snapshot/pin/format/documentation checks, package inventory and custom deployment
-drift-refusal checks passed. Evidence is under `target/evidence/toko-tooling-0424/`.
-Both complete release plans, final archives and registry/source readback passed.
-Preserve all prior candidates/refs and the separate syn 3.0.10 edit. The latest delivered
-[Logging CI](https://github.com/dragginzgame/ic-observability/actions/runs/43466158474)
-was observed pending; native and installed consumer acceptance remain asynchronous.
+Published source `10bb4b09110b21d319820f96ea4535c8734fe284` used 0.42.4
+for managed tool activation/maintenance recovery. Its
+[receipt](../evidence/releases/toko0424-delivery-20261113.md) owns complete plans,
+registry/source readback and custody. The current adoption supersedes that
+source's local exit-prefix workaround; product engines remain unchanged.
 
 ## Delivered 0.42.1 tooling
 
 The published source `925cdc3f661624a6a4286d523f9ee9699e8d71fb` used
 0.42.1 for the vendor migration, explicit consumer-root validation and local
 exit-prefix qualification. Its [receipt](../evidence/releases/toko0421-vendor-20261113.md)
-owns exact identities, complete plans and registry/source readback. The local
-exit-probe adapter and all 18 cleanup/retention assertions remain unchanged.
+owns exact identities, complete plans and registry/source readback. The
+18 cleanup/retention assertions remain; their current execution owner is Shared.
 
 Initial batch `batch-3okIbLbo` stopped before version preparation or delivery
 at the generic exit runner's retired root-layout copy. It retains original source
@@ -73,9 +84,9 @@ or downstream deployment is implied.
 
 ## Deferred work and recovery custody
 
-The separate syn 3.0.10 edit remains outside the last published syn 3.0.9 graph.
-Its current durable stash is `b2ea8921ac8149c0391c3053bb51c28aee5f3fb2`, pinned by
-`preserved/syn-3.0.10-toko0424-reconcile-20261113`. It remains reapplied locally.
+The separate syn 3.0.10 edit remains outside the frozen syn 3.0.9 graph.
+Its current durable stash is `64a3d10ee118478dfbb7c5695a0ed5ec8f182d0c`, pinned by
+`preserved/syn-3.0.10-toko0425-20261113`. Reapply it after clean reconciliation.
 All preceding stashes and preservation refs remain retained; the
 [receipt chain](../evidence/releases/README.md) owns their exact identities.
 
