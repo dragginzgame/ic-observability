@@ -1,14 +1,15 @@
 # Contributor tooling
 
-## Current local 0.42.4 selection
+## Delivered 0.42.4 selection
 
 Published toko-tooling **0.42.4** is selected once at the root, inherited by both
 real members and locked with archive SHA-256
 `697efc1801f8c8c3f563364984efff1b941e84eef2cfaade40aece5e09bced2b`.
 The authenticated exporter retains the same 56 entrypoints and 110 files under
 the vendor layout. Only the baseline, Rust-tool installer and `OwnedTree` helper
-change. Canonical files, product Rust/APIs, package versions, Rust 1.100.0 and
-release-stage roster remain unchanged; the separate syn 3.0.10 edit is preserved.
+change. Canonical files, product Rust/APIs, Rust 1.100.0 and the release-stage roster
+remain unchanged. Group metadata advances Metrics to 0.30.4 and Logging to 0.25.4;
+the separate syn 3.0.10 edit is preserved.
 
 Normal installation prepared and admitted the actual cached common tools and
 IC Build 0.83.0. The installer now distinguishes activation from a subsequent
@@ -20,8 +21,10 @@ existing engine/adapter boundary and adds no product dependency or API.
 
 Snapshot/pin/format/documentation checks, package inventory and custom deployment
 drift-refusal checks passed. Evidence is under `target/evidence/toko-tooling-0424/`.
-This batch remains local and uncommitted, with pending Metrics 0.30.4 and Logging
-0.25.4 notes. It has not run a broad CI/release suite or published new products.
+Metrics 0.30.4 and Logging 0.25.4 are delivered and independently verified on
+crates.io after both complete 20-stage workspace plans. The
+[delivery receipt](releases/toko0424-delivery-20261113.md) owns exact identities,
+timings, registry readback and recovery custody.
 Current setup/check commands belong to the [host guide](../development/hosts.md);
 release obligations belong to the [release guide](../releases/independent-releases.md).
 

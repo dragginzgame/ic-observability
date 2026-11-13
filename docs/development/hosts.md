@@ -76,7 +76,7 @@ Use the [0.42 migration](https://github.com/dragginzgame/toko-tooling/blob/8eb73
 for a pre-vendor snapshot; later updates use the same public Make commands.
 The selected tool catalogs are unchanged; the compiler is now explicitly prepared at Rust 1.100.0.
 `make tools-check check-pins` admits prepared tools;
-setup admits the renamed catalog contract without store cleanup. Earlier source-bound
+offline admission does not mutate the tool store; explicit setup owns bounded maintenance. Earlier source-bound
 receipts retain their original snapshots. Explicit setup still uses
 `make install-tools`; changed build-helper policies require re-preparation.
 Linux fingerprints retain native tool/header/library providers while excluding

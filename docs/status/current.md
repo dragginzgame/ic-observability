@@ -2,24 +2,25 @@
 
 ## Published products
 
-Metrics **0.30.3** and Logging **0.25.3** are delivered to GitHub and independently
-verified on crates.io. Never re-upload them. The [delivery receipt](../evidence/releases/toko0421-vendor-20261113.md)
+Metrics **0.30.4** and Logging **0.25.4** are delivered to GitHub and independently
+verified on crates.io. Never re-upload them. The [delivery receipt](../evidence/releases/toko0424-delivery-20261113.md)
 owns exact commits, annotated tags, archive hashes, complete plans and registry
-readback. Fresh batch `batch-qiGiRmCY` passed both complete 20-stage workspace plans
-without narrowing or stage reuse,
-then final-version archives, source/tag admission and maintained-source readback
-(34 Metrics and 16 Logging files). Stage totals were 525 and 491 seconds;
-release-tool fixtures took 371 and 349 seconds. Hosted native and installed
+readback. Batch `batch-zAj6vbFx` passed both complete 20-stage workspace plans
+without narrowing or stage reuse, followed by final-version archives, source/tag
+admission and maintained-source readback
+(34 Metrics and 16 Logging files). Stage totals were 511 and 484 seconds;
+release-tool fixtures took 366 and 343 seconds. Hosted native and installed
 consumer acceptance remain separate and asynchronous. Logging delivery CI was
-observed pending; the preceding 0.41.0 delivery CI is green.
+observed pending; pending or cancelled runs are not passes.
 
-## Local 0.42.4 adoption
+## Delivered 0.42.4 tooling
 
 The root exact pin, both inherited development dependencies, Cargo.lock and the
 exporter-owned snapshot select published **toko-tooling 0.42.4**, archive SHA-256
 `697efc1801f8c8c3f563364984efff1b941e84eef2cfaade40aece5e09bced2b`.
-This adoption is uncommitted and unpushed. Metrics stays 0.30.3 and Logging stays
-0.25.3; pending 0.30.4/0.25.4 notes record contributor-tooling changes only.
+Delivery source is `10bb4b09110b21d319820f96ea4535c8734fe284`. The release
+advances only the selected package versions and their tooling notes; product
+Rust/APIs, compiler policy and production dependencies remain unchanged.
 
 The same 56 entrypoints/110 files remain selected. The exporter changes only the
 baseline, Rust-tool installer and `OwnedTree` helper. Normal setup/admission passed
@@ -30,11 +31,11 @@ unchanged. The domain-library/endpoint clarification matches the existing bounda
 no codec, endpoint or consumer-ownership migration is needed here.
 
 Snapshot/pin/format/documentation checks, package inventory and custom deployment
-drift-refusal checks passed. Evidence is under `target/evidence/toko-tooling-0424/`. Full CI,
-release validation and publication are not part of this adoption. Preserve all
-prior candidates/refs and the separate syn 3.0.10 edit. The latest delivered
-[receipt CI](https://github.com/dragginzgame/ic-observability/actions/runs/43461154117)
-was observed in progress; that source does not qualify this later adoption.
+drift-refusal checks passed. Evidence is under `target/evidence/toko-tooling-0424/`.
+Both complete release plans, final archives and registry/source readback passed.
+Preserve all prior candidates/refs and the separate syn 3.0.10 edit. The latest delivered
+[Logging CI](https://github.com/dragginzgame/ic-observability/actions/runs/43466158474)
+was observed pending; native and installed consumer acceptance remain asynchronous.
 
 ## Delivered 0.42.1 tooling
 
@@ -73,17 +74,17 @@ or downstream deployment is implied.
 ## Deferred work and recovery custody
 
 The separate syn 3.0.10 edit remains outside the last published syn 3.0.9 graph.
-Its current durable stash is `6e5f2a2d58b10afd34912309d63670a313d6b3c1`, pinned by
-`preserved/syn-3.0.10-toko0421-reconcile-20261113`. It remains reapplied locally.
+Its current durable stash is `b2ea8921ac8149c0391c3053bb51c28aee5f3fb2`, pinned by
+`preserved/syn-3.0.10-toko0424-reconcile-20261113`. It remains reapplied locally.
 All preceding stashes and preservation refs remain retained; the
 [receipt chain](../evidence/releases/README.md) owns their exact identities.
 
-Batch `batch-qiGiRmCY` completed at index 2 and reconciled cleanly. Execution remains
-under `target/release-frozen/batch-qiGiRmCY`, with durable recovery under
-`.git/release-state/frozen/batch-qiGiRmCY/`. Earlier completed batches, including
-`batch-z8nN4ysP` and `batch-4BqGe_7B`, retain their candidates and recovery. They
-keep original source, layout, catalogs, journals and proof owners; never reinterpret them with this
-migration. All 20 release obligations and disabled stage/version-proof reuse remain.
+Batch `batch-zAj6vbFx` completed at index 2 and reconciled cleanly. Execution remains
+under `target/release-frozen/batch-zAj6vbFx`, with durable recovery under
+`.git/release-state/frozen/batch-zAj6vbFx/`. Earlier completed batches, including
+`batch-qiGiRmCY`, `batch-z8nN4ysP` and `batch-4BqGe_7B`, retain their candidates
+and recovery. They keep original source, layout, catalogs, journals and proof
+owners; never reinterpret them with this migration. All 20 release obligations and disabled stage/version-proof reuse remain.
 
 Stopped/failed pre-delivery batches `batch-wmST1LGL`, `batch-9uizEjhh` and
 `batch-C8a10ddy` retain original source and partial evidence. Do not resume them as
