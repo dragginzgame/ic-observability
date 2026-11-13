@@ -1,222 +1,59 @@
 # Contributor tooling
 
+## Current local 0.42.4 selection
+
+Published toko-tooling **0.42.4** is selected once at the root, inherited by both
+real members and locked with archive SHA-256
+`697efc1801f8c8c3f563364984efff1b941e84eef2cfaade40aece5e09bced2b`.
+The authenticated exporter retains the same 56 entrypoints and 110 files under
+the vendor layout. Only the baseline, Rust-tool installer and `OwnedTree` helper
+change. Canonical files, product Rust/APIs, package versions, Rust 1.100.0 and
+release-stage roster remain unchanged; the separate syn 3.0.10 edit is preserved.
+
+Normal installation prepared and admitted the actual cached common tools and
+IC Build 0.83.0. The installer now distinguishes activation from a subsequent
+maintenance failure; recovery remains with the reviewed setup/maintenance owner.
+The shared release-command checker is still unselected: this consumer retains
+its direct dispatch/refusal tests and vendor-aware exit-prefix qualification.
+The domain-library/endpoint policy clarification agrees with this repository's
+existing engine/adapter boundary and adds no product dependency or API.
+
+Snapshot/pin/format/documentation checks, package inventory and custom deployment
+drift-refusal checks passed. Evidence is under `target/evidence/toko-tooling-0424/`.
+This batch remains local and uncommitted, with pending Metrics 0.30.4 and Logging
+0.25.4 notes. It has not run a broad CI/release suite or published new products.
+Current setup/check commands belong to the [host guide](../development/hosts.md);
+release obligations belong to the [release guide](../releases/independent-releases.md).
+
 ## Delivered 0.42.1 selection
 
-Published toko-tooling **0.42.1** is selected once in the root, inherited by both
-libraries and locked with archive SHA-256
-`697b19c709eccb5f25c0abb0156766ded116abd8bde1552b20022b8af6f51dce`.
-The authenticated exporter proves previous bytes before retiring root-layout
-copies and installs executables/catalogs under `vendor/toko-tooling/`. Canonical
-root files and the receipt retain their roles; no managed file was hand-moved.
-Consumer-owned scripts, CI workflow, release policies and process helpers remain
-local. Make includes, actions, native source hashing, fixture copies, compiler
-callers and release/publication adapters select the new paths. Old candidates
-retain their original layouts and evidence owners.
-
-The consumer fixture no longer invokes the producer's root-layout-only generic
-release checker. Its own standard dispatch, failure/refusal, default/direct and
-jobserver checks remain, with the existing local batch/recovery fixture owning
-outer capture. The retired shared checker is removed through the exporter.
-The migration preserves product Rust, public APIs, compiler/lint policy and the
-release-stage roster. Delivery advances the selected patch versions. No
-qualification workspace or selection-only package is introduced.
-Tool installation/admission, pins, formatting, packaged docs, compiler/CI source
-selection, current/GNU Make 3.81 release/publication dispatch, hook retention,
-native evidence, product boundaries, sealed plans, both group transactions and
-frozen-batch capture/setup/lint/archives/readback/recovery passed. The moved
-validation runner is explicitly bound to the consumer root at each local caller.
-Matched full-CI/selected-plan traces use substituted Make effects. That focused
-adoption qualification preceded the full selected release plans.
-Current focused evidence and preview/install records are under
-`target/evidence/toko-tooling-0421/`. Metrics 0.30.3 and Logging 0.25.3 are
-delivered and independently verified on crates.io after both complete 20-stage
-workspace plans. The
-[delivery receipt](releases/toko0421-vendor-20261113.md) owns exact identities,
-registry readback, timings, the stopped initial batch and fresh repair capture.
-The final consumer exit qualification uses Shared's prefix renderer with its
-actual root; all 18 cleanup/retention assertions remain. The separate syn
-3.0.10 edit is preserved outside the delivered 3.0.9 graph.
+Vendor layout, consumer-root validation and exit-probe repair; both full plans and registry readback.
+The [protected receipt](releases/toko0421-vendor-20261113.md) owns identities, validation scope and recovery custody.
 
 ## Delivered 0.41.0 selection
 
-Published toko-tooling **0.41.0** is pinned at the root, inherited by both members,
-and locked with archive SHA-256
-`4aaafc699324611501e051132e971288c16392a3ece605e9909e88e0c7e80a2f`.
-The authenticated exporter retains 55 roots/111 files. Relative to local 0.40.2,
-only the baseline and native Cargo tool builder change. Canonical files,
-Rust 1.100.0 and engine APIs are unchanged. Logging's export example writes
-accepted rows directly after checking their exact encoded length.
-
-The 0.40.2 `make deps-list`, removed display aliases and member-manifest-based
-publication are retained. Both packages inherit the 0.41.0 Cargo/Rustdoc minimum.
-Strict product Clippy and Rustdoc were already clean. The new Cargo lints found
-unused num-bigint/Serde declarations copied into the isolated Logging consumer.
-The renderer now retains actual inherited declarations, including conditional
-ones. The unused empty library target was removed and both integration contracts
-have crate documentation. Both generated consumers pass with warnings denied.
-
-Clippy now uses `CARGO_BUILD_WARNINGS=deny`. A real retained Metrics consumer
-warning was rejected on fresh and reused native/Wasm artifacts, using public
-Cargo artifact records; warning-free controls pass. The warning diagnostic was
-read from plain JSON, while refusal used json-render-diagnostics. An initial
-post-processing assertion expected diagnostics in the latter stream; correction
-reused its completed native fresh output instead of repeating that execution.
-No production plain-JSON collector or explicit Rustdoc denial is weakened.
-
-Managed installation preserves exact versions/checksums and packaged-lock
-admission while relying on Cargo 1.100's default install lock. The
-[release guide](../releases/independent-releases.md) records the actual selected
-native/test boundary: no testkit is selected here, and optional upgrade probes
-do not invalidate an existing qualified graph. Required gates and recovery limits
-are unchanged; no new cooldown, skip flag or fleet generation requirement is added.
-Focused evidence is under `target/evidence/toko-tooling-0410/`. Metrics 0.30.2
-and Logging 0.25.2 are delivered and verified on crates.io after both complete
-20-stage workspace plans, final archive compilation and source/tag admission.
-The [delivery receipt](releases/toko0410-export-20261113.md) retains exact
-identities, timings, registry readback and custody. Both releases incorporate
-the earlier 0.40.2 work. The separate syn 3.0.10 edit remains preserved.
+Cargo warning admission, actual-dependency consumers and direct bounded-export formatting.
+The [protected receipt](releases/toko0410-export-20261113.md) owns identities, validation scope and recovery custody.
 
 ## Delivered 0.40.1 selection
 
-Published toko-tooling **0.40.1** is pinned once in the root catalog and inherited
-by both real members. Cargo.lock and the authenticated snapshot select archive
-SHA-256 `fb884b05e2e5bbca2388dd0b757833fb5ad37e91b3ced09f6a37b454c7fe9f90`.
-The exporter preserves 55 roots and 111 files, changing only the baseline.
-Executable payloads, canonical files, Rust 1.100.0 and product code are unchanged.
-The [release guide](../releases/independent-releases.md) records nested work,
-measured stage costs and the missing cross-source/collector-recovery admission.
-Current gates remain; the policy adds no skip flags or recovery implementation.
-
-Metrics **0.30.1** and Logging **0.25.1** are delivered to GitHub and verified
-on crates.io. Inspection found the preceding hosted run failed on both macOS
-architectures at Make prerequisite admission. GNU Make 3.81 reproduced it;
-consumer group/scope prerequisites now admit execution before effects. Standard
-release and publication fixtures passed with Linux-built GNU Make 3.81 and
-current Make, before the fresh batch ran both complete 20-stage workspace plans.
-Final archives, source/tag admission and registry/source-content readback passed.
-The [delivery receipt](releases/toko0401-delivery-20261113.md) owns exact identities,
-timings, supplier review, the stopped first batch and reconciliation custody.
-
-Focused evidence is under `target/evidence/toko-tooling-0401/` and
-`target/evidence/toko0401-make381/`; current delivery transcripts are under
-`target/deploy/toko0401-20261113/`. Hosted macOS and installed consumer acceptance
-remain separate and asynchronous. The normal checkout is reconciled; delivery
-used syn 3.0.9 and the preserved 3.0.10 edit is restored separately. Earlier
-candidates and recovery refs remain retained. No sibling change or deployment ran.
+GNU Make 3.81 prerequisite admission and full frozen delivery.
+The [protected receipt](releases/toko0401-delivery-20261113.md) owns identities, validation scope and recovery custody.
 
 ## Delivered 0.40.0 selection
 
-Published toko-tooling **0.40.0** is selected once at the root and inherited by
-both members. Cargo.lock and the authenticated snapshot select archive SHA-256
-`9c1758c3c04e2754d97fd38d29177d73fc03d3d414d654f689d8b75cbc7ed918`.
-The exporter preserves all 55 roots and 111 files, changing only the baseline.
-Canonical files and executable payloads are unchanged; product Rust and APIs
-are unchanged. The normal Cargo lock retains the separate incoming syn selection.
-
-Root/member lint policy now retains safe-only `forbid`, uses the common explicit
-checks, removes blanket nursery, and preserves reviewed pedantic checks. There
-are no local lint suppressions to migrate. Generated retained consumers inherit
-the same table. Cargo allows unused workspace catalog entries because both
-required product identities are recorded without adding an inter-library edge.
-
-Explicit setup prepared Rust **1.100.0** with native/Wasm support and rebuilt
-managed tools for the compiler fingerprint. Actual identities are rustc
-`1.100.0 (0ef1bc386 2026-11-09)` and Cargo
-`1.100.0 (3acc79c0c 2026-11-05)` on Linux x86_64. Strict all-target native and
-Wasm-library Clippy, native/Wasm Rustdoc, minimal Metrics lint, all-feature tests,
-minimal Metrics tests, feature graphs, allocator-free linking, compiler-policy
-fixtures, retained rendering and both generated public consumers passed.
-Disposable consumers admitted valid code and rejected unsafe code, ignored
-must-use results, dead code, stale expectations and broken Rustdoc links using
-typed compiler diagnostics on both targets. Technical inputs/transcripts are
-under `target/evidence/toko-tooling-0400/`.
-
-This qualifies the local work for
-[#134 — Adopt Rust 1.100.0 and the common lint policy](https://github.com/dragginzgame/ic-observability/issues/134).
-Metrics **0.30.0** and Logging **0.25.0** are delivered to GitHub and
-independently verified on crates.io. Both passed their full 20-stage workspace
-plans without narrowing or stage reuse, final-version archive compilation and
-registry/source-content readback. The
-[delivery receipt](releases/toko0400-rust1100-20261113.md) owns exact source,
-tag/archive identities, validation plans, supplier dispositions and recovery.
-The consumer Rust floor is now 1.100.0. Hosted macOS and installed consumer
-acceptance remain separate; pending CI is not a pass. Delivery transcripts and
-registry review are under `target/deploy/toko0400-20261113/`.
-
-The normal checkout is reconciled. Delivery used syn 3.0.9; the separately
-preserved 3.0.10 edit is restored outside the delivered graph. All earlier
-candidates, recovery records and preservation refs remain retained. No sibling
-repository was changed or deployed.
+Rust 1.100.0 and inherited lint policy.
+The [protected receipt](releases/toko0400-rust1100-20261113.md) owns identities, validation scope and recovery custody.
 
 ## Delivered 0.39.17 selection
 
-The delivered requirements select published toko-tooling **0.39.17**, inherited
-by both members. Cargo.lock and the snapshot select archive SHA-256
-`aaeab49adb84ea0d66cf86ecc48d826125f9c3ac6eafaf2a362bccfeba7acbfd`.
-The authenticated snapshot has 55 roots and 111 files. The explicit
-`make deps-update` entrypoint and its Make/hook fixture copies add no CI/release
-prerequisite and perform no freshness audit. Five test modules now use directory
-layout with identical bytes and module paths. Focused checks preserved the 62
-Metrics and 35 Logging test inventories (one pre-existing ignored Logging test)
-and all LOC roles/totals. Production Rust and public APIs are unchanged.
-
-Metrics **0.29.12** and Logging **0.24.17** are delivered and independently
-verified on crates.io. Both passed all 20 workspace stages, final-version archive
-compilation, atomic branch/tag delivery and registry/source-content readback.
-The [delivery receipt](releases/toko03917-delivery-20261112.md) owns exact source,
-tag and archive identities, complete plans, verification and recovery custody.
-The native release editor is published IC Build **0.83.0**. Both group ledgers
-record supplier registry review and optional-refresh dispositions; pin/tool
-admission is not a claim of supplier freshness.
-
-Focused adoption checks remain under `target/evidence/toko-tooling-03917/`, with
-unchanged LOC/Make caller proofs under the earlier adoption evidence. Native
-editor qualification and release transcripts are under
-`target/deploy/toko03917-20261112/`. The optional shared missing-doc baseline
-checker remains unselected; warning-denied Rustdoc remains the consumer gate.
-The 0.39.17 batch reconciled and restored the deferred syn 3.0.10 edit; that
-delivery used 3.0.9. All earlier candidates and preservation refs remain
-retained. No sibling repository was changed or deployed. Hosted native and
-installed consumer acceptance remain separate from these local release gates.
+Tooling/package layout and independent group delivery.
+The [protected receipt](releases/toko03917-delivery-20261112.md) owns identities, validation scope and recovery custody.
 
 ## Delivered 0.39.7 selection
 
-The delivered selection is crates.io toko-tooling **0.39.7**, pinned once
-at the root and inherited by both real members. Cargo.lock and the snapshot
-select archive SHA-256
-`fd795f6ef878496ac27a990a9208b87fa786a9148c18580338ef8ac79df501d7`.
-The 0.39.7 authenticated exporter preserves all 54 roots and 109 files, changing
-the baseline and the Make/batch retired-setting diagnostics. The preceding 0.39.5
-refresh retired 71 unchanged files no longer needed by that selection. Shared reference docs,
-rules, audits and task guides are read through reviewed commit-pinned upstream
-links; the earlier managed-document namespace plan is superseded. Native product
-docs and the canonical root distribution files remain local.
-
-The current diagnostic change points to a reviewed online release guide.
-`validation-evidence.pl` remains explicitly selected to preserve the local release
-validation caller. Tool catalogs, CI/release rosters and product Rust sources are
-unchanged. The consumer release adapter retains its
-explicit `TOKO_TOOLING_RELEASE := 1` selection; all 20 workspace obligations and
-product/qualification placement remain intact. Consumer documentation checking
-now scans maintained local directories without the retired reference roots.
-
-Metrics 0.29.11 and Logging 0.24.16 are delivered with this selection. Both
-passed all 20 workspace stages, final-version archive compilation, atomic
-branch/tag delivery and independent registry/source-content readback. The
-[delivery receipt](releases/toko0397-docs-20261110.md) owns exact identities,
-plans, verification directories and recovery custody. Installation/admission and
-focused checks are under `target/evidence/toko-tooling-0397/`; documentation
-organisation and CI-selection checks are under
-`target/evidence/docs-cleanup-20261110/`.
-
-The first batch stopped before delivery on an incomplete synthetic package.
-Its fixture repair adds complete distribution inputs and missing/altered-input
-refusals. The new batch reran both complete release plans. Failed and completed
-candidates remain retained. The normal checkout is reconciled, with only the
-separately preserved syn 3.0.10 edit reapplied; the delivered graph uses 3.0.9.
-The [source inventory](../governance/source-origins.md) records component origins.
-No sibling change or delivery was selected. Hosted native and installed consumer
-acceptance remain separate from the local release gate.
+Online references, package distribution inputs and documentation organisation.
+The [protected receipt](releases/toko0397-docs-20261110.md) owns identities, validation scope and recovery custody.
 
 ## Earlier qualification
 

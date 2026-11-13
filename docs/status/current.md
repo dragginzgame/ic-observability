@@ -13,56 +13,48 @@ release-tool fixtures took 371 and 349 seconds. Hosted native and installed
 consumer acceptance remain separate and asynchronous. Logging delivery CI was
 observed pending; the preceding 0.41.0 delivery CI is green.
 
-## Delivered tooling
+## Local 0.42.4 adoption
 
-The root exact pin, both inherited development dependencies, Cargo.lock and
-exporter-owned receipt select published **toko-tooling 0.42.1**, archive SHA-256
-`697b19c709eccb5f25c0abb0156766ded116abd8bde1552b20022b8af6f51dce`.
-Delivery source is `925cdc3f661624a6a4286d523f9ee9699e8d71fb`, including the
-vendor migration and the consumer exit-probe repair. Package versions are now
-Metrics 0.30.3 and Logging 0.25.3; there are no pending release notes.
+The root exact pin, both inherited development dependencies, Cargo.lock and the
+exporter-owned snapshot select published **toko-tooling 0.42.4**, archive SHA-256
+`697efc1801f8c8c3f563364984efff1b941e84eef2cfaade40aece5e09bced2b`.
+This adoption is uncommitted and unpushed. Metrics stays 0.30.3 and Logging stays
+0.25.3; pending 0.30.4/0.25.4 notes record contributor-tooling changes only.
 
-The authenticated exporter retired the 108 prior root-layout runtime files after
-proving ownership. The final 56-root/110-file snapshot keeps executables, catalogs,
-Make includes, composite actions and hooks under `vendor/toko-tooling/`; root
-canonical files and `.toko-tooling.snapshot` retain their roles. Consumer scripts,
-workflow, release policies and `scripts/ci/CheckProcess.pm` remain local. No managed
-files were hand-moved, no old-path aliases were added and canonical bytes match
-the published crate. The unused generic root-layout release checker was retired
-through the exporter; direct consumer dispatch/refusal/recovery checks remain.
+The same 56 entrypoints/110 files remain selected. The exporter changes only the
+baseline, Rust-tool installer and `OwnedTree` helper. Normal setup/admission passed
+with the existing common tools and IC Build 0.83.0. The installer can retain an
+activated tool after maintenance fails and retry owned cleanup without rebuilding.
+Canonical files, product Rust/APIs, compiler/lints and release-stage roster remain
+unchanged. The domain-library/endpoint clarification matches the existing boundary;
+no codec, endpoint or consumer-ownership migration is needed here.
 
-Make, native CI/actions, source hashing, fixture copies, compiler readers and
-candidate/metadata/publication adapters call the vendor tree. Validation callers
-scope `VALIDATION_REPOSITORY_ROOT` to the actual consumer, rather than deriving it
-from the installed helper location. `core.hooksPath` now selects
-`vendor/toko-tooling/.githooks`; the old directory contained no custom hooks.
-`make deps-list` shows package-first rows for both real members.
+Snapshot/pin/format/documentation checks, package inventory and custom deployment
+drift-refusal checks passed. Evidence is under `target/evidence/toko-tooling-0424/`. Full CI,
+release validation and publication are not part of this adoption. Preserve all
+prior candidates/refs and the separate syn 3.0.10 edit. The latest delivered
+[receipt CI](https://github.com/dragginzgame/ic-observability/actions/runs/43461154117)
+was observed in progress; that source does not qualify this later adoption.
 
-Before capture, focused installation/admission, snapshot/pin/format/docs,
-compiler/CI selection, current/GNU Make 3.81 dispatch, hook retention, native
-evidence, product boundaries, sealed plans, matched CI traces, group transactions
-and simulated frozen recovery passed. Records remain under
-`target/evidence/toko-tooling-0421/`. Full release transcripts, supplier review,
-focused repair and reconciliation are under `target/deploy/toko0421-vendor-20261113/`.
+## Delivered 0.42.1 tooling
 
-Initial batch `batch-3okIbLbo` stopped before version preparation or delivery at
-the generic exit runner's retired root-layout helper copy. Original source
-`66b02a8a99c8b851d1d55cdda210fe497ac2e741` and partial records remain retained;
-never resume it as repaired. The consumer now uses Shared's prefix renderer with
-its actual root, preserving all 18 cleanup/retention assertions. The focused
-`--kind exits` check passed before fresh capture, then both complete retention
-stages passed. Whole-source proofs required fresh validation; no stage reuse or
-collector-repair admission was invented. The [release guide](../releases/independent-releases.md)
-and [tooling summary](../evidence/tooling.md) record the maintained interfaces.
+The published source `925cdc3f661624a6a4286d523f9ee9699e8d71fb` used
+0.42.1 for the vendor migration, explicit consumer-root validation and local
+exit-prefix qualification. Its [receipt](../evidence/releases/toko0421-vendor-20261113.md)
+owns exact identities, complete plans and registry/source readback. The local
+exit-probe adapter and all 18 cleanup/retention assertions remain unchanged.
 
-Both packages remain under `crates/` in one virtual workspace, excluding
-`qualification`, which contains retired READMEs only. No selection-only package or
-qualification workspace is introduced. Rust **1.100.0**, lint policy, public APIs,
-features, retained-data semantics and dependency-free production graphs are
-unchanged. The separate incoming syn 3.0.10 edit remains; other supplier selections
-are unchanged. IC Build **0.83.0** remains the qualified editor. Optional supplier
-refresh dispositions remain in the last delivered ledgers and must be revisited
-at the next applicable release review. No sibling was edited or deployed.
+Initial batch `batch-3okIbLbo` stopped before version preparation or delivery
+at the generic exit runner's retired root-layout copy. It retains original source
+`66b02a8a99c8b851d1d55cdda210fe497ac2e741` and partial evidence; never resume
+it as repaired. Fresh batch `batch-qiGiRmCY` passed both complete plans. No
+cross-source stage reuse or collector-repair admission is enabled.
+
+Both packages remain under `crates/` in one virtual workspace excluding the
+retired `qualification` tree. Product Rust, Rust 1.100.0, lint policy, public APIs
+and dependency-free production graphs are unchanged. IC Build 0.83.0 remains the
+qualified editor; optional refresh dispositions stay in the last delivered ledgers
+until the next applicable review. No sibling was changed or deployed.
 
 ## Product and consumer ownership
 

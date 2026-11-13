@@ -37,7 +37,7 @@ collection or turn a failed check into a successful one.
 
 ## Prerequisites and focused checks
 
-Root `[workspace.dependencies]` declares `toko-tooling = "=0.42.1"` once.
+Root `[workspace.dependencies]` declares `toko-tooling = "=0.42.4"` once.
 Both real members inherit it unconditionally as a dev-dependency and merge the
 name into cargo-machete ignored metadata, without a Rust import. Cargo.lock pins
 the registry version/checksum; no selection-only package or separate tooling
@@ -54,7 +54,7 @@ consumer checkout, because the installed runner now lives beneath the vendor tre
 Use `make deps-update` for explicit Cargo updates (`cargo update -v`), optionally
 with `DEPENDENCY_PACKAGE` and `DEPENDENCY_PRECISE` to select one dependency.
 For example, after editing the root tooling pin, run
-`make deps-update DEPENDENCY_PACKAGE=toko-tooling DEPENDENCY_PRECISE=0.42.1`,
+`make deps-update DEPENDENCY_PACKAGE=toko-tooling DEPENDENCY_PRECISE=0.42.4`,
 then `make toko-tooling-update`. This repository has only the root maintained
 workspace. The command preserves manifest requirements and is separate from
 supplier freshness review; it is not called by CI or release admission.
@@ -67,8 +67,7 @@ before their first tool installation and save after setup, before product checks
 Cache service failures permit download fallback; downloaded bytes still require
 the selected checksum. The existing native prerequisite/compiler order is retained.
 
-The crates.io toko-tooling 0.42.1 refresh moves installed executables and
-catalogs into `vendor/toko-tooling/` through the exporter. Root `TOKO-TOOLING.md`,
+The 0.42 vendor migration placed installed executables and catalogs in `vendor/toko-tooling/` through the exporter. Root `TOKO-TOOLING.md`,
 `LICENSE.md`, `CONTRIBUTING.md` and `.toko-tooling.snapshot` retain their roles.
 Local scripts, workflows, policies and `make/validation.mk` stay consumer-owned.
 The root Makefile and shared action calls select the vendor tree; active hooks
@@ -82,7 +81,12 @@ receipts retain their original snapshots. Explicit setup still uses
 `make install-tools`; changed build-helper policies require re-preparation.
 Linux fingerprints retain native tool/header/library providers while excluding
 unrelated applications. Selected executables, source archives and receipts remain;
-obsolete executable retirement follows the [shared guide](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/docs/tools/tool-store-maintenance.md).
+obsolete executable retirement follows the [shared guide](https://github.com/dragginzgame/toko-tooling/blob/0ac9269cfb3084826df233bfbb187aa57093b5c2/docs/tools/tool-store-maintenance.md).
+The selected 0.42.4 installer distinguishes an admitted executable from a later
+maintenance failure. Preserve its reported generation/evidence and retry the same
+setup command to re-admit the selection and retry cleanup without rebuilding.
+Changed-tree refusals remain blocking; investigate the named path and metadata.
+
 
 `make cloc CLOC_DEPTH=0` reports package detail; `CLOC_DEPTH=1` adds source modules.
 `bash vendor/toko-tooling/scripts/dev/cloc.sh -d 1 ic-metrics::recording` drills into one source branch;
