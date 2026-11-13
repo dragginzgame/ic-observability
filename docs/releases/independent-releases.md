@@ -28,13 +28,19 @@ Neither conversion changes a package's numeric identity.
 Earlier coordinated releases remain once in [shared history](../../releases/history.md), through 0.23.0;
 both group ledgers link to that history. Existing tags and receipts are retained.
 Tooling has no selection-only package or release-group membership. One exact
-root dependency pins toko-tooling 0.41.0; both libraries inherit it only for
+root dependency pins toko-tooling 0.42.1; both libraries inherit it only for
 development, and Cargo.lock owns its registry checksum. Root dependency entries
 serve actual member inheritance; no display-only aliases or lint allowances are
 needed. Both product packages remain in their groups' `members` rosters, with
 empty `dependencies` rosters because neither library depends on the other.
 Publication derives the selected package directory from the admitted member
 manifest, independently of dependency aliases.
+Shared executable helpers and catalogs now live under `vendor/toko-tooling/`.
+The normal Makefile, consumer metadata/candidate/publication adapters and native
+workflow call that tree; release policies remain in local `ci/`. Complete old
+frozen candidates retain their original layouts and source-bound recovery owners.
+The vendor migration does not reinterpret their journals or enable evidence reuse.
+
 
 Both groups own their versions and active release notes at the same level. The
 root is virtual and has no package or aggregate product version. It supplies common metadata, dependency
@@ -61,7 +67,7 @@ native/product checks and consumer-owned acceptance remain required.
 
 The [0.40.1 deployment sequence](https://github.com/dragginzgame/toko-tooling/blob/dcc51b5cab3d9993f0668bc0902252364d7dc316/docs/releases/releases.md#plan-once-recover-the-failed-phase)
 owns planning and failure-specific recovery. This consumer's nested work is:
-`release-verify` runs the selected plan; version preparation recompiles the selected
+`release-verify` binds `VALIDATION_REPOSITORY_ROOT` to its consumer and runs the selected plan; version preparation recompiles the selected
 final archives; publication freshly admits source and selected-group Clippy,
 then uploads and verifies the registry archive. Publication does not call full CI.
 Whole-source proofs and disabled version projection currently prevent cross-group
@@ -266,6 +272,13 @@ adapters retain their own integration/release owners. Arithmetic, Serde fields,
 encoded bytes and Logging's retained-data contract do not change in this split.
 
 ## Focused qualification
+
+`bash scripts/release/test-fixture-retention.sh --kind standard` selects the
+standard-release body's success/failure custody checks. `publication` and `hook`
+select their corresponding bodies. These focused forms omit other kinds, nested
+group admission and generic lifecycle probes; the no-argument release gate retains
+the complete roster. Use the group-admission and frozen-batch fixtures separately
+when their actual transaction/capture wiring changes.
 
 `make release-tools-check` is an aggregate of the consumer-owned fixtures below.
 The standard/internal-hook and group admission fixtures exercise the actual

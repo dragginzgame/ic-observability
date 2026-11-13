@@ -4,16 +4,17 @@ prepare_make_fixture() {
     local source_root="$1" destination="$2" command
     unset OBSERVABILITY_RELEASE_VALIDATION_SCOPE OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT
     mkdir -p "$destination/bin" "$destination/ci" "$destination/scripts/release"
-    bash "$source_root/scripts/ci/prepare-script-fixture.sh" "$source_root" "$destination" \
-        make/consumer.mk make/validation.mk make/cargo-dependencies.mk
+    bash "$source_root/vendor/toko-tooling/scripts/ci/prepare-script-fixture.sh" "$source_root" "$destination" \
+        vendor/toko-tooling/make/consumer.mk vendor/toko-tooling/make/release.mk \
+        vendor/toko-tooling/make/cargo-publication.mk make/validation.mk vendor/toko-tooling/make/cargo-dependencies.mk
     cp "$source_root/Makefile" "$destination/Makefile"
     cp "$source_root/ci/"{release-delivery.txt,cargo-release-groups.json,release-validation.json} "$destination/ci/"
     cp "$source_root/scripts/release/metadata.sh" "$destination/scripts/release/"
     # This fixture isolates Make routing. Direct deployment tooling admission
     # and refusal-before-effects are exercised by test-tooling-admission.sh.
     mkdir -p "$destination/scripts/dev"
-    printf '#!/usr/bin/env bash\nexit 0\n' > "$destination/scripts/dev/toko-tooling.sh"
-    printf 'print "Cleanup substituted for Make dispatch qualification.\\n";\n' > "$destination/scripts/dev/clean-empty-source-dirs.pl"
+    printf '#!/usr/bin/env bash\nexit 0\n' > "$destination/vendor/toko-tooling/scripts/dev/toko-tooling.sh"
+    printf 'print "Cleanup substituted for Make dispatch qualification.\\n";\n' > "$destination/vendor/toko-tooling/scripts/dev/clean-empty-source-dirs.pl"
     # Compilation/admission semantics are tested separately; keep pipe propagation.
     cat > "$destination/scripts/ci/check-rust-compiler.sh" <<'COMPILER'
 set -euo pipefail

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Shared companions: scripts/dev/toko-tooling.sh
+# Shared companions: vendor/toko-tooling/scripts/dev/toko-tooling.sh
 set -euo pipefail
 # Observability owns the tag/package policy; Shared owns observation/provenance.
 [[ $# == 1 && ( "$1" == admit || "$1" == verify ) ]] || exit 2
 operation="$1"
 root="$(git rev-parse --show-toplevel)"
 cd "$root"
-bash scripts/dev/toko-tooling.sh check --consumer "$root"
+bash vendor/toko-tooling/scripts/dev/toko-tooling.sh check --consumer "$root"
 plan="$(bash scripts/release/metadata.sh plan)"
 package="$(jq -er .primary <<< "$plan")"
 version="$(jq -er .previous <<< "$plan")"
@@ -40,7 +40,7 @@ attempt="$(mktemp -d target/publication/verification.XXXXXX)"
 printf 'Registry verification evidence: %s\n' "$root/$attempt"
 printf '%s\n' "$RELEASE_GROUP" "$package@$version" "$source" > "$attempt/selection"
 status=0
-bash scripts/ci/check-crates-io-version.sh --metadata "$attempt/registry" "$package" "$version" > "$attempt/observation.json" || status=$?
+bash vendor/toko-tooling/scripts/ci/check-crates-io-version.sh --metadata "$attempt/registry" "$package" "$version" > "$attempt/observation.json" || status=$?
 case "$status" in
     0) ;;
     1) echo 'Version is absent; no upload is attempted by verification' >&2; exit 1 ;;
@@ -52,9 +52,9 @@ archive="$attempt/archives/$package-$version.crate"
 curl --disable --fail --silent --show-error --location --proto '=https' --proto-redir '=https' \
     --connect-timeout 10 --max-time 60 --max-filesize 16777216 \
     "https://static.crates.io/crates/$package/$package-$version.crate" -o "$archive"
-checksum="$(bash scripts/ci/verify-file-checksum.sh --print sha256 "$archive")"
+checksum="$(bash vendor/toko-tooling/scripts/ci/verify-file-checksum.sh --print sha256 "$archive")"
 [[ "$checksum" == "$(jq -er .checksum "$attempt/observation.json")" ]]
-bash scripts/ci/check-cargo-package-provenance.sh "$attempt/provenance" "$attempt/archives" \
+bash vendor/toko-tooling/scripts/ci/check-cargo-package-provenance.sh "$attempt/provenance" "$attempt/archives" \
     "$repository" "$source" --package "$package@$version" "$path"
 perl scripts/release/check-package-content.pl "$archive" "$attempt/provenance/source.git" \
     "$source" "$package@$version" "$path" > "$attempt/content-verified"

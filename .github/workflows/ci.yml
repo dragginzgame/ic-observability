@@ -27,14 +27,14 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Restore pinned tool downloads
-        uses: ./.github/actions/cache-tool-downloads
+        uses: ./vendor/toko-tooling/.github/actions/cache-tool-downloads
       - name: Install pinned secret scanner
         id: scanner
         run: |
-          scanner="$(bash scripts/ci/install-ci-tool.sh gitleaks --install-dir "$RUNNER_TEMP/security-bin")"
+          scanner="$(bash vendor/toko-tooling/scripts/ci/install-ci-tool.sh gitleaks --install-dir "$RUNNER_TEMP/security-bin")"
           echo "GITLEAKS_BIN=$scanner" >> "$GITHUB_ENV"
       - name: Save pinned tool downloads
-        uses: ./.github/actions/cache-tool-downloads
+        uses: ./vendor/toko-tooling/.github/actions/cache-tool-downloads
         with:
           mode: save
       - name: Scan repository history
@@ -117,10 +117,10 @@ jobs:
           EXPECTED_ARCHITECTURE: ${{ matrix.architecture }}
         run: |
           if [[ "$EXPECTED_OS" == Darwin ]]; then
-            bash scripts/ci/check-native-host.sh "$EXPECTED_OS" "$EXPECTED_ARCHITECTURE" 15
+            bash vendor/toko-tooling/scripts/ci/check-native-host.sh "$EXPECTED_OS" "$EXPECTED_ARCHITECTURE" 15
             echo /bin >> "$GITHUB_PATH"
           else
-            bash scripts/ci/check-native-host.sh "$EXPECTED_OS" "$EXPECTED_ARCHITECTURE"
+            bash vendor/toko-tooling/scripts/ci/check-native-host.sh "$EXPECTED_OS" "$EXPECTED_ARCHITECTURE"
           fi
       - name: Install native tooling prerequisites
         if: env.CI_SCOPE != 'docs'
@@ -136,18 +136,18 @@ jobs:
       - name: Restore pinned tool downloads
         if: env.CI_SCOPE != 'docs'
         id: restore_downloads
-        uses: ./.github/actions/cache-tool-downloads
+        uses: ./vendor/toko-tooling/.github/actions/cache-tool-downloads
       - name: Prepare host parsers
         if: env.CI_SCOPE != 'docs'
         id: host_tools
         run: |
-          bash scripts/dev/install-host-tools.sh --consumer "$PWD" \
+          bash vendor/toko-tooling/scripts/dev/install-host-tools.sh --consumer "$PWD" \
             2>&1 | tee target/evidence/native-ci/host-tools.log
       - name: Prepare development Rust
         if: env.CI_SCOPE != 'docs'
         id: toolchain
         run: |
-          PATH="$PWD/.tools/host/bin:$PATH" bash scripts/dev/prepare-rust-toolchain.sh \
+          PATH="$PWD/.tools/host/bin:$PATH" bash vendor/toko-tooling/scripts/dev/prepare-rust-toolchain.sh \
             --toolchain-file rust-toolchain.toml
       - name: Admit and record the supported compiler
         if: env.CI_SCOPE != 'docs'
@@ -157,11 +157,11 @@ jobs:
       - name: Install and verify the complete common toolset
         if: env.CI_SCOPE != 'docs'
         id: tools
-        uses: ./.github/actions/prepare-common-tools
+        uses: ./vendor/toko-tooling/.github/actions/prepare-common-tools
       - name: Save pinned tool downloads
         if: env.CI_SCOPE != 'docs'
         id: save_downloads
-        uses: ./.github/actions/cache-tool-downloads
+        uses: ./vendor/toko-tooling/.github/actions/cache-tool-downloads
         with:
           mode: save
       - name: Record installed tool versions
@@ -171,7 +171,7 @@ jobs:
           {
             rustc --version
             cargo --version
-            bash scripts/ci/report-tool-versions.sh "$GITHUB_WORKSPACE"
+            bash vendor/toko-tooling/scripts/ci/report-tool-versions.sh "$GITHUB_WORKSPACE"
           } > target/evidence/native-ci/tool-versions.txt 2>&1
       - name: Prepare the locked application sources
         if: env.CI_SCOPE != 'docs'

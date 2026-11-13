@@ -3,14 +3,14 @@ set -euo pipefail
 unset MAKEFLAGS MFLAGS MAKEOVERRIDES GNUMAKEFLAGS MAKEFILES RUSTC MSRV
 root="$(cd "${BASH_SOURCE[0]%/*}/../.." && pwd -P)"
 export PATH="$root/.tools/host/bin:$PATH"
-# shellcheck source=scripts/ci/fixture-lifecycle.sh
-source "$root/scripts/ci/fixture-lifecycle.sh"
+# shellcheck source=vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh
+source "$root/vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh"
 mkdir -p "$root/target/qualification"
 fixture="$(fixture_create "$root/target/qualification/compiler-policy.XXXXXX")"
 fixture_complete=false
 trap 'fixture_finish "$?" "$fixture" "Compiler policy fixture retained"' EXIT
 mkdir -p "$fixture/scripts/ci" "$fixture/bin" "$fixture/crates/ic-metrics" "$fixture/crates/ic-logging"
-bash "$root/scripts/ci/prepare-script-fixture.sh" "$root" "$fixture" \
+bash "$root/vendor/toko-tooling/scripts/ci/prepare-script-fixture.sh" "$root" "$fixture" \
     scripts/ci/check-allocation-free.sh
 pin="$(yq -p toml -o yaml -r '.toolchain.channel' "$root/rust-toolchain.toml")"
 cat > "$fixture/bin/rustc" <<'RUSTC'

@@ -4,8 +4,8 @@ root="${BASH_SOURCE[0]}"
 [[ "$root" == /* ]] || root="$PWD/$root"
 root="$(cd -P "${root%/*}/../.." && printf '%s/.' "$PWD")"
 root="${root%/.}"
-# shellcheck source=scripts/ci/fixture-lifecycle.sh
-source "$root/scripts/ci/fixture-lifecycle.sh"
+# shellcheck source=vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh
+source "$root/vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh"
 mkdir -p "$root/target/qualification"
 fixture="$(fixture_create "${TMPDIR:-$root/target/qualification}/native-archive.XXXXXX")"
 fixture_complete=false
@@ -18,7 +18,7 @@ for scenario in success occupied checksum-occupied output-link inventory-link in
     cd "$fixture/$scenario"
     mkdir -p 'evidence tree/scratch/release/.git/release-state' bin
     printf 'readable diagnostics\n' > diagnostics.tar.gz
-    bash "$root/scripts/ci/verify-file-checksum.sh" --print sha256 diagnostics.tar.gz > diagnostics.tar.gz.sha256
+    bash "$root/vendor/toko-tooling/scripts/ci/verify-file-checksum.sh" --print sha256 diagnostics.tar.gz > diagnostics.tar.gz.sha256
     cp diagnostics.tar.gz.sha256 expected-diagnostics.sha256
     printf 'source identity\n' > 'evidence tree/source.txt'
     printf 'index\n' > 'evidence tree/scratch/release/.git/index'
@@ -57,7 +57,7 @@ HASH
     [[ "$status" == "$expected" ]] || exit 1
     [[ "$(cat diagnostics.tar.gz)" == 'readable diagnostics' ]] || exit 1
     cmp expected-diagnostics.sha256 diagnostics.tar.gz.sha256
-    bash "$root/scripts/ci/verify-file-checksum.sh" sha256 \
+    bash "$root/vendor/toko-tooling/scripts/ci/verify-file-checksum.sh" sha256 \
         "$(cat diagnostics.tar.gz.sha256)" diagnostics.tar.gz > diagnostic-check.log
     [[ "$(cat 'evidence tree/scratch/release/.git/release-state/attempt.plan')" == intent ]] || exit 1
     [[ "$(cat 'evidence tree/scratch/release/.git/index')" == index ]] || exit 1

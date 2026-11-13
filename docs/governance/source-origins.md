@@ -1,6 +1,6 @@
 # Maintained source origins
 
-Inventory reviewed on 2026-11-10. Scope is the current maintained product source,
+Inventory updated on 2026-11-13. Scope is the current maintained product source,
 tests, examples, consumer scripts, generated-fixture templates and tooling
 snapshot. Build outputs, downloaded tools and historical frozen candidates are
 not maintained product source.
@@ -9,12 +9,12 @@ not maintained product source.
 | --- | --- | --- |
 | Metrics | `crates/ic-metrics` | Repository scaffold introduced at `975dabc`; implementations and tests developed in this repository's subsequent history. |
 | Logging | `crates/ic-logging` | Heap engine introduced at `537f6d7`; subsequent engine, checkpoint and typed-history changes are recorded here. |
-| Shared tooling | Paths in `.toko-tooling.snapshot` | Authenticated crates.io `toko-tooling` 0.41.0; archive SHA-256 `4aaafc699324611501e051132e971288c16392a3ece605e9909e88e0c7e80a2f`. |
+| Shared tooling | `vendor/toko-tooling/` and canonical root files, recorded in `.toko-tooling.snapshot` | Authenticated crates.io `toko-tooling` 0.42.1; archive SHA-256 `697b19c709eccb5f25c0abb0156766ded116abd8bde1552b20022b8af6f51dce`. |
 | Local release and CI adapters | Consumer-owned files under `scripts/`, `ci/` and `Makefile` | Repository history; shared implementations are distinguished by the snapshot receipt. |
 
 The local Git author inventory contains the `borovan` identity with two email
-addresses. No submodules, vendored implementation roots or maintained binary
-assets were found. Product Rust source contains no third-party attribution
+addresses. No submodules or maintained binary assets were found. The vendor
+tree contains the authenticated shared-tooling payload. Product Rust source contains no third-party attribution
 headers or imported-implementation notices. These are source-inventory findings;
 the exact introduction and modification records remain in Git.
 

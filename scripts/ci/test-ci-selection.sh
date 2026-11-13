@@ -2,14 +2,14 @@
 set -euo pipefail
 root="$(cd "${BASH_SOURCE[0]%/*}/../.." && pwd -P)"
 export PATH="$root/.tools/host/bin:$PATH"
-# shellcheck source=scripts/ci/fixture-lifecycle.sh
-source "$root/scripts/ci/fixture-lifecycle.sh"
+# shellcheck source=vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh
+source "$root/vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh"
 mkdir -p "$root/target/qualification"
 fixture="$(fixture_create "$root/target/qualification/ci-selection.XXXXXX")"
 fixture_complete=false
 trap 'fixture_finish "$?" "$fixture" "CI selection fixture retained"' EXIT
 yq -o json '.jobs.changes.steps' "$root/.github/workflows/ci.yml" > "$fixture/steps.json"
-bash "$root/scripts/ci/extract-workflow-step.sh" "$fixture/steps.json" select > "$fixture/select-step.sh"
+bash "$root/vendor/toko-tooling/scripts/ci/extract-workflow-step.sh" "$fixture/steps.json" select > "$fixture/select-step.sh"
 yq -o json '.jobs' "$root/.github/workflows/ci.yml" > "$fixture/jobs.json"
 # Stable product job names retain full execution when classification fails.
 jq -e '
@@ -33,7 +33,7 @@ jq -e '
     index("save_downloads") < index("application_sources"))
 ' "$fixture/jobs.json" > /dev/null
 jq '.security.steps' "$fixture/jobs.json" > "$fixture/security.json"
-bash "$root/scripts/ci/extract-workflow-step.sh" "$fixture/security.json" secrets > "$fixture/scan.sh"
+bash "$root/vendor/toko-tooling/scripts/ci/extract-workflow-step.sh" "$fixture/security.json" secrets > "$fixture/scan.sh"
 cat > "$fixture/scanner" <<'SCANNER'
 #!/usr/bin/env bash
 printf '%s\n' "$@" > "$SCAN_ARGUMENTS"
@@ -49,13 +49,13 @@ for result in 0 1; do
     cmp "$fixture/scan-expected" "$fixture/scan-args"
 done
 mkdir -p "$fixture/repo/scripts/ci" "$fixture/repo/ci" "$fixture/repo/docs/status"
-bash "$root/scripts/ci/prepare-script-fixture.sh" "$root" "$fixture/repo" \
-    scripts/ci/classify-ci-change.pl scripts/ci/select-ci.sh
+bash "$root/vendor/toko-tooling/scripts/ci/prepare-script-fixture.sh" "$root" "$fixture/repo" \
+    vendor/toko-tooling/scripts/ci/classify-ci-change.pl scripts/ci/select-ci.sh
 cp "$root/ci/docs-only-paths.txt" "$fixture/repo/ci/"
 # The actual allowlist must not admit packaged/embedded/companion inputs.
 while IFS= read -r path; do
     case "$path" in ''|'#'*) continue ;; esac
-    case "$path" in crates/*|README.md|AGENTS.md|TOKO-TOOLING.md|.github/*|scripts/*|ci/*|make/*) exit 1 ;; esac
+    case "$path" in crates/*|README.md|AGENTS.md|TOKO-TOOLING.md|.github/*|scripts/*|ci/*|make/*|vendor/*) exit 1 ;; esac
     [[ -f "$root/$path" ]] || exit 1
     if rg -q 'Shared companions:' "$root/$path"; then exit 1; fi
 done < "$root/ci/docs-only-paths.txt"
@@ -92,7 +92,7 @@ check full "$mixed" "$(git rev-parse HEAD)"
 check full 1111111111111111111111111111111111111111 "$docs"
 check full "$base" "$docs" push refs/tags/metrics-v0.0.1
 # A broken classifier cannot publish a docs result; workflow wiring above falls back.
-printf 'exit 41;\n' > scripts/ci/classify-ci-change.pl
+printf 'exit 41;\n' > vendor/toko-tooling/scripts/ci/classify-ci-change.pl
 : > "$fixture/output"
 if CI_EVENT=push CI_REF=refs/heads/main CI_BASE="$base" CI_HEAD="$docs" \
     GITHUB_OUTPUT="$fixture/output" bash "$fixture/select-step.sh"; then exit 1; fi

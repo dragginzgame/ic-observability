@@ -9,25 +9,25 @@ unset VALIDATION_REPOSITORY_ROOT VALIDATION_RUNNER_SNAPSHOT_PATH VALIDATION_LOG_
 unset VALIDATION_INPUT_ROOT VALIDATION_INPUT_BASELINE GITHUB_STEP_SUMMARY
 root="$(cd "${BASH_SOURCE[0]%/*}/../.." && pwd -P)"
 export PATH="$root/.tools/host/bin:$PATH"
-# shellcheck source=scripts/ci/fixture-lifecycle.sh
-source "$root/scripts/ci/fixture-lifecycle.sh"
-# shellcheck source=scripts/ci/release-receipts.sh
-source "$root/scripts/ci/release-receipts.sh"
+# shellcheck source=vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh
+source "$root/vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh"
+# shellcheck source=vendor/toko-tooling/scripts/ci/release-receipts.sh
+source "$root/vendor/toko-tooling/scripts/ci/release-receipts.sh"
 mkdir -p "$root/target/qualification"
 fixture="$(fixture_create "$root/target/qualification/release-validation.XXXXXX")"
 fixture_complete=false
 trap 'fixture_finish "$?" "$fixture" "Release validation qualification retained"' EXIT
 mkdir "$fixture/repo"
-bash "$root/scripts/ci/prepare-script-fixture.sh" "$root" "$fixture/repo" \
+bash "$root/vendor/toko-tooling/scripts/ci/prepare-script-fixture.sh" "$root" "$fixture/repo" \
     make/validation.mk scripts/release/validation.pl \
-    ci/release-validation.json ci/cargo-release-groups.json scripts/ci/check-pipe-jobserver.pl
+    ci/release-validation.json ci/cargo-release-groups.json vendor/toko-tooling/scripts/ci/check-pipe-jobserver.pl
 cd "$fixture/repo"
 # Exercise the actual consumer CI entry and roster without product compilation.
 cat > Makefile <<'MAKE'
 include make/validation.mk
 .PHONY: ci $(shell jq -r '.stages[]' ci/release-validation.json)
 $(shell jq -r '.stages[]' ci/release-validation.json):
-	+@if test "$${REQUIRE_JOBSERVER:-0}" = 1 && test '$@' = compiler-check; then perl scripts/ci/check-pipe-jobserver.pl; fi
+	+@if test "$${REQUIRE_JOBSERVER:-0}" = 1 && test '$@' = compiler-check; then perl vendor/toko-tooling/scripts/ci/check-pipe-jobserver.pl; fi
 	@printf '%s\t%s\n' '$@' "$${OBSERVABILITY_RELEASE_VALIDATION_SCOPE:-workspace}" >> .git/commands
 	@printf '%s\n' "$${TMPDIR:-}" >> .git/scratch-roots
 	@test "$${FAIL_TARGET:-}" != '$@'
@@ -58,9 +58,9 @@ select_plan() {
     perl scripts/release/validation.pl select "$attempt" > "$fixture/$1-selection.log" 2>&1
 }
 run_plan() {
-    OBSERVABILITY_RELEASE_VALIDATION_SCOPE="$(jq -r .scope "$attempt/plan.json")" \
+    VALIDATION_REPOSITORY_ROOT="$PWD" OBSERVABILITY_RELEASE_VALIDATION_SCOPE="$(jq -r .scope "$attempt/plan.json")" \
         VALIDATION_LOG_DIR="$attempt/logs" VALIDATION_FAILURE_LOG_DIR="$fixture/failures" \
-        bash scripts/ci/run-validation-targets.sh --plan "$attempt/plan.json" > "$fixture/${attempt##*/}-run.log" 2>&1
+        bash vendor/toko-tooling/scripts/ci/run-validation-targets.sh --plan "$attempt/plan.json" > "$fixture/${attempt##*/}-run.log" 2>&1
 }
 refuse() {
     if "$@" > "$fixture/refusal.log" 2>&1; then echo "unexpected acceptance: $*" >&2; exit 1; fi

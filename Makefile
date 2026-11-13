@@ -26,13 +26,13 @@ export OBSERVABILITY_RELEASE_VALIDATION_SCOPE
 publish publish-check: override OBSERVABILITY_RELEASE_VALIDATION_SCOPE := group
 
 # Common commands use this checkout's reviewed snapshot, including scratch exports.
-override TOKO_TOOLING_ROOT := $(CURDIR)
+override TOKO_TOOLING_ROOT := $(CURDIR)/vendor/toko-tooling
 export TOKO_TOOLING_ROOT
 override RELEASE_DELIVERY_POLICY := $(CURDIR)/ci/release-delivery.txt
 TOKO_TOOLING_RELEASE := 1
-include make/consumer.mk
-include make/cargo-dependencies.mk
-include make/cargo-publication.mk
+include vendor/toko-tooling/make/consumer.mk
+include vendor/toko-tooling/make/cargo-dependencies.mk
+include vendor/toko-tooling/make/cargo-publication.mk
 
 # These consumer-owned gates retain execution/failure admission now that the
 # common guard runs only for protected recipes. Help and completion remain inert.
@@ -178,10 +178,10 @@ ci-evidence-check:
 	bash scripts/ci/test-native-recovery-evidence.sh
 
 candid-boundary-check: | validation-scope-check
-	perl scripts/ci/check-candid-boundary.pl --cbor "$(CURDIR)" ci/candid-boundary.json $(validation_candid_sources)
+	perl vendor/toko-tooling/scripts/ci/check-candid-boundary.pl --cbor "$(CURDIR)" ci/candid-boundary.json $(validation_candid_sources)
 
 cargo-boundaries-check:
-	bash scripts/ci/check-cargo-dependency-boundaries.sh --consumer "$(CURDIR)" --external-ic
+	bash vendor/toko-tooling/scripts/ci/check-cargo-dependency-boundaries.sh --consumer "$(CURDIR)" --external-ic
 
 check:
 	+cargo check -p $(PACKAGE) --lib --no-default-features --locked
@@ -200,10 +200,10 @@ docs-check:
 	+RUSTDOCFLAGS="-D warnings" cargo doc $(validation_cargo_selection) --all-features --locked --no-deps --target wasm32-unknown-unknown
 
 check-doc-links:
-	perl scripts/ci/check-documentation-links.pl --root "$(CURDIR)" \
+	perl vendor/toko-tooling/scripts/ci/check-documentation-links.pl --root "$(CURDIR)" \
 		README.md AGENTS.md TOKO-TOOLING.md LICENSE.md CONTRIBUTING.md CHANGELOG.md \
 		releases docs qualification
-	perl scripts/ci/check-documentation-links.pl --root "$(CURDIR)" \
+	perl vendor/toko-tooling/scripts/ci/check-documentation-links.pl --root "$(CURDIR)" \
 		crates/ic-metrics/src/*.md crates/ic-metrics/README.md crates/ic-metrics/CHANGELOG.md \
 		crates/ic-logging/README.md crates/ic-logging/CHANGELOG.md
 
@@ -242,7 +242,7 @@ compiler-policy-check:
 	bash scripts/ci/test-rust-compiler.sh
 
 check-pins:
-	bash scripts/ci/check-dependency-pins.sh --cargo-inheritance
+	bash vendor/toko-tooling/scripts/ci/check-dependency-pins.sh --cargo-inheritance
 
 production-dependencies-check: candid-boundary-check cargo-boundaries-check
 	perl scripts/ci/tests/check-process.t

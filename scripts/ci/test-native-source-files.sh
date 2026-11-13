@@ -5,14 +5,16 @@ root="${BASH_SOURCE[0]}"
 [[ "$root" == /* ]] || root="$PWD/$root"
 root="$(cd -P "${root%/*}/../.." && printf '%s/.' "$PWD")"
 root="${root%/.}"
-# shellcheck source=scripts/ci/fixture-lifecycle.sh
-source "$root/scripts/ci/fixture-lifecycle.sh"
+# shellcheck source=vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh
+source "$root/vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh"
 mkdir -p "$root/target/qualification"
 fixture="$(fixture_create "${TMPDIR:-$root/target/qualification}/metrics-native-source.XXXXXX")"
 fixture_complete=false
 trap 'fixture_finish "$?" "$fixture" "Failed native source fixture retained"' EXIT
 mkdir -p "$fixture/scripts/ci" "$fixture/crates/example" "$fixture/qualification/probe" "$fixture/ci/typescript/node_modules" "$fixture/docs/evidence" "$fixture/.tools" "$fixture/.private-evidence" "$fixture/target"
 cp "$root/scripts/ci/native-source-files.sh" "$fixture/scripts/ci/"
+mkdir -p "$fixture/vendor/toko-tooling/scripts/ci"
+printf 'shared executable\n' > "$fixture/vendor/toko-tooling/scripts/ci/probe.sh"
 git -C "$fixture" init -q
 printf '/target/\n/.tools/\n' > "$fixture/.gitignore"
 printf 'tracked\n' > "$fixture/Cargo.toml"
@@ -26,10 +28,10 @@ for directory in docs/evidence .tools .private-evidence target crates/example/ta
 bash "$fixture/scripts/ci/native-source-files.sh" > "$fixture/selected.nul"
 count=0
 while IFS= read -r -d '' file; do
-    case "$file" in README.md|Cargo.toml|.toko-tooling.snapshot|scripts/ci/native-source-files.sh|crates/example/*|qualification/probe/lib.rs) ;; *) exit 1 ;; esac
+    case "$file" in README.md|Cargo.toml|.toko-tooling.snapshot|scripts/ci/native-source-files.sh|crates/example/*|qualification/probe/lib.rs|vendor/toko-tooling/scripts/ci/probe.sh) ;; *) exit 1 ;; esac
     count=$((count + 1))
 done < "$fixture/selected.nul"
-[[ "$count" == 6 ]]
+[[ "$count" == 7 ]]
 # Missing tracked source stays selected so the hash boundary cannot silently omit it.
 rm "$fixture/Cargo.toml"
 bash "$fixture/scripts/ci/native-source-files.sh" > "$fixture/missing.nul"

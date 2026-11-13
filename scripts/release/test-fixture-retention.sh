@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 export RELEASE_DELIVERY=direct
+selected_kind=''
+if [[ $# != 0 ]]; then
+    [[ $# == 2 && "$1" == --kind ]] || {
+        echo 'usage: test-fixture-retention.sh [--kind standard|publication|hook]' >&2; exit 2;
+    }
+    case "$2" in standard|publication|hook) selected_kind="$2" ;; *) exit 2 ;; esac
+fi
 
 # Exercise real consumer fixtures through controlled executable failures.
 # Use caller-owned scratch, defaulting to native CI evidence, including inputs.
@@ -9,8 +16,8 @@ root="${BASH_SOURCE[0]}"
 root="$(cd -P "${root%/*}/../.." && printf '%s/.' "$PWD")"
 root="${root%/.}"
 mkdir -p "$root/target/evidence/native-ci"
-# shellcheck source=scripts/ci/fixture-lifecycle.sh
-source "$root/scripts/ci/fixture-lifecycle.sh"
+# shellcheck source=vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh
+source "$root/vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh"
 evidence="$(fixture_create "${TMPDIR:-$root/target/evidence/native-ci}/fixture-retention.XXXXXX")"
 fixture_complete=false
 cleanup() {
@@ -23,8 +30,8 @@ cleanup() {
     exit "$status"
 }
 trap cleanup EXIT
-# shellcheck source=scripts/ci/fixture-retention-probes.sh
-source "$root/scripts/ci/fixture-retention-probes.sh"
+# shellcheck source=vendor/toko-tooling/scripts/ci/fixture-retention-probes.sh
+source "$root/vendor/toko-tooling/scripts/ci/fixture-retention-probes.sh"
 real_bash="$(command -v bash)"
 export FIXTURE_RETENTION_REAL_BASH="$real_bash"
 FIXTURE_RETENTION_REAL_MAKE="$(command -v make)"
@@ -35,7 +42,7 @@ write_bash_fault() {
     local destination="$1"
     cat >> "$destination" <<'BASH'
 case "${1:-}" in
-    */scripts/ci/check-release-commands.sh) ;;
+    */vendor/toko-tooling/scripts/ci/prepare-script-fixture.sh) ;;
     *) exec "$FIXTURE_RETENTION_REAL_BASH" "$@" ;;
 esac
 BASH
@@ -69,6 +76,7 @@ MAKE
 }
 
 for kind in standard publication hook; do
+    [[ -z "$selected_kind" || "$selected_kind" == "$kind" ]] || continue
     case "$kind" in
         standard) script=scripts/release/test-standard-release.sh; prefix=standard-release-entry; child=bash ;;
         publication) script=scripts/release/test-publication-make.sh; prefix=publication-make-entry; child='make' ;;
@@ -139,6 +147,11 @@ FAIL
         esac
     done
 done
+if [[ -n "$selected_kind" ]]; then
+    fixture_complete=true
+    echo "Selected $selected_kind fixture retention passed; evidence: $evidence"
+    exit 0
+fi
 # Execute the actual admission fixture with parent-owned evidence destinations.
 # Its synthetic failures must use its own logs and leave the parent untouched.
 run="$evidence/admission-parent"

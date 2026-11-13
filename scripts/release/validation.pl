@@ -1,10 +1,11 @@
 #!/usr/bin/env perl
-# Shared companions: scripts/ci/validation-evidence.pl scripts/ci/CheckProcess.pm ci/release-validation.json ci/cargo-release-groups.json
+# Shared companions: vendor/toko-tooling/scripts/ci/validation-evidence.pl scripts/ci/CheckProcess.pm ci/release-validation.json ci/cargo-release-groups.json
 # Product scope and protected-receipt custody; Shared owns reusable observations.
 use strict;
 use warnings;
 use FindBin qw($RealBin);
 use lib "$RealBin/../ci";
+use lib "$RealBin/../../vendor/toko-tooling/scripts/ci";
 use ValidationPlan qw(bytes digest document relative_path);
 use CheckProcess qw(observe);
 use JSON::PP;
@@ -18,7 +19,7 @@ defined($operation) && $operation =~ /\A(?:select|seal|check|admit|roster)\z/
 my $root = abs_path('.');
 my $json = JSON::PP->new->canonical->utf8;
 my $policy_path = 'ci/release-validation.json';
-my $observer = "$RealBin/../ci/validation-evidence.pl";
+my $observer = "$RealBin/../../vendor/toko-tooling/scripts/ci/validation-evidence.pl";
 sub same { $json->encode($_[0]) eq $json->encode($_[1]) or die "$_[2]\n" }
 sub write_document {
     my ($path, $value) = @_;

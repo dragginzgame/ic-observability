@@ -2,7 +2,7 @@
 set -euo pipefail
 # Stable dispatcher: phase is explicit data, never a replaced executable.
 case "${1:-}" in
-    */scripts/ci/check-make-execution.sh|*/scripts/ci/check-release-delivery.sh|scripts/ci/check-rust-compiler.sh|*/scripts/dev/toko-tooling.sh|scripts/dev/toko-tooling.sh)
+    */scripts/ci/check-make-execution.sh|*/scripts/ci/check-release-delivery.sh|scripts/ci/check-rust-compiler.sh|*/scripts/dev/toko-tooling.sh|vendor/toko-tooling/scripts/dev/toko-tooling.sh)
         exec "$STANDARD_RELEASE_REAL_BASH" "$@" ;;
     scripts/release/metadata.sh)
         if [[ "$2" == selection ]]; then exit 0; fi

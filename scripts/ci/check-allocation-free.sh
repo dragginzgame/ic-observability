@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Shared companions: scripts/ci/check-rust-compiler.sh scripts/ci/check-make-execution.sh
+# Shared companions: scripts/ci/check-rust-compiler.sh vendor/toko-tooling/scripts/ci/check-make-execution.sh
 set -euo pipefail
 # Validation only. Cargo uses this repository's target directory and locked graph.
 [[ $# == 0 ]] || { echo 'usage: check-allocation-free.sh' >&2; exit 2; }
 bash scripts/ci/check-rust-compiler.sh
-bash scripts/ci/check-make-execution.sh
+bash vendor/toko-tooling/scripts/ci/check-make-execution.sh
 export RUSTUP_AUTO_INSTALL=0 CARGO_NET_OFFLINE=true CARGO_TARGET_DIR="$PWD/target"
 # --export-all and link-dead-code retain the runtime-input arithmetic entrypoint.
 # No global allocator or std is supplied by the fixture. This must link, not check.

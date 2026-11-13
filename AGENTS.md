@@ -116,9 +116,9 @@ consumer-contract or persistence-boundary changes. No baseline exceptions apply.
 
 ## Dependency qualification
 
-- Follow [shared local setup](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/docs/adoption/local-setup.md) and the selected catalogs
-  in `ci/tool-versions.env` and `ci/ic-tools.tsv`; Metrics has no tool-catalog
-  exception. [make/consumer.mk](make/consumer.mk) owns common setup/check,
+- Follow [shared local setup](https://github.com/dragginzgame/toko-tooling/blob/8eb734758129eef2d2190c4fd22e00b52525f41a/docs/adoption/local-setup.md) and the selected catalogs
+  in `vendor/toko-tooling/ci/tool-versions.env` and `vendor/toko-tooling/ci/ic-tools.tsv`; Metrics has no tool-catalog
+  exception. [vendor/toko-tooling/make/consumer.mk](vendor/toko-tooling/make/consumer.mk) owns common setup/check,
   formatting, hook and release recipes. Local host qualification and commands
   remain in [docs/development/hosts.md](docs/development/hosts.md).
 - Metrics selects the released IC Build metadata editor in `ci/release-tools.env`.

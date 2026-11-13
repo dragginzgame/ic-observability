@@ -10,7 +10,7 @@ unset VALIDATION_REPOSITORY_ROOT VALIDATION_RUNNER_SNAPSHOT_PATH VALIDATION_LOG_
 unset VALIDATION_INPUT_ROOT VALIDATION_INPUT_BASELINE GITHUB_STEP_SUMMARY
 root="$(cd "${BASH_SOURCE[0]%/*}/../.." && pwd -P)"
 export PATH="$root/.tools/host/bin:$root/.tools/rust/common/bin:$PATH"
-source "$root/scripts/ci/fixture-lifecycle.sh"
+source "$root/vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh"
 mkdir -p "$root/target/qualification"
 fixture="$(fixture_create "$root/target/qualification/release-batch-consumer.XXXXXX")"
 fixture_complete=false
@@ -39,7 +39,7 @@ done
 package="${selection%@*}" version="${selection##*@}"
 "$RELEASE_BATCH_FIXTURE_REAL_CARGO" package --package "$selection" --locked --offline
 archive="$PWD/target/package/$package-$version.crate"
-checksum="$(bash scripts/ci/verify-file-checksum.sh --print sha256 "$archive")"
+checksum="$(bash vendor/toko-tooling/scripts/ci/verify-file-checksum.sh --print sha256 "$archive")"
 cp "$archive" "$RELEASE_BATCH_FIXTURE/registry/$package-$version.crate"
 jq -n --arg package "$package" --arg version "$version" --arg checksum "$checksum" \
     '{version:{crate:$package,num:$version,checksum:$checksum,yanked:false}}' > "$RELEASE_BATCH_FIXTURE/registry/$package-$version.json"
@@ -87,7 +87,7 @@ release-push-check:
 MAKE
 for group in metrics logging; do
     previous="$(RELEASE_GROUP="$group" bash scripts/release/metadata.sh version)"
-    candidate="$(perl scripts/ci/validate-release-inputs.pl next-version "$previous" patch)"
+    candidate="$(perl vendor/toko-tooling/scripts/ci/validate-release-inputs.pl next-version "$previous" patch)"
     printf '# Changelog\n\n## [%s] - Unreleased\n\n- Qualification only.\n\n## [%s] - 2000-01-01\n\n- Baseline.\n' "$candidate" "$previous" > "releases/$group/CHANGELOG.md"
     printf '%s\n' "$candidate" > "$fixture/$group-version"
 done

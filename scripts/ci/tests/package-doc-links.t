@@ -14,8 +14,8 @@ make_path("$root/target/qualification");
 my $fixture = tempdir('package-doc-inputs.XXXXXX', DIR => "$root/target/qualification", CLEANUP => 0);
 note("Package input fixture retained: $fixture");
 make_path("$fixture/scripts/ci", "$fixture/bin", "$fixture/package/src");
-observe('bash', "$root/scripts/ci/prepare-script-fixture.sh", $root, $fixture,
-    'scripts/ci/check-package-doc-links.pl', 'scripts/ci/check-documentation-links.pl');
+observe('bash', "$root/vendor/toko-tooling/scripts/ci/prepare-script-fixture.sh", $root, $fixture,
+    'scripts/ci/check-package-doc-links.pl', 'vendor/toko-tooling/scripts/ci/check-documentation-links.pl');
 sub write_file {
     open my $out, '>', $_[0] or die $!;
     print {$out} $_[1] or die $!;

@@ -1,129 +1,94 @@
 # Current handoff — 2026-11-13
 
-## Published products and tooling
+## Published products
 
-Metrics **0.30.2** and Logging **0.25.2** are delivered to GitHub and
-independently verified on crates.io. Never re-upload those versions. The
-[delivery receipt](../evidence/releases/toko0410-export-20261113.md) owns exact
-commits, annotated tags, archive hashes, complete plans and registry readback.
-Both passed all 20 workspace stages without narrowing or stage reuse, followed
-by final archive compilation and matching maintained source (34 Metrics and
-16 Logging files). Stage totals were 528 and 521 seconds; release-tool fixtures
-took 381 and 375 seconds. Hosted native and installed consumer acceptance remain
-separate and asynchronous; pending or cancelled checks are not passes.
+Metrics **0.30.2** and Logging **0.25.2** are delivered to GitHub and independently
+verified on crates.io. Never re-upload them. The [delivery receipt](../evidence/releases/toko0410-export-20261113.md)
+owns exact commits, annotated tags, archive hashes, complete plans and registry
+readback. Both passed all 20 workspace stages without narrowing or stage reuse.
+The latest delivered [hosted CI](https://github.com/dragginzgame/ic-observability/actions/runs/43431374070)
+is now green, including Linux and both macOS architectures. Installed consumer
+acceptance remains separately owned. That source selected toko-tooling 0.41.0;
+it does not qualify this later local adoption.
 
-Both packages require **Rust 1.100.0** on native and Wasm. The root pin, inherited
-development dependencies, Cargo.lock and authenticated snapshot select published
-**toko-tooling 0.41.0**, archive SHA-256
-`4aaafc699324611501e051132e971288c16392a3ece605e9909e88e0c7e80a2f`.
-The exporter retains 55 roots and 111 files. `make deps-list` inventories real
-members without display-only aliases. Publication uses admitted member manifests;
-group increments preserve root bytes. Canonical files and engine APIs remain unchanged.
+## Local tooling adoption
 
-The Cargo/Rustdoc lint minimum is inherited, with safe-only `forbid` unchanged.
-Clippy uses Cargo warning denial qualified against fresh/reused native/Wasm
-artifacts; explicit Rustdoc denial remains. Generated consumers retain only
-actual inherited dependencies and integration targets, with crate documentation.
-Current and Linux-built GNU Make 3.81 release/publication fixtures passed before
-capture. The prior [0.40.1 receipt CI](https://github.com/dragginzgame/ic-observability/actions/runs/43410271716)
-is now green, including both macOS architectures; it does not qualify this source.
+The root exact pin, both inherited development dependencies, Cargo.lock and
+exporter-owned receipt now select published **toko-tooling 0.42.1**, archive SHA-256
+`697b19c709eccb5f25c0abb0156766ded116abd8bde1552b20022b8af6f51dce`.
+This batch is uncommitted and unpushed. Pending Metrics **0.30.3** and Logging
+**0.25.3** notes record the migration; package versions remain 0.30.2 and 0.25.2.
 
-Logging's byte-budgeted export example checks exact encoded length before writing
-accepted rows directly into its result using a reusable stack number buffer.
-Its five named tests, strict Clippy and runnable demonstration passed. UTF-8
-budgets, typed oversized-row errors and cursor continuation remain unchanged.
-Focused evidence is under `target/evidence/logging-export-direct-format/` and
-`target/evidence/toko-tooling-0410/`; full release transcripts and supplier review
-are under `target/deploy/toko0410-export-20261113/`.
+The authenticated exporter retired the 108 prior root-layout runtime files after
+proving ownership. The final 56-root/110-file snapshot keeps executables, catalogs,
+Make includes, composite actions and hooks under `vendor/toko-tooling/`; root
+canonical files and `.toko-tooling.snapshot` retain their roles. Consumer scripts,
+workflow, release policies and `scripts/ci/CheckProcess.pm` remain local. No managed
+files were hand-moved, no old-path aliases were added and canonical bytes match
+the published crate. The unused generic root-layout release checker was retired
+through the exporter; direct consumer dispatch/refusal/recovery checks remain.
 
-The [release guide](../releases/independent-releases.md) records nested work,
-measured costs and current missing cross-source/collector recovery admission.
-All 20 obligations remain. No testkit/PocketIC supplier is selected; optional
-upgrade failures do not invalidate the qualified existing graph. Required native,
-product and separately owned consumer checks remain required. The native editor
-remains qualified IC Build 0.83.0; both ledgers record newer-supplier dispositions.
+Make, native CI/actions, source hashing, fixture copies, compiler readers and
+candidate/metadata/publication adapters call the vendor tree. Validation callers
+scope `VALIDATION_REPOSITORY_ROOT` to the actual consumer, rather than deriving it
+from the installed helper location. `core.hooksPath` now selects
+`vendor/toko-tooling/.githooks`; the old directory contained no custom hooks.
+`make deps-list` shows package-first rows for both real members.
 
-[#134 — Adopt Rust 1.100.0 and the common lint policy](https://github.com/dragginzgame/ic-observability/issues/134)
-is closed. Focused evidence under `target/evidence/toko-tooling-0400/` includes
-actual compiler identities, both generated consumers and typed native/Wasm lint
-refusals. Earlier full release transcripts and supplier review are under
-`target/deploy/toko0400-20261113/`. Only Linux x86_64 ran locally; hosted native
-and installed consumer acceptance are not inferred from those results.
+Tool installation/admission, snapshot verification, pins, formatting, local and
+packaged documentation, compiler policy, native source selection, CI selection,
+current/GNU Make 3.81 release/publication dispatch, standard/hook retention,
+native success/recovery evidence and product dependency boundaries passed.
+Sealed-plan and publication-policy fixtures passed after fixing the explicit-root
+caller binding. Both group transactions and the frozen-batch fixture passed;
+matched CI/selected-plan trace qualification also passed.
+Raw previews, failed/fixed attempts and focused results are under
+`target/evidence/toko-tooling-0421/`. No broad `make ci`, `make msrv` or actual
+release/publication ran for this adoption. The [host guide](../development/hosts.md),
+[release guide](../releases/independent-releases.md) and [tooling summary](../evidence/tooling.md)
+record the maintained interfaces and evidence limits.
 
-The native release editor selects published IC Build **0.83.0**. Both group
-ledgers record current supplier review and optional-refresh dispositions for
-cargo-sort-derives and the editor's packaged IC Host lock. Review those again
-at the next applicable maintenance/release boundary. Focused adoption/layout
-checks remain under `target/evidence/toko-tooling-03917/`; earlier delivery
-transcripts and registry review are under `target/deploy/toko03917-20261112/`.
-The [tooling summary](../evidence/tooling.md) and
-[source inventory](../governance/source-origins.md) retain their respective scope.
-The deferred syn 3.0.10 edit is separate from the delivered syn 3.0.9 graph.
+Both packages remain under `crates/` in one virtual workspace, excluding
+`qualification`, which contains retired READMEs only. No selection-only package or
+qualification workspace is introduced. Rust **1.100.0**, lint policy, public APIs,
+features, retained-data semantics and dependency-free production graphs are
+unchanged. The separate incoming syn 3.0.10 edit remains; other supplier selections
+are unchanged. IC Build **0.83.0** remains the qualified editor. Optional supplier
+refresh dispositions remain in the last delivered ledgers and must be revisited
+at the next applicable release review. No sibling was edited or deployed.
 
-The product crates remain independent, under `crates/`, in one virtual root
-workspace excluding `qualification`. That tree contains historical README files,
-not maintained packages. No qualification workspace or qualification release selection is needed.
-Package-local tests and examples remain with their products. Current product
-APIs, features and all existing release obligations remain unchanged.
+## Product and consumer ownership
 
-Metrics 0.29.9 introduced `BoundedCounterTable::add_omitted(u128)` and
-`LexicalMeasurementTable::record_omitted(u64)`, preserving canonical arithmetic
-without constructing/comparing a key, allocation or retained-state changes.
-[#133](https://github.com/dragginzgame/ic-observability/issues/133) records producer
-completion/publication. Original typed tables and Logging `BoundedHistory<T>`
-are recorded in the earlier delivery receipts. Canic
+Logging's last delivered export example uses direct writes after exact UTF-8
+length checks, preserving typed errors and continuation. Metrics' bounded-table
+omission APIs and Logging's typed history are already published. The
+[API inventory](../architecture/metrics-api.md), [extraction contract](../architecture/extraction.md)
+and [Logging boundary](../architecture/logging.md) retain their ownership limits.
+Producer issues #130, #133 and #134 remain closed. Canic
 [#755](https://github.com/dragginzgame/canic/issues/755) and
-[#756](https://github.com/dragginzgame/canic/issues/756) retain adoption and real
-endpoint/report/installed acceptance. No sibling deployment is implied.
+[#756](https://github.com/dragginzgame/canic/issues/756), Profiler
+[#17](https://github.com/dragginzgame/ic-profiler/issues/17), IC Storage and each
+consumer retain their own outstanding adoption/acceptance. No IC cost measurement
+or downstream deployment is implied.
 
 ## Deferred work and recovery custody
 
-The syn 3.0.10 Cargo.lock edit is restored and excluded from the published
-syn 3.0.9 graph. Its current stash is
-`526b26f8fe13ee560cf542f3db1747a33ef746fe`, pinned by branch
-`preserved/syn-3.0.10-toko0410-export-20261113`. The preceding stash
-`dcf41ce2ca54b419de568f549d3521a2b75b5779` and branch
-`preserved/syn-3.0.10-toko0401-reconcile-20261113` remain retained. The initial 0.40.1 stash
-`0797db766ffd29e0fc972c31e3c3a4cbf67a0b99` and branch
-`preserved/syn-3.0.10-toko0401-20261113` remain retained. Earlier stash
-`96058885f9422b59860801243f934678d1abd175` and its branch
-`preserved/syn-3.0.10-toko0400-20261113` remain retained. The earlier stash/ref
-`6511a6979fae869912f7f3f2f6a3e7b968bb9792` and its
-`preserved/syn-3.0.10-toko03917-20261112` branch remain retained. The earlier stash/ref
-`39f97a10b8ecd7f567b3b69696b7c71fb549ab01` and its
-`preserved/syn-3.0.10-toko0397-20261110` branch remain retained. The original stash
-`de3f936fd3e93d094ddf5ff5d7129a8104119f0c` and its preservation branch remain
-retained. Do not discard this work or mistake it for the released selection.
+The separate syn 3.0.10 edit remains outside the last published syn 3.0.9 graph.
+Its current durable stash is `526b26f8fe13ee560cf542f3db1747a33ef746fe`, pinned by
+`preserved/syn-3.0.10-toko0410-export-20261113`. It remains reapplied locally.
+All preceding stashes and preservation refs remain retained; the
+[receipt chain](../evidence/releases/README.md) owns their exact identities.
 
-Batch `batch-z8nN4ysP` is complete at index 2 and reconciled cleanly. Execution
-remains under `target/release-frozen/batch-z8nN4ysP`, with durable recovery under
-`.git/release-state/frozen/batch-z8nN4ysP/`. The preserved syn edit is reapplied
-separately after recording delivery. No retirement or protected cleanup ran.
+Batch `batch-z8nN4ysP` completed at index 2 and reconciled cleanly. Execution remains
+under `target/release-frozen/batch-z8nN4ysP`, with durable recovery under
+`.git/release-state/frozen/batch-z8nN4ysP/`. Earlier completed batches, including
+`batch-4BqGe_7B`, retain their candidates and recovery. They keep original source,
+layout, catalogs, journals and proof owners; never reinterpret them with this
+migration. All 20 release obligations and disabled stage/version-proof reuse remain.
 
-Earlier batch `batch-4BqGe_7B` is complete at index 2. Execution remains under
-`target/release-frozen/batch-4BqGe_7B`, with durable recovery under
-`.git/release-state/frozen/batch-4BqGe_7B/`. Reconciliation completed and the
-syn edit was reapplied. No retirement or protected cleanup ran.
-
-The first 0.40.1 batch, `batch-wmST1LGL`, was stopped before delivery after
-hosted run 43398940199 exposed GNU Make 3.81 scope/group prerequisite admission
-failures on both macOS architectures. Its original source and partial validation
-remain retained; do not resume it as repaired source. The consumer-owned Make
-repair passed GNU Make 3.81/current Make fixtures under
-`target/evidence/toko0401-make381/` before the completed fresh capture.
-
-Failed pre-delivery batch `batch-9uizEjhh` retains its original source and evidence;
-do not resume it as repaired source. Its publication-policy fixture was fixed in
-the normal checkout before the completed batch reran all required checks.
-
-Earlier completed batches `batch-V1TkLKoY`, `batch-CRinIsG3`, `batch-ic09DJmB`, `batch-Dvpzy0I1`, `batch-9DUaDslR`, `batch-vgM1oJ1f`, `batch-gfJA5IMg`
-and `batch-z30yB8KG` retain their candidates/recovery. Failed pre-delivery batch
-`batch-C8a10ddy` must not be resumed as repaired source. The delivery-receipt
-chain and [retention index](../evidence/README.md) own their identities and
-private-source custody. Earlier stashes `a7dbbac568a37876f37f8a89607545a5fba389b2`
-and `e5bedde93b31a520a4ff282071099152cb04c555` remain untouched.
-
-The [API inventory](../architecture/metrics-api.md) and [Metrics migration](../../releases/metrics/0.29.md)
-retain downstream contract ownership. Producer #130 remains closed; Profiler
-[#17](https://github.com/dragginzgame/ic-profiler/issues/17) and each consumer
-retain their own outstanding acceptance. No IC cost measurement is implied.
+Stopped/failed pre-delivery batches `batch-wmST1LGL`, `batch-9uizEjhh` and
+`batch-C8a10ddy` retain original source and partial evidence. Do not resume them as
+repaired source. Earlier receipts preserve their failure and repair scopes.
+No retirement, protected cleanup, stash deletion or history rewrite ran. The
+[retention index](../evidence/README.md) and [distribution record](../evidence/archive-distribution-072.md)
+retain earlier evidence and private-original custody.

@@ -50,6 +50,6 @@ for my $package (@{$metadata->{packages}}) {
         push @documents, $path if $path =~ /\.md\z/;
     }
     @documents or die "package has no selected documentation\n";
-    system('perl', "$root/scripts/ci/check-documentation-links.pl", '--root', $destination, @documents) == 0
+    system('perl', "$root/vendor/toko-tooling/scripts/ci/check-documentation-links.pl", '--root', $destination, @documents) == 0
         or die "packaged documentation references failed for $package->{name}\n";
 }

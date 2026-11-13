@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Shared companions: scripts/ci/collect-native-diagnostics.sh scripts/ci/package-native-recovery-evidence.sh ci/tool-versions.env ci/ic-tools.tsv
+# Shared companions: vendor/toko-tooling/scripts/ci/collect-native-diagnostics.sh scripts/ci/package-native-recovery-evidence.sh vendor/toko-tooling/ci/tool-versions.env vendor/toko-tooling/ci/ic-tools.tsv
 set -euo pipefail
 [[ $# == 0 ]] || { echo 'usage: collect-native-evidence.sh (workflow outcomes in environment)' >&2; exit 2; }
 root="${BASH_SOURCE[0]}"
@@ -29,10 +29,10 @@ printf 'native=%s\ninputs=%s\ntools=%s\nhost=%s\ncompiler=%s\ntoolchain=%s\nprer
 collection_status=0
 collection_outcome="$TOOLS_OUTCOME"
 if [[ "$HOST_TOOLS_OUTCOME" == failure ]]; then collection_outcome=failure; fi
-bash scripts/ci/collect-native-diagnostics.sh \
+bash vendor/toko-tooling/scripts/ci/collect-native-diagnostics.sh \
     "$PWD" "$PWD/target/evidence/native-ci" target/evidence/native-diagnostics.tar.gz \
     "${RUNNER_TEMP:-${TMPDIR:-/tmp}}" "$collection_outcome" \
-    "$PWD/ci/tool-versions.env" "$PWD/ci/ic-tools.tsv" \
+    "$PWD/vendor/toko-tooling/ci/tool-versions.env" "$PWD/vendor/toko-tooling/ci/ic-tools.tsv" \
     inputs.txt source-commit.txt source-files.nul source-sha256.txt outcome.txt \
     compiler.txt setup-smoke.log prerequisites.log host-tools.log tools-setup.log tools-check.log tool-versions.txt application-sources.log native-ci.log || collection_status=$?
 # Attempt recovery packaging even after collection fails, preserving the first error.

@@ -24,7 +24,7 @@ my @profiles = (
 
 for my $profile ($group eq 'logging' ? () : @profiles) {
     my ($name, $target, @features) = @$profile;
-    system($^X,'scripts/ci/check-cargo-graph.pl','--consumer','.',
+    system($^X,'vendor/toko-tooling/scripts/ci/check-cargo-graph.pl','--consumer','.',
         '--package','ic-metrics','--target',$target,'--edges','normal,build',@features,
         '--forbid-pattern','^(?!ic-metrics$)') == 0
         or die "$name: ic-metrics production graph refused\n";
@@ -34,7 +34,7 @@ for my $profile ($group eq 'logging' ? () : @profiles) {
 # Logging has no feature matrix. Declaration admission independently refuses
 # every dependency; observe its resolved closure once per supported target.
 for my $target ($group eq 'metrics' ? () : ($host, 'wasm32-unknown-unknown')) {
-    system($^X,'scripts/ci/check-cargo-graph.pl','--consumer','.',
+    system($^X,'vendor/toko-tooling/scripts/ci/check-cargo-graph.pl','--consumer','.',
         '--package','ic-logging','--target',$target,'--edges','normal,build',
         '--all-features','--forbid-pattern','^(?!ic-logging$)') == 0
         or die "$target: ic-logging production graph refused\n";

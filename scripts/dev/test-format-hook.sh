@@ -9,14 +9,15 @@ root="$(cd -P "${root%/*}/../.." && printf '%s/.' "$PWD")"
 root="${root%/.}"
 # The fixed-instrumentation workspace has no dependency pair to reorder. Shared owns
 # generic manifest sorting; this fixture retains Rust hook and failure checks.
-# shellcheck source=scripts/ci/fixture-lifecycle.sh
-source "$root/scripts/ci/fixture-lifecycle.sh"
+# shellcheck source=vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh
+source "$root/vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh"
 mkdir -p "$root/target/qualification"
 fixture="$(fixture_create "${TMPDIR:-$root/target/qualification}/metrics-format-hook.XXXXXX")"
 fixture_complete=false
 trap 'fixture_finish "$?" "$fixture" "Metrics formatting fixture retained"' EXIT
-TMPDIR="$fixture" bash "$root/scripts/ci/check-formatting-hooks.sh" "$root" \
+TMPDIR="$fixture" bash "$root/vendor/toko-tooling/scripts/ci/check-formatting-hooks.sh" "$root" \
     crates/ic-metrics/src/lib.rs Cargo.toml \
     --no-dependency-tables --rust-sources Cargo.lock LICENSE.md \
-    make/consumer.mk make/cargo-dependencies.mk
+    vendor/toko-tooling/make/consumer.mk vendor/toko-tooling/make/release.mk \
+    vendor/toko-tooling/make/cargo-publication.mk vendor/toko-tooling/make/cargo-dependencies.mk
 fixture_complete=true

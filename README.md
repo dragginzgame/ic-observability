@@ -88,9 +88,10 @@ readback never retries the upload; retain and reconcile the separate receipts.
 
 Use the pinned Rust 1.100.0 toolchain with rustfmt and Clippy. Starting with
 Metrics 0.30.0 and Logging 0.25.0, both libraries require Rust 1.100.0 on native
-and Wasm. [Local setup](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/docs/adoption/local-setup.md) owns explicit
+and Wasm. [Local setup](https://github.com/dragginzgame/toko-tooling/blob/8eb734758129eef2d2190c4fd22e00b52525f41a/docs/adoption/local-setup.md) owns explicit
 common-tool preparation through `make install-tools` and offline admission with
-`make tools-check`. Checks do not install tools or change dependency selections.
+`make tools-check`. Installed shared executables and catalogs live under
+`vendor/toko-tooling/`; local product scripts and release policies stay outside it. Checks do not install tools or change dependency selections.
 
 Select the affected package during development:
 

@@ -33,12 +33,14 @@ storage dependency.
 
 The root [baseline](../TOKO-TOOLING.md) and
 [snapshot receipt](../.toko-tooling.snapshot) identify managed shared material.
+Executable payloads and operational catalogs live under `vendor/toko-tooling/`;
+consumer scripts, workflows and release policies remain outside it.
 Product-specific instructions remain in [AGENTS.md](../AGENTS.md) and the guides
 above.
 
-- [Adoption and installation](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/docs/adoption/consuming-snapshots.md)
-- [Migration history](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/docs/adoption/migrations.md)
-- [Local setup](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/docs/adoption/local-setup.md) and [Make interface](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/docs/adoption/make-interface.md)
+- [Adoption and installation](https://github.com/dragginzgame/toko-tooling/blob/8eb734758129eef2d2190c4fd22e00b52525f41a/docs/adoption/consuming-snapshots.md)
+- [Migration history](https://github.com/dragginzgame/toko-tooling/blob/8eb734758129eef2d2190c4fd22e00b52525f41a/docs/adoption/migrations.md)
+- [Local setup](https://github.com/dragginzgame/toko-tooling/blob/8eb734758129eef2d2190c4fd22e00b52525f41a/docs/adoption/local-setup.md) and [Make interface](https://github.com/dragginzgame/toko-tooling/blob/8eb734758129eef2d2190c4fd22e00b52525f41a/docs/adoption/make-interface.md)
 - [Tool inventory](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/docs/tools/tool-inventory.md)
 - [Validation helpers](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/docs/validation/verification-helpers.md)
 - [Shared release contract](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/docs/releases/releases.md)

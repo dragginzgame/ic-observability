@@ -24,8 +24,8 @@ root="${BASH_SOURCE[0]}"
 root="$(cd -P "${root%/*}/../.." && printf '%s/.' "$PWD")"
 root="${root%/.}"
 export PATH="$root/.tools/host/bin:$root/.tools/rust/common/bin:$PATH"
-# shellcheck source=scripts/ci/fixture-lifecycle.sh
-source "$root/scripts/ci/fixture-lifecycle.sh"
+# shellcheck source=vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh
+source "$root/vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh"
 fixture="$(fixture_create "${TMPDIR:-$root/target}/observability-release-groups.XXXXXX")"
 fixture_complete=false
 cleanup() {
@@ -60,10 +60,10 @@ freeze_consumer() {
         "$consumer/client/tests/contract.rs"
     cargo metadata --manifest-path "$consumer/Cargo.toml" --offline --format-version 1 > "$fixture/$group-consumer-before.json"
     # Admit the independently resolved client as well as the source workspace.
-    bash "$root/scripts/ci/check-cargo-dependency-boundaries.sh" --consumer "$consumer" --external-ic
+    bash "$root/vendor/toko-tooling/scripts/ci/check-cargo-dependency-boundaries.sh" --consumer "$consumer" --external-ic
     mkdir -p "$consumer/ci"
     cp "$root/ci/candid-boundary.json" "$consumer/ci/"
-    perl "$root/scripts/ci/check-candid-boundary.pl" --cbor "$consumer" ci/candid-boundary.json supplier client
+    perl "$root/vendor/toko-tooling/scripts/ci/check-candid-boundary.pl" --cbor "$consumer" ci/candid-boundary.json supplier client
     cp "$consumer/Cargo.lock" "$fixture/$group-consumer.lock"
 }
 
@@ -170,7 +170,7 @@ for group in metrics logging; do
     ledger="$(printf '%s' "$plan" | jq -er .changelog)"
     kind='patch'
     [[ "$group" != logging ]] || kind=minor
-    candidate="$(perl scripts/ci/validate-release-inputs.pl next-version "$previous" "$kind")"
+    candidate="$(perl vendor/toko-tooling/scripts/ci/validate-release-inputs.pl next-version "$previous" "$kind")"
     printf '# Changelog\n\n## [%s]\n\n- Fixture release.\n\n## [%s] - 2000-01-01\n\n- Fixture baseline.\n' "$candidate" "$previous" > "$ledger"
 done
 git init -q -b main
@@ -208,7 +208,7 @@ for group in metrics logging; do
     kind='patch'
     [[ "$group" != logging ]] || { other=metrics; kind=minor; }
     previous="$(make --no-print-directory -s release-version)"
-    candidate="$(perl scripts/ci/validate-release-inputs.pl next-version "$previous" "$kind")"
+    candidate="$(perl vendor/toko-tooling/scripts/ci/validate-release-inputs.pl next-version "$previous" "$kind")"
     cp Cargo.toml "$fixture/$group-root-before"
     cp "$fixture/$group-root-before" "$fixture/$group-root-expected"
     other_version="$(RELEASE_GROUP="$other" make --no-print-directory -s release-version)"

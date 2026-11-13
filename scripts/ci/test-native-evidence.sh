@@ -48,8 +48,8 @@ yq="$root/.tools/host/bin/yq"
 jq="$root/.tools/host/bin/jq"
 git_dir="$(git -C "$root" rev-parse --absolute-git-dir)"
 mkdir -p "$root/target/evidence/native-ci"
-# shellcheck source=scripts/ci/fixture-lifecycle.sh
-source "$root/scripts/ci/fixture-lifecycle.sh"
+# shellcheck source=vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh
+source "$root/vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh"
 fixture="$(fixture_create "${TMPDIR:-$root/target/evidence/native-ci}/native-evidence.XXXXXX")"
 fixture_complete=false
 cleanup() {
@@ -79,7 +79,7 @@ mkdir -p "$fixture/commands" "$fixture/bin" "$fixture/source"
     (map(.id) | index("native_inputs")) < (map(.id) | index("prerequisites")) and
     (map(select(.id == "native_inputs"))[0].run ==
         "bash scripts/ci/record-native-inputs.sh\n") and
-    (map(select(.id == "tools"))[0].uses == "./.github/actions/prepare-common-tools") and
+    (map(select(.id == "tools"))[0].uses == "./vendor/toko-tooling/.github/actions/prepare-common-tools") and
     (map(select(.id == "native_artifacts"))[0].if ==
         "env.CI_SCOPE != '\''docs'\'' && (always() && steps.checkout.outcome == '\''success'\'')") and
     (map(select(.id == "native_artifacts"))[0].run ==
@@ -101,7 +101,7 @@ mkdir -p "$fixture/commands" "$fixture/bin" "$fixture/source"
         "env.CI_SCOPE != '\''docs'\'' && (always() && steps.checkout.outcome == '\''success'\'')")
 ' "$fixture/steps.json" > /dev/null
 for step in setup_smoke native_host host_tools toolchain compiler tool_inputs application_sources native_ci; do
-    PATH="${jq%/*}:$PATH" bash "$root/scripts/ci/extract-workflow-step.sh" \
+    PATH="${jq%/*}:$PATH" bash "$root/vendor/toko-tooling/scripts/ci/extract-workflow-step.sh" \
         "$fixture/steps.json" "$step" > "$fixture/commands/$step.sh"
 done
 # Matrix values are action inputs; execute the Linux body with substituted Make
@@ -207,7 +207,7 @@ printf '%s\n' "$*" >> "$FIXTURE_COMMANDS"
 printf 'make stdout: %s\n' "$*"
 printf 'make stderr: %s\n' "$*" >&2
 if [[ "${FIXTURE_FORMATTING:-no}" == yes && "$*" == ci ]]; then
-    bash scripts/ci/run-formatting.sh --check bash -c \
+    bash vendor/toko-tooling/scripts/ci/run-formatting.sh --check bash -c \
         'echo formatter-stdout; echo formatter-stderr >&2; exit 43'
 fi
 if [[ "$*" == "$FIXTURE_FAILURE" ]]; then exit 43; fi
@@ -245,7 +245,7 @@ if [[ "$1" == scripts/ci/check-rust-compiler.sh ]]; then
     [[ "$FIXTURE_FAILURE" != compiler ]] || exit 43
     exit 0
 fi
-if [[ "$1" == scripts/dev/install-host-tools.sh ]]; then
+if [[ "$1" == vendor/toko-tooling/scripts/dev/install-host-tools.sh ]]; then
     printf 'host-tools\n' >> "$FIXTURE_COMMANDS"
     printf 'host setup stdout\n'
     printf 'host setup stderr\n' >&2
@@ -256,13 +256,13 @@ if [[ "$1" == scripts/dev/install-host-tools.sh ]]; then
     fi
     exit 0
 fi
-if [[ "$1" == scripts/ci/collect-native-diagnostics.sh && "${FIXTURE_COLLECTION_STATUS:-0}" != 0 ]]; then
+if [[ "$1" == vendor/toko-tooling/scripts/ci/collect-native-diagnostics.sh && "${FIXTURE_COLLECTION_STATUS:-0}" != 0 ]]; then
     # The producer owns collector failures; exercise this workflow's handling of
     # its status after real readable diagnostics and candidates are published.
     "$FIXTURE_REAL_BASH" "$@"
     exit "$FIXTURE_COLLECTION_STATUS"
 fi
-if [[ "$1" == scripts/ci/report-tool-versions.sh ]]; then
+if [[ "$1" == vendor/toko-tooling/scripts/ci/report-tool-versions.sh ]]; then
     [[ $# == 2 && "$2" == "$GITHUB_WORKSPACE" ]] || exit 99
     # Shared qualifies catalog selection, admission and executable probes.
     # Metrics owns the workflow's partial-log retention and later-step refusal.
@@ -284,7 +284,7 @@ chmod +x "$fixture/bin/bash"
 FIXTURE_REAL_BASH="$real_bash"
 export FIXTURE_REAL_BASH
 check_diagnostic_checksum() {
-    bash "$root/scripts/ci/verify-file-checksum.sh" sha256 \
+    bash "$root/vendor/toko-tooling/scripts/ci/verify-file-checksum.sh" sha256 \
         "$(cat target/evidence/native-diagnostics.tar.gz.sha256)" \
         target/evidence/native-diagnostics.tar.gz > diagnostic-check.log
 }

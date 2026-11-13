@@ -11,8 +11,8 @@ root="${BASH_SOURCE[0]}"
 [[ "$root" == /* ]] || root="$PWD/$root"
 root="$(cd -P "${root%/*}/../.." && printf '%s/.' "$PWD")"
 root="${root%/.}"
-# shellcheck source=scripts/ci/fixture-lifecycle.sh
-source "$root/scripts/ci/fixture-lifecycle.sh"
+# shellcheck source=vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh
+source "$root/vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh"
 mkdir -p "$root/target/qualification"
 fixture="$(fixture_create "${TMPDIR:-$root/target/qualification}/standard-release-entry.XXXXXX")"
 fixture_complete=false
@@ -24,10 +24,11 @@ cleanup() {
     fixture_finish "$status" "$fixture" "failed standard release fixture retained"
 }
 trap cleanup EXIT
-# shellcheck source=scripts/ci/make-adapter-probes.sh
-source "$root/scripts/ci/make-adapter-probes.sh"
+# shellcheck source=vendor/toko-tooling/scripts/ci/make-adapter-probes.sh
+source "$root/vendor/toko-tooling/scripts/ci/make-adapter-probes.sh"
 # shellcheck source=scripts/release/fixtures/prepare-make.sh
 source "$root/scripts/release/fixtures/prepare-make.sh"
+: > "$fixture/output"
 prepare_make_fixture "$root" "$fixture"
 real_bash="$STANDARD_RELEASE_REAL_BASH"
 cd "$fixture"
@@ -36,14 +37,8 @@ real_make="$(command -v make)"
 (cd "$root" && "$real_make" --no-print-directory release-files) > "$fixture/release-files"
 printf '%s\0' Cargo.toml Cargo.lock releases/metrics/CHANGELOG.md crates/ic-metrics/Cargo.toml > "$fixture/expected-release-files"
 cmp "$fixture/expected-release-files" "$fixture/release-files"
-for selection in default direct; do
-    if [[ "$selection" == default ]]; then unset RELEASE_DELIVERY; else export RELEASE_DELIVERY=direct; fi
-    TMPDIR="$fixture" "$real_bash" "$root/scripts/ci/check-release-commands.sh" "$root" \
-        make/consumer.mk make/tools.mk make/release.mk make/rust-format.mk make/execution.mk make/validation.mk make/cargo-dependencies.mk \
-        scripts/ci/check-make-execution.sh scripts/ci/check-release-delivery.sh \
-        ci/release-delivery.txt scripts/ci/run-formatting.sh \
-        scripts/release/metadata.sh ci/cargo-release-groups.json > "$fixture/output" 2>&1
-done
+# The producer owns generic runner/export regression checks. This fixture tests
+# the actual vendor-layout consumer's dispatch and refusal boundaries below.
 
 # Keep one real-consumer include-admission check. Shared Tooling owns the
 # environment/recursive-root isolation matrix and checker export behavior.
@@ -64,7 +59,7 @@ export STANDARD_RELEASE_PHASE=metadata
 # Preflight binds the same independently selected Rust catalog as installation;
 # a host-only override must not change it. Exercise actual Make child routing.
 selected_rust="$fixture/selected Rust pins.env"
-cp "$root/ci/tool-versions.env" "$selected_rust"
+cp "$root/vendor/toko-tooling/ci/tool-versions.env" "$selected_rust"
 : > "$EVENTS"
 PATH="$fixture/bin:$PATH" RELEASE_DELIVERY=direct REQUIRE_RUST_CATALOG=1 \
     EXPECTED_RUST_CATALOG="$selected_rust" "$real_make" --no-print-directory \
@@ -100,7 +95,7 @@ export STANDARD_RELEASE_PHASE=real
 
 # Captured standard entries admit prepared tools and retain caller offline mode.
 mkdir -p scripts/ci
-cat > scripts/ci/run-release.sh <<'RUNNER'
+cat > vendor/toko-tooling/scripts/ci/run-release.sh <<'RUNNER'
 #!/usr/bin/env bash
 set -euo pipefail
 [[ "${IC_METRICS_RELEASE_CACHE_PREPARE:-}" == "${EXPECTED_CACHE_PREPARE:-0}" ]] || exit 1
@@ -108,6 +103,8 @@ set -euo pipefail
 printf '%s\n' "$@" > "$EVENTS"
 exit "${CACHE_ENTRY_RESULT:-0}"
 RUNNER
+for selection in default direct; do
+    if [[ "$selection" == default ]]; then unset RELEASE_DELIVERY; else export RELEASE_DELIVERY=direct; fi
 for target in patch minor major resume; do
     for result in 0 17; do
         : > "$EVENTS"
@@ -121,6 +118,9 @@ for target in patch minor major resume; do
         cmp "$fixture/cache-entry-expected" "$EVENTS"
     done
 done
+
+done
+export RELEASE_DELIVERY=direct
 
 # Earlier standalone recovery keeps its preparation lane; outer increments use
 # the separately qualified batch runner instead.
@@ -148,7 +148,7 @@ cmp "$fixture/cache-entry-expected" "$EVENTS"
 # release/formatter operation, including an inherited marker claiming admission.
 # Publication remains a separate Cargo operation. Substitute it
 # before admission cases so even a broken guard cannot reach a registry.
-export JOBSERVER_PROBE="$root/scripts/ci/check-pipe-jobserver.pl"
+export JOBSERVER_PROBE="$root/vendor/toko-tooling/scripts/ci/check-pipe-jobserver.pl"
 parallel=(-j4)
 if "$real_make" --help | grep -q -- --jobserver-style; then parallel+=(--jobserver-style=pipe); fi
 cargo_targets=(package-check check check-wasm clippy docs-check test allocation-free-check)

@@ -2,21 +2,21 @@
 set -euo pipefail
 root="$(cd "${BASH_SOURCE[0]%/*}/../.." && pwd -P)"
 export PATH="$root/.tools/host/bin:$PATH"
-# shellcheck source=scripts/ci/fixture-lifecycle.sh
-source "$root/scripts/ci/fixture-lifecycle.sh"
+# shellcheck source=vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh
+source "$root/vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh"
 mkdir -p "$root/target/qualification"
 fixture="$(fixture_create "$root/target/qualification/publication-policy.XXXXXX")"
 fixture_complete=false
 trap 'fixture_finish "$?" "$fixture" "Publication policy fixture retained"' EXIT
 mkdir -p "$fixture/repo/scripts/"{release,ci} "$fixture/bin" "$fixture/archive/ic-metrics-0.1.0"
-bash "$root/scripts/ci/prepare-script-fixture.sh" "$root" "$fixture/repo" \
+bash "$root/vendor/toko-tooling/scripts/ci/prepare-script-fixture.sh" "$root" "$fixture/repo" \
     scripts/release/publication.sh scripts/release/check-package-content.pl \
-    scripts/ci/check-crates-io-version.sh scripts/ci/check-cargo-package-provenance.sh \
-    scripts/ci/verify-file-checksum.sh
+    vendor/toko-tooling/scripts/ci/check-crates-io-version.sh vendor/toko-tooling/scripts/ci/check-cargo-package-provenance.sh \
+    vendor/toko-tooling/scripts/ci/verify-file-checksum.sh
 cd "$fixture/repo"
 mkdir -p scripts/dev
 # This fixture isolates publication policy; tooling refusal is tested separately.
-printf '#!/usr/bin/env bash\nexit 0\n' > scripts/dev/toko-tooling.sh
+printf '#!/usr/bin/env bash\nexit 0\n' > vendor/toko-tooling/scripts/dev/toko-tooling.sh
 printf '/target/\n' > .gitignore
 cp "$root/LICENSE.md" LICENSE.md
 printf '[workspace.package]\nrepository = "%s/remote.git"\n' "$fixture" > Cargo.toml
@@ -60,7 +60,7 @@ cp crates/ic-metrics/Cargo.toml "$fixture/archive/ic-metrics-0.1.0/Cargo.toml"
 cp LICENSE.md "$fixture/archive/ic-metrics-0.1.0/LICENSE.md"
 printf '# generated lock\n' > "$fixture/archive/ic-metrics-0.1.0/Cargo.lock"
 tar -czf "$fixture/valid.crate" -C "$fixture/archive" ic-metrics-0.1.0
-checksum="$(bash scripts/ci/verify-file-checksum.sh --print sha256 "$fixture/valid.crate")"
+checksum="$(bash vendor/toko-tooling/scripts/ci/verify-file-checksum.sh --print sha256 "$fixture/valid.crate")"
 jq -n --arg checksum "$checksum" '{version:{crate:"ic-metrics",num:"0.1.0",checksum:$checksum,yanked:false}}' > "$fixture/registry.json"
 cat > "$fixture/bin/curl" <<'CURL'
 #!/usr/bin/env bash
@@ -132,13 +132,13 @@ done
 # Retain an integrated tampering case with matching checksum and provenance:
 # registry readback must still dispatch the content verifier and reject bytes.
 cp "$fixture/content/package.crate" "$fixture/valid.crate"
-checksum="$(bash scripts/ci/verify-file-checksum.sh --print sha256 "$fixture/valid.crate")"
+checksum="$(bash vendor/toko-tooling/scripts/ci/verify-file-checksum.sh --print sha256 "$fixture/valid.crate")"
 jq --arg checksum "$checksum" '.version.checksum = $checksum' "$fixture/registry.json" > "$fixture/tampered-registry.json"
 cp "$fixture/tampered-registry.json" "$fixture/registry.json"
 if bash scripts/release/publication.sh verify > "$fixture/tampered-readback.log" 2>&1; then exit 1; fi
 grep -Fxq 'package content differs from source: src/lib.rs' "$fixture/tampered-readback.log"
 tar -czf "$fixture/valid.crate" -C "$fixture/archive" ic-metrics-0.1.0
-checksum="$(bash scripts/ci/verify-file-checksum.sh --print sha256 "$fixture/valid.crate")"
+checksum="$(bash vendor/toko-tooling/scripts/ci/verify-file-checksum.sh --print sha256 "$fixture/valid.crate")"
 jq --arg checksum "$checksum" '.version.checksum = $checksum' "$fixture/registry.json" > "$fixture/reset.json"
 cp "$fixture/reset.json" "$fixture/registry.json"
 for status in 403 404; do

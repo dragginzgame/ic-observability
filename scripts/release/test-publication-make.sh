@@ -7,8 +7,8 @@ root="${BASH_SOURCE[0]}"
 [[ "$root" == /* ]] || root="$PWD/$root"
 root="$(cd -P "${root%/*}/../.." && printf '%s/.' "$PWD")"
 root="${root%/.}"
-# shellcheck source=scripts/ci/fixture-lifecycle.sh
-source "$root/scripts/ci/fixture-lifecycle.sh"
+# shellcheck source=vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh
+source "$root/vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh"
 mkdir -p "$root/target"
 fixture="$(fixture_create "${TMPDIR:-$root/target}/publication-make-entry.XXXXXX")"
 fixture_complete=false
@@ -21,13 +21,13 @@ trap cleanup EXIT
 assertion_fault="${METRICS_FIXTURE_ASSERTION_FAILURE:-0}"
 unset METRICS_FIXTURE_ASSERTION_FAILURE
 [[ "$assertion_fault" == 0 || "$assertion_fault" == 1 ]] || exit 2
-# shellcheck source=scripts/ci/make-adapter-probes.sh
-source "$root/scripts/ci/make-adapter-probes.sh"
+# shellcheck source=vendor/toko-tooling/scripts/ci/make-adapter-probes.sh
+source "$root/vendor/toko-tooling/scripts/ci/make-adapter-probes.sh"
 # shellcheck source=scripts/release/fixtures/prepare-make.sh
 source "$root/scripts/release/fixtures/prepare-make.sh"
 prepare_make_fixture "$root" "$fixture"
 real_make="$(command -v make)"
-export JOBSERVER_PROBE="$root/scripts/ci/check-pipe-jobserver.pl"
+export JOBSERVER_PROBE="$root/vendor/toko-tooling/scripts/ci/check-pipe-jobserver.pl"
 parallel=(-j4)
 if "$real_make" --help | grep -q -- --jobserver-style; then parallel+=(--jobserver-style=pipe); fi
 cd "$fixture"

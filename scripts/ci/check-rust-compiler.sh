@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Shared companions: scripts/ci/read-cargo-workspace-rust-version.sh
+# Shared companions: vendor/toko-tooling/scripts/ci/read-cargo-workspace-rust-version.sh
 set -euo pipefail
 # Consumer policy: one exact, prepared compiler for development and support.
 [[ $# == 0 ]] || { echo 'usage: check-rust-compiler.sh' >&2; exit 2; }
@@ -9,7 +9,7 @@ root="$(cd -P "${root%/*}/../.." && printf '%s/.' "$PWD")"
 root="${root%/.}"
 cd "$root"
 export PATH="$root/.tools/host/bin:$PATH" RUSTUP_AUTO_INSTALL=0
-minimum="$(bash scripts/ci/read-cargo-workspace-rust-version.sh Cargo.toml)"
+minimum="$(bash vendor/toko-tooling/scripts/ci/read-cargo-workspace-rust-version.sh Cargo.toml)"
 document="$("${YQ:-yq}" -p toml -o json '.' rust-toolchain.toml)"
 pin="$(printf '%s' "$document" | jq -er '.toolchain.channel | select(type == "string" and test("^[0-9]+\\.[0-9]+\\.[0-9]+$"))')"
 [[ "$minimum" == "$pin" ]] || { echo 'workspace Rust floor must equal the exact toolchain pin' >&2; exit 1; }

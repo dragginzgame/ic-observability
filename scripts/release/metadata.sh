@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Shared companions: scripts/dev/toko-tooling.sh scripts/ci/cargo-release-group.sh scripts/ci/cargo-release-metadata.sh scripts/ci/check-release-source.sh scripts/ci/check-release-delivery.sh scripts/ci/check-release-changelog.sh scripts/ci/cargo-release-preflight.sh scripts/ci/release-receipts.sh scripts/dev/release-editor.sh scripts/ci/check-setup-smoke.sh scripts/ci/fixture-lifecycle.sh ci/tool-versions.env ci/release-delivery.txt ci/release-tools.env
+# Shared companions: vendor/toko-tooling/scripts/dev/toko-tooling.sh vendor/toko-tooling/scripts/ci/cargo-release-group.sh vendor/toko-tooling/scripts/ci/cargo-release-metadata.sh vendor/toko-tooling/scripts/ci/check-release-source.sh vendor/toko-tooling/scripts/ci/check-release-delivery.sh vendor/toko-tooling/scripts/ci/check-release-changelog.sh vendor/toko-tooling/scripts/ci/cargo-release-preflight.sh vendor/toko-tooling/scripts/ci/release-receipts.sh scripts/dev/release-editor.sh scripts/ci/check-setup-smoke.sh vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh vendor/toko-tooling/ci/tool-versions.env ci/release-delivery.txt ci/release-tools.env
 set -euo pipefail
 [[ $# == 1 ]] || exit 2
 operation="$1"
@@ -28,21 +28,21 @@ perl -MJSON::PP -e '
     }
 ' "$root/ci/cargo-release-groups.json" "$RELEASE_GROUP" "${RELEASE_GROUPS:-}"
 [[ "$operation" != selection ]] || exit 0
-bash "$root/scripts/ci/check-release-delivery.sh" "$root/ci/release-delivery.txt" "${RELEASE_DELIVERY-direct}"
+bash "$root/vendor/toko-tooling/scripts/ci/check-release-delivery.sh" "$root/ci/release-delivery.txt" "${RELEASE_DELIVERY-direct}"
 case "$operation" in
     preflight|verify|prepare)
-        bash "$root/scripts/dev/toko-tooling.sh" check --consumer "$root" ;;
+        bash "$root/vendor/toko-tooling/scripts/dev/toko-tooling.sh" check --consumer "$root" ;;
 esac
 # Initial admission precedes Cargo, tooling preparation and validation effects.
 if [[ "$operation" == preflight || "$operation" == verify ]]; then
-    bash "$root/scripts/ci/check-release-source.sh"
+    bash "$root/vendor/toko-tooling/scripts/ci/check-release-source.sh"
 fi
 if [[ "$operation" == packages ]]; then unset RELEASE_COMMIT; fi
 case "$operation" in
     version|files|plan)
-        exec bash "$root/scripts/ci/cargo-release-group.sh" "$operation" "$RELEASE_GROUP" ;;
+        exec bash "$root/vendor/toko-tooling/scripts/ci/cargo-release-group.sh" "$operation" "$RELEASE_GROUP" ;;
 esac
-plan="$(bash "$root/scripts/ci/cargo-release-group.sh" plan "$RELEASE_GROUP")"
+plan="$(bash "$root/vendor/toko-tooling/scripts/ci/cargo-release-group.sh" plan "$RELEASE_GROUP")"
 if [[ "$operation" == packages ]]; then
     printf '%s' "$plan" | jq -er '.members | join(" ")'
     exit
@@ -53,17 +53,17 @@ files=()
 while IFS= read -r -d '' path; do files+=("$path"); done < <(printf '%s' "$plan" | jq -jr '.files[] | . + "\u0000"')
 source_arguments=()
 for path in "${files[@]}"; do source_arguments+=(--allow "$path"); done
-# shellcheck source=scripts/ci/release-receipts.sh
-source "$root/scripts/ci/release-receipts.sh"
-perl "$root/scripts/ci/validate-release-inputs.pl" version "${RELEASE_VERSION:?}" > /dev/null
+# shellcheck source=vendor/toko-tooling/scripts/ci/release-receipts.sh
+source "$root/vendor/toko-tooling/scripts/ci/release-receipts.sh"
+perl "$root/vendor/toko-tooling/scripts/ci/validate-release-inputs.pl" version "${RELEASE_VERSION:?}" > /dev/null
 state="$(git rev-parse --git-path release-state)/$RELEASE_GROUP-$RELEASE_VERSION"
 metadata() {
-    bash "$root/scripts/ci/cargo-release-metadata.sh" "$1" "$primary" ${2:+"$2"}
+    bash "$root/vendor/toko-tooling/scripts/ci/cargo-release-metadata.sh" "$1" "$primary" ${2:+"$2"}
 }
 validated_identity() {
     release_receipt_identity || return
     printf 'group-validation:2\n%s\n' "$attempt" || return
-    bash "$root/scripts/ci/verify-file-checksum.sh" --print sha256 "$attempt/proof.json"
+    bash "$root/vendor/toko-tooling/scripts/ci/verify-file-checksum.sh" --print sha256 "$attempt/proof.json"
 }
 validated() {
     [[ -f "$state/validation-attempt" && ! -L "$state/validation-attempt" ]]
@@ -79,10 +79,10 @@ prepared() {
 case "$operation" in
     preflight)
         [[ "$(printf '%s' "$plan" | jq -er .previous)" == "${RELEASE_PREVIOUS:?}" ]]
-        bash "$root/scripts/ci/check-release-changelog.sh" "$RELEASE_VERSION" "$RELEASE_PREVIOUS" "${RELEASE_DATE:?}" "$changelog"
+        bash "$root/vendor/toko-tooling/scripts/ci/check-release-changelog.sh" "$RELEASE_VERSION" "$RELEASE_PREVIOUS" "${RELEASE_DATE:?}" "$changelog"
         "${RELEASE_MAKE:-make}" --no-print-directory setup-smoke-check
-        bash "$root/scripts/ci/cargo-release-preflight.sh" "$PWD" "$release_cache_prepare" \
-            --pin "${RUST_TOOL_VERSIONS:-$root/ci/tool-versions.env}" --pin "$root/ci/release-tools.env" \
+        bash "$root/vendor/toko-tooling/scripts/ci/cargo-release-preflight.sh" "$PWD" "$release_cache_prepare" \
+            --pin "${RUST_TOOL_VERSIONS:-$root/vendor/toko-tooling/ci/tool-versions.env}" --pin "$root/ci/release-tools.env" \
             --check rust-tools-check --check release-editor-check \
             --prepare install-rust-tools --prepare rust-tools-check \
             --prepare install-release-editor --prepare release-editor-check
@@ -98,15 +98,16 @@ case "$operation" in
         OBSERVABILITY_RELEASE_VALIDATION_SCOPE="$(jq -er .scope "$attempt/plan.json")" \
             OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT="$attempt" VALIDATION_LOG_DIR="$attempt/logs" \
         VALIDATION_FAILURE_LOG_DIR="$(git rev-parse --git-path release-state)/validation-failures" \
-            TMPDIR="${TMPDIR:-$root/$attempt/tmp}" CARGO_NET_OFFLINE=true bash "$root/scripts/ci/run-validation-targets.sh" \
+            VALIDATION_REPOSITORY_ROOT="$root" TMPDIR="${TMPDIR:-$root/$attempt/tmp}" \
+                CARGO_NET_OFFLINE=true bash "$root/vendor/toko-tooling/scripts/ci/run-validation-targets.sh" \
             --plan "$attempt/plan.json"
-        bash "$root/scripts/ci/check-release-source.sh"
+        bash "$root/vendor/toko-tooling/scripts/ci/check-release-source.sh"
         release_receipt_write "$attempt/proof.json" perl "$root/scripts/release/validation.pl" seal "$attempt"
         release_receipt_write "$state/validated" validated_identity
         ;;
     prepare)
         validated
-        bash "$root/scripts/ci/check-release-source.sh"
+        bash "$root/vendor/toko-tooling/scripts/ci/check-release-source.sh"
         CARGO_RELEASE_METADATA_EDITOR="$("${RELEASE_MAKE:-make}" --no-print-directory -s release-editor-check)"
         export CARGO_RELEASE_METADATA_EDITOR
         # shellcheck source=ci/release-tools.env
@@ -118,7 +119,7 @@ case "$operation" in
     check|commit-check)
         if [[ "$operation" == commit-check ]]; then [[ -z "${RELEASE_COMMIT:-}" ]]; fi
         prepared
-        bash "$root/scripts/ci/check-release-source.sh" "${source_arguments[@]}"
+        bash "$root/vendor/toko-tooling/scripts/ci/check-release-source.sh" "${source_arguments[@]}"
         if [[ "$operation" == commit-check ]]; then git diff --quiet -- "${files[@]}"; fi
         ;;
 esac

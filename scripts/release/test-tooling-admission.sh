@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 root="$(cd "${BASH_SOURCE[0]%/*}/../.." && pwd -P)"
-# shellcheck source=scripts/ci/fixture-lifecycle.sh
-source "$root/scripts/ci/fixture-lifecycle.sh"
+# shellcheck source=vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh
+source "$root/vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh"
 mkdir -p "$root/target/qualification"
 fixture="$(fixture_create "$root/target/qualification/tooling-admission.XXXXXX")"
 fixture_complete=false
 trap 'fixture_finish "$?" "$fixture" "Tooling admission fixture retained"' EXIT
-mkdir -p "$fixture/scripts/release" "$fixture/scripts/dev" "$fixture/scripts/ci" "$fixture/ci" "$fixture/bin"
+mkdir -p "$fixture/scripts/release" "$fixture/vendor/toko-tooling/scripts/"{dev,ci} "$fixture/ci" "$fixture/bin"
 cp "$root/scripts/release/"{candidate-setup.sh,publication.sh,metadata.sh} "$fixture/scripts/release/"
 cp "$root/ci/cargo-release-groups.json" "$fixture/ci/"
 cp "$root/ci/release-delivery.txt" "$fixture/ci/"
-cp "$root/scripts/ci/check-release-delivery.sh" "$fixture/scripts/ci/"
+cp "$root/vendor/toko-tooling/scripts/ci/check-release-delivery.sh" "$fixture/vendor/toko-tooling/scripts/ci/"
 git init -q "$fixture"
-cat > "$fixture/scripts/dev/toko-tooling.sh" <<'CHECK'
+cat > "$fixture/vendor/toko-tooling/scripts/dev/toko-tooling.sh" <<'CHECK'
 set -euo pipefail
 [[ "$1" == check && "$2" == --consumer && "$3" == "$EXPECTED_ROOT" ]]
 printf 'check\n' >> "$EVENTS"

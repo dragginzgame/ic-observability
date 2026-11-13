@@ -51,7 +51,7 @@ SETUP_SMOKE_REAL_BASH="$(command -v bash)"
 export SETUP_SMOKE_REAL_PERL SETUP_SMOKE_REAL_BASH
 cat > "$fixture/bin/perl" <<'PERL'
 #!/bin/bash
-if [[ "${1:-}" == "$SETUP_SMOKE_ROOT/scripts/ci/run-release-batch.pl" ]]; then
+if [[ "${1:-}" == "$SETUP_SMOKE_ROOT/vendor/toko-tooling/scripts/ci/run-release-batch.pl" ]]; then
     printf '%s\0' "$@" > "$SETUP_SMOKE_ARGS"
     exit 43
 fi
@@ -59,7 +59,7 @@ exec "$SETUP_SMOKE_REAL_PERL" "$@"
 PERL
 cat > "$fixture/bin/bash" <<'BASH'
 #!/bin/bash
-if [[ "${1:-}" == "$SETUP_SMOKE_ROOT/scripts/ci/run-release.sh" ]]; then
+if [[ "${1:-}" == "$SETUP_SMOKE_ROOT/vendor/toko-tooling/scripts/ci/run-release.sh" ]]; then
     printf 'unexpected-live-runner\n' > "$SETUP_SMOKE_ARGS"
     exit 43
 fi
@@ -77,7 +77,7 @@ for kind in patch minor major; do
     status=0
     probe_make "release-$kind" > "$fixture/$kind-capture.log" 2>&1 || status=$?
     [[ "$status" == 2 ]]
-    printf '%s\0' "$root/scripts/ci/run-release-batch.pl" --root "$root" --groups metrics \
+    printf '%s\0' "$root/vendor/toko-tooling/scripts/ci/run-release-batch.pl" --root "$root" --groups metrics \
         --kind "$kind" --remote origin --branch main --delivery direct --setup-target release-candidate-setup > "$fixture/expected"
     cmp "$fixture/expected" "$SETUP_SMOKE_ARGS"
 done

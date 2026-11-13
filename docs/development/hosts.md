@@ -37,7 +37,7 @@ collection or turn a failed check into a successful one.
 
 ## Prerequisites and focused checks
 
-Root `[workspace.dependencies]` declares `toko-tooling = "=0.41.0"` once.
+Root `[workspace.dependencies]` declares `toko-tooling = "=0.42.1"` once.
 Both real members inherit it unconditionally as a dev-dependency and merge the
 name into cargo-machete ignored metadata, without a Rust import. Cargo.lock pins
 the registry version/checksum; no selection-only package or separate tooling
@@ -47,11 +47,14 @@ Neither installer edits manifests or Cargo.lock. Installation runs `install-tool
 and `tools-check`; offline `toko-tooling-check` admits all member declarations,
 the exact root pin, Cargo.lock and installed snapshot. CI/release Make entrypoints and
 the custom candidate, metadata and publication scripts check tooling before effects.
+Local full-CI and release-plan callers scope `VALIDATION_REPOSITORY_ROOT` to the
+consumer checkout, because the installed runner now lives beneath the vendor tree.
+
 
 Use `make deps-update` for explicit Cargo updates (`cargo update -v`), optionally
 with `DEPENDENCY_PACKAGE` and `DEPENDENCY_PRECISE` to select one dependency.
 For example, after editing the root tooling pin, run
-`make deps-update DEPENDENCY_PACKAGE=toko-tooling DEPENDENCY_PRECISE=0.41.0`,
+`make deps-update DEPENDENCY_PACKAGE=toko-tooling DEPENDENCY_PRECISE=0.42.1`,
 then `make toko-tooling-update`. This repository has only the root maintained
 workspace. The command preserves manifest requirements and is separate from
 supplier freshness review; it is not called by CI or release admission.
@@ -64,8 +67,15 @@ before their first tool installation and save after setup, before product checks
 Cache service failures permit download fallback; downloaded bytes still require
 the selected checksum. The existing native prerequisite/compiler order is retained.
 
-The crates.io toko-tooling 0.41.0 refresh preserves the selected
-tool catalogs; the compiler is now explicitly prepared at Rust 1.100.0.
+The crates.io toko-tooling 0.42.1 refresh moves installed executables and
+catalogs into `vendor/toko-tooling/` through the exporter. Root `TOKO-TOOLING.md`,
+`LICENSE.md`, `CONTRIBUTING.md` and `.toko-tooling.snapshot` retain their roles.
+Local scripts, workflows, policies and `make/validation.mk` stay consumer-owned.
+The root Makefile and shared action calls select the vendor tree; active hooks
+use `core.hooksPath=vendor/toko-tooling/.githooks`. No old-path wrappers remain.
+Use the [0.42 migration](https://github.com/dragginzgame/toko-tooling/blob/8eb734758129eef2d2190c4fd22e00b52525f41a/docs/adoption/migrations.md#vendor-installation-in-0420)
+for a pre-vendor snapshot; later updates use the same public Make commands.
+The selected tool catalogs are unchanged; the compiler is now explicitly prepared at Rust 1.100.0.
 `make tools-check check-pins` admits prepared tools;
 setup admits the renamed catalog contract without store cleanup. Earlier source-bound
 receipts retain their original snapshots. Explicit setup still uses
@@ -75,15 +85,15 @@ unrelated applications. Selected executables, source archives and receipts remai
 obsolete executable retirement follows the [shared guide](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/docs/tools/tool-store-maintenance.md).
 
 `make cloc CLOC_DEPTH=0` reports package detail; `CLOC_DEPTH=1` adds source modules.
-`bash scripts/dev/cloc.sh -d 1 ic-metrics::recording` drills into one source branch;
+`bash vendor/toko-tooling/scripts/dev/cloc.sh -d 1 ic-metrics::recording` drills into one source branch;
 the depth is relative to the selected crate or module.
 Terminal reports colour workspace, crate and module names; redirected or
 `NO_COLOR=1` reports stay plain. Text labels are capped at 44 characters and
 shrink to fit the terminal, with middle truncation and a 120-column fallback
-for redirected output. `bash scripts/dev/cloc.sh --wide -d 1` keeps full names;
+for redirected output. `bash vendor/toko-tooling/scripts/dev/cloc.sh --wide -d 1` keeps full names;
 numeric columns and JSON labels are unchanged. Sibling scans use one updating
 progress line.
-`bash scripts/dev/cloc.sh --json`
+`bash vendor/toko-tooling/scripts/dev/cloc.sh --json`
 emits schema 2 with application/library, test, example, benchmark, tooling and
 unclassified counts. Singular Rust test paths are not retained. The allocation-free
 link fixture lives at `tests/allocation-free/link.rs` with an explicit test role,
@@ -114,7 +124,7 @@ Prepare it once with rustfmt, Clippy and `wasm32-unknown-unknown`:
 ```sh
 make install-host-tools
 export PATH="$PWD/.tools/host/bin:$PATH"
-bash scripts/dev/prepare-rust-toolchain.sh --toolchain-file rust-toolchain.toml
+bash vendor/toko-tooling/scripts/dev/prepare-rust-toolchain.sh --toolchain-file rust-toolchain.toml
 make compiler-check
 ```
 
@@ -184,8 +194,8 @@ Experiments select their qualified published version, managed installation and
 budgets directly. Metrics has no inspector wrapper, pin or Make targets; common
 setup/check, CI, release preflight and the instrumentation library require no inspector.
 Existing experiment sources, executable identities and artifacts remain frozen.
-The reviewed snapshot owns default pins in `ci/tool-versions.env` and
-`ci/ic-tools.tsv`; host, Rust and IC exceptions are independently selected
+The reviewed snapshot owns default pins in `vendor/toko-tooling/ci/tool-versions.env` and
+`vendor/toko-tooling/ci/ic-tools.tsv`; host, Rust and IC exceptions are independently selected
 under the shared catalog contract. Use the same optional
 `TOKO_TOOLING_STORE` setting for setup, checking and evidence collection.
 Host/IC/Cargo paths select admitted shared generations; earlier sets and failed
@@ -384,7 +394,7 @@ rejection fixtures retain their narrow exceptions. Frozen evidence keeps its
 original source and dependency identities.
 
 The Metrics profile matrix delegates resolved normal/build graph mechanics to
-Shared's `scripts/ci/check-cargo-graph.pl`. Local code owns the four target/feature
+Shared's `vendor/toko-tooling/scripts/ci/check-cargo-graph.pl`. Local code owns the four target/feature
 profiles and package-count/exclusion rules. Logging has no feature matrix and is
 checked separately once on native and Wasm; declaration admission remains a
 separate guard that refuses every Logging dependency. `bash scripts/release/test-retained-consumer.sh`

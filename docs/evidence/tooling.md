@@ -1,5 +1,35 @@
 # Contributor tooling
 
+## Current local 0.42.1 selection
+
+Published toko-tooling **0.42.1** is selected once in the root, inherited by both
+libraries and locked with archive SHA-256
+`697b19c709eccb5f25c0abb0156766ded116abd8bde1552b20022b8af6f51dce`.
+The authenticated exporter proves previous bytes before retiring root-layout
+copies and installs executables/catalogs under `vendor/toko-tooling/`. Canonical
+root files and the receipt retain their roles; no managed file was hand-moved.
+Consumer-owned scripts, CI workflow, release policies and process helpers remain
+local. Make includes, actions, native source hashing, fixture copies, compiler
+callers and release/publication adapters select the new paths. Old candidates
+retain their original layouts and evidence owners.
+
+The consumer fixture no longer invokes the producer's root-layout-only generic
+release checker. Its own standard dispatch, failure/refusal, default/direct and
+jobserver checks remain, with the existing local batch/recovery fixture owning
+outer capture. The retired shared checker is removed through the exporter.
+No product Rust, public API, package version, compiler, lint or gate roster is
+changed. No qualification workspace or selection-only package is introduced.
+Tool installation/admission, pins, formatting, packaged docs, compiler/CI source
+selection, current/GNU Make 3.81 release/publication dispatch, hook retention,
+native evidence, product boundaries, sealed plans, both group transactions and
+frozen-batch capture/setup/lint/archives/readback/recovery passed. The moved
+validation runner is explicitly bound to the consumer root at each local caller.
+Matched full-CI/selected-plan traces use substituted Make effects. No broad
+product CI, real publication or deployment ran for this adoption.
+Current focused evidence and preview/install records are under
+`target/evidence/toko-tooling-0421/`. This adoption remains uncommitted and
+unpublished; the separate incoming syn 3.0.10 edit is preserved.
+
 ## Delivered 0.41.0 selection
 
 Published toko-tooling **0.41.0** is pinned at the root, inherited by both members,

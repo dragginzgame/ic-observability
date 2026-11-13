@@ -112,9 +112,9 @@ dependencies = [
 
 [[package]]
 name = "toko-tooling"
-version = "0.41.0"
+version = "0.42.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4aaafc699324611501e051132e971288c16392a3ece605e9909e88e0c7e80a2f"
+checksum = "697b19c709eccb5f25c0abb0156766ded116abd8bde1552b20022b8af6f51dce"
 
 [[package]]
 name = "unicode-ident"
