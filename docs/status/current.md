@@ -2,22 +2,25 @@
 
 ## Published products
 
-Metrics **0.30.2** and Logging **0.25.2** are delivered to GitHub and independently
-verified on crates.io. Never re-upload them. The [delivery receipt](../evidence/releases/toko0410-export-20261113.md)
+Metrics **0.30.3** and Logging **0.25.3** are delivered to GitHub and independently
+verified on crates.io. Never re-upload them. The [delivery receipt](../evidence/releases/toko0421-vendor-20261113.md)
 owns exact commits, annotated tags, archive hashes, complete plans and registry
-readback. Both passed all 20 workspace stages without narrowing or stage reuse.
-The latest delivered [hosted CI](https://github.com/dragginzgame/ic-observability/actions/runs/43431374070)
-is now green, including Linux and both macOS architectures. Installed consumer
-acceptance remains separately owned. That source selected toko-tooling 0.41.0;
-it does not qualify this later local adoption.
+readback. Fresh batch `batch-qiGiRmCY` passed both complete 20-stage workspace plans
+without narrowing or stage reuse,
+then final-version archives, source/tag admission and maintained-source readback
+(34 Metrics and 16 Logging files). Stage totals were 525 and 491 seconds;
+release-tool fixtures took 371 and 349 seconds. Hosted native and installed
+consumer acceptance remain separate and asynchronous. Logging delivery CI was
+observed pending; the preceding 0.41.0 delivery CI is green.
 
-## Local tooling adoption
+## Delivered tooling
 
 The root exact pin, both inherited development dependencies, Cargo.lock and
-exporter-owned receipt now select published **toko-tooling 0.42.1**, archive SHA-256
+exporter-owned receipt select published **toko-tooling 0.42.1**, archive SHA-256
 `697b19c709eccb5f25c0abb0156766ded116abd8bde1552b20022b8af6f51dce`.
-This batch is uncommitted and unpushed. Pending Metrics **0.30.3** and Logging
-**0.25.3** notes record the migration; package versions remain 0.30.2 and 0.25.2.
+Delivery source is `925cdc3f661624a6a4286d523f9ee9699e8d71fb`, including the
+vendor migration and the consumer exit-probe repair. Package versions are now
+Metrics 0.30.3 and Logging 0.25.3; there are no pending release notes.
 
 The authenticated exporter retired the 108 prior root-layout runtime files after
 proving ownership. The final 56-root/110-file snapshot keeps executables, catalogs,
@@ -35,26 +38,22 @@ from the installed helper location. `core.hooksPath` now selects
 `vendor/toko-tooling/.githooks`; the old directory contained no custom hooks.
 `make deps-list` shows package-first rows for both real members.
 
-Tool installation/admission, snapshot verification, pins, formatting, local and
-packaged documentation, compiler policy, native source selection, CI selection,
-current/GNU Make 3.81 release/publication dispatch, standard/hook retention,
-native success/recovery evidence and product dependency boundaries passed.
-Sealed-plan and publication-policy fixtures passed after fixing the explicit-root
-caller binding. Both group transactions and the frozen-batch fixture passed;
-matched CI/selected-plan trace qualification also passed.
+Before capture, focused installation/admission, snapshot/pin/format/docs,
+compiler/CI selection, current/GNU Make 3.81 dispatch, hook retention, native
+evidence, product boundaries, sealed plans, matched CI traces, group transactions
+and simulated frozen recovery passed. Records remain under
+`target/evidence/toko-tooling-0421/`. Full release transcripts, supplier review,
+focused repair and reconciliation are under `target/deploy/toko0421-vendor-20261113/`.
 
-Deployment batch `batch-3okIbLbo` stopped before version preparation or delivery
-at the generic exit-probe helper's legacy root-layout copy. Its original source
+Initial batch `batch-3okIbLbo` stopped before version preparation or delivery at
+the generic exit runner's retired root-layout helper copy. Original source
 `66b02a8a99c8b851d1d55cdda210fe497ac2e741` and partial records remain retained;
-never resume it as repaired source. The consumer now uses Shared's prefix renderer
-with its actual root and preserves all 18 owned cleanup/retention assertions.
-The focused `--kind exits` check passed. A fresh whole-source capture is required;
-this adapter has no cross-source stage-reuse admission.
-Raw previews, failed/fixed attempts and focused results are under
-`target/evidence/toko-tooling-0421/`. No broad `make ci`, `make msrv` or actual
-release/publication ran for this adoption. The [host guide](../development/hosts.md),
-[release guide](../releases/independent-releases.md) and [tooling summary](../evidence/tooling.md)
-record the maintained interfaces and evidence limits.
+never resume it as repaired. The consumer now uses Shared's prefix renderer with
+its actual root, preserving all 18 cleanup/retention assertions. The focused
+`--kind exits` check passed before fresh capture, then both complete retention
+stages passed. Whole-source proofs required fresh validation; no stage reuse or
+collector-repair admission was invented. The [release guide](../releases/independent-releases.md)
+and [tooling summary](../evidence/tooling.md) record the maintained interfaces.
 
 Both packages remain under `crates/` in one virtual workspace, excluding
 `qualification`, which contains retired READMEs only. No selection-only package or
@@ -82,16 +81,16 @@ or downstream deployment is implied.
 ## Deferred work and recovery custody
 
 The separate syn 3.0.10 edit remains outside the last published syn 3.0.9 graph.
-Its current durable stash is `526b26f8fe13ee560cf542f3db1747a33ef746fe`, pinned by
-`preserved/syn-3.0.10-toko0410-export-20261113`. It remains reapplied locally.
+Its current durable stash is `6e5f2a2d58b10afd34912309d63670a313d6b3c1`, pinned by
+`preserved/syn-3.0.10-toko0421-reconcile-20261113`. It remains reapplied locally.
 All preceding stashes and preservation refs remain retained; the
 [receipt chain](../evidence/releases/README.md) owns their exact identities.
 
-Batch `batch-z8nN4ysP` completed at index 2 and reconciled cleanly. Execution remains
-under `target/release-frozen/batch-z8nN4ysP`, with durable recovery under
-`.git/release-state/frozen/batch-z8nN4ysP/`. Earlier completed batches, including
-`batch-4BqGe_7B`, retain their candidates and recovery. They keep original source,
-layout, catalogs, journals and proof owners; never reinterpret them with this
+Batch `batch-qiGiRmCY` completed at index 2 and reconciled cleanly. Execution remains
+under `target/release-frozen/batch-qiGiRmCY`, with durable recovery under
+`.git/release-state/frozen/batch-qiGiRmCY/`. Earlier completed batches, including
+`batch-z8nN4ysP` and `batch-4BqGe_7B`, retain their candidates and recovery. They
+keep original source, layout, catalogs, journals and proof owners; never reinterpret them with this
 migration. All 20 release obligations and disabled stage/version-proof reuse remain.
 
 Stopped/failed pre-delivery batches `batch-wmST1LGL`, `batch-9uizEjhh` and

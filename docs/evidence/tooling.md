@@ -1,6 +1,6 @@
 # Contributor tooling
 
-## Current local 0.42.1 selection
+## Delivered 0.42.1 selection
 
 Published toko-tooling **0.42.1** is selected once in the root, inherited by both
 libraries and locked with archive SHA-256
@@ -17,18 +17,25 @@ The consumer fixture no longer invokes the producer's root-layout-only generic
 release checker. Its own standard dispatch, failure/refusal, default/direct and
 jobserver checks remain, with the existing local batch/recovery fixture owning
 outer capture. The retired shared checker is removed through the exporter.
-No product Rust, public API, package version, compiler, lint or gate roster is
-changed. No qualification workspace or selection-only package is introduced.
+The migration preserves product Rust, public APIs, compiler/lint policy and the
+release-stage roster. Delivery advances the selected patch versions. No
+qualification workspace or selection-only package is introduced.
 Tool installation/admission, pins, formatting, packaged docs, compiler/CI source
 selection, current/GNU Make 3.81 release/publication dispatch, hook retention,
 native evidence, product boundaries, sealed plans, both group transactions and
 frozen-batch capture/setup/lint/archives/readback/recovery passed. The moved
 validation runner is explicitly bound to the consumer root at each local caller.
-Matched full-CI/selected-plan traces use substituted Make effects. No broad
-product CI, real publication or deployment ran for this adoption.
+Matched full-CI/selected-plan traces use substituted Make effects. That focused
+adoption qualification preceded the full selected release plans.
 Current focused evidence and preview/install records are under
-`target/evidence/toko-tooling-0421/`. This adoption remains uncommitted and
-unpublished; the separate incoming syn 3.0.10 edit is preserved.
+`target/evidence/toko-tooling-0421/`. Metrics 0.30.3 and Logging 0.25.3 are
+delivered and independently verified on crates.io after both complete 20-stage
+workspace plans. The
+[delivery receipt](releases/toko0421-vendor-20261113.md) owns exact identities,
+registry readback, timings, the stopped initial batch and fresh repair capture.
+The final consumer exit qualification uses Shared's prefix renderer with its
+actual root; all 18 cleanup/retention assertions remain. The separate syn
+3.0.10 edit is preserved outside the delivered 3.0.9 graph.
 
 ## Delivered 0.41.0 selection
 

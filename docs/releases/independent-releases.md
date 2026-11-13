@@ -74,11 +74,11 @@ Whole-source proofs and disabled version projection currently prevent cross-grou
 stage reuse, so shared changes still require each group's complete plan. Do not
 claim the new policy supplies that missing admission or collector repair.
 
-The last delivered batch measured 528 seconds for Metrics' stages and 521 for
-Logging's stages. `release-tools-check` dominated at 381 and 375 seconds; native
-evidence checks took 50 and 51 seconds. These are retained stage timings,
+The last delivered batch measured 525 seconds for Metrics' stages and 491 for
+Logging's stages. `release-tools-check` dominated at 371 and 349 seconds; native
+evidence checks took 49 and 48 seconds. These are retained stage timings,
 not total deployment time or a forecast; see the
-[delivery receipt](../evidence/releases/toko0410-export-20261113.md). Use the
+[delivery receipt](../evidence/releases/toko0421-vendor-20261113.md). Use the
 selected attempt's current timings and explain execution/reuse scope before a
 new expensive gate. Unchanged fixture evidence remains bound to its inputs.
 
