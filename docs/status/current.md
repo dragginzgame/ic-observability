@@ -2,40 +2,37 @@
 
 ## Published products and tooling
 
-Metrics **0.30.0** and Logging **0.25.0** are delivered to GitHub and
+Metrics **0.30.1** and Logging **0.25.1** are delivered to GitHub and
 independently verified on crates.io. Never re-upload those versions. The
-[delivery receipt](../evidence/releases/toko0400-rust1100-20261113.md) owns exact
+[delivery receipt](../evidence/releases/toko0401-delivery-20261113.md) owns exact
 commits, annotated tags, archive hashes, complete plans and registry readback.
 Both passed all 20 workspace stages without narrowing or stage reuse, followed
 by final archive compilation and matching maintained source (34 Metrics and
 16 Logging files). Hosted macOS and installed consumer acceptance remain separate
 and asynchronous; pending or cancelled checks are not passes.
 
-Both delivered packages require **Rust 1.100.0** on native and Wasm and inherit
-common lint policy. Their published requirements retain toko-tooling 0.40.0 and
-the delivery receipt's original identities.
-
-The local root pin, Cargo.lock and authenticated snapshot now select published
-**toko-tooling 0.40.1**, archive SHA-256
+Both packages require **Rust 1.100.0** on native and Wasm, inherit common lint
+policy and select published **toko-tooling 0.40.1** for development, archive SHA-256
 `fb884b05e2e5bbca2388dd0b757833fb5ad37e91b3ced09f6a37b454c7fe9f90`.
-This adoption is uncommitted and unpushed. The exporter preserves 55 roots and
-111 files, changing only the baseline; prepared tools are admitted, with no
-compiler, executable or product Rust changes. Shared references stay upstream.
-Pending Metrics **0.30.1** and Logging **0.25.1** notes are contributor-tooling
-patches; this task does not execute another release.
+The exporter preserves 55 roots and 111 files, changing only the baseline.
+Canonical/executable bytes and production Rust/API/retention behavior are unchanged.
+The consumer Make adapter now admits execution at group/scope prerequisites,
+fixing the GNU Make 3.81 refusal failure found in both prior macOS jobs. Actual
+release/publication fixtures passed on Linux-built GNU Make 3.81 and current Make
+before fresh capture; this does not claim native macOS acceptance.
 
-The [release guide](../releases/independent-releases.md) records actual nested
-commands, measured stage costs and the current missing cross-source/collector
-recovery admission. All 20 release obligations and disabled stage reuse remain.
-The 0.40.1 policy requires planned validation and failure-specific recovery; it
-does not itself implement skipped-stage admission. Focused installation, tool,
-pin, format and documentation checks are under `target/evidence/toko-tooling-0401/`.
-Unchanged product/fixture evidence retains its 0.40.0 delivery source and scope.
+The [release guide](../releases/independent-releases.md) records nested work,
+measured stage costs and current missing cross-source/collector recovery admission.
+All 20 release obligations and disabled stage reuse remain; no pending release
+note remains. Focused adoption/repair evidence is under
+`target/evidence/toko-tooling-0401/` and `target/evidence/toko0401-make381/`.
+Current full release transcripts and supplier review are under
+`target/deploy/toko0401-20261113/`.
 
 [#134 — Adopt Rust 1.100.0 and the common lint policy](https://github.com/dragginzgame/ic-observability/issues/134)
 is closed. Focused evidence under `target/evidence/toko-tooling-0400/` includes
 actual compiler identities, both generated consumers and typed native/Wasm lint
-refusals. Current full release transcripts and supplier review are under
+refusals. Earlier full release transcripts and supplier review are under
 `target/deploy/toko0400-20261113/`. Only Linux x86_64 ran locally; hosted native
 and installed consumer acceptance are not inferred from those results.
 
@@ -69,8 +66,12 @@ endpoint/report/installed acceptance. No sibling deployment is implied.
 
 The syn 3.0.10 Cargo.lock edit is restored and excluded from the published
 syn 3.0.9 graph. Its current stash is
-`96058885f9422b59860801243f934678d1abd175`, pinned by branch
-`preserved/syn-3.0.10-toko0400-20261113`. The earlier stash/ref
+`dcf41ce2ca54b419de568f549d3521a2b75b5779`, pinned by branch
+`preserved/syn-3.0.10-toko0401-reconcile-20261113`. The initial 0.40.1 stash
+`0797db766ffd29e0fc972c31e3c3a4cbf67a0b99` and branch
+`preserved/syn-3.0.10-toko0401-20261113` remain retained. Earlier stash
+`96058885f9422b59860801243f934678d1abd175` and its branch
+`preserved/syn-3.0.10-toko0400-20261113` remain retained. The earlier stash/ref
 `6511a6979fae869912f7f3f2f6a3e7b968bb9792` and its
 `preserved/syn-3.0.10-toko03917-20261112` branch remain retained. The earlier stash/ref
 `39f97a10b8ecd7f567b3b69696b7c71fb549ab01` and its
@@ -78,23 +79,23 @@ syn 3.0.9 graph. Its current stash is
 `de3f936fd3e93d094ddf5ff5d7129a8104119f0c` and its preservation branch remain
 retained. Do not discard this work or mistake it for the released selection.
 
-Batch `batch-V1TkLKoY` is complete at index 2. Execution remains under
-`target/release-frozen/batch-V1TkLKoY`, with durable recovery under
-`.git/release-state/frozen/batch-V1TkLKoY/`. Reconciliation completed and the
+Batch `batch-4BqGe_7B` is complete at index 2. Execution remains under
+`target/release-frozen/batch-4BqGe_7B`, with durable recovery under
+`.git/release-state/frozen/batch-4BqGe_7B/`. Reconciliation completed and the
 syn edit was reapplied. No retirement or protected cleanup ran.
 
 The first 0.40.1 batch, `batch-wmST1LGL`, was stopped before delivery after
 hosted run 43398940199 exposed GNU Make 3.81 scope/group prerequisite admission
 failures on both macOS architectures. Its original source and partial validation
 remain retained; do not resume it as repaired source. The consumer-owned Make
-repair is qualified first with actual GNU Make 3.81 and current Make fixtures
-under `target/evidence/toko0401-make381/`, before a fresh release capture.
+repair passed GNU Make 3.81/current Make fixtures under
+`target/evidence/toko0401-make381/` before the completed fresh capture.
 
 Failed pre-delivery batch `batch-9uizEjhh` retains its original source and evidence;
 do not resume it as repaired source. Its publication-policy fixture was fixed in
 the normal checkout before the completed batch reran all required checks.
 
-Earlier completed batches `batch-CRinIsG3`, `batch-ic09DJmB`, `batch-Dvpzy0I1`, `batch-9DUaDslR`, `batch-vgM1oJ1f`, `batch-gfJA5IMg`
+Earlier completed batches `batch-V1TkLKoY`, `batch-CRinIsG3`, `batch-ic09DJmB`, `batch-Dvpzy0I1`, `batch-9DUaDslR`, `batch-vgM1oJ1f`, `batch-gfJA5IMg`
 and `batch-z30yB8KG` retain their candidates/recovery. Failed pre-delivery batch
 `batch-C8a10ddy` must not be resumed as repaired source. The delivery-receipt
 chain and [retention index](../evidence/README.md) own their identities and

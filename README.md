@@ -62,8 +62,8 @@ make publish-check RELEASE_GROUP=logging
 ```
 
 Any `PACKAGE` override must belong to the selected group. See
-[independent releases](docs/releases/independent-releases.md) for version/ledger ownership,
-release commands and recovery.
+[independent releases](docs/releases/independent-releases.md) for version/ledger
+ownership, selected validation work, measured stage costs and phase-specific recovery.
 Each command runs the native/Wasm Clippy gate before Cargo publication. Neither
 package depends on the other, so there is no publication-order dependency.
 Toko Tooling owns package-selection mechanics and dispatch. This repository

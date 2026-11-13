@@ -5,7 +5,8 @@ source/tool selections and observed outcomes under the separate release and
 recovery contract. They are preserved during evidence compaction; they are not
 new qualification of later sources or a permanent raw-experiment archive.
 
-- [Latest delivery: Metrics 0.30.0 / Logging 0.25.0](toko0400-rust1100-20261113.md)
+- [Latest delivery: Metrics 0.30.1 / Logging 0.25.1](toko0401-delivery-20261113.md)
+- [Earlier delivery: Metrics 0.30.0 / Logging 0.25.0](toko0400-rust1100-20261113.md)
 - [Earlier delivery: Metrics 0.29.12 / Logging 0.24.17](toko03917-delivery-20261112.md)
 - [Earlier delivery: Metrics 0.29.11 / Logging 0.24.16](toko0397-docs-20261110.md)
 - [Earlier delivery: Metrics 0.29.10 / Logging 0.24.15](toko0382-placement-20261109.md)
