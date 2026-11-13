@@ -11,15 +11,26 @@ by final archive compilation and matching maintained source (34 Metrics and
 16 Logging files). Hosted macOS and installed consumer acceptance remain separate
 and asynchronous; pending or cancelled checks are not passes.
 
-Both packages now require **Rust 1.100.0** on native and Wasm and inherit the
-root common lint policy. The root, Cargo.lock and authenticated snapshot select
-published **toko-tooling 0.40.0**, archive SHA-256
-`9c1758c3c04e2754d97fd38d29177d73fc03d3d414d654f689d8b75cbc7ed918`.
-Explicit setup prepared native/Wasm support and managed tools for that compiler.
-The exporter preserves 55 roots and 111 files, changing only the baseline.
-Canonical/executable bytes and production Rust/API/retention behavior are unchanged.
-Shared references remain upstream. All 20 release obligations and disabled stage
-reuse remain intact; there is no pending release note after this delivery.
+Both delivered packages require **Rust 1.100.0** on native and Wasm and inherit
+common lint policy. Their published requirements retain toko-tooling 0.40.0 and
+the delivery receipt's original identities.
+
+The local root pin, Cargo.lock and authenticated snapshot now select published
+**toko-tooling 0.40.1**, archive SHA-256
+`fb884b05e2e5bbca2388dd0b757833fb5ad37e91b3ced09f6a37b454c7fe9f90`.
+This adoption is uncommitted and unpushed. The exporter preserves 55 roots and
+111 files, changing only the baseline; prepared tools are admitted, with no
+compiler, executable or product Rust changes. Shared references stay upstream.
+Pending Metrics **0.30.1** and Logging **0.25.1** notes are contributor-tooling
+patches; this task does not execute another release.
+
+The [release guide](../releases/independent-releases.md) records actual nested
+commands, measured stage costs and the current missing cross-source/collector
+recovery admission. All 20 release obligations and disabled stage reuse remain.
+The 0.40.1 policy requires planned validation and failure-specific recovery; it
+does not itself implement skipped-stage admission. Focused installation, tool,
+pin, format and documentation checks are under `target/evidence/toko-tooling-0401/`.
+Unchanged product/fixture evidence retains its 0.40.0 delivery source and scope.
 
 [#134 — Adopt Rust 1.100.0 and the common lint policy](https://github.com/dragginzgame/ic-observability/issues/134)
 is closed. Focused evidence under `target/evidence/toko-tooling-0400/` includes

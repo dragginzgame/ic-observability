@@ -28,7 +28,7 @@ Neither conversion changes a package's numeric identity.
 Earlier coordinated releases remain once in [shared history](../../releases/history.md), through 0.23.0;
 both group ledgers link to that history. Existing tags and receipts are retained.
 Tooling has no selection-only package or release-group membership. One exact
-root dependency pins toko-tooling 0.40.0; both libraries inherit it only for
+root dependency pins toko-tooling 0.40.1; both libraries inherit it only for
 development, and Cargo.lock owns its registry checksum. Each public member has a root
 catalog entry with its local path and full current version, registered in its
 group's dependency roster. These unused catalog aliases provide a readable
@@ -50,6 +50,23 @@ Before freezing a candidate, perform the baseline's
 Include the selected native `ic-build` release editor alongside the release's
 actual Cargo suppliers; record newer-supplier dispositions in the existing group
 notes. Prepared-tool and pin admission do not supply that review.
+
+The [0.40.1 deployment sequence](https://github.com/dragginzgame/toko-tooling/blob/dcc51b5cab3d9993f0668bc0902252364d7dc316/docs/releases/releases.md#plan-once-recover-the-failed-phase)
+owns planning and failure-specific recovery. This consumer's nested work is:
+`release-verify` runs the selected plan; version preparation recompiles the selected
+final archives; publication freshly admits source and selected-group Clippy,
+then uploads and verifies the registry archive. Publication does not call full CI.
+Whole-source proofs and disabled version projection currently prevent cross-group
+stage reuse, so shared changes still require each group's complete plan. Do not
+claim the new policy supplies that missing admission or collector repair.
+
+The last delivered batch measured 493 seconds for Metrics' stages and 508 for
+Logging's stages. `release-tools-check` dominated at 344 and 363 seconds; native
+evidence checks took 52 seconds per group. These are retained stage timings,
+not total deployment time or a forecast; see the
+[delivery receipt](../evidence/releases/toko0400-rust1100-20261113.md). Use the
+selected attempt's current timings and explain execution/reuse scope before a
+new expensive gate. Unchanged fixture evidence remains bound to its inputs.
 
 Prepare tools explicitly with `make install-tools` after adopting this snapshot.
 The managed release editor is published IC Build 0.83.0 with its cli feature.
@@ -207,8 +224,16 @@ Existing metadata,
 source and index checks admit the prepared commit. It does not rerun the generic
 verifier against changed metadata, project versions or relocate proof.
 Missing, altered, interrupted or failed evidence refuses.
-No check-result reuse or package-version projection is enabled. Retain the
-attempt directory for recovery; deleting `target/` also removes that evidence.
+No check-result reuse or package-version projection is enabled. A failed seal or
+collector has no qualified post-processing recovery in this adapter; successful
+logs alone cannot replace its missing sealed proof. Diagnose the failed phase
+and changed inputs against the
+[shared recovery contract](https://github.com/dragginzgame/toko-tooling/blob/dcc51b5cab3d9993f0668bc0902252364d7dc316/docs/releases/release-validation-reuse.md#failure-specific-recovery)
+before retrying. Metadata uses its owning transaction; uncertain uploads use
+read-only `verify-publication` and the saved batch acknowledgement, never blind
+re-upload. If proof cannot be admitted, explain that concrete limitation and the
+resulting rerun scope before starting another full plan. Retain the attempt
+directory; deleting `target/` also removes that evidence.
 One repository-wide lock protects the shared lock.
 Renderer failure restores original selected files; wrong-group or altered
 receipts cannot resume. Older receipts remain archived rather than overwritten.

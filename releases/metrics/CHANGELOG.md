@@ -5,6 +5,22 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.30.1] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt authenticated toko-tooling 0.40.1 deployment and CI guidance. Use retained
+  stage timings and focused wiring evidence when planning deployment; diagnose
+  failed phases before retrying, preserving required fresh artifact/registry
+  admission and existing release gates. Stage reuse and collector recovery remain
+  unavailable until their input and custody contracts are qualified here.
+- Registry review confirms current stable toko-tooling 0.40.1, num-bigint 0.5.1,
+  serde 1.0.229, cargo-sort 2.1.4 and IC Build 0.83.0. Defer optional
+  cargo-sort-derives 0.15.0 to the next reviewed shared catalog adoption; retain
+  its selected 0.14.1. Keep the editor's packaged IC Host 0.76.4 lock, deferring
+  optional artifacts/fs/process 0.76.5 to the next published editor adoption.
+  Revisit both dispositions at the next applicable release review.
+
 ## [0.30.0] - 2026-11-13
 
 ### ⚠️ Breaking

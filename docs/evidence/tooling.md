@@ -1,5 +1,25 @@
 # Contributor tooling
 
+## Current local selection
+
+Published toko-tooling **0.40.1** is pinned once in the root catalog and inherited
+by both real members. Cargo.lock and the exporter-authenticated snapshot select
+archive SHA-256
+`fb884b05e2e5bbca2388dd0b757833fb5ad37e91b3ced09f6a37b454c7fe9f90`.
+The exporter preserves 55 roots and 111 files, changing only the baseline.
+Executable payloads, canonical files, Rust 1.100.0 and product code are unchanged.
+Prepared tools are reused and admitted; the deferred syn 3.0.10 edit is preserved.
+
+The [consumer release guide](../releases/independent-releases.md) now identifies
+actual nested work, retained dominant-stage timings and the adapter's missing
+cross-source reuse and collector-recovery admission. Current gates remain;
+policy adoption supplies neither a skip flag nor a new recovery implementation.
+Unchanged product/runtime and fixture evidence retains its original source.
+Installation/admission, pin, format and documentation checks are under
+`target/evidence/toko-tooling-0401/`. No full CI/release suite was repeated.
+Adoption is local, uncommitted and unpushed, with pending Metrics 0.30.1 and
+Logging 0.25.1 contributor-tooling notes. Delivered versions below are unchanged.
+
 ## Delivered 0.40.0 selection
 
 Published toko-tooling **0.40.0** is selected once at the root and inherited by
