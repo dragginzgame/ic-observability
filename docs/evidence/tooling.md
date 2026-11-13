@@ -1,6 +1,6 @@
 # Contributor tooling
 
-## Current local selection
+## Delivered 0.40.0 selection
 
 Published toko-tooling **0.40.0** is selected once at the root and inherited by
 both members. Cargo.lock and the authenticated snapshot select archive SHA-256
@@ -29,13 +29,20 @@ under `target/evidence/toko-tooling-0400/`.
 
 This qualifies the local work for
 [#134 — Adopt Rust 1.100.0 and the common lint policy](https://github.com/dragginzgame/ic-observability/issues/134).
-macOS execution was unavailable; no native-host result is inferred. Full release
-rosters and hosted CI were not run. Adoption is uncommitted, unpushed and
-unpublished. Pending Metrics 0.30.0 and Logging 0.25.0 record the raised consumer
-compiler requirement, while published versions retain their original identities.
-Deployment guidance preserves all 20 existing release stages and disabled stage
-reuse. Registry review establishes the selected tooling release is stable and
-non-yanked; it makes no freshness claim for other suppliers.
+Metrics **0.30.0** and Logging **0.25.0** are delivered to GitHub and
+independently verified on crates.io. Both passed their full 20-stage workspace
+plans without narrowing or stage reuse, final-version archive compilation and
+registry/source-content readback. The
+[delivery receipt](releases/toko0400-rust1100-20261113.md) owns exact source,
+tag/archive identities, validation plans, supplier dispositions and recovery.
+The consumer Rust floor is now 1.100.0. Hosted macOS and installed consumer
+acceptance remain separate; pending CI is not a pass. Delivery transcripts and
+registry review are under `target/deploy/toko0400-20261113/`.
+
+The normal checkout is reconciled. Delivery used syn 3.0.9; the separately
+preserved 3.0.10 edit is restored outside the delivered graph. All earlier
+candidates, recovery records and preservation refs remain retained. No sibling
+repository was changed or deployed.
 
 ## Delivered 0.39.17 selection
 
