@@ -16,6 +16,9 @@ Metrics and Logging each own their package version and release notes.
 - Use the package-first dependency inventory and keep generic producer release
   checks upstream, retaining direct consumer dispatch and recovery qualification.
 
+- Bind fixture exit probes to the consumer root under the vendor layout, retaining
+  failure/premature-exit evidence and successful-cleanup assertions. A focused
+  exit-boundary selection avoids repeating nested release transactions.
 - Pre-release registry review confirms stable toko-tooling 0.42.1, num-bigint
   0.5.1, Serde 1.0.229 and cargo-sort 2.1.4. Defer optional cargo-sort-derives
   0.15.0 to the next reviewed shared catalog adoption, retaining 0.14.1.

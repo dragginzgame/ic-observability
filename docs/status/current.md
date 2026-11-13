@@ -42,6 +42,14 @@ native success/recovery evidence and product dependency boundaries passed.
 Sealed-plan and publication-policy fixtures passed after fixing the explicit-root
 caller binding. Both group transactions and the frozen-batch fixture passed;
 matched CI/selected-plan trace qualification also passed.
+
+Deployment batch `batch-3okIbLbo` stopped before version preparation or delivery
+at the generic exit-probe helper's legacy root-layout copy. Its original source
+`66b02a8a99c8b851d1d55cdda210fe497ac2e741` and partial records remain retained;
+never resume it as repaired source. The consumer now uses Shared's prefix renderer
+with its actual root and preserves all 18 owned cleanup/retention assertions.
+The focused `--kind exits` check passed. A fresh whole-source capture is required;
+this adapter has no cross-source stage-reuse admission.
 Raw previews, failed/fixed attempts and focused results are under
 `target/evidence/toko-tooling-0421/`. No broad `make ci`, `make msrv` or actual
 release/publication ran for this adoption. The [host guide](../development/hosts.md),

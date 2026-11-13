@@ -275,7 +275,9 @@ encoded bytes and Logging's retained-data contract do not change in this split.
 
 `bash scripts/release/test-fixture-retention.sh --kind standard` selects the
 standard-release body's success/failure custody checks. `publication` and `hook`
-select their corresponding bodies. These focused forms omit other kinds, nested
+select their corresponding bodies. `--kind exits` checks each maintained
+fixture's initialization/EXIT boundary against the real consumer root using
+Shared's prefix renderer, without root-layout helper copies. These focused forms omit other kinds, nested
 group admission and generic lifecycle probes; the no-argument release gate retains
 the complete roster. Use the group-admission and frozen-batch fixtures separately
 when their actual transaction/capture wiring changes.
