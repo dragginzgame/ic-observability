@@ -37,7 +37,7 @@ collection or turn a failed check into a successful one.
 
 ## Prerequisites and focused checks
 
-Root `[workspace.dependencies]` declares `toko-tooling = "=0.39.17"` once.
+Root `[workspace.dependencies]` declares `toko-tooling = "=0.40.0"` once.
 Both real members inherit it unconditionally as a dev-dependency and merge the
 name into cargo-machete ignored metadata, without a Rust import. Cargo.lock pins
 the registry version/checksum; no selection-only package or separate tooling
@@ -51,7 +51,7 @@ the custom candidate, metadata and publication scripts check tooling before effe
 Use `make deps-update` for explicit Cargo updates (`cargo update -v`), optionally
 with `DEPENDENCY_PACKAGE` and `DEPENDENCY_PRECISE` to select one dependency.
 For example, after editing the root tooling pin, run
-`make deps-update DEPENDENCY_PACKAGE=toko-tooling DEPENDENCY_PRECISE=0.39.17`,
+`make deps-update DEPENDENCY_PACKAGE=toko-tooling DEPENDENCY_PRECISE=0.40.0`,
 then `make toko-tooling-update`. This repository has only the root maintained
 workspace. The command preserves manifest requirements and is separate from
 supplier freshness review; it is not called by CI or release admission.
@@ -64,8 +64,9 @@ before their first tool installation and save after setup, before product checks
 Cache service failures permit download fallback; downloaded bytes still require
 the selected checksum. The existing native prerequisite/compiler order is retained.
 
-The crates.io toko-tooling 0.39.17 refresh preserves the selected
-tool catalogs and compiler. `make tools-check check-pins` admits prepared tools;
+The crates.io toko-tooling 0.40.0 refresh preserves the selected
+tool catalogs; the compiler is now explicitly prepared at Rust 1.100.0.
+`make tools-check check-pins` admits prepared tools;
 setup admits the renamed catalog contract without store cleanup. Earlier source-bound
 receipts retain their original snapshots. Explicit setup still uses
 `make install-tools`; changed build-helper policies require re-preparation.
@@ -106,8 +107,8 @@ offline checks remain immediate. The shared
 wait-budget override and lock admission. The release editor retains its existing
 `cli` feature without adding a library dependency.
 
-Rust 1.99.1 is both the supported minimum and exact development/release compiler,
-as approved in [#124](https://github.com/dragginzgame/ic-observability/issues/124).
+Rust 1.100.0 is both the supported minimum and exact development/release compiler,
+as selected in [#134 — Adopt Rust 1.100.0 and the common lint policy](https://github.com/dragginzgame/ic-observability/issues/134).
 Prepare it once with rustfmt, Clippy and `wasm32-unknown-unknown`:
 
 ```sh
@@ -127,9 +128,16 @@ Make targets do not parse Cargo to choose a compiler.
 
 `make msrv` remains a compatibility alias for compiler admission. `make ci`
 provides the compilation proof once on this same compiler; see the coverage map
-below. Both Metrics and Logging require Rust 1.99.1 on native and Wasm. The adopted
+below. Both Metrics and Logging require Rust 1.100.0 on native and Wasm. The adopted
 Toko Tooling baseline now owns this same compiler policy;
 no local exception or temporary policy-reference override is needed.
+
+Both product members and generated retained consumers inherit root lint policy.
+The root keeps safe-only `unsafe_code = "forbid"`, strict warning-denied Clippy
+and Rustdoc gates, and reviewed pedantic checks without blanket nursery selection.
+Cargo permits the otherwise-unused product catalog entries because they record
+release identities without creating a dependency between the libraries.
+The historical minimum-compiler evidence below retains its original identity.
 
 Use Git, GNU Make, Bash 3.2 or newer and standard Unix utilities. The
 [local setup guide](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/docs/adoption/local-setup.md#bootstrap-prerequisites) owns system bootstrap,

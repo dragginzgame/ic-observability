@@ -5,6 +5,29 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.30.0] - Unreleased
+
+### ⚠️ Breaking
+
+- Require Rust 1.100.0 for native and Wasm consumers, matching the explicitly
+  prepared development/release compiler. Upgrade the consumer compiler before
+  adopting this release.
+  [#134 — Adopt Rust 1.100.0 and the common lint policy](https://github.com/dragginzgame/ic-observability/issues/134).
+
+### 🛠️ Tooling
+
+- Adopt authenticated toko-tooling 0.40.0 and its common inherited lint policy.
+  Preserve safe-only prohibitions and strict Clippy/Rustdoc gates, select
+  individual checks instead of blanket nursery, and lint generated consumers.
+  Retain the full validation roster, fresh artifact admission and recovery
+  boundaries; stage reuse remains disabled.
+- Registry review confirms current stable toko-tooling 0.40.0, num-bigint 0.5.1,
+  serde 1.0.229, cargo-sort 2.1.4 and the selected IC Build 0.83.0 release editor.
+  Defer optional cargo-sort-derives 0.15.0 to the next reviewed shared tool-catalog
+  adoption; the current catalog selects 0.14.1. Keep the editor's packaged IC Host
+  0.76.4 lock, deferring optional artifacts/fs/process 0.76.5 to the next published
+  editor adoption. Revisit both dispositions at the next applicable release review.
+
 ## [0.29.12] - 2026-11-12
 
 ### 🛠️ Tooling

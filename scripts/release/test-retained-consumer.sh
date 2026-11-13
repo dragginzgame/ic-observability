@@ -20,7 +20,7 @@ default-members = [
 resolver = "3"
 [workspace.package]
 edition = "2024"
-rust-version = "1.99.1"
+rust-version = "1.100.0"
 authors = ["A \"quoted\" author"]
 [workspace.dependencies.ic-metrics]
 path = "crates/ic-metrics"

@@ -93,7 +93,7 @@ transport reconstruction are absent; restoration never infers lost provenance.
 See the [complete API inventory](https://github.com/dragginzgame/ic-observability/blob/main/docs/architecture/metrics-api.md)
 and [compiled application guide](https://github.com/dragginzgame/ic-observability/blob/main/crates/ic-metrics/src/application.md).
 
-Rust 1.99.1 is the floor and pinned compiler on native and Wasm. Focused checks:
+Rust 1.100.0 is the floor and pinned compiler on native and Wasm. Focused checks:
 
 ```sh
 make fmt

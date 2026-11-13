@@ -1,4 +1,4 @@
-# Current handoff — 2026-11-12
+# Current handoff — 2026-11-13
 
 ## Published products and tooling
 
@@ -11,17 +11,31 @@ by final archive compilation and matching maintained source (34 Metrics and
 16 Logging files). Hosted macOS and installed consumer acceptance remain separate
 and asynchronous; pending or cancelled checks are not passes.
 
-The root Cargo pin, inherited dev-dependencies, lock and snapshot select published
-toko-tooling **0.39.17**, archive SHA-256
-`aaeab49adb84ea0d66cf86ecc48d826125f9c3ac6eafaf2a362bccfeba7acbfd`.
-The receipt selects 55 roots and 111 files. `make deps-update` is explicit Cargo
-maintenance, with no CI/release prerequisite or freshness audit. Shared reference
-docs stay upstream at reviewed commit-pinned URLs; the
-[documentation index](../README.md) owns native guide navigation. Five test
-modules now use `tests/mod.rs` with unchanged bytes, Rust module paths and test
-inventories. Production Rust, public APIs and all release obligations remain
-unchanged. The consumer retains `TOKO_TOOLING_RELEASE := 1` and explicitly selects
-`validation-evidence.pl` for its actual release caller.
+The local Cargo selection and authenticated snapshot now select published
+**toko-tooling 0.40.0**, archive SHA-256
+`9c1758c3c04e2754d97fd38d29177d73fc03d3d414d654f689d8b75cbc7ed918`.
+Both product members inherit its dev-dependency and the root common lint table.
+The root and retained-consumer fixtures select **Rust 1.100.0**; explicit setup
+prepared native/Wasm support and rebuilt/admitted managed tools for that compiler.
+The exporter preserves 55 roots and 111 files, changing only the shared baseline.
+Shared reference docs remain upstream; canonical files and executable bytes are
+unchanged. No production Rust, public API or retention arithmetic changed.
+
+[#134 — Adopt Rust 1.100.0 and the common lint policy](https://github.com/dragginzgame/ic-observability/issues/134)
+is implemented locally. Strict native/Wasm Clippy and Rustdoc, all-feature and
+minimal Metrics tests, feature graphs, allocator-free Wasm linking, compiler-policy
+fixtures and both generated public consumers passed. Disposable consumers also
+proved typed rejection of unsafe code, ignored results, dead code, stale lint
+expectations and broken Rustdoc links on both targets. Actual compiler identities
+and focused transcripts are under `target/evidence/toko-tooling-0400/`.
+Linux x86_64 was exercised; macOS hosts were unavailable and remain unqualified
+for these new inputs. No full release roster or hosted matrix was run.
+
+This adoption is uncommitted and unpushed. Pending **Metrics 0.30.0** and
+**Logging 0.25.0** notes record the consumer Rust-floor change: consumers need
+Rust 1.100.0 before adopting the next release. Published identities above remain
+unchanged. Stage reuse remains disabled and all 20 release obligations remain.
+The deferred syn 3.0.10 edit and all recovery custody below are preserved.
 
 The native release editor selects published IC Build **0.83.0**. Both group
 ledgers record current supplier review and optional-refresh dispositions for

@@ -1,9 +1,46 @@
 # Contributor tooling
 
-## Current selection and delivery
+## Current local selection
 
-Published toko-tooling **0.39.17** is selected once in the root catalog and
-inherited by both members. Cargo.lock and the snapshot select archive SHA-256
+Published toko-tooling **0.40.0** is selected once at the root and inherited by
+both members. Cargo.lock and the authenticated snapshot select archive SHA-256
+`9c1758c3c04e2754d97fd38d29177d73fc03d3d414d654f689d8b75cbc7ed918`.
+The exporter preserves all 55 roots and 111 files, changing only the baseline.
+Canonical files and executable payloads are unchanged; product Rust and APIs
+are unchanged. The normal Cargo lock retains the separate incoming syn selection.
+
+Root/member lint policy now retains safe-only `forbid`, uses the common explicit
+checks, removes blanket nursery, and preserves reviewed pedantic checks. There
+are no local lint suppressions to migrate. Generated retained consumers inherit
+the same table. Cargo allows unused workspace catalog entries because both
+required product identities are recorded without adding an inter-library edge.
+
+Explicit setup prepared Rust **1.100.0** with native/Wasm support and rebuilt
+managed tools for the compiler fingerprint. Actual identities are rustc
+`1.100.0 (0ef1bc386 2026-11-09)` and Cargo
+`1.100.0 (3acc79c0c 2026-11-05)` on Linux x86_64. Strict all-target native and
+Wasm-library Clippy, native/Wasm Rustdoc, minimal Metrics lint, all-feature tests,
+minimal Metrics tests, feature graphs, allocator-free linking, compiler-policy
+fixtures, retained rendering and both generated public consumers passed.
+Disposable consumers admitted valid code and rejected unsafe code, ignored
+must-use results, dead code, stale expectations and broken Rustdoc links using
+typed compiler diagnostics on both targets. Technical inputs/transcripts are
+under `target/evidence/toko-tooling-0400/`.
+
+This qualifies the local work for
+[#134 — Adopt Rust 1.100.0 and the common lint policy](https://github.com/dragginzgame/ic-observability/issues/134).
+macOS execution was unavailable; no native-host result is inferred. Full release
+rosters and hosted CI were not run. Adoption is uncommitted, unpushed and
+unpublished. Pending Metrics 0.30.0 and Logging 0.25.0 record the raised consumer
+compiler requirement, while published versions retain their original identities.
+Deployment guidance preserves all 20 existing release stages and disabled stage
+reuse. Registry review establishes the selected tooling release is stable and
+non-yanked; it makes no freshness claim for other suppliers.
+
+## Delivered 0.39.17 selection
+
+The delivered requirements select published toko-tooling **0.39.17**, inherited
+by both members. Cargo.lock and the snapshot select archive SHA-256
 `aaeab49adb84ea0d66cf86ecc48d826125f9c3ac6eafaf2a362bccfeba7acbfd`.
 The authenticated snapshot has 55 roots and 111 files. The explicit
 `make deps-update` entrypoint and its Make/hook fixture copies add no CI/release
@@ -26,8 +63,8 @@ unchanged LOC/Make caller proofs under the earlier adoption evidence. Native
 editor qualification and release transcripts are under
 `target/deploy/toko03917-20261112/`. The optional shared missing-doc baseline
 checker remains unselected; warning-denied Rustdoc remains the consumer gate.
-The normal checkout is reconciled and only the deferred syn 3.0.10 edit remains
-local; delivery used 3.0.9. All earlier candidates and preservation refs remain
+The 0.39.17 batch reconciled and restored the deferred syn 3.0.10 edit; that
+delivery used 3.0.9. All earlier candidates and preservation refs remain
 retained. No sibling repository was changed or deployed. Hosted native and
 installed consumer acceptance remain separate from these local release gates.
 

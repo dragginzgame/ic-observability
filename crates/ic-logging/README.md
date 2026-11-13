@@ -1,6 +1,6 @@
 # ic-logging
 
-Requires Rust 1.99.1 on native and Wasm, matching the workspace compiler policy.
+Requires Rust 1.100.0 on native and Wasm, matching the workspace compiler policy.
 
 Bounded, caller-owned heap logs without a framework or IC runtime dependency.
 The library is `no_std` with `alloc`; it has no dependency on Metrics or any other crate.

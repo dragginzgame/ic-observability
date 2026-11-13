@@ -47,7 +47,7 @@ for scenario in success floor-drift moving-pin nightly-pin member-override old-r
     case "$scenario" in
         floor-drift) perl -pi -e 's/^rust-version = .*/rust-version = "1.0.0"/' Cargo.toml ;;
         moving-pin) perl -pi -e 's/^channel = .*/channel = "stable"/' rust-toolchain.toml ;;
-        nightly-pin) perl -pi -e 's/^channel = .*/channel = "1.99.1-nightly"/' rust-toolchain.toml ;;
+        nightly-pin) perl -pi -e 's/^channel = .*/channel = "1.100.0-nightly"/' rust-toolchain.toml ;;
         member-override) perl -pi -e 's/^rust-version.workspace = true/rust-version = "1.0.0"/' crates/ic-logging/Cargo.toml ;;
         old-rustc) TEST_RUSTC_VERSION=1.0.0 ;;
         newer-rustc) TEST_RUSTC_VERSION=9.0.0 ;;

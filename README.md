@@ -83,8 +83,8 @@ readback never retries the upload; retain and reconcile the separate receipts.
 
 ## Development
 
-Use the pinned Rust 1.99.1 toolchain with rustfmt and Clippy. Both library floors
-are Rust 1.99.1 on native and Wasm. [Local setup](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/docs/adoption/local-setup.md) owns explicit
+Use the pinned Rust 1.100.0 toolchain with rustfmt and Clippy. Both library floors
+are Rust 1.100.0 on native and Wasm. [Local setup](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/docs/adoption/local-setup.md) owns explicit
 common-tool preparation through `make install-tools` and offline admission with
 `make tools-check`. Checks do not install tools or change dependency selections.
 
