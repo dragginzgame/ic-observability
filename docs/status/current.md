@@ -83,6 +83,13 @@ Batch `batch-V1TkLKoY` is complete at index 2. Execution remains under
 `.git/release-state/frozen/batch-V1TkLKoY/`. Reconciliation completed and the
 syn edit was reapplied. No retirement or protected cleanup ran.
 
+The first 0.40.1 batch, `batch-wmST1LGL`, was stopped before delivery after
+hosted run 43398940199 exposed GNU Make 3.81 scope/group prerequisite admission
+failures on both macOS architectures. Its original source and partial validation
+remain retained; do not resume it as repaired source. The consumer-owned Make
+repair is qualified first with actual GNU Make 3.81 and current Make fixtures
+under `target/evidence/toko0401-make381/`, before a fresh release capture.
+
 Failed pre-delivery batch `batch-9uizEjhh` retains its original source and evidence;
 do not resume it as repaired source. Its publication-policy fixture was fixed in
 the normal checkout before the completed batch reran all required checks.

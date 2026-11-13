@@ -8,6 +8,13 @@ belong here.
 
 ## [0.25.1] - Unreleased
 
+### 🩹 Fixed
+
+- Refuse unsafe Make modes before group/scope selection on GNU Make 3.81,
+  preserving release and publication admission on both macOS architectures.
+  The existing consumer fixtures cover the failure from
+  [native CI](https://github.com/dragginzgame/ic-observability/actions/runs/43398940199).
+
 ### 🛠️ Tooling
 
 - Adopt authenticated toko-tooling 0.40.1 deployment and CI guidance. Use retained

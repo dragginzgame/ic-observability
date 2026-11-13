@@ -20,6 +20,14 @@ Installation/admission, pin, format and documentation checks are under
 Adoption is local, uncommitted and unpushed, with pending Metrics 0.30.1 and
 Logging 0.25.1 contributor-tooling notes. Delivered versions below are unchanged.
 
+The subsequent deployment inspection found hosted run 43398940199 failed the
+consumer Make admission fixture on both macOS architectures. GNU Make 3.81
+reproduced `package-check -q` returning 1 before explicit refusal. Guarding the
+consumer's group/scope prerequisites repairs that path, with unchanged Cargo
+recipes and no production Rust changes. Focused actual-Make qualification is
+under `target/evidence/toko0401-make381/`. The initial batch `batch-wmST1LGL`
+was stopped before delivery; its source/evidence are retained independently.
+
 ## Delivered 0.40.0 selection
 
 Published toko-tooling **0.40.0** is selected once at the root and inherited by

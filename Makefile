@@ -36,7 +36,7 @@ include make/cargo-publication.mk
 
 # These consumer-owned gates retain execution/failure admission now that the
 # common guard runs only for protected recipes. Help and completion remain inert.
-ci compiler-check check check-wasm clippy docs-check test package-check allocation-free-check \
+ci compiler-check release-group-check validation-scope-check check check-wasm clippy docs-check test package-check allocation-free-check \
 release-verify release-prepare-version release-commit-check release-prepared-check \
 release-committed-check release-tagged-check release-push-check: | toko-execution-check
 
