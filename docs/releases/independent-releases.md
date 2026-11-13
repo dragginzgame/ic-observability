@@ -2,8 +2,8 @@
 
 The two libraries remain in one development workspace and share the catalog,
 lockfile, compiler policy and repository-wide CI. They have no dependency
-on one another. [The declared policy](../../ci/cargo-release-groups.json) and root
-Cargo.toml dependency catalog identify every member:
+on one another. [The declared policy](../../ci/cargo-release-groups.json) owns membership;
+`make deps-list` displays every package version and release group:
 
 | Group | Members | Version owner | Canonical ledger |
 | --- | --- | --- | --- |
@@ -28,14 +28,13 @@ Neither conversion changes a package's numeric identity.
 Earlier coordinated releases remain once in [shared history](../../releases/history.md), through 0.23.0;
 both group ledgers link to that history. Existing tags and receipts are retained.
 Tooling has no selection-only package or release-group membership. One exact
-root dependency pins toko-tooling 0.40.1; both libraries inherit it only for
-development, and Cargo.lock owns its registry checksum. Each public member has a root
-catalog entry with its local path and full current version, registered in its
-group's dependency roster. These unused catalog aliases provide a readable
-version map without adding dependencies between the libraries. Each group appears
-once in a contiguous catalog block with a short title and separate changelog
-comment; grouped formatting preserves these blocks. Only member dependency
-declarations create edges.
+root dependency pins toko-tooling 0.41.0; both libraries inherit it only for
+development, and Cargo.lock owns its registry checksum. Root dependency entries
+serve actual member inheritance; no display-only aliases or lint allowances are
+needed. Both product packages remain in their groups' `members` rosters, with
+empty `dependencies` rosters because neither library depends on the other.
+Publication derives the selected package directory from the admitted member
+manifest, independently of dependency aliases.
 
 Both groups own their versions and active release notes at the same level. The
 root is virtual and has no package or aggregate product version. It supplies common metadata, dependency
@@ -50,6 +49,15 @@ Before freezing a candidate, perform the baseline's
 Include the selected native `ic-build` release editor alongside the release's
 actual Cargo suppliers; record newer-supplier dispositions in the existing group
 notes. Prepared-tool and pin admission do not supply that review.
+
+The selected product libraries remain dependency-free. Actual development
+suppliers are num-bigint, Serde and Toko Tooling; no testkit, PocketIC or maintained
+qualification workspace is selected here. The synthetic testkit case checks
+workspace/path ownership, not a fleet-wide version generation. Apply the
+[shared isolation rule](../../TOKO-TOOLING.md#current-dependencies-and-upstream-independence)
+to the actual selected graphs: optional test-supplier upgrade probes do not block
+an otherwise qualified frozen selection. Real type/executor boundaries, required
+native/product checks and consumer-owned acceptance remain required.
 
 The [0.40.1 deployment sequence](https://github.com/dragginzgame/toko-tooling/blob/dcc51b5cab3d9993f0668bc0902252364d7dc316/docs/releases/releases.md#plan-once-recover-the-failed-phase)
 owns planning and failure-specific recovery. This consumer's nested work is:
@@ -70,6 +78,10 @@ new expensive gate. Unchanged fixture evidence remains bound to its inputs.
 
 Prepare tools explicitly with `make install-tools` after adopting this snapshot.
 The managed release editor is published IC Build 0.83.0 with its cli feature.
+The 0.41.0 managed builder uses Cargo 1.100's default packaged installation lock,
+while retaining exact version, archive-checksum and packaged-lock admission.
+Build/check/test/metadata/publication commands keep their meaningful `--locked`.
+Clippy now uses qualified Cargo warning denial; Rustdoc's explicit denial remains.
 Fresh captured delivery prepares its own tools through the existing managed
 owners before version lookup. Recovery and validation admit that selection offline.
 
@@ -199,10 +211,10 @@ adapter supplies group policy, existing tool preparation, planned validation and
 source/receipt admission. There is no second release implementation.
 
 Plans always include Cargo.toml and Cargo.lock. Each group additionally selects
-its own literal-version manifest and ledger. The root manifest updates only the
-selected group's catalog requirements, preserving their operators. Other groups'
-versions, manifests, requirements and pending notes must be
-preserved. Future shared consumer metadata needs an explicit shared_metadata_files
+its own literal-version manifest and ledger. There are no product dependency
+aliases to update, so the current root manifest remains byte-identical during a
+group version change. Other groups' versions, manifests and pending notes, plus
+external dependency selections, remain preserved. Future shared consumer metadata needs an explicit shared_metadata_files
 declaration plus selective rendering/qualification; none is needed for this split.
 
 New tags are metrics-vX.Y.Z and logging-vX.Y.Z; subjects are Release metrics X.Y.Z
@@ -260,7 +272,8 @@ The standard/internal-hook and group admission fixtures exercise the actual
 adapter, shared runner/editor and
 local Git remotes in disposable repositories. It checks both group directions,
 missing/empty/unknown group refusal, unrelated versions/requirements/ledgers,
-selected root catalog updates, unchanged index/history inputs, exact changed files, rollback, receipts, resume
+unchanged root bytes without display aliases, stale-alias refusal, index/history inputs,
+exact changed files, rollback, receipts, resume
 and publication selection. Setup, broad gates, archive compilation and
 registry effects are substituted. Unchanged-group consumers use workspace-owned
 source copies pinned to their prior compatible identities; this is source-level

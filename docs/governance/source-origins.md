@@ -9,7 +9,7 @@ not maintained product source.
 | --- | --- | --- |
 | Metrics | `crates/ic-metrics` | Repository scaffold introduced at `975dabc`; implementations and tests developed in this repository's subsequent history. |
 | Logging | `crates/ic-logging` | Heap engine introduced at `537f6d7`; subsequent engine, checkpoint and typed-history changes are recorded here. |
-| Shared tooling | Paths in `.toko-tooling.snapshot` | Authenticated crates.io `toko-tooling` 0.40.1; archive SHA-256 `fb884b05e2e5bbca2388dd0b757833fb5ad37e91b3ced09f6a37b454c7fe9f90`. |
+| Shared tooling | Paths in `.toko-tooling.snapshot` | Authenticated crates.io `toko-tooling` 0.41.0; archive SHA-256 `4aaafc699324611501e051132e971288c16392a3ece605e9909e88e0c7e80a2f`. |
 | Local release and CI adapters | Consumer-owned files under `scripts/`, `ci/` and `Makefile` | Repository history; shared implementations are distinguished by the snapshot receipt. |
 
 The local Git author inventory contains the `borovan` identity with two email

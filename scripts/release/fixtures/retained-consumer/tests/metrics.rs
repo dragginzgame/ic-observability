@@ -1,3 +1,5 @@
+//! Checks the retained public Metrics recording and restoration contract.
+
 #[test]
 fn retained_instrumentation_contract() {
     use ic_metrics::{

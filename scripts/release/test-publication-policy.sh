@@ -27,7 +27,7 @@ cat > scripts/release/metadata.sh <<'PLAN'
 #!/usr/bin/env bash
 set -euo pipefail
 [[ "$1" == plan && "$RELEASE_GROUP" == metrics ]] || exit 2
-printf '%s\n' '{"primary":"ic-metrics","previous":"0.1.0","dependencies":[{"package":"ic-metrics","path":"crates/ic-metrics"}]}'
+printf '%s\n' '{"primary":"ic-metrics","previous":"0.1.0","dependencies":[],"manifests":[{"path":"Cargo.toml","version":"unchanged"},{"path":"crates/ic-metrics/Cargo.toml","version":"package"}]}'
 PLAN
 git init -q
 git config user.email fixture@example.invalid

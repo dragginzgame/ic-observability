@@ -5,17 +5,21 @@
       "name": "metrics",
       "primary": "ic-metrics",
       "version": "package",
-      "members": ["ic-metrics"],
+      "members": [
+        "ic-metrics"
+      ],
       "changelog": "releases/metrics/CHANGELOG.md",
-      "dependencies": ["ic-metrics"]
+      "dependencies": []
     },
     {
       "name": "logging",
       "primary": "ic-logging",
       "version": "package",
-      "members": ["ic-logging"],
+      "members": [
+        "ic-logging"
+      ],
       "changelog": "releases/logging/CHANGELOG.md",
-      "dependencies": ["ic-logging"]
+      "dependencies": []
     }
   ]
 }

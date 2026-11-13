@@ -21,10 +21,35 @@ fixing the GNU Make 3.81 refusal failure found in both prior macOS jobs. Actual
 release/publication fixtures passed on Linux-built GNU Make 3.81 and current Make
 before fresh capture; this does not claim native macOS acceptance.
 
+The local root pin, Cargo.lock and authenticated snapshot now select published
+**toko-tooling 0.41.0**, archive SHA-256
+`4aaafc699324611501e051132e971288c16392a3ece605e9909e88e0c7e80a2f`.
+This adoption is uncommitted and unpushed, incorporating the earlier 0.40.2 work.
+The exporter retains 55 roots and 111 files. `make deps-list` inventories members;
+display-only aliases remain removed and both member rosters/versions are preserved.
+The Cargo/Rustdoc lint minimum is inherited, with safe-only `forbid` unchanged.
+Clippy uses Cargo warning denial qualified against fresh/reused native/Wasm
+artifacts; explicit Rustdoc denial remains. Isolated consumers now retain only
+actually inherited suppliers and integration targets, without empty-library or
+missing-crate-documentation warnings. Library engines and APIs are unchanged.
+
+The [release guide](../releases/independent-releases.md) records the selected
+native/test dependency boundary. No testkit supplier is selected here; optional
+upgrade failures do not invalidate the qualified existing graph. All required
+product/native checks and current recovery limits remain. Current focused
+qualification is under `target/evidence/toko-tooling-0410/`; no broad CI/release
+suite ran. Pending Metrics **0.30.2** and Logging **0.25.2** remain compatible
+contributor-tooling notes. The deferred syn 3.0.10 edit is preserved.
+
+Logging's byte-budgeted export example now checks encoded length before writing
+accepted rows directly into its result, using a reusable stack number buffer.
+Its five named example tests, strict Clippy and runnable demonstration passed;
+evidence is under `target/evidence/logging-export-direct-format/`. Engine APIs,
+UTF-8 budgets, typed errors and continuation semantics remain unchanged.
+
 The [release guide](../releases/independent-releases.md) records nested work,
 measured stage costs and current missing cross-source/collector recovery admission.
-All 20 release obligations and disabled stage reuse remain; no pending release
-note remains. Focused adoption/repair evidence is under
+All 20 release obligations and disabled stage reuse remain. Focused adoption/repair evidence is under
 `target/evidence/toko-tooling-0401/` and `target/evidence/toko0401-make381/`.
 Current full release transcripts and supplier review are under
 `target/deploy/toko0401-20261113/`.

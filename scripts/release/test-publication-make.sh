@@ -38,10 +38,10 @@ PATH="$fixture/bin:$PATH" REQUIRE_JOBSERVER=1 make_probe_parallel_dispatch "$rea
 write_expected_lints() {
     local destination="$1" last_phase="$2"
     printf 'publication-admission %s\n' "$mode" > "$destination"
-    printf '%s\n' clippy -p "$lint_package" --all-targets --all-features --locked -- -D warnings >> "$destination"
+    printf '%s\n' clippy -p "$lint_package" --all-targets --all-features --locked >> "$destination"
     case "$last_phase" in
         native) ;;
-        wasm) printf '%s\n' clippy -p "$lint_package" --lib --all-features --locked --target wasm32-unknown-unknown -- -D warnings >> "$destination" ;;
+        wasm) printf '%s\n' clippy -p "$lint_package" --lib --all-features --locked --target wasm32-unknown-unknown >> "$destination" ;;
         *) return 2 ;;
     esac
 }

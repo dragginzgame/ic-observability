@@ -18,13 +18,11 @@ consumer-contract or persistence-boundary changes. No baseline exceptions apply.
   another. Each group owns literal package versions and its ledger under
   releases/metrics or releases/logging. The root has shared metadata and changelog
   navigation, with no aggregate version. Coordinated history is in releases/history.md.
-  Membership is explicit in ci/cargo-release-groups.json and root Cargo comments.
+  Membership is explicit in ci/cargo-release-groups.json.
   The root Cargo catalog and lock select tooling; use the installed common
   setup/check interface. Custom deployment adapters must run
   `toko-tooling-check` before effects. Tooling stays outside production graphs.
-  The root dependency catalog lists both members with full current versions and
-  paths; each alias belongs to its group's dependency roster. Catalog entries
-  alone add no dependency edge between the libraries.
+  Use `make deps-list` for package versions and release-group membership.
   Both product packages remain under `crates/` in the virtual root workspace,
   which explicitly excludes `qualification`. No maintained qualification package
   or workspace exists here; the two `qualification/` README files retain retired

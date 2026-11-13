@@ -1,5 +1,41 @@
 # Contributor tooling
 
+## Current local selection
+
+Published toko-tooling **0.41.0** is pinned at the root, inherited by both members,
+and locked with archive SHA-256
+`4aaafc699324611501e051132e971288c16392a3ece605e9909e88e0c7e80a2f`.
+The authenticated exporter retains 55 roots/111 files. Relative to local 0.40.2,
+only the baseline and native Cargo tool builder change. Canonical files, package
+versions, Rust 1.100.0 and production Rust/API behavior are unchanged.
+
+The 0.40.2 `make deps-list`, removed display aliases and member-manifest-based
+publication are retained. Both packages inherit the 0.41.0 Cargo/Rustdoc minimum.
+Strict product Clippy and Rustdoc were already clean. The new Cargo lints found
+unused num-bigint/Serde declarations copied into the isolated Logging consumer.
+The renderer now retains actual inherited declarations, including conditional
+ones. The unused empty library target was removed and both integration contracts
+have crate documentation. Both generated consumers pass with warnings denied.
+
+Clippy now uses `CARGO_BUILD_WARNINGS=deny`. A real retained Metrics consumer
+warning was rejected on fresh and reused native/Wasm artifacts, using public
+Cargo artifact records; warning-free controls pass. The warning diagnostic was
+read from plain JSON, while refusal used json-render-diagnostics. An initial
+post-processing assertion expected diagnostics in the latter stream; correction
+reused its completed native fresh output instead of repeating that execution.
+No production plain-JSON collector or explicit Rustdoc denial is weakened.
+
+Managed installation preserves exact versions/checksums and packaged-lock
+admission while relying on Cargo 1.100's default install lock. The
+[release guide](../releases/independent-releases.md) records the actual selected
+native/test boundary: no testkit is selected here, and optional upgrade probes
+do not invalidate an existing qualified graph. Required gates and recovery limits
+are unchanged; no new cooldown, skip flag or fleet generation requirement is added.
+Focused evidence is under `target/evidence/toko-tooling-0410/`. No broad CI or
+release suite ran. Adoption remains local and uncommitted; pending Metrics 0.30.2
+and Logging 0.25.2 notes incorporate the earlier 0.40.2 work. The incoming
+syn 3.0.10 edit remains preserved.
+
 ## Delivered 0.40.1 selection
 
 Published toko-tooling **0.40.1** is pinned once in the root catalog and inherited

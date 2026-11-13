@@ -10,7 +10,9 @@ bash scripts/dev/toko-tooling.sh check --consumer "$root"
 plan="$(bash scripts/release/metadata.sh plan)"
 package="$(jq -er .primary <<< "$plan")"
 version="$(jq -er .previous <<< "$plan")"
-path="$(jq -er --arg package "$package" '.dependencies[] | select(.package == $package) | .path' <<< "$plan")"
+path="$(jq -er '[.manifests[] | select(.version == "package") | .path] |
+    if length == 1 then .[0] | rtrimstr("/Cargo.toml")
+    else error("expected one selected package manifest") end' <<< "$plan")"
 repository="$(yq -p toml -o json -r '.workspace.package.repository' Cargo.toml)"
 if [[ "$operation" == admit ]]; then
     case "${OBSERVABILITY_PUBLICATION_MODE:?select publication mode}" in

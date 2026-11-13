@@ -193,7 +193,7 @@ status=0
 PATH="$fixture/bin:$PATH" REQUIRE_JOBSERVER=1 CLIPPY_FAILURE=native "$real_make" "${parallel[@]}" --no-print-directory \
     -f "$root/Makefile" clippy > "$fixture/output" 2>&1 || status=$?
 [[ "$status" == 2 ]] || exit 1
-printf '%s\n' clippy --workspace --all-targets --all-features --locked -- -D warnings > "$fixture/expected"
+printf '%s\n' clippy --workspace --all-targets --all-features --locked > "$fixture/expected"
 cmp "$fixture/expected" "$EVENTS"
 
 # The same Cargo recipes select either independent package under group scope;
@@ -206,8 +206,8 @@ for group in metrics logging; do
             "$target" OBSERVABILITY_RELEASE_VALIDATION_SCOPE=group > "$fixture/output" 2>&1
         case "$target" in
             clippy)
-                printf '%s\n' clippy -p "ic-$group" --all-targets --all-features --locked -- -D warnings \
-                    clippy -p "ic-$group" --lib --all-features --locked --target wasm32-unknown-unknown -- -D warnings > "$fixture/expected" ;;
+                printf '%s\n' clippy -p "ic-$group" --all-targets --all-features --locked \
+                    clippy -p "ic-$group" --lib --all-features --locked --target wasm32-unknown-unknown > "$fixture/expected" ;;
             docs-check)
                 printf '%s\n' doc -p "ic-$group" --all-features --locked --no-deps \
                     doc -p "ic-$group" --all-features --locked --no-deps --target wasm32-unknown-unknown > "$fixture/expected" ;;

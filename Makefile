@@ -138,7 +138,7 @@ help:
 	@echo "Workspace gates: check, check-wasm, clippy, docs-check, test (both packages; see docs/development/hosts.md for focused Cargo commands)"
 	@echo "Formatting and admission: format-tools-check, fmt, fmt-check, check-doc-links, toko-tooling-check, check-pins"
 	@echo "Dependency declarations and boundary fixtures: production-dependencies-check"
-	@echo "Explicit Cargo updates: deps-update (optional DEPENDENCY_PACKAGE and DEPENDENCY_PRECISE)"
+	@echo "Local package inventory: deps-list; explicit Cargo updates: deps-update (optional DEPENDENCY_PACKAGE and DEPENDENCY_PRECISE)"
 	@echo "Link fixed Metrics recording without an allocator: allocation-free-check"
 	@echo "Early setup: setup-smoke-check"
 	@echo "Dependency-free Metrics graphs: metrics-profiles-check; Logging graphs: logging-profiles-check"
@@ -192,8 +192,8 @@ check-wasm:
 	+cargo check --workspace --all-features --locked --target wasm32-unknown-unknown
 
 clippy:
-	+cargo clippy $(validation_cargo_selection) --all-targets --all-features --locked -- -D warnings
-	+cargo clippy $(validation_cargo_selection) --lib --all-features --locked --target wasm32-unknown-unknown -- -D warnings
+	+CARGO_BUILD_WARNINGS=deny cargo clippy $(validation_cargo_selection) --all-targets --all-features --locked
+	+CARGO_BUILD_WARNINGS=deny cargo clippy $(validation_cargo_selection) --lib --all-features --locked --target wasm32-unknown-unknown
 
 docs-check:
 	+RUSTDOCFLAGS="-D warnings" cargo doc $(validation_cargo_selection) --all-features --locked --no-deps

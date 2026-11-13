@@ -1,7 +1,7 @@
 //! Caller-owned UTF-8 export with a body budget and lossless cursor continuation.
 
 use ic_logging::{EntryInput, Filter, Level, Limits, Log, PageRequest};
-use std::{num::NonZeroUsize, ops::ControlFlow};
+use std::{fmt::NumBuffer, num::NonZeroUsize, ops::ControlFlow};
 
 #[derive(Debug, Eq, PartialEq)]
 struct ExportPage {
@@ -20,7 +20,7 @@ enum ExportError {
     },
 }
 
-// This budget bounds returned body bytes, not temporary formatting allocations
+// This budget bounds returned body bytes, not the String's spare capacity
 // or an enclosing transport envelope. The host owns the format and those bounds.
 fn export(
     log: &Log,
@@ -32,13 +32,15 @@ fn export(
     let mut emitted = 0;
     let mut last_emitted = None;
     let mut stopped_for_budget = Ok(false);
+    let mut sequence_buffer = NumBuffer::new();
     let scan = log.visit_page(filter, request, |entry| {
-        let encoded = format!("{}: {}\n", entry.sequence, entry.message);
-        if encoded.len() > max_bytes.saturating_sub(body.len()) {
+        let sequence = entry.sequence.format_into(&mut sequence_buffer);
+        let required_bytes = sequence.len() + 2 + entry.message.len() + 1;
+        if required_bytes > max_bytes.saturating_sub(body.len()) {
             stopped_for_budget = if emitted == 0 {
                 Err(ExportError::EntryTooLarge {
                     sequence: entry.sequence,
-                    required_bytes: encoded.len(),
+                    required_bytes,
                     max_bytes,
                 })
             } else {
@@ -46,7 +48,11 @@ fn export(
             };
             return ControlFlow::Break(());
         }
-        body.push_str(&encoded);
+        body.reserve(required_bytes);
+        body.push_str(sequence);
+        body.push_str(": ");
+        body.push_str(&entry.message);
+        body.push('\n');
         emitted += 1;
         last_emitted = Some(entry.sequence);
         ControlFlow::Continue(())

@@ -6,6 +6,35 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.25.2] - Unreleased
+
+### 🔧 Changed
+
+- Format byte-budgeted export rows directly into the result after checking their
+  exact encoded length, removing the per-row temporary string while preserving
+  UTF-8 budgets, typed oversized-row errors and cursor continuation.
+
+### 🛠️ Tooling
+
+- Adopt published toko-tooling 0.41.0, its inherited Cargo/Rustdoc lint minimum
+  and offline `make deps-list`. Keep display-only aliases and their allowances
+  removed; preserve package identities, production graphs and existing gates.
+  Publication uses admitted member manifests; group increments preserve root bytes.
+- Enforce Clippy warnings through Cargo after qualifying fresh/reused native and
+  Wasm artifact refusal. Keep explicit Rustdoc denial and selected-group admission.
+  Generated public consumers retain only their supplier's inherited dependencies
+  and integration targets, removing unused declarations and empty-library warnings.
+- Keep optional test-supplier upgrades separate from the qualified frozen release
+  graph. Native tool installation still admits exact versions, archive checksums
+  and packaged locks; Cargo 1.100 supplies its default install lock.
+- Pre-release registry review confirms current stable toko-tooling 0.41.0,
+  num-bigint 0.5.1, Serde 1.0.229 and cargo-sort 2.1.4. Defer optional
+  cargo-sort-derives 0.15.0 to the next reviewed shared catalog adoption, retaining
+  0.14.1. Defer IC Build 0.84.0 to the next native-editor maintenance batch;
+  this release retains qualified 0.83.0 and its packaged IC Host 0.76.4 lock.
+  Current IC Host 0.77.0 is not forced into that supplier's selected graph.
+  Revisit these dispositions at the next applicable release review.
+
 ## [0.25.1] - 2026-11-13
 
 ### 🩹 Fixed

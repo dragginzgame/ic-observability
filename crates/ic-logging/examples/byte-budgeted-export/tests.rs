@@ -1,6 +1,35 @@
 use super::*;
 
 #[test]
+fn byte_budget_handles_decimal_widths_and_utf8_through_sequence_exhaustion() {
+    for sequence in [0, 9, 10, 99, 100, u64::MAX] {
+        for message in ["", "é🙂"] {
+            let mut snapshot = history().into_snapshot();
+            let mut entry = snapshot.entries.pop().unwrap();
+            entry.sequence = sequence;
+            entry.message = message.into();
+            snapshot.entries = vec![entry];
+            snapshot.next_sequence = sequence.checked_add(1);
+            let log = Log::restore(snapshot).unwrap();
+            let expected = format!("{sequence}: {message}\n");
+            let exact = export(&log, Filter::default(), request(None), expected.len()).unwrap();
+            assert_eq!(exact.body, expected);
+            assert_eq!(exact.emitted, 1);
+            assert_eq!(exact.scanned, 1);
+            assert_eq!(exact.next_before, None);
+            assert_eq!(
+                export(&log, Filter::default(), request(None), expected.len() - 1),
+                Err(ExportError::EntryTooLarge {
+                    sequence,
+                    required_bytes: expected.len(),
+                    max_bytes: expected.len() - 1,
+                })
+            );
+        }
+    }
+}
+
+#[test]
 fn budget_stop_does_not_skip_the_unemitted_utf8_candidate() {
     let log = history();
     let first = export(&log, Filter::default(), request(None), 8).unwrap();

@@ -25,17 +25,32 @@ sub write_manifest {
     print {$out} $text or die "cannot render fixture manifest\n";
     close $out or die "cannot close fixture manifest\n";
 }
-my ($root_file,$destination,$supplier,$version)=@ARGV;
-@ARGV == 4 && $supplier =~ /\A(?:metrics|logging)\z/
-    or die "usage: render-retained-consumer.pl ROOT.json DEST.toml metrics|logging VERSION\n";
+my ($root_file,$supplier_file,$destination,$supplier,$version)=@ARGV;
+@ARGV == 5 && $supplier =~ /\A(?:metrics|logging)\z/
+    or die "usage: render-retained-consumer.pl ROOT.json SUPPLIER.json DEST.toml metrics|logging VERSION\n";
 my $root=read_json($root_file);
+my $manifest=read_json($supplier_file);
 my $workspace=$root->{workspace};
 ref($workspace) eq 'HASH' && ref($workspace->{dependencies}) eq 'HASH'
     or die "missing workspace catalog\n";
 $workspace->{members}=['supplier','client'];
 $workspace->{'default-members'}=['client'];
-my $dependencies=$workspace->{dependencies};
-delete @{$dependencies}{'ic-metrics','ic-logging'};
+my %inherited;
+for my $scope ($manifest, values %{$manifest->{target} // {}}) {
+    for my $table (qw(dependencies dev-dependencies build-dependencies)) {
+        my $declarations=$scope->{$table} // {};
+        for my $alias (keys %$declarations) {
+            my $dependency=$declarations->{$alias};
+            $inherited{$alias}=1 if ref($dependency) eq 'HASH' && $dependency->{workspace};
+        }
+    }
+}
+my $dependencies={};
+for my $alias (keys %inherited) {
+    exists($workspace->{dependencies}{$alias}) or die "missing inherited dependency: $alias\n";
+    $dependencies->{$alias}=$workspace->{dependencies}{$alias};
+}
+$workspace->{dependencies}=$dependencies;
 # Retain the supplier's real version; this client must not normalize identity.
 $dependencies->{"ic-$supplier"}={
     path => 'supplier', version => "=$version", 'default-features' => JSON::PP::false,

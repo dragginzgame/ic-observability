@@ -39,7 +39,7 @@ trap cleanup EXIT
 freeze_consumer() {
     local group="$1" supplier="$2" version="$3" directory
     consumer="$fixture/$group-consumer"
-    mkdir -p "$consumer/supplier" "$consumer/client/src" "$consumer/client/tests"
+    mkdir -p "$consumer/supplier" "$consumer/client/tests"
     cp Cargo.toml Cargo.lock rust-toolchain.toml LICENSE.md "$consumer/"
     cp "crates/ic-$supplier/Cargo.toml" \
         "crates/ic-$supplier/README.md" "$consumer/supplier/"
@@ -52,10 +52,10 @@ freeze_consumer() {
     # This standalone client owns only the retained supplier, not the product
     # workspace's complete local member catalog or release policy.
     yq -p toml -o json '.' "$consumer/Cargo.toml" > "$consumer/root.json"
+    yq -p toml -o json '.' "$consumer/supplier/Cargo.toml" > "$consumer/supplier.json"
     perl scripts/release/render-retained-consumer.pl "$consumer/root.json" \
-        "$consumer/Cargo.toml" "$supplier" "$version"
+        "$consumer/supplier.json" "$consumer/Cargo.toml" "$supplier" "$version"
     printf '[package]\nname = "retained-consumer"\nversion = "0.0.0"\nedition.workspace = true\nrust-version.workspace = true\npublish = false\n[lints]\nworkspace = true\n[package.metadata.toko-tooling.loc]\ncategory = "tests"\n[dependencies]\nic-%s.workspace = true\n' "$supplier" > "$consumer/client/Cargo.toml"
-    : > "$consumer/client/src/lib.rs"
     cp "scripts/release/fixtures/retained-consumer/tests/$supplier.rs" \
         "$consumer/client/tests/contract.rs"
     cargo metadata --manifest-path "$consumer/Cargo.toml" --offline --format-version 1 > "$fixture/$group-consumer-before.json"
@@ -210,13 +210,7 @@ for group in metrics logging; do
     previous="$(make --no-print-directory -s release-version)"
     candidate="$(perl scripts/ci/validate-release-inputs.pl next-version "$previous" "$kind")"
     cp Cargo.toml "$fixture/$group-root-before"
-    FIXTURE_GROUP="$group" FIXTURE_PREVIOUS="$previous" FIXTURE_NEXT="$candidate" perl -pe '
-        if (/^ic-\Q$ENV{FIXTURE_GROUP}\E = /) {
-            s/version = "\Q$ENV{FIXTURE_PREVIOUS}\E"/version = "$ENV{FIXTURE_NEXT}"/ or die "missing selected catalog version\n";
-            $found++;
-        }
-        END { die "expected one selected catalog alias\n" unless $found == 1 }
-    ' "$fixture/$group-root-before" > "$fixture/$group-root-expected"
+    cp "$fixture/$group-root-before" "$fixture/$group-root-expected"
     other_version="$(RELEASE_GROUP="$other" make --no-print-directory -s release-version)"
     other_ledger="$(RELEASE_GROUP="$other" bash scripts/release/metadata.sh plan | jq -er .changelog)"
     cp "$other_ledger" "$fixture/$group-other-ledger"
@@ -226,9 +220,7 @@ for group in metrics logging; do
     source="$(git rev-parse HEAD)"
     # Cargo accepts an unused alias with a stale version. The actual group
     # adapter must still reject it, even when that alias belongs to the other group.
-    FIXTURE_OTHER="$other" perl -pi -e '
-        if (/^ic-\Q$ENV{FIXTURE_OTHER}\E = /) { s/version = "[^"]+"/version = "0.0.0"/ or die }
-    ' Cargo.toml
+    printf '\n[workspace.dependencies.ic-%s]\npath = "crates/ic-%s"\nversion = "0.0.0"\n' "$other" "$other" >> Cargo.toml
     cargo metadata --locked --offline --format-version 1 > "$fixture/$group-unused-catalog-metadata.json"
     if bash scripts/release/metadata.sh plan > "$fixture/$group-unused-catalog-refusal.log" 2>&1; then exit 1; fi
     cp "$fixture/$group-root-before" Cargo.toml
@@ -312,9 +304,9 @@ for group in metrics logging; do
     jq -n -e --arg name "ic-$other" --slurpfile before "$fixture/$group-before.json" --slurpfile after "$fixture/$group-after.json" '
         def identity($m): $m.packages[] | select(.name==$name) | {id,version,dependencies};
         identity($before[0]) == identity($after[0])' >/dev/null
-    # The root catalog changes only the selected alias's numeric requirement.
-    # Exact byte comparison above preserves the other group and all external pins.
-    printf '%s\n' Cargo.toml Cargo.lock "releases/$group/CHANGELOG.md" "crates/ic-$group/Cargo.toml" > "$fixture/expected-changed"
+    # Without local dependency aliases, version preparation preserves root bytes.
+    # Exact comparison above also preserves every external dependency selection.
+    printf '%s\n' Cargo.lock "releases/$group/CHANGELOG.md" "crates/ic-$group/Cargo.toml" > "$fixture/expected-changed"
     git diff-tree --no-commit-id --name-only -r HEAD | LC_ALL=C sort > "$fixture/changed"
     LC_ALL=C sort "$fixture/expected-changed" > "$fixture/expected-sorted"
     cmp "$fixture/expected-sorted" "$fixture/changed"

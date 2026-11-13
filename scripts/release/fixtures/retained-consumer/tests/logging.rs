@@ -1,3 +1,5 @@
+//! Checks retained Logging append, scan and time-retention behavior.
+
 #[test]
 fn retained_log_contract() {
     use ic_logging::{EntryInput, Filter, Level, Limits, Log, PageRequest};

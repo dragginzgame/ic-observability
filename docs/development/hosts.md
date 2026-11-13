@@ -37,7 +37,7 @@ collection or turn a failed check into a successful one.
 
 ## Prerequisites and focused checks
 
-Root `[workspace.dependencies]` declares `toko-tooling = "=0.40.1"` once.
+Root `[workspace.dependencies]` declares `toko-tooling = "=0.41.0"` once.
 Both real members inherit it unconditionally as a dev-dependency and merge the
 name into cargo-machete ignored metadata, without a Rust import. Cargo.lock pins
 the registry version/checksum; no selection-only package or separate tooling
@@ -51,7 +51,7 @@ the custom candidate, metadata and publication scripts check tooling before effe
 Use `make deps-update` for explicit Cargo updates (`cargo update -v`), optionally
 with `DEPENDENCY_PACKAGE` and `DEPENDENCY_PRECISE` to select one dependency.
 For example, after editing the root tooling pin, run
-`make deps-update DEPENDENCY_PACKAGE=toko-tooling DEPENDENCY_PRECISE=0.40.1`,
+`make deps-update DEPENDENCY_PACKAGE=toko-tooling DEPENDENCY_PRECISE=0.41.0`,
 then `make toko-tooling-update`. This repository has only the root maintained
 workspace. The command preserves manifest requirements and is separate from
 supplier freshness review; it is not called by CI or release admission.
@@ -64,7 +64,7 @@ before their first tool installation and save after setup, before product checks
 Cache service failures permit download fallback; downloaded bytes still require
 the selected checksum. The existing native prerequisite/compiler order is retained.
 
-The crates.io toko-tooling 0.40.1 refresh preserves the selected
+The crates.io toko-tooling 0.41.0 refresh preserves the selected
 tool catalogs; the compiler is now explicitly prepared at Rust 1.100.0.
 `make tools-check check-pins` admits prepared tools;
 setup admits the renamed catalog contract without store cleanup. Earlier source-bound
@@ -135,8 +135,16 @@ no local exception or temporary policy-reference override is needed.
 Both product members and generated retained consumers inherit root lint policy.
 The root keeps safe-only `unsafe_code = "forbid"`, strict warning-denied Clippy
 and Rustdoc gates, and reviewed pedantic checks without blanket nursery selection.
-Cargo permits the otherwise-unused product catalog entries because they record
-release identities without creating a dependency between the libraries.
+`make deps-list` lists actual package versions and release groups offline.
+The root retains only dependencies inherited by real members; display-only
+product aliases and their unused-dependency lint allowance are removed.
+The 0.41.0 Cargo/Rustdoc minimum is inherited by both packages. `make clippy`
+uses `CARGO_BUILD_WARNINGS=deny` without changing compilation flags solely for
+warning policy; fresh and reused native/Wasm warning refusal is qualified under
+`target/evidence/toko-tooling-0410/`. Rustdoc retains `RUSTDOCFLAGS="-D warnings"`.
+No plain-JSON warning collector is weakened. See the released
+[Cargo 1.100 adoption choices](https://github.com/dragginzgame/toko-tooling/blob/b4e6308894c495169278b34ea7803973c125adb6/docs/tools/rust-toolchains.md#rust-1100-adoption-choices). Cargo dependency lints do not cover
+dev-dependencies, so existing feature, graph and public-consumer checks remain.
 The historical minimum-compiler evidence below retains its original identity.
 
 Use Git, GNU Make, Bash 3.2 or newer and standard Unix utilities. The
@@ -192,9 +200,9 @@ libraries; select direct Cargo commands when only one package or test is affecte
 | Scope | Commands |
 | --- | --- |
 | Observability workspace | `make check check-wasm clippy docs-check test` |
-| Focused library checks | `cargo check -p PACKAGE --all-targets --locked`; library Wasm: `cargo check -p PACKAGE --locked --target wasm32-unknown-unknown`; `cargo clippy -p PACKAGE --all-targets --locked -- -D warnings` |
+| Focused library checks | `cargo check -p PACKAGE --all-targets --locked`; library Wasm: `cargo check -p PACKAGE --locked --target wasm32-unknown-unknown`; `CARGO_BUILD_WARNINGS=deny cargo clippy -p PACKAGE --all-targets --locked` |
 | Named tests | `cargo test -p ic-metrics --locked <test-name>`; package doctests: `cargo test -p PACKAGE --locked --doc` |
-| Logging | `cargo test -p ic-logging --lib --locked`; `cargo test -p ic-logging --doc --locked`; `cargo clippy -p ic-logging --lib --tests --examples --locked -- -D warnings` |
+| Logging | `cargo test -p ic-logging --lib --locked`; `cargo test -p ic-logging --doc --locked`; `CARGO_BUILD_WARNINGS=deny cargo clippy -p ic-logging --lib --tests --examples --locked` |
 | Explicit persistence clients | `cargo test -p ic-metrics --test persistence --all-features --locked --offline`; negative API checks: `cargo test -p ic-metrics --doc --all-features --locked --offline` |
 | Fixed instrumentation | `cargo test -p ic-metrics --lib --no-default-features --locked --offline aggregate::tests`; native/Wasm production graphs exclude all external dependencies |
 | Instrumentation feature graphs | `make metrics-profiles-check`; checks dependency-free native minimal, recording, default and all-feature Wasm normal/build closures. `make logging-profiles-check` independently checks Logging |
@@ -204,7 +212,7 @@ libraries; select direct Cargo commands when only one package or test is affecte
 | Logging operation model | `cargo test -p ic-logging --lib --locked --offline log::tests::mixed`; exercises journal-based state, paging and visitor stops across admission, retention and restoration |
 | Histogram restoration oracle | `cargo test -p ic-metrics --lib --no-default-features --locked --offline histogram::tests::restoration`; exhaustive small-domain bounds/distributions and exact weighted overflow histories |
 | Allocator-free fixed recording link | `make allocation-free-check` |
-| Recording library checks | `cargo check -p ic-metrics --lib --features recording --locked`; Wasm: `cargo check -p ic-metrics --lib --features recording --locked --target wasm32-unknown-unknown`; lint: `cargo clippy -p ic-metrics --lib --tests --features recording --locked -- -D warnings` |
+| Recording library checks | `cargo check -p ic-metrics --lib --features recording --locked`; Wasm: `cargo check -p ic-metrics --lib --features recording --locked --target wasm32-unknown-unknown`; lint: `CARGO_BUILD_WARNINGS=deny cargo clippy -p ic-metrics --lib --tests --features recording --locked` |
 | Recording tests and examples | `cargo test -p ic-metrics --lib --features recording --locked <test-name>`; doctests: `cargo test -p ic-metrics --doc --features recording --locked` |
 | Snapshot/pins | `make toko-tooling-check check-pins` |
 | Local process capture | `perl scripts/ci/tests/check-process.t`; byte limits, child status, timeout, interruption and reaping without product compilation |
@@ -300,11 +308,11 @@ coverage; passing these checks is not proof of byte/protocol compatibility.
 ### Dependency roles and production graphs
 
 The workspace owns independent, dependency-free Metrics and Logging libraries.
-The root catalog's `Tests and tooling only` group selects `num-bigint` for the
+The root dependency catalog selects `num-bigint` for the
 restoration overflow oracle and Serde for public API trait-refusal checks. Neither
 enters production. IC Storage owns adapter graph and retained-format qualification.
 
-The root catalog uses Toko Tooling's grouped sort order.
+The root catalog follows the shared formatter; Cargo role/group headings are optional.
 `make fmt`, `make fmt-check` and hooks use that shared default; every release
 adapter ordering check uses `--manifest-order-grouped` against its current or
 selected committed source. No paired formatter override is needed here.
@@ -381,7 +389,8 @@ profiles and package-count/exclusion rules. Logging has no feature matrix and is
 checked separately once on native and Wasm; declaration admission remains a
 separate guard that refuses every Logging dependency. `bash scripts/release/test-retained-consumer.sh`
 verifies parsed Cargo projection across multiline manifests, quoted strings and
-retained consumers' real supplier versions while preserving other catalog fields.
+retained consumers' real supplier versions and workspace metadata, retaining only
+the supplier's actual inherited dependency declarations (including target tables).
 The retained clients copy checked-in Rust contracts from
 `scripts/release/fixtures/retained-consumer/tests/`; shared standalone Rustfmt
 selection includes both contracts in `make fmt`, `make fmt-check` and the hook.
