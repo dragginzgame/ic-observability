@@ -1,42 +1,21 @@
 # Contributor tooling
 
-## Current 0.43.0 selection
+## Delivered 0.43.0 selection
 
-Published toko-tooling **0.43.0** is pinned once at the root, inherited by both
-members and locked with archive SHA-256
-`060d3507b66eb290ce12bc2572098f7e7cb1e12e9d6697a9b1a5d1552fcb2588`.
-The authenticated exporter retains all 56 entrypoints and adds the PATH launcher
-as a required companion, for 111 managed files. Relative to local 0.42.8, only
-`vendor/toko-tooling/make/tools.mk` and the LOC reporter change, plus the new
-`vendor/toko-tooling/scripts/dev/toko-cloc` file. The carried-forward CDPATH fixes
-remain included. Baseline/canonical files, compiler/lints, product Rust/APIs and
-the release-stage roster remain unchanged.
+The authenticated vendor payload selects published toko-tooling **0.43.0**, with
+56 entrypoints and 111 files. The `toko-cloc` PATH launcher replaces the retired
+Make LOC interface; active usage belongs to the [development guide](../development/hosts.md).
+The carried-forward CDPATH hook fixes preserve staged formatting and local edits.
+Canonical files, product Rust/APIs, compiler/lints and production graphs are unchanged.
 
-The current LOC interface is `toko-cloc`, with `-d N`, `--manifest PATH` and
-positional selectors. Consumer-owned Make help and active docs use it; no local
-LOC overrides or CI callers require repair. Historical ledgers retain their
-original commands. The [development guide](../development/hosts.md) owns local
-usage and links to the reviewed launcher setup.
-
-Normal installation/tool admission, offline snapshot agreement, pin, formatting,
-membership and deployment drift-refusal checks passed. The existing PATH launcher
-matches the released bytes; help, repository JSON and recording-module selection
-ran successfully, with both real members and no unclassified LOC. The actual
-consumer hook fixture passed with CDPATH set against the new Make include,
-including edit preservation and refusal cases. Only toko-tooling changed from the
-incoming lock; syn and canonical files remain intact.
-
-Focused records are under `target/evidence/toko-tooling-0430/`. Authorized delivery
-selects Metrics 0.30.6 then Logging 0.25.6 with both complete workspace plans;
-final Git/registry results remain pending. Transcripts and supplier review are
-under `target/deploy/toko0430-20261114/`. The separate syn 3.0.10 edit stays outside
-the release graph.
-
-The preceding local 0.42.8 checks remain under
-`target/evidence/toko-tooling-0428/`: CDPATH-set repeated installation,
-staged formatting, unrelated-edit/lock preservation and formatter/partial-stage/
-hook-conflict refusal passed before this refresh. Producer regression suites
-remain upstream.
+Metrics 0.30.6 and Logging 0.25.6 are delivered and independently verified on
+crates.io. The [protected receipt](releases/toko0430-delivery-20261114.md) owns exact
+source/tag/archive identities, both complete 20-stage plans, phase timings,
+supplier dispositions, focused LOC/hook checks and recovery custody. Focused
+records remain under `target/evidence/toko-tooling-0430/` and
+`target/evidence/toko-tooling-0428/`; delivery records are under
+`target/deploy/toko0430-20261114/`. Hosted native acceptance stays asynchronous.
+The separate syn 3.0.10 edit remains outside the published syn 3.0.9 graph.
 
 ## Delivered 0.42.5 selection
 

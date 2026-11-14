@@ -2,18 +2,18 @@
 
 ## Published products
 
-Metrics **0.30.5** and Logging **0.25.5** are delivered to GitHub and independently
-verified on crates.io. Never re-upload them. The [delivery receipt](../evidence/releases/toko0425-delivery-20261113.md)
+Metrics **0.30.6** and Logging **0.25.6** are delivered to GitHub and independently
+verified on crates.io. Never re-upload them. The [delivery receipt](../evidence/releases/toko0430-delivery-20261114.md)
 owns exact commits, annotated tags, archive hashes, complete plans and registry
-readback. Batch `batch-meIy8QET` passed both complete 20-stage workspace plans
+readback. Batch `batch-gobrWzyt` passed both complete 20-stage workspace plans
 without narrowing or stage reuse, followed by final-version archives, source/tag
 admission and maintained-source readback
-(34 Metrics and 16 Logging files). Stage totals were 505 and 521 seconds;
-release-tool fixtures took 356 and 377 seconds. Hosted native and installed
-consumer acceptance remain separate and asynchronous. Logging delivery CI was
-observed pending; pending or cancelled runs are not passes.
+(34 Metrics and 16 Logging files). Stage totals were 543 and 534 seconds;
+release-tool fixtures took 392 and 383 seconds. Hosted native and installed
+consumer acceptance remain separate and asynchronous. Delivery CI was observed
+in progress; pending or cancelled runs are not passes.
 
-## Prepared 0.43.0 delivery
+## Delivered 0.43.0 tooling
 
 Root Cargo selection, inherited dev-dependencies, lock and authenticated snapshot
 select published **toko-tooling 0.43.0**, archive SHA-256
@@ -33,11 +33,13 @@ toko-tooling from the incoming lock; syn remains byte-identical.
 
 Current records are under `target/evidence/toko-tooling-0430/`; prior local
 CDPATH/hook evidence remains under `target/evidence/toko-tooling-0428/`.
-Authorized delivery selects Metrics 0.30.6 then Logging 0.25.6, with both complete
-workspace plans and verified publication. The normal checkout remains on `main`;
-the managed candidate owns effects to `origin/main`. Final Git/registry results
-remain pending. Preserve the separate syn 3.0.10 edit and every previous
-candidate, stash and recovery ref.
+Source `7d9c1a2c75932374e828b799c91f04c26c32a192` delivered Metrics then
+Logging with complete plans and verified publication. The normal `main` reconciled
+to `bdd5bf0bba1cf7b85013a41aa9b40835ef4f4723`; both ledgers record supplier review.
+Hosted [Logging CI](https://github.com/dragginzgame/ic-observability/actions/runs/43573880716)
+and [Metrics CI](https://github.com/dragginzgame/ic-observability/actions/runs/43573110089)
+were observed in progress. No downstream deployment or completed native acceptance
+is implied. Preserve the separate syn edit and all prior candidates/recovery.
 
 ## Delivered 0.42.5 tooling
 
@@ -94,14 +96,14 @@ or downstream deployment is implied.
 
 The separate syn 3.0.10 edit remains outside the frozen syn 3.0.9 graph.
 Its current durable stash is `ed73c698f3ff895ed6ed994ac011514e0cdf67ae`, pinned by
-`preserved/syn-3.0.10-toko0430-20261114`. Reapply it after clean reconciliation.
+`preserved/syn-3.0.10-toko0430-20261114`. It is reapplied locally after clean reconciliation.
 All preceding stashes and preservation refs remain retained; the
 [receipt chain](../evidence/releases/README.md) owns their exact identities.
 
-Batch `batch-meIy8QET` completed at index 2 and reconciled cleanly. Execution remains
-under `target/release-frozen/batch-meIy8QET`, with durable recovery under
-`.git/release-state/frozen/batch-meIy8QET/`. Earlier completed batches, including
-`batch-zAj6vbFx`, `batch-qiGiRmCY`, `batch-z8nN4ysP` and `batch-4BqGe_7B`, retain their candidates
+Batch `batch-gobrWzyt` completed at index 2 and reconciled cleanly. Execution remains
+under `target/release-frozen/batch-gobrWzyt`, with durable recovery under
+`.git/release-state/frozen/batch-gobrWzyt/`. Earlier completed batches, including
+`batch-meIy8QET`, `batch-zAj6vbFx`, `batch-qiGiRmCY`, `batch-z8nN4ysP` and `batch-4BqGe_7B`, retain their candidates
 and recovery. They keep original source, layout, catalogs, journals and proof
 owners; never reinterpret them with this migration. All 20 release obligations and disabled stage/version-proof reuse remain.
 
