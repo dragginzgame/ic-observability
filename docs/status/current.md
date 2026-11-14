@@ -2,45 +2,41 @@
 
 ## Published products
 
-Metrics **0.30.6** and Logging **0.25.6** are delivered to GitHub and independently
-verified on crates.io. Never re-upload them. The [delivery receipt](../evidence/releases/toko0430-delivery-20261114.md)
+Metrics **0.30.7** and Logging **0.25.7** are delivered to GitHub and independently
+verified on crates.io. Never re-upload them. The [delivery receipt](../evidence/releases/toko0432-delivery-20261114.md)
 owns exact commits, annotated tags, archive hashes, complete plans and registry
-readback. Batch `batch-gobrWzyt` passed both complete 20-stage workspace plans
+readback. Batch `batch-SPBo7uq9` passed both complete 20-stage workspace plans
 without narrowing or stage reuse, followed by final-version archives, source/tag
 admission and maintained-source readback
-(34 Metrics and 16 Logging files). Stage totals were 543 and 534 seconds;
-release-tool fixtures took 392 and 383 seconds. Hosted native and installed
-consumer acceptance remain separate and asynchronous. Delivery CI was observed
-in progress; pending or cancelled runs are not passes.
+(34 Metrics and 16 Logging files). Stage totals were 497 and 480 seconds;
+release-tool fixtures took 352 and 338 seconds. Hosted native and installed
+consumer acceptance remain separate and asynchronous. Delivery CI remained
+pending; pending or cancelled runs are not passes.
 
-## Prepared 0.43.2 delivery
+## Delivered 0.43.2 tooling
 
-Root Cargo selection, inherited dev-dependencies, lock and authenticated snapshot
-select published **toko-tooling 0.43.2**, archive SHA-256
+Source `2138f76c237a1af23ab00061b06d9b7b4e578838` selects published
+**toko-tooling 0.43.2**, archive SHA-256
 `cb81a5f9c13f50614af8468b599c3a05327f09f643aa954dc8e6878aa649263f`.
-All 56 entrypoints remain; three timing companions bring the managed roster to
-114 files. The baseline's CLI quick-start rule is adopted in the root release
-index. Compiler/lints, canonical legal files, product Rust/APIs and release-stage
-selection remain unchanged. This repo has no maintained qualification workspace;
-the optional/transitive qualification-lock fix changes no selected product graph.
+All 56 entrypoints remain; timing companions bring the managed roster to 114 files.
+The root index supplies the new CLI quick start. Compiler/lints, legal files,
+product Rust/APIs and release roster are unchanged. No maintained qualification
+workspace exists here; the qualification-lock fix changes no selected graph.
 
-New batches retain phase observations, read with `make release-batch-timings`.
-Readback of `batch-gobrWzyt` returned `[]`, leaving its intent and absent journal
-unchanged. Older receipt-derived phase measurements retain their original method;
-never backfill a timing journal or infer proof reuse. Current records are under
-`target/evidence/toko-tooling-0432/`; supplier regression suites remain upstream.
+`make release-batch-timings BATCH=batch-SPBo7uq9` returned 30 completed,
+successful live observations. Readback preserved journal bytes; isolated consumer
+fixtures contributed no simulated sources/versions or deliberate failures.
+Old batches still return `[]`; never backfill their journals or infer proof reuse.
+The [receipt](../evidence/releases/toko0432-delivery-20261114.md) owns exact scope,
+phase timings and custody. Current records use `target/deploy/toko0432-20261114/`;
+adoption checks remain under `target/evidence/toko-tooling-0432/`.
 
-Installation/tool admission, snapshot/pin/format checks, membership and deployment
-drift refusal passed. Publication Make/policy fixtures passed with timing enabled
-and substituted effects; their observations retain both success and expected
-failure. Only toko-tooling changed from the incoming lock; syn is byte-identical.
-
-Consumer release/publication fixtures now clear the invoking timing context;
-publication fixtures passed with an inherited sentinel journal byte-identical.
-Nested batch fixtures retain their own observations. Authorized delivery selects
-Metrics 0.30.7 then Logging 0.25.7, with both complete workspace plans and verified
-publication from the managed candidate to `origin/main`. Final results remain
-pending. Preserve the separate syn edit and all prior candidates/recovery.
+Normal `main` reconciled to `a73602086379fcf62d6a25ee503fc2a5cbcf0e39`.
+Both ledgers record supplier review. Hosted
+[Logging CI](https://github.com/dragginzgame/ic-observability/actions/runs/43622955576)
+was queued; [Metrics CI](https://github.com/dragginzgame/ic-observability/actions/runs/43622150508)
+was in progress. No completed hosted native or downstream acceptance is implied.
+Preserve the separate syn edit and all prior candidates/recovery.
 
 ## Delivered 0.43.0 tooling
 
@@ -106,14 +102,14 @@ or downstream deployment is implied.
 
 The separate syn 3.0.10 edit remains outside the frozen syn 3.0.9 graph.
 Its current durable stash is `10a7bac2485e4217206bdf01ef62a11425e1a28f`, pinned by
-`preserved/syn-3.0.10-toko0432-20261114`. Reapply it after clean reconciliation.
+`preserved/syn-3.0.10-toko0432-20261114`. It is reapplied locally after clean reconciliation.
 All preceding stashes and preservation refs remain retained; the
 [receipt chain](../evidence/releases/README.md) owns their exact identities.
 
-Batch `batch-gobrWzyt` completed at index 2 and reconciled cleanly. Execution remains
-under `target/release-frozen/batch-gobrWzyt`, with durable recovery under
-`.git/release-state/frozen/batch-gobrWzyt/`. Earlier completed batches, including
-`batch-meIy8QET`, `batch-zAj6vbFx`, `batch-qiGiRmCY`, `batch-z8nN4ysP` and `batch-4BqGe_7B`, retain their candidates
+Batch `batch-SPBo7uq9` completed at index 2 and reconciled cleanly. Execution remains
+under `target/release-frozen/batch-SPBo7uq9`, with durable recovery under
+`.git/release-state/frozen/batch-SPBo7uq9/`. Earlier completed batches, including
+`batch-gobrWzyt`, `batch-meIy8QET`, `batch-zAj6vbFx`, `batch-qiGiRmCY`, `batch-z8nN4ysP` and `batch-4BqGe_7B`, retain their candidates
 and recovery. They keep original source, layout, catalogs, journals and proof
 owners; never reinterpret them with this migration. All 20 release obligations and disabled stage/version-proof reuse remain.
 
