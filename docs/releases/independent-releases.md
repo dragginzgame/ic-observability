@@ -28,7 +28,7 @@ Neither conversion changes a package's numeric identity.
 Earlier coordinated releases remain once in [shared history](../../releases/history.md), through 0.23.0;
 both group ledgers link to that history. Existing tags and receipts are retained.
 Tooling has no selection-only package or release-group membership. One exact
-root dependency pins toko-tooling 0.43.0; both libraries inherit it only for
+root dependency pins toko-tooling 0.43.2; both libraries inherit it only for
 development, and Cargo.lock owns its registry checksum. Root dependency entries
 serve actual member inheritance; no display-only aliases or lint allowances are
 needed. Both product packages remain in their groups' `members` rosters, with
@@ -81,6 +81,20 @@ not total deployment time or a forecast; see the
 [delivery receipt](../evidence/releases/toko0430-delivery-20261114.md). Use the
 selected attempt's current timings and explain execution/reuse scope before a
 new expensive gate. Unchanged fixture evidence remains bound to its inputs.
+
+New batches retain phase observations through failures and resumes. Read them
+from the normal checkout with `make release-batch-timings BATCH=batch-gobrWzyt`.
+This read-only command prints JSON without setup, validation or network effects;
+it takes the existing queue lock. Older batches, including that example, return
+`[]`; they receive no reconstructed timing journal. Parent durations include
+their children, and Cargo publication includes packaging/upload/registry wait.
+Timing observations grant no proof reuse or retry authority. The reviewed
+[phase-timing contract](https://github.com/dragginzgame/toko-tooling/blob/38a3b259453c56d9fb66e780e53957641f1e73b2/docs/releases/release-batches.md#phase-timings)
+owns recording and interpretation. Existing historical receipt measurements keep
+their original method and scope.
+Consumer release/publication fixtures clear the invoking timing context, so
+simulated effects do not enter a live deployment's journal. Nested frozen fixtures
+record their own observations separately.
 
 Prepare tools explicitly with `make install-tools` after adopting this snapshot.
 The managed release editor is published IC Build 0.83.0 with its cli feature.

@@ -13,33 +13,43 @@ release-tool fixtures took 392 and 383 seconds. Hosted native and installed
 consumer acceptance remain separate and asynchronous. Delivery CI was observed
 in progress; pending or cancelled runs are not passes.
 
-## Delivered 0.43.0 tooling
+## Prepared 0.43.2 delivery
 
 Root Cargo selection, inherited dev-dependencies, lock and authenticated snapshot
-select published **toko-tooling 0.43.0**, archive SHA-256
-`060d3507b66eb290ce12bc2572098f7e7cb1e12e9d6697a9b1a5d1552fcb2588`.
-All 56 entrypoints remain; the new PATH launcher is a required companion, for
-111 managed files. Relative to the local 0.42.8 payload, only the shared Make
-LOC interface and reporter change, plus the launcher. Existing CDPATH fixes carry
-forward. Use `toko-cloc` and `-d N`; active docs and consumer Make help are
-migrated. Baseline/canonical files, compiler/lints, product Rust/APIs and release
-roster stay intact. Producer regression suites remain upstream.
+select published **toko-tooling 0.43.2**, archive SHA-256
+`cb81a5f9c13f50614af8468b599c3a05327f09f643aa954dc8e6878aa649263f`.
+All 56 entrypoints remain; three timing companions bring the managed roster to
+114 files. The baseline's CLI quick-start rule is adopted in the root release
+index. Compiler/lints, canonical legal files, product Rust/APIs and release-stage
+selection remain unchanged. This repo has no maintained qualification workspace;
+the optional/transitive qualification-lock fix changes no selected product graph.
+
+New batches retain phase observations, read with `make release-batch-timings`.
+Readback of `batch-gobrWzyt` returned `[]`, leaving its intent and absent journal
+unchanged. Older receipt-derived phase measurements retain their original method;
+never backfill a timing journal or infer proof reuse. Current records are under
+`target/evidence/toko-tooling-0432/`; supplier regression suites remain upstream.
 
 Installation/tool admission, snapshot/pin/format checks, membership and deployment
-drift refusal passed. The PATH launcher matches the release and successfully
-reports repository JSON and recording-module detail. The actual consumer hook
-fixture passed with CDPATH set against the new Make include. Cargo changed only
-toko-tooling from the incoming lock; syn remains byte-identical.
+drift refusal passed. Publication Make/policy fixtures passed with timing enabled
+and substituted effects; their observations retain both success and expected
+failure. Only toko-tooling changed from the incoming lock; syn is byte-identical.
 
-Current records are under `target/evidence/toko-tooling-0430/`; prior local
-CDPATH/hook evidence remains under `target/evidence/toko-tooling-0428/`.
+Consumer release/publication fixtures now clear the invoking timing context;
+publication fixtures passed with an inherited sentinel journal byte-identical.
+Nested batch fixtures retain their own observations. Authorized delivery selects
+Metrics 0.30.7 then Logging 0.25.7, with both complete workspace plans and verified
+publication from the managed candidate to `origin/main`. Final results remain
+pending. Preserve the separate syn edit and all prior candidates/recovery.
+
+## Delivered 0.43.0 tooling
+
 Source `7d9c1a2c75932374e828b799c91f04c26c32a192` delivered Metrics then
-Logging with complete plans and verified publication. The normal `main` reconciled
-to `bdd5bf0bba1cf7b85013a41aa9b40835ef4f4723`; both ledgers record supplier review.
-Hosted [Logging CI](https://github.com/dragginzgame/ic-observability/actions/runs/43573880716)
-and [Metrics CI](https://github.com/dragginzgame/ic-observability/actions/runs/43573110089)
-were observed in progress. No downstream deployment or completed native acceptance
-is implied. Preserve the separate syn edit and all prior candidates/recovery.
+Logging with both complete plans and verified publication. Its
+[receipt](../evidence/releases/toko0430-delivery-20261114.md) owns exact identities,
+phase measurements and custody. LOC uses `toko-cloc`; CDPATH hook fixes remain.
+Hosted CI was observed in progress; that historical observation does not qualify
+this new local source.
 
 ## Delivered 0.42.5 tooling
 
@@ -95,8 +105,8 @@ or downstream deployment is implied.
 ## Deferred work and recovery custody
 
 The separate syn 3.0.10 edit remains outside the frozen syn 3.0.9 graph.
-Its current durable stash is `ed73c698f3ff895ed6ed994ac011514e0cdf67ae`, pinned by
-`preserved/syn-3.0.10-toko0430-20261114`. It is reapplied locally after clean reconciliation.
+Its current durable stash is `10a7bac2485e4217206bdf01ef62a11425e1a28f`, pinned by
+`preserved/syn-3.0.10-toko0432-20261114`. Reapply it after clean reconciliation.
 All preceding stashes and preservation refs remain retained; the
 [receipt chain](../evidence/releases/README.md) owns their exact identities.
 

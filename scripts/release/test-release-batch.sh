@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
+# Simulated effects must not enter the invoking deployment's timing journal.
+unset RELEASE_TIMING_JOURNAL RELEASE_TIMING_ATTEMPT RELEASE_TIMING_PARENT
 # Actual capture/setup, metadata, source proofs, native/Wasm lint, archives and
 # publication admission/readback. Only the full gate roster and registry effects
 # are substituted, against a disposable local Git remote.

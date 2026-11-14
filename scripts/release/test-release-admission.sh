@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
+# Simulated effects must not enter the invoking deployment's timing journal.
+unset RELEASE_TIMING_JOURNAL RELEASE_TIMING_ATTEMPT RELEASE_TIMING_PARENT
 consumers_only=false
 if [[ "$#" != 0 ]]; then
     [[ "$#" == 1 && "$1" == --consumers-only ]] || {

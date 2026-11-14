@@ -1,5 +1,40 @@
 # Contributor tooling
 
+## Current 0.43.2 selection
+
+Published toko-tooling **0.43.2** is pinned once at the root, inherited by both
+members and locked with archive SHA-256
+`cb81a5f9c13f50614af8468b599c3a05327f09f643aa954dc8e6878aa649263f`.
+The authenticated exporter retains 56 entrypoints and adds three required timing
+companions, for 114 managed files. Its updated release/publication helpers retain
+phase observations across failure/resume; timing data grants no proof admission,
+retry or validation reuse. The baseline adds the root CLI quick-start requirement,
+now reflected in the release index. Legal files, compiler/lints, product Rust/APIs
+and full release roster remain unchanged.
+
+Actual old-batch readback through `make release-batch-timings BATCH=batch-gobrWzyt`
+returned `[]`; the intent hash remained equal and no journal was created. The
+old protected receipt's measured boundaries keep their original method and scope.
+The qualification-lock planner change is installed but no maintained qualification
+workspace exists here. The sibling dashboard and producer suites stay unselected.
+
+Normal installation/tool admission, snapshot/pin/format checks, membership and
+custom deployment drift refusal passed. Before fixture-context isolation, consumer
+publication Make and policy fixtures passed with timing enabled: 28 admission spans and six
+registry-observation spans retained successful and intentionally rejected cases.
+Cargo, registry and Git effects were substituted/local; no upload occurred.
+Only toko-tooling changed from the incoming lock. Both real packages retain
+inherited dev-only selection and dependency-free production graphs; syn remains
+byte-identical. No new batch execution or hosted qualification is claimed.
+
+Release preparation isolates simulated consumer fixtures from the invoking live
+timing context. Publication Make/policy checks passed with an inherited sentinel
+journal unchanged; nested frozen fixtures still own their separate observations.
+Focused adoption records remain under `target/evidence/toko-tooling-0432/`;
+delivery records and current supplier review use `target/deploy/toko0432-20261114/`.
+Authorized delivery selects Metrics 0.30.7 then Logging 0.25.7; full-plan and final
+Git/registry results remain pending. The separate syn edit stays outside that graph.
+
 ## Delivered 0.43.0 selection
 
 The authenticated vendor payload selects published toko-tooling **0.43.0**, with

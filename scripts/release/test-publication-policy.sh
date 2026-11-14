@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
+# Simulated effects must not enter the invoking deployment's timing journal.
+unset RELEASE_TIMING_JOURNAL RELEASE_TIMING_ATTEMPT RELEASE_TIMING_PARENT
 root="$(cd "${BASH_SOURCE[0]%/*}/../.." && pwd -P)"
 export PATH="$root/.tools/host/bin:$PATH"
 # shellcheck source=vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh
