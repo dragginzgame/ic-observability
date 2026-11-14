@@ -19,7 +19,7 @@ authors = ["borovan <84897664+borovan@users.noreply.github.com>"]
 # External restoration oracle and public API trait-refusal checks.
 num-bigint = { version = "0.5.1", default-features = false }
 serde = { version = "1.0", default-features = false }
-toko-tooling = "=0.42.5"
+toko-tooling = "=0.43.0"
 
 [workspace.lints.cargo]
 unused_dependencies = "deny"

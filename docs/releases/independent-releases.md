@@ -28,7 +28,7 @@ Neither conversion changes a package's numeric identity.
 Earlier coordinated releases remain once in [shared history](../../releases/history.md), through 0.23.0;
 both group ledgers link to that history. Existing tags and receipts are retained.
 Tooling has no selection-only package or release-group membership. One exact
-root dependency pins toko-tooling 0.42.5; both libraries inherit it only for
+root dependency pins toko-tooling 0.43.0; both libraries inherit it only for
 development, and Cargo.lock owns its registry checksum. Root dependency entries
 serve actual member inheritance; no display-only aliases or lint allowances are
 needed. Both product packages remain in their groups' `members` rosters, with

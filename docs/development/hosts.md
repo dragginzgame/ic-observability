@@ -37,7 +37,7 @@ collection or turn a failed check into a successful one.
 
 ## Prerequisites and focused checks
 
-Root `[workspace.dependencies]` declares `toko-tooling = "=0.42.5"` once.
+Root `[workspace.dependencies]` declares `toko-tooling = "=0.43.0"` once.
 Both real members inherit it unconditionally as a dev-dependency and merge the
 name into cargo-machete ignored metadata, without a Rust import. Cargo.lock pins
 the registry version/checksum; no selection-only package or separate tooling
@@ -54,7 +54,7 @@ consumer checkout, because the installed runner now lives beneath the vendor tre
 Use `make deps-update` for explicit Cargo updates (`cargo update -v`), optionally
 with `DEPENDENCY_PACKAGE` and `DEPENDENCY_PRECISE` to select one dependency.
 For example, after editing the root tooling pin, run
-`make deps-update DEPENDENCY_PACKAGE=toko-tooling DEPENDENCY_PRECISE=0.42.5`,
+`make deps-update DEPENDENCY_PACKAGE=toko-tooling DEPENDENCY_PRECISE=0.43.0`,
 then `make toko-tooling-update`. This repository has only the root maintained
 workspace. The command preserves manifest requirements and is separate from
 supplier freshness review; it is not called by CI or release admission.
@@ -88,16 +88,19 @@ setup command to re-admit the selection and retry cleanup without rebuilding.
 Changed-tree refusals remain blocking; investigate the named path and metadata.
 
 
-`make cloc CLOC_DEPTH=0` reports package detail; `CLOC_DEPTH=1` adds source modules.
-`bash vendor/toko-tooling/scripts/dev/cloc.sh -d 1 ic-metrics::recording` drills into one source branch;
+Use the `toko-cloc` PATH launcher from a checkout, installed once through the
+[reviewed LOC setup](https://github.com/dragginzgame/toko-tooling/blob/bd24a0b7bc95b20a849b16f63d77f6551ff48ab4/docs/fleet/fleet-tools.md#cargo-workspace-loc-report).
+It selects this checkout's vendor reporter and prepared tools. `toko-cloc -d 0`
+reports package detail; `toko-cloc -d 1` adds source modules.
+`toko-cloc -d 1 ic-metrics::recording` drills into one source branch;
 the depth is relative to the selected crate or module.
 Terminal reports colour workspace, crate and module names; redirected or
 `NO_COLOR=1` reports stay plain. Text labels are capped at 44 characters and
 shrink to fit the terminal, with middle truncation and a 120-column fallback
-for redirected output. `bash vendor/toko-tooling/scripts/dev/cloc.sh --wide -d 1` keeps full names;
+for redirected output. `toko-cloc --wide -d 1` keeps full names;
 numeric columns and JSON labels are unchanged. Sibling scans use one updating
 progress line.
-`bash vendor/toko-tooling/scripts/dev/cloc.sh --json`
+`toko-cloc --json`
 emits schema 2 with application/library, test, example, benchmark, tooling and
 unclassified counts. Singular Rust test paths are not retained. The allocation-free
 link fixture lives at `tests/allocation-free/link.rs` with an explicit test role,
@@ -231,7 +234,7 @@ libraries; select direct Cargo commands when only one package or test is affecte
 | Snapshot/pins | `make toko-tooling-check check-pins` |
 | Local process capture | `perl scripts/ci/tests/check-process.t`; byte limits, child status, timeout, interruption and reaping without product compilation |
 | Packaged documentation admission | `perl scripts/ci/tests/package-doc-links.t`; rejects missing, symlink and directory inputs while admitting known Cargo-generated absences |
-| Local tools/hooks | `make tools-check hook-check` |
+| Local tools/hooks | `make tools-check`; `CDPATH=. make hook-check` checks installed hook formatting, edit preservation and installation/refusal with CDPATH set |
 | Release/evidence adapters | `make release-tools-check ci-evidence-check` |
 | Generated public consumer tests | `bash scripts/release/test-release-admission.sh --consumers-only`; builds the two retained supplier clients and runs their `tests/contract.rs` targets without release/recovery scenarios |
 | Native evidence scenario | `bash scripts/ci/test-native-evidence.sh --scenario collection-archive-failure`; runs the named workflow recovery case with substituted effects, excluding standalone host/compiler setup checks |

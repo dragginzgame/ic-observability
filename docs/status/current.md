@@ -1,4 +1,4 @@
-# Current handoff — 2026-11-13
+# Current handoff — 2026-11-14
 
 ## Published products
 
@@ -13,32 +13,40 @@ release-tool fixtures took 356 and 377 seconds. Hosted native and installed
 consumer acceptance remain separate and asynchronous. Logging delivery CI was
 observed pending; pending or cancelled runs are not passes.
 
+## Prepared 0.43.0 delivery
+
+Root Cargo selection, inherited dev-dependencies, lock and authenticated snapshot
+select published **toko-tooling 0.43.0**, archive SHA-256
+`060d3507b66eb290ce12bc2572098f7e7cb1e12e9d6697a9b1a5d1552fcb2588`.
+All 56 entrypoints remain; the new PATH launcher is a required companion, for
+111 managed files. Relative to the local 0.42.8 payload, only the shared Make
+LOC interface and reporter change, plus the launcher. Existing CDPATH fixes carry
+forward. Use `toko-cloc` and `-d N`; active docs and consumer Make help are
+migrated. Baseline/canonical files, compiler/lints, product Rust/APIs and release
+roster stay intact. Producer regression suites remain upstream.
+
+Installation/tool admission, snapshot/pin/format checks, membership and deployment
+drift refusal passed. The PATH launcher matches the release and successfully
+reports repository JSON and recording-module detail. The actual consumer hook
+fixture passed with CDPATH set against the new Make include. Cargo changed only
+toko-tooling from the incoming lock; syn remains byte-identical.
+
+Current records are under `target/evidence/toko-tooling-0430/`; prior local
+CDPATH/hook evidence remains under `target/evidence/toko-tooling-0428/`.
+Authorized delivery selects Metrics 0.30.6 then Logging 0.25.6, with both complete
+workspace plans and verified publication. The normal checkout remains on `main`;
+the managed candidate owns effects to `origin/main`. Final Git/registry results
+remain pending. Preserve the separate syn 3.0.10 edit and every previous
+candidate, stash and recovery ref.
+
 ## Delivered 0.42.5 tooling
 
-The root exact pin, both inherited dev-dependencies, Cargo.lock and authenticated
-snapshot select published **toko-tooling 0.42.5**, archive SHA-256
-`071631f382cbdb682ab04242bb8022bea9f1fa237eaa273456433b95ad6f2aec`.
 Source `45689e21ef4cf4dfb2dcd6de82a8124ff9624866` delivered Metrics then
-Logging with both complete workspace plans and verified registry publication.
-The normal `main` reconciled to delivered commit
-`cde4c144601ad802740e9344f43cafa428f36928`; both ledgers record supplier review.
-
-The same 56 entrypoints/110 files remain selected. Only the shared retention
-probe helper changes in the managed payload. The local exit-probe workaround is
-removed: the existing six-fixture/three-outcome roster uses Shared's repaired
-helper with explicit consumer-root and directory bindings, retaining all 18
-cleanup/retention checks. The full release-stage roster remains unchanged.
-
-Setup/tool admission, offline snapshot agreement, pin checks, formatting, docs,
-membership inventory and deployment drift refusal passed. All 18 exit-boundary
-cases passed through the repaired Shared helper. Cargo changed only toko-tooling
-relative to the incoming lock; the separate syn edit remains intact.
-Current records are under `target/evidence/toko-tooling-0425/`. The compiler,
-canonical files, product Rust/APIs and production graphs are unchanged. Preserve
-the separate syn 3.0.10 edit and every previous candidate, stash and recovery ref.
-Hosted [Logging CI](https://github.com/dragginzgame/ic-observability/actions/runs/43479655848)
-was observed pending; [Metrics CI](https://github.com/dragginzgame/ic-observability/actions/runs/43478036048)
-was in progress. Neither observation is a completed native acceptance claim.
+Logging with complete plans and verified registry publication. Its
+[receipt](../evidence/releases/toko0425-delivery-20261113.md) owns exact identities,
+archive/source readback and custody. The 18 exit checks now use Shared's repaired
+vendor-aware helper. Hosted CI was observed pending/in progress; those historical
+observations do not qualify this new local source.
 
 ## Delivered 0.42.4 tooling
 
@@ -85,8 +93,8 @@ or downstream deployment is implied.
 ## Deferred work and recovery custody
 
 The separate syn 3.0.10 edit remains outside the frozen syn 3.0.9 graph.
-Its current durable stash is `64a3d10ee118478dfbb7c5695a0ed5ec8f182d0c`, pinned by
-`preserved/syn-3.0.10-toko0425-20261113`. It is reapplied locally after clean reconciliation.
+Its current durable stash is `ed73c698f3ff895ed6ed994ac011514e0cdf67ae`, pinned by
+`preserved/syn-3.0.10-toko0430-20261114`. Reapply it after clean reconciliation.
 All preceding stashes and preservation refs remain retained; the
 [receipt chain](../evidence/releases/README.md) owns their exact identities.
 

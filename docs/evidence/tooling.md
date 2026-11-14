@@ -1,35 +1,50 @@
 # Contributor tooling
 
-## Current 0.42.5 selection
+## Current 0.43.0 selection
 
-Published toko-tooling **0.42.5** is pinned once at the root, inherited by both
+Published toko-tooling **0.43.0** is pinned once at the root, inherited by both
 members and locked with archive SHA-256
-`071631f382cbdb682ab04242bb8022bea9f1fa237eaa273456433b95ad6f2aec`.
-The authenticated exporter retains the same 56 entrypoints and 110 files. Only
-`vendor/toko-tooling/scripts/ci/fixture-retention-probes.sh` changes in the payload;
-canonical files, compiler/lints and product Rust/APIs remain unchanged.
+`060d3507b66eb290ce12bc2572098f7e7cb1e12e9d6697a9b1a5d1552fcb2588`.
+The authenticated exporter retains all 56 entrypoints and adds the PATH launcher
+as a required companion, for 111 managed files. Relative to local 0.42.8, only
+`vendor/toko-tooling/make/tools.mk` and the LOC reporter change, plus the new
+`vendor/toko-tooling/scripts/dev/toko-cloc` file. The carried-forward CDPATH fixes
+remain included. Baseline/canonical files, compiler/lints, product Rust/APIs and
+the release-stage roster remain unchanged.
 
-The consumer's local exit-probe workaround is removed. Its existing six-fixture,
-three-outcome roster now calls Shared's repaired `fixture_probe_exit`, preserving
-all 18 checks and explicit consumer-root/directory bindings. The helper resolves
-its own installed companions independently of that consumer context. `--kind exits`
-remains the focused check; the no-argument release gate retains its full roster.
-The [release guide](../releases/independent-releases.md) owns that local mapping.
+The current LOC interface is `toko-cloc`, with `-d N`, `--manifest PATH` and
+positional selectors. Consumer-owned Make help and active docs use it; no local
+LOC overrides or CI callers require repair. Historical ledgers retain their
+original commands. The [development guide](../development/hosts.md) owns local
+usage and links to the reviewed launcher setup.
 
-Setup/tool admission, offline snapshot agreement, pin checks, formatting and local
-documentation links passed. `make deps-list` retained the two real members, and
-custom deployment adapters refused tooling drift before effects. All 18 actual
-consumer exit-boundary cases passed through the repaired Shared helper. The
-inventory confirms identical entrypoint/file rosters, canonical files matching
-the downloaded package, and only toko-tooling changed from the incoming lock.
+Normal installation/tool admission, offline snapshot agreement, pin, formatting,
+membership and deployment drift-refusal checks passed. The existing PATH launcher
+matches the released bytes; help, repository JSON and recording-module selection
+ran successfully, with both real members and no unclassified LOC. The actual
+consumer hook fixture passed with CDPATH set against the new Make include,
+including edit preservation and refusal cases. Only toko-tooling changed from the
+incoming lock; syn and canonical files remain intact.
 
-Metrics 0.30.5 and Logging 0.25.5 are delivered and independently verified on
-crates.io. The [protected receipt](releases/toko0425-delivery-20261113.md) owns
-exact selections, both complete 20-stage workspace plans, archive/source readback,
-timings and recovery custody. Focused records remain under
-`target/evidence/toko-tooling-0425/`; delivery transcripts and supplier review are
-under `target/deploy/toko0425-20261113/`. The separate syn 3.0.10 edit stays outside
-the published syn 3.0.9 graph. Hosted native acceptance remains asynchronous.
+Focused records are under `target/evidence/toko-tooling-0430/`. Authorized delivery
+selects Metrics 0.30.6 then Logging 0.25.6 with both complete workspace plans;
+final Git/registry results remain pending. Transcripts and supplier review are
+under `target/deploy/toko0430-20261114/`. The separate syn 3.0.10 edit stays outside
+the release graph.
+
+The preceding local 0.42.8 checks remain under
+`target/evidence/toko-tooling-0428/`: CDPATH-set repeated installation,
+staged formatting, unrelated-edit/lock preservation and formatter/partial-stage/
+hook-conflict refusal passed before this refresh. Producer regression suites
+remain upstream.
+
+## Delivered 0.42.5 selection
+
+Vendor-aware fixture-retention helper resolution replaced the local workaround,
+retaining all 18 exit-boundary checks. Metrics 0.30.5 and Logging 0.25.5 are
+published and independently verified. The [protected receipt](releases/toko0425-delivery-20261113.md)
+owns exact selections, both complete plans, archive/source readback, timings and
+recovery custody. Its hosted native observations remain separate from local proof.
 
 ## Delivered 0.42.4 selection
 
