@@ -1,47 +1,24 @@
 # Contributor tooling
 
-## Local 0.44.2 selection
+## Delivered 0.44.2 selection
 
-The authenticated crates.io payload selects toko-tooling **0.44.2**, archive
-SHA-256 `d8a17b4fb7429edc446c06b1c50149102d17cf93e15dade9f53c187a1717c373`.
-The preview changes only `TOKO-TOOLING.md`, retaining 56 entrypoints and 114 files.
-The baseline requires focused post-push review of delivered commits and directly
-affected callers, recorded in the normal delivery response and existing follow-up
-records. The [local release guide](../releases/independent-releases.md#maintainer-commands)
-links that requirement. No new hook, gate or report framework is selected.
+Source `aa7e9abe93f8aea7b9ea1c95c5b86530bd7086a0` selects published
+**toko-tooling 0.44.2**, archive SHA-256
+`d8a17b4fb7429edc446c06b1c50149102d17cf93e15dade9f53c187a1717c373`.
+The exporter retained 56 entrypoints and 114 files. Plain `toko-cloc` matches
+`-d 0`; timing readback rejects malformed records. The new post-push review
+is part of delivery handoff, with no extra hook or validation framework.
+No local caller imports the retired Python verifier, and the Platform-only BLS
+exception does not apply here. Product Rust/APIs, compiler/lints and production
+graphs remain unchanged.
 
-The 0.44.1 runtime payload is unchanged, so its LOC, strict timing-reader,
-dependency-boundary and deployment-admission checks below remain applicable.
-Only toko-tooling changes in the incoming lock graph; the separate syn 3.0.10
-edit is preserved. Product versions, compiler/lints, legal files, APIs and release
-gates remain unchanged. This is a local adoption, without a commit or push.
-Installation, snapshot, pin, formatting, documentation and inventory checks
-passed; records use `target/evidence/toko-tooling-0442/`.
-
-## Prior local 0.44.1 checks
-
-The prior authenticated crates.io payload selected toko-tooling **0.44.1**, archive
-SHA-256 `5b0da6eee9b9d4b95fc4e92fe86c54b90372a6babee661aa2e70f2b084082cc7`.
-The exporter updated five managed files, retaining all 56 entrypoints and 114 files.
-Only the tooling package changed in the incoming lock graph; the separate syn
-3.0.10 edit remains intact. Product versions remain Metrics 0.30.7 and Logging 0.25.7.
-
-Installation/tool admission, snapshot verification, pin/format checks, the local
-external-IC dependency caller, `deps-list` and deployment drift refusal passed.
-Plain `toko-cloc` and `-d 0` produced identical repository and manifest reports,
-including both crate rows; explicit module selection with `-d 1` passed.
-The retained `batch-SPBo7uq9` timing report still has the same 30 successful live
-observations. Readback preserved the original journal bytes. Missing-status and
-negative-elapsed copies were refused without modifying the copies. These are
-reader checks, not new release observations or proof reuse.
-
-No local caller imports the retired Python failure-evidence API. Its Perl
-replacement is therefore unselected. The new Platform-only native BLS comparison
-exception grants no dependency permission here. Compiler/lints, legal files,
-product Rust/APIs, production graphs and the complete release roster are unchanged.
-Focused records use `target/evidence/toko-tooling-0441/`; documentation links,
-consistency and diff checks complete this local adoption. Nothing was committed
-or delivered for this selection.
+Metrics 0.30.8 and Logging 0.25.8 are delivered and independently verified on
+crates.io. The [protected receipt](releases/toko0442-delivery-20261115.md) owns
+exact identities, both complete plans, phase timings, supplier dispositions,
+post-push review and recovery custody. Initial focused records remain under
+`target/evidence/toko-tooling-0441/` and `target/evidence/toko-tooling-0442/`;
+delivery records use `target/deploy/toko0442-20261115/`. The separate syn edit
+is preserved. Hosted native and downstream acceptance remain separate.
 
 ## Delivered 0.43.2 selection
 

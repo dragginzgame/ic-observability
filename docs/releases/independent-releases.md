@@ -80,16 +80,16 @@ Whole-source proofs and disabled version projection currently prevent cross-grou
 stage reuse, so shared changes still require each group's complete plan. Do not
 claim the new policy supplies that missing admission or collector repair.
 
-The last delivered batch measured 497 seconds for Metrics' stages and 480 for
-Logging's stages. `release-tools-check` dominated at 352 and 338 seconds; native
-evidence checks took 48 seconds each. These are retained stage timings,
+The last delivered batch measured 504 seconds for Metrics' stages and 493 for
+Logging's stages. `release-tools-check` dominated at 359 and 349 seconds; native
+evidence checks took 49 seconds each. These are retained stage timings,
 not total deployment time or a forecast; see the
-[delivery receipt](../evidence/releases/toko0432-delivery-20261114.md). Use the
+[delivery receipt](../evidence/releases/toko0442-delivery-20261115.md). Use the
 selected attempt's current timings and explain execution/reuse scope before a
 new expensive gate. Unchanged fixture evidence remains bound to its inputs.
 
 New batches retain phase observations through failures and resumes. Read them
-from the normal checkout with `make release-batch-timings BATCH=batch-SPBo7uq9`.
+from the normal checkout with `make release-batch-timings BATCH=batch-ux0e618D`.
 This read-only command prints JSON without setup, validation or network effects;
 it takes the existing queue lock. The example uses this deployment's retained
 local batch; substitute one retained in your checkout. Older batches return

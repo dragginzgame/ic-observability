@@ -8,7 +8,7 @@ release version. Each group owns its release ledger:
 - [Coordinated history through 0.23.0](releases/history.md)
 - [Group commands and recovery](docs/releases/independent-releases.md)
 
-## Pending maintainer tooling — Metrics 0.30.8 / Logging 0.25.8
+## Maintainer tooling — Metrics 0.30.8 / Logging 0.25.8
 
 ### ▶️ Try it
 
@@ -24,7 +24,7 @@ toko-cloc -d 1
 ```
 
 The first two reports are identical and include crate rows. Explicit `-d 1`
-expands source modules. Product versions remain unchanged until a selected release.
+expands source modules. These reporting commands do not change product versions.
 
 ## Maintainer tooling — Metrics 0.30.7 / Logging 0.25.7
 

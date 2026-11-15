@@ -2,37 +2,33 @@
 
 ## Published products
 
-Metrics **0.30.7** and Logging **0.25.7** are delivered to GitHub and independently
-verified on crates.io. Never re-upload them. The [delivery receipt](../evidence/releases/toko0432-delivery-20261114.md)
-owns exact commits, annotated tags, archive hashes, complete plans and registry
-readback. Batch `batch-SPBo7uq9` passed both complete 20-stage workspace plans
-without narrowing or stage reuse, followed by final-version archives, source/tag
-admission and maintained-source readback. The retained
-[native CI run](https://github.com/dragginzgame/ic-observability/actions/runs/43623329723)
-subsequently passed Linux, macOS Intel and macOS ARM, including native checks.
-Earlier superseded runs were cancelled; the protected receipt retains its original
-pending-at-delivery observation. Downstream acceptance remains consumer-owned.
+Metrics **0.30.8** and Logging **0.25.8** are delivered to GitHub and independently
+verified on crates.io. Never re-upload them. The [delivery receipt](../evidence/releases/toko0442-delivery-20261115.md)
+owns exact commits, annotated tags, archive hashes, both complete 20-stage workspace
+plans, source/tag and maintained-package readback. Batch `batch-ux0e618D` used
+no narrowing or stage reuse. Stage totals were 504 and 493 seconds; the batch took
+1,132.3 seconds. Release fixtures dominated at 359 and 349 seconds.
+[Logging delivery CI](https://github.com/dragginzgame/ic-observability/actions/runs/43703632221)
+was observed in progress; the earlier Metrics run was superseded/cancelled.
+Hosted native and downstream acceptance remain separate and asynchronous.
 
-## Local 0.44.2 tooling adoption
+## Delivered 0.44.2 tooling
 
-Root Cargo selection, Cargo.lock and the authenticated vendor payload now agree
-on published **toko-tooling 0.44.2**, archive SHA-256
+Source `aa7e9abe93f8aea7b9ea1c95c5b86530bd7086a0` selects published
+**toko-tooling 0.44.2**, archive SHA-256
 `d8a17b4fb7429edc446c06b1c50149102d17cf93e15dade9f53c187a1717c373`.
-The exporter retained 56 entrypoints and 114 files. This patch changes only the
-baseline: review delivered commits and directly affected callers after each push,
-before the next increment. Use the normal delivery response and existing follow-up
-records; no hook or validation target is added. The local release guide links it.
+The exporter retained 56 entrypoints and 114 files. Plain `toko-cloc` includes
+crate rows, matching `-d 0`; module expansion is explicit. Timing readback
+rejects malformed records. The new baseline requires focused post-push review,
+recorded in normal delivery/follow-up records, without another gate or framework.
+The delivered scope and directly affected callers were reviewed; no actionable
+finding was identified. This does not claim the whole repository is debt-free.
 
-The unchanged 0.44.1 runtime retains passing LOC defaults/module, timing-reader,
-external-IC dependency and deployment drift-refusal evidence. Plain `toko-cloc`
-matches `-d 0`; retained live timing records are unchanged and malformed copies
-were refused with bytes intact. Current installation, snapshot/tool/pin/format,
-documentation and inventory checks passed and are recorded in
-[the tooling evidence](../evidence/tooling.md), with focused records under
-`target/evidence/toko-tooling-0442/`. Compiler/lints, legal files, product Rust/APIs
-and release gates remain unchanged. Pending notes belong to Metrics 0.30.8
-and Logging 0.25.8; package versions remain 0.30.7 and 0.25.7.
-This adoption is local and uncommitted; no new release or deployment ran.
+The [tooling evidence](../evidence/tooling.md) retains focused adoption scope.
+Delivery records use `target/deploy/toko0442-20261115/`; timing readback returned
+30 successful live observations without changing journal bytes. Compiler/lints,
+product Rust/APIs, production graphs and complete release requirements are unchanged.
+Normal `main` reconciled to `0810f1819b01b0a8b2b324fc058954e7e418c790`.
 
 ## Delivered 0.43.2 tooling
 
@@ -109,15 +105,16 @@ or downstream deployment is implied.
 ## Deferred work and recovery custody
 
 The separate syn 3.0.10 edit remains outside the frozen syn 3.0.9 graph.
-Its current durable stash is `10a7bac2485e4217206bdf01ef62a11425e1a28f`, pinned by
-`preserved/syn-3.0.10-toko0432-20261114`. It is reapplied locally after clean reconciliation.
+Its current durable stash is `0a33a698131d86db2e68898949aff87045a38a97`, pinned by
+`preserved/syn-3.0.10-toko0442-20261115`. Cargo restored the exact syn package block
+locally after clean reconciliation; never replay the whole prior lock after version changes.
 All preceding stashes and preservation refs remain retained; the
 [receipt chain](../evidence/releases/README.md) owns their exact identities.
 
-Batch `batch-SPBo7uq9` completed at index 2 and reconciled cleanly. Execution remains
-under `target/release-frozen/batch-SPBo7uq9`, with durable recovery under
-`.git/release-state/frozen/batch-SPBo7uq9/`. Earlier completed batches, including
-`batch-gobrWzyt`, `batch-meIy8QET`, `batch-zAj6vbFx`, `batch-qiGiRmCY`, `batch-z8nN4ysP` and `batch-4BqGe_7B`, retain their candidates
+Batch `batch-ux0e618D` completed at index 2 and reconciled cleanly. Execution remains
+under `target/release-frozen/batch-ux0e618D`, with durable recovery under
+`.git/release-state/frozen/batch-ux0e618D/`. Earlier completed batches, including
+`batch-SPBo7uq9`, `batch-gobrWzyt`, `batch-meIy8QET`, `batch-zAj6vbFx`, `batch-qiGiRmCY`, `batch-z8nN4ysP` and `batch-4BqGe_7B`, retain their candidates
 and recovery. They keep original source, layout, catalogs, journals and proof
 owners; never reinterpret them with this migration. All 20 release obligations and disabled stage/version-proof reuse remain.
 
