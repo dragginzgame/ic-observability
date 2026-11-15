@@ -1,4 +1,4 @@
-# Current handoff — 2026-11-14
+# Current handoff — 2026-11-15
 
 ## Published products
 
@@ -7,36 +7,44 @@ verified on crates.io. Never re-upload them. The [delivery receipt](../evidence/
 owns exact commits, annotated tags, archive hashes, complete plans and registry
 readback. Batch `batch-SPBo7uq9` passed both complete 20-stage workspace plans
 without narrowing or stage reuse, followed by final-version archives, source/tag
-admission and maintained-source readback
-(34 Metrics and 16 Logging files). Stage totals were 497 and 480 seconds;
-release-tool fixtures took 352 and 338 seconds. Hosted native and installed
-consumer acceptance remain separate and asynchronous. Delivery CI remained
-pending; pending or cancelled runs are not passes.
+admission and maintained-source readback. The retained
+[native CI run](https://github.com/dragginzgame/ic-observability/actions/runs/43623329723)
+subsequently passed Linux, macOS Intel and macOS ARM, including native checks.
+Earlier superseded runs were cancelled; the protected receipt retains its original
+pending-at-delivery observation. Downstream acceptance remains consumer-owned.
+
+## Local 0.44.2 tooling adoption
+
+Root Cargo selection, Cargo.lock and the authenticated vendor payload now agree
+on published **toko-tooling 0.44.2**, archive SHA-256
+`d8a17b4fb7429edc446c06b1c50149102d17cf93e15dade9f53c187a1717c373`.
+The exporter retained 56 entrypoints and 114 files. This patch changes only the
+baseline: review delivered commits and directly affected callers after each push,
+before the next increment. Use the normal delivery response and existing follow-up
+records; no hook or validation target is added. The local release guide links it.
+
+The unchanged 0.44.1 runtime retains passing LOC defaults/module, timing-reader,
+external-IC dependency and deployment drift-refusal evidence. Plain `toko-cloc`
+matches `-d 0`; retained live timing records are unchanged and malformed copies
+were refused with bytes intact. Current installation, snapshot/tool/pin/format,
+documentation and inventory checks passed and are recorded in
+[the tooling evidence](../evidence/tooling.md), with focused records under
+`target/evidence/toko-tooling-0442/`. Compiler/lints, legal files, product Rust/APIs
+and release gates remain unchanged. Pending notes belong to Metrics 0.30.8
+and Logging 0.25.8; package versions remain 0.30.7 and 0.25.7.
+This adoption is local and uncommitted; no new release or deployment ran.
 
 ## Delivered 0.43.2 tooling
 
-Source `2138f76c237a1af23ab00061b06d9b7b4e578838` selects published
-**toko-tooling 0.43.2**, archive SHA-256
-`cb81a5f9c13f50614af8468b599c3a05327f09f643aa954dc8e6878aa649263f`.
-All 56 entrypoints remain; timing companions bring the managed roster to 114 files.
-The root index supplies the new CLI quick start. Compiler/lints, legal files,
-product Rust/APIs and release roster are unchanged. No maintained qualification
-workspace exists here; the qualification-lock fix changes no selected graph.
-
-`make release-batch-timings BATCH=batch-SPBo7uq9` returned 30 completed,
-successful live observations. Readback preserved journal bytes; isolated consumer
-fixtures contributed no simulated sources/versions or deliberate failures.
-Old batches still return `[]`; never backfill their journals or infer proof reuse.
-The [receipt](../evidence/releases/toko0432-delivery-20261114.md) owns exact scope,
-phase timings and custody. Current records use `target/deploy/toko0432-20261114/`;
-adoption checks remain under `target/evidence/toko-tooling-0432/`.
-
-Normal `main` reconciled to `a73602086379fcf62d6a25ee503fc2a5cbcf0e39`.
-Both ledgers record supplier review. Hosted
-[Logging CI](https://github.com/dragginzgame/ic-observability/actions/runs/43622955576)
-was queued; [Metrics CI](https://github.com/dragginzgame/ic-observability/actions/runs/43622150508)
-was in progress. No completed hosted native or downstream acceptance is implied.
-Preserve the separate syn edit and all prior candidates/recovery.
+Source `2138f76c237a1af23ab00061b06d9b7b4e578838` delivered 0.43.2 tooling
+with Metrics 0.30.7 and Logging 0.25.7. The
+[receipt](../evidence/releases/toko0432-delivery-20261114.md) owns exact source,
+plans, timing observations, supplier dispositions and custody. Consumer fixtures
+clear invoking timing context; live records exclude simulated effects.
+Old batches still return `[]`; never backfill journals or infer proof reuse.
+Delivery records use `target/deploy/toko0432-20261114/`; original adoption checks
+remain under `target/evidence/toko-tooling-0432/`. Normal `main` subsequently reached
+receipt commit `a93e3b6a5f9ee91aca8641a04b7bf90e46824615`.
 
 ## Delivered 0.43.0 tooling
 

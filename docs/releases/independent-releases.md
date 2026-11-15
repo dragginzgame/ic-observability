@@ -28,7 +28,7 @@ Neither conversion changes a package's numeric identity.
 Earlier coordinated releases remain once in [shared history](../../releases/history.md), through 0.23.0;
 both group ledgers link to that history. Existing tags and receipts are retained.
 Tooling has no selection-only package or release-group membership. One exact
-root dependency pins toko-tooling 0.43.2; both libraries inherit it only for
+root dependency pins toko-tooling 0.44.2; both libraries inherit it only for
 development, and Cargo.lock owns its registry checksum. Root dependency entries
 serve actual member inheritance; no display-only aliases or lint allowances are
 needed. Both product packages remain in their groups' `members` rosters, with
@@ -49,6 +49,12 @@ ledgers and the historical ledger. A Logging release to 0.24.0 can leave Metrics
 at 0.23.1. There is no default release group.
 
 ## Maintainer commands
+
+After a successful push, include the baseline's
+[focused post-push review](../../TOKO-TOOLING.md#post-push-review) in the delivery
+handoff before starting the next increment. Review delivered commits and directly
+affected callers; use existing issues or design notes for deferred findings.
+This is an agent review, with no additional runner hook or validation target.
 
 Before freezing a candidate, perform the baseline's
 [supplier freshness review](../../TOKO-TOOLING.md#current-dependencies-and-upstream-independence).

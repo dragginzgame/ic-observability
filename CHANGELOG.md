@@ -8,6 +8,24 @@ release version. Each group owns its release ledger:
 - [Coordinated history through 0.23.0](releases/history.md)
 - [Group commands and recovery](docs/releases/independent-releases.md)
 
+## Pending maintainer tooling — Metrics 0.30.8 / Logging 0.25.8
+
+### ▶️ Try it
+
+From this repository's root, with the `toko-cloc` PATH launcher already installed
+as described in the [development guide](docs/development/hosts.md), and Cargo.lock
+selecting toko-tooling 0.44.2:
+
+```sh
+make toko-tooling-update  # One-time setup: downloads tooling and prepares local tools.
+toko-cloc
+toko-cloc -d 0
+toko-cloc -d 1
+```
+
+The first two reports are identical and include crate rows. Explicit `-d 1`
+expands source modules. Product versions remain unchanged until a selected release.
+
 ## Maintainer tooling — Metrics 0.30.7 / Logging 0.25.7
 
 ### ▶️ Try it

@@ -37,7 +37,7 @@ collection or turn a failed check into a successful one.
 
 ## Prerequisites and focused checks
 
-Root `[workspace.dependencies]` declares `toko-tooling = "=0.43.2"` once.
+Root `[workspace.dependencies]` declares `toko-tooling = "=0.44.2"` once.
 Both real members inherit it unconditionally as a dev-dependency and merge the
 name into cargo-machete ignored metadata, without a Rust import. Cargo.lock pins
 the registry version/checksum; no selection-only package or separate tooling
@@ -54,7 +54,7 @@ consumer checkout, because the installed runner now lives beneath the vendor tre
 Use `make deps-update` for explicit Cargo updates (`cargo update -v`), optionally
 with `DEPENDENCY_PACKAGE` and `DEPENDENCY_PRECISE` to select one dependency.
 For example, after editing the root tooling pin, run
-`make deps-update DEPENDENCY_PACKAGE=toko-tooling DEPENDENCY_PRECISE=0.43.2`,
+`make deps-update DEPENDENCY_PACKAGE=toko-tooling DEPENDENCY_PRECISE=0.44.2`,
 then `make toko-tooling-update`. This repository has only the root maintained
 workspace. The command preserves manifest requirements and is separate from
 supplier freshness review; it is not called by CI or release admission.
@@ -89,9 +89,10 @@ Changed-tree refusals remain blocking; investigate the named path and metadata.
 
 
 Use the `toko-cloc` PATH launcher from a checkout, installed once through the
-[reviewed LOC setup](https://github.com/dragginzgame/toko-tooling/blob/bd24a0b7bc95b20a849b16f63d77f6551ff48ab4/docs/fleet/fleet-tools.md#cargo-workspace-loc-report).
-It selects this checkout's vendor reporter and prepared tools. `toko-cloc -d 0`
-reports package detail; `toko-cloc -d 1` adds source modules.
+[reviewed LOC setup](https://github.com/dragginzgame/toko-tooling/blob/d9072adb355612043dbaac06960e60a6aea8a55e/docs/fleet/fleet-tools.md#cargo-workspace-loc-report).
+It selects this checkout's vendor reporter and prepared tools. Plain `toko-cloc`
+is equivalent to `toko-cloc -d 0`: both include package rows without expanding
+source modules. `toko-cloc -d 1` adds source modules.
 `toko-cloc -d 1 ic-metrics::recording` drills into one source branch;
 the depth is relative to the selected crate or module.
 Terminal reports colour workspace, crate and module names; redirected or

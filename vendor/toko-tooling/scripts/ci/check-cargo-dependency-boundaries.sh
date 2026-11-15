@@ -161,6 +161,20 @@ CARGO_NET_OFFLINE=true RUSTUP_AUTO_INSTALL=0 perl -MJSON::PP -e '
                             && !($package->{name} eq "ic-wire-benchmarks" && $name eq "candid"
                                 && ($dependency->{kind} // "") eq "dev" && !defined($dependency->{target})
                                 && ref($package->{publish}) eq "ARRAY" && !@{$package->{publish}})
+                            && !($package->{name} eq "bls-wrapper-probe" && $name eq "ic-verify-bls-signature"
+                                && ($package->{repository} // "") eq "https://github.com/dragginzgame/ic-platform"
+                                && $ARGV[1] =~ m{/qualification\z}
+                                && ($package->{manifest_path} // "") eq "$ARGV[1]/bls-probe/Cargo.toml"
+                                && ref($package->{publish}) eq "ARRAY" && !@{$package->{publish}}
+                                && ($dependency->{kind} // "") eq "dev"
+                                && ($dependency->{target} // "") eq q{cfg(not(target_family = "wasm"))}
+                                && !defined($dependency->{rename}) && !defined($dependency->{path})
+                                && ($dependency->{source} // "") eq "registry+https://github.com/rust-lang/crates.io-index"
+                                && ($dependency->{req} // "") eq "^0.6.0"
+                                && JSON::PP::is_bool($dependency->{optional}) && !$dependency->{optional}
+                                && JSON::PP::is_bool($dependency->{uses_default_features}) && !$dependency->{uses_default_features}
+                                && ref($dependency->{features}) eq "ARRAY"
+                                && @{$dependency->{features}} == 1 && $dependency->{features}[0] eq "alloc")
                             && !($name eq "pocket-ic"
                                 && ($dependency->{target} // "") eq q{cfg(not(target_family = "wasm"))}
                                 && (($dependency->{kind} // "") eq "dev"
