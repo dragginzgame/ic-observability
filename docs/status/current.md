@@ -12,6 +12,21 @@ no narrowing or stage reuse. Stage totals were 504 and 493 seconds; the batch to
 was observed in progress; the earlier Metrics run was superseded/cancelled.
 Hosted native and downstream acceptance remain separate and asynchronous.
 
+## Local 0.44.3 adoption
+
+Root Cargo selection, Cargo.lock and the authenticated snapshot select published
+**toko-tooling 0.44.3**, archive SHA-256
+`8a9bc7b6827044baac8134cada7ee6bc31f86c70beec9608d1d39d911eba15e1`.
+The exporter changed only the two LOC reporter files, retaining 56 entrypoints
+and 114 files. Plain `toko-cloc` equals `-d 0` and shows compact totals; `-d 1`
+adds crates and `-d 2` adds modules. Named selections retain relative depth.
+Repository/workspace/named-selection checks passed with identical JSON counts.
+Current installation, snapshot/pin/format/membership and documentation checks
+are recorded in [the tooling evidence](../evidence/tooling.md), with records under
+`target/evidence/toko-tooling-0443/`. Product versions and the separate syn edit
+are preserved. Pending notes belong to Metrics 0.30.9 and Logging 0.25.9.
+This adoption is local and uncommitted; no new release or deployment ran.
+
 ## Delivered 0.44.2 tooling
 
 Source `aa7e9abe93f8aea7b9ea1c95c5b86530bd7086a0` selects published

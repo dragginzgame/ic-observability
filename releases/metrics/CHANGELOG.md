@@ -5,6 +5,15 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.30.9] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt published toko-tooling 0.44.3 through the authenticated exporter. Plain
+  `toko-cloc` and `-d 0` show compact totals; repository/workspace `-d 1` adds
+  crates and `-d 2` adds modules. Named crate/module selections expand immediate
+  children at `-d 1`; JSON counts remain unchanged.
+
 ## [0.30.8] - 2026-11-15
 
 ### 🛠️ Tooling

@@ -1,9 +1,9 @@
 # Toko Tooling snapshot v1
-# version	0.44.2
+# version	0.44.3
 # layout	vendor
 format	1
 source	https://crates.io/crates/toko-tooling
-revision	d8a17b4fb7429edc446c06b1c50149102d17cf93e15dade9f53c187a1717c373
+revision	8a9bc7b6827044baac8134cada7ee6bc31f86c70beec9608d1d39d911eba15e1
 # entrypoint	vendor/toko-tooling/.githooks/pre-commit
 # entrypoint	vendor/toko-tooling/.github/actions/cache-tool-downloads/action.yml
 # entrypoint	vendor/toko-tooling/.github/actions/prepare-common-tools/action.yml
@@ -126,7 +126,7 @@ file	a52db278800a9f02d85a6b8a780a9b1eed860c49d5442cef9db1f7f9d7ddee0a	x	vendor/t
 file	be31909f524f1b8efc0065c353101fa793bfcd4cf6004de9f053745550d6f9bf	x	vendor/toko-tooling/scripts/ci/run-rust-formatting.pl
 file	33060e8f4a77791ef3c97caca8a983db98a8205f933d17bb08b632ee2e1d9f30	x	vendor/toko-tooling/scripts/ci/tool-catalog-records.pl
 file	c913280d89dbb1c4a2c324c58448354697dff08d570ca845c7ad36ad78a321a3	x	vendor/toko-tooling/scripts/dev/install-ic-tools.sh
-file	a295ba1d7885c46977ab721a6e08f47df5fb2f2c5f7f2ccdcfc0856f67f45dfd	x	vendor/toko-tooling/scripts/dev/cloc.sh
+file	74c1397fc2d0fc67020ec990a74dfeb601a95ba05264e6390153e7cfde5e8178	x	vendor/toko-tooling/scripts/dev/cloc.sh
 file	6830accbd4895c4fa2e75eff81fde8a5902cfbd78baab199351fbaa747cd3c35	x	vendor/toko-tooling/scripts/dev/toko-cloc
 file	4ca77bd13961dbca51fa47714dfca5ae1097f8a6fe664110444be6ab4c031edc	-	vendor/toko-tooling/scripts/ci/cargo-release-groups.jq
 file	b0221c706bcd6382fbb5d658529466aa447e3e03222df74524131115eed4d203	-	vendor/toko-tooling/scripts/ci/release-metadata-transaction.sh
@@ -168,7 +168,7 @@ file	6209a1e0b83b149b199dd8f0918c227957c5113227670f29e0e42a48925a7058	x	vendor/t
 file	ec46c51af7fc2b7ef2959343331e6aa9efb40904d55f5c5b5a43cb446736f9a8	-	vendor/toko-tooling/scripts/ci/cargo-publication-selection.pl
 file	6d99677e86759273a88fb4149cbd4c14f2aacc99e1838a0db343d76c776f1aba	-	vendor/toko-tooling/scripts/ci/ic-tool-pins.awk
 file	ebf236f1db579744a13bc995ec1c58c2ee87e34caed23088a6d9b75e638dd27f	x	vendor/toko-tooling/scripts/ci/verify-evidence-checksums.sh
-file	4cd50320f3d3ed98d0ce7de3b20d9b3d02caf2885e02e8e89fedfebf35bd6d58	-	vendor/toko-tooling/scripts/dev/cloc-classify.pl
+file	43823e64b809d92c87f68d4106f128ce3d97d56d9f3d69809f704f72782bb00d	-	vendor/toko-tooling/scripts/dev/cloc-classify.pl
 file	74f1cb53ee48eda9eb2c46f8f96639c78f96712cc2dec311f75042e1ac181788	-	vendor/toko-tooling/scripts/ci/cargo-qualification-release.jq
 file	6e0aaf65ad8127e0586d2aca3b03b3c269aa4f50e284c83033dc66b9ea55c812	x	vendor/toko-tooling/scripts/ci/release-timing.pl
 file	064ee8ecf5e36d760ae4b0aad1cc80563cac074445677526bc7d1d124ff5b303	x	vendor/toko-tooling/scripts/ci/select-tool-evidence.sh

@@ -125,7 +125,7 @@ verify-publication:
 
 help:
 	@echo "Local setup: install-tools; offline verification: tools-check"
-	@echo "Reports: toko-cloc (includes packages by default); -d 1 adds modules"
+	@echo "Reports: toko-cloc (totals); -d 1 adds packages, -d 2 adds modules"
 	@echo "Maintainer releases: release-patch, release-minor, release-major; release-resume VERSION=X.Y.Z"
 	@echo "Normal releases start fresh from committed metadata; exact recovery requires VERSION and RELEASE_GROUP"
 	@echo "Release/publication selection required: RELEASE_GROUP=metrics or logging (no default)"

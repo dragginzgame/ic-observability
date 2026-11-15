@@ -1,5 +1,24 @@
 # Contributor tooling
 
+## Local 0.44.3 selection
+
+The authenticated crates.io payload selects published toko-tooling **0.44.3**,
+archive SHA-256 `8a9bc7b6827044baac8134cada7ee6bc31f86c70beec9608d1d39d911eba15e1`.
+The exporter updated only the two LOC reporter files, retaining 56 entrypoints
+and 114 files. Plain `toko-cloc` and `-d 0` now show compact totals; repository
+and workspace `-d 1` adds crates and `-d 2` adds top-level modules. Named crate
+and module selections expand their immediate children at `-d 1`.
+
+Installation/tool admission and actual repository/workspace/selection reports
+passed. Before/after JSON reports are identical: 5,524 lines and no unclassified
+source. The launcher remains unchanged; no sibling scan or producer fixture suite
+was needed. Pin/lock/snapshot, member selection, formatting, documentation and
+inventory checks complete this adoption; records use `target/evidence/toko-tooling-0443/`.
+Only toko-tooling changed in the incoming lock graph; the separate syn 3.0.10
+edit is preserved. Product versions remain Metrics 0.30.8 and Logging 0.25.8.
+The baseline and all other runtime inputs are unchanged. This selection remains
+local and uncommitted; no new release or deployment ran.
+
 ## Delivered 0.44.2 selection
 
 Source `aa7e9abe93f8aea7b9ea1c95c5b86530bd7086a0` selects published
