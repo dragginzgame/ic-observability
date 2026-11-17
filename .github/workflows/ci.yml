@@ -153,7 +153,7 @@ jobs:
               sudo apt-get update && sudo apt-get install -y xz-utils perl
               ;;
             Darwin) brew install xz ;;
-            *) echo 'unsupported native host' >&2; exit 1 ;;
+            *) echo "unsupported native host" >&2; exit 1 ;;
           esac'
       - name: Restore pinned tool downloads
         if: env.CI_SCOPE != 'docs'

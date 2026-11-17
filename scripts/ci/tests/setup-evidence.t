@@ -113,5 +113,33 @@ is(run('inputs.out','bash','-e','-o','pipefail','-c',$body),43,
     'failure before host/tool setup retains the original status');
 like(read_file('target/evidence/input-setup/.setup/inputs.log'),qr/missing tracked workflow source/,
     'earliest setup failure has retrievable diagnostics');
+is(run('prerequisites-body.json',"$root/.tools/host/bin/yq",'-o=json',
+    '.jobs.native.steps[] | select(.id == "prerequisites")',"$root/.github/workflows/ci.yml"),0,
+    'read actual prerequisite workflow body');
+my $prerequisites=decode_json(read_file('prerequisites-body.json'));
+for my $case (['Linux',0],['Linux',49],['Darwin',0],['Darwin',47],['Unsupported',1]) {
+    my ($os,$status)=@$case;
+    my $case_root="$work/prerequisites-$os-$status";
+    make_path("$case_root/scripts/ci","$case_root/bin");
+    symlink $helper,"$case_root/scripts/ci/setup-evidence.pl" or die $!;
+    for my $tool (qw(uname sudo brew)) {
+        open my $stub,'>',"$case_root/bin/$tool" or die $!;
+        print {$stub} $tool eq 'uname' ? "#!/bin/sh\necho '$os'\n" :
+            "#!/bin/sh\nprintf '%s\\n' \"\$*\" >> \"\$PREREQUISITE_COMMANDS\"\nexit $status\n";
+        close $stub;chmod 0755,"$case_root/bin/$tool";
+    }
+    chdir $case_root or die $!;
+    local $ENV{PATH}="$case_root/bin:$ENV{PATH}";
+    local $ENV{PREREQUISITE_COMMANDS}="$case_root/commands";
+    is(run('step.out','bash','-e','-o','pipefail','-c',$prerequisites->{run}),$status,
+        "$os prerequisite body preserves status $status");
+    my $record=decode_json(read_file('target/evidence/native-ci/.setup/prerequisites.json'));
+    is($record->{status},$status,"$os prerequisite status is retained");
+    if ($os eq 'Linux') {
+        my $expected="apt-get update\n".($status ? '' : "apt-get install -y xz-utils perl\n");
+        is(read_file('commands'),$expected,'Linux install follows successful update only');
+    } elsif ($os eq 'Darwin') {is(read_file('commands'),"install xz\n",'Darwin selects brew installation');}
+    else {like(read_file('step.out'),qr/unsupported native host/,'unsupported host reports its actual cause');}
+}
 chdir $root or die $!;
 done_testing();
