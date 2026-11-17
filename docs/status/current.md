@@ -2,34 +2,28 @@
 
 ## State and next action
 
-Toko Tooling **0.45.0** is adopted locally through the authenticated exporter;
-Cargo updated only its tooling lock entry. Installation and prepared-tool admission
-passed. Both-group metadata/rollback checks, selected Make routing, formatting,
-pins, production boundaries and local links passed. Evidence is recorded under
-`target/qualification/toko-adoption-20261118/`. Pending compatible notes are
-Metrics 0.30.12 and Logging 0.25.11; product versions remain unchanged.
-The maintainer has authorized delivery of both pending groups. The supplied
-AGENTS.md corrections are preserved in this source checkpoint; fresh selected
-release gates and independent registry readback follow frozen capture.
+**Metrics 0.30.12 and Logging 0.25.11 are delivered and independently verified.**
+Toko Tooling **0.45.0** is adopted through the authenticated exporter. The supplied
+AGENTS.md corrections are included. Product Rust/APIs and unrelated dependencies
+remain unchanged. Adoption evidence is under
+`target/qualification/toko-adoption-20261118/`.
 
-**Metrics 0.30.11 and Logging 0.25.10 are delivered and independently verified.**
+Batch `batch-C6LML5zV` completed both groups and reconciled cleanly in **188.1
+seconds**. Both three-stage release plans, final-version archives and independent
+registry readback passed, matching 34 Metrics and 16 Logging maintained files.
+The [delivery record](../releases/independent-releases.md#tooling-0450-delivery--2026-11-18)
+owns exact identities and checksums. Focused review of the pushed adoption,
+affected callers and each metadata increment found no actionable issue.
+
+The normal checkout contains both release commits. The completed candidate and
+journal remain under `target/release-frozen/batch-C6LML5zV` and
+`.git/release-state/frozen/batch-C6LML5zV/`. Delivery logs and timings are under
+`target/deploy/toko0450-20261118/`. Hosted CI remains asynchronous; no completed
+hosted pass is claimed. No sibling deployment or cleanup ran.
+
 [Observability #136](https://github.com/dragginzgame/ic-observability/issues/136)
-is closed. Reconstruction source is `3974fd375485c133b5284255c4d09477167b8c32`.
-The [delivery record](../releases/independent-releases.md#live-delivery--2026-11-17)
-owns commits, tags, checksums, timings and verification scope.
-
-Batch `batch-dZNTL4CS` completed both groups and reconciled cleanly. Its real
-capture-through-publication interval was **166.8 seconds**. Both three-stage plans
-passed; final-version archives and source/registry readback matched 34 Metrics
-and 16 Logging maintained files. Post-push review found no actionable issue in
-the delivered pipeline/callers or either group's exact metadata increment.
-No product Rust/API, supplier selection or sibling was changed.
-
-The normal checkout now contains both release commits. The completed candidate
-and durable journal remain under `target/release-frozen/batch-dZNTL4CS` and
-`.git/release-state/frozen/batch-dZNTL4CS/`. No retirement or cleanup ran.
-Local delivery records are under `target/deploy/issue136-20261117/`.
-Hosted native CI remains asynchronous; no completed hosted pass is claimed.
+is closed. Its preceding reconstruction delivery, batch `batch-dZNTL4CS`, remains
+intact with its [original record](../releases/independent-releases.md#live-delivery--2026-11-17).
 
 CI covers both products on the three supported hosts. Releases use fresh
 admission, strict lint and selected-package product checks; tooling qualification
@@ -40,7 +34,7 @@ retains its separate simulated-registry/legacy-fixture-substitution scope under
 
 Stopped historical batch `batch-sSjwd230` remains untouched. It delivered only
 Metrics 0.30.10 at `b9d488dec7eaf40c79f665880051b2d45c68ae1a`; its Logging
-0.25.10 attempt was interrupted before delivery. The new batch independently
+0.25.10 attempt was interrupted before delivery. Batch `batch-dZNTL4CS` independently
 published Logging 0.25.10. Never resume or reinterpret the old attempt with new
 semantics. Its original proof and publication record remain under that candidate
 and `target/deploy/issue135-20261117/`.

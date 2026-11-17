@@ -1,6 +1,6 @@
 # Contributor tooling
 
-## Pending 0.45.0 adoption
+## Delivered 0.45.0 adoption
 
 Published toko-tooling 0.45.0 is selected by root Cargo and Cargo.lock, checksum
 `3789a925c1165317eff84cc80436195b66c0478b0c2b441bc2f1a755caf6a23a`.
@@ -21,10 +21,11 @@ Preview, installation, locked fetch and focused metadata/caller records are unde
 prepare/check, failed-editor rollback, wrong-primary refusal and preservation of
 unrelated identities/lock entries. Actual Make leaf routing passed with Cargo
 effects substituted. Snapshot/tool admission, pin/format checks, live production
-boundaries, local links and diff checks passed. No full product suite, hosted
-matrix or deployment ran for this tooling-only change. Product Rust, APIs, versions and
-unrelated dependency selections remain unchanged. Historical delivery timings
-and recovery records below retain their original snapshots and scope.
+boundaries, local links and diff checks passed. The subsequent authorized delivery published Metrics 0.30.12 and Logging
+0.25.11 after both selected release plans and independent registry readback passed;
+see the [delivery record](../releases/independent-releases.md#tooling-0450-delivery--2026-11-18).
+Product Rust, APIs and unrelated dependencies remain unchanged. Hosted CI is
+asynchronous. Historical timings and recovery records retain their original scope.
 
 ## Delivered pipeline reconstruction
 

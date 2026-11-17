@@ -448,3 +448,34 @@ separate from these completed local/registry checks.
 The completed candidate and durable Git journal remain intact. Historical
 `batch-sSjwd230` still has its original stopped state; it is not resumed or
 converted. No sibling delivery, protected cleanup or duplicate upload occurred.
+
+### Tooling 0.45.0 delivery — 2026-11-18
+
+Authorized batch `batch-C6LML5zV` delivered source
+`e9c42adc332eda196ceab27011199ac6eb527e79` to GitHub and crates.io:
+
+| Package | Release commit | Annotated tag object | Registry SHA-256 |
+| --- | --- | --- | --- |
+| ic-metrics 0.30.12 | `2647e2858ca171616d737f1627741e4b202548f3` | `86300f784e81432416e9ad44b99a11fff75fa9c6` (`metrics-v0.30.12`) | `26acd88e610363878e0c63add0cdeee183ebb506e14ac7321663c201c0c5f7ae` |
+| ic-logging 0.25.11 | `f8052d992f9371062a5c81a679214c20a8f72c93` | `03cf5cbf098b3611d0a53d2e1af1e890c055643e` (`logging-v0.25.11`) | `c46acb13f261eb5ecfea855013f76d61fe05917613a3cd651c9c5a49bf22b664` |
+
+The real capture-through-publication interval was **188.1 seconds**, with warm
+managed tool/download caches and a fresh candidate. Metrics admission/lint/product
+stages took 11/5/7 seconds; Logging took 12/4/5 seconds. Final-version archives,
+fresh publication admission and independent registry/source readback passed.
+No effects were simulated or validation results reused. Cargo briefly waited on
+the shared package cache; this single observation is not a performance guarantee.
+
+Readback matched all 34 maintained Metrics and 16 Logging files, retained under
+the candidate's `target/publication/verification.wITGmE` and
+`target/publication/verification.r5s1r6`. Supplier review, delivery and reconciliation
+logs and phase timings remain under `target/deploy/toko0450-20261118/`.
+Optional IC Build 0.87.4 and cargo-sort-derives 0.15.0 upgrades are deferred to the
+next requested tooling maintenance pass, as recorded in both ledgers.
+
+The normal branch reconciled to the delivered Logging commit. Focused post-push
+review found no actionable issue in the adoption and affected callers; each
+release increment changed only its own manifest version, lock entry and ledger
+date. Ledger dates use UTC (2026-11-17); this record uses the maintainer's local
+date. Hosted CI remains asynchronous. Original candidates, journals and stashes
+remain intact; no sibling changes, retirement or duplicate uploads occurred.
