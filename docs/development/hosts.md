@@ -18,26 +18,19 @@ including pending source. The workflow records common managed tool paths, hashes
 and observed versions through Toko Tooling; compiler selection stays local. Failed observations retain partial diagnostics.
 
 CI prepares pinned host parsers before reading Rust policy from TOML. The
-separate `host-tools.log` and outcome survive setup failure; Rust and subsequent
-common setup are skipped when parser preparation fails. The selected
-`prepare-common-tools` action reuses those host tools and owns complete common installation,
-offline checking and PATH publication after success. The always-run
-[native evidence collector](../../scripts/ci/collect-native-evidence.sh) projects
-its `RUNNER_TEMP/tools-install.log` and `tools-check.log` into
-the retained `tools-setup.log` and `tools-check.log` names. Setup failures keep
-their actual stdout/stderr; skipped setup does not select unrelated temp logs.
-Toko Tooling tests the action's installation and PATH mechanics; Metrics tests
-its action reference, outcome/log projection and complete recovery evidence.
-
-Diagnostic collection failure still allows the independently admitted native
-recovery archive to be packaged and uploaded. The artifact step retains the
-collection failure status; a secondary packaging failure is reported without
-replacing that first error. A recovery archive does not establish complete tool
-collection or turn a failed check into a successful one.
+consumer [setup wrapper](../../scripts/ci/setup-evidence.pl) records the phase,
+command identity, original status and bounded sanitized output for native setup
+and scanner installation. The selected `prepare-common-tools.sh` helper retains
+Shared's installation, offline checking and PATH publication after success;
+its unused composite action and cache-key companion retired through the exporter.
+The always-run [collector](../../scripts/ci/collect-native-evidence.sh) publishes
+only the explicitly selected hidden setup records when setup fails. Later native
+failures retain the existing complete recovery archive. Collection/upload failure
+is reported separately and cannot make the original failed step successful.
 
 ## Prerequisites and focused checks
 
-Root `[workspace.dependencies]` declares `toko-tooling = "=0.44.3"` once.
+Root `[workspace.dependencies]` declares `toko-tooling = "=0.44.11"` once.
 Both real members inherit it unconditionally as a dev-dependency and merge the
 name into cargo-machete ignored metadata, without a Rust import. Cargo.lock pins
 the registry version/checksum; no selection-only package or separate tooling
@@ -54,7 +47,7 @@ consumer checkout, because the installed runner now lives beneath the vendor tre
 Use `make deps-update` for explicit Cargo updates (`cargo update -v`), optionally
 with `DEPENDENCY_PACKAGE` and `DEPENDENCY_PRECISE` to select one dependency.
 For example, after editing the root tooling pin, run
-`make deps-update DEPENDENCY_PACKAGE=toko-tooling DEPENDENCY_PRECISE=0.44.3`,
+`make deps-update DEPENDENCY_PACKAGE=toko-tooling DEPENDENCY_PRECISE=0.44.11`,
 then `make toko-tooling-update`. This repository has only the root maintained
 workspace. The command preserves manifest requirements and is separate from
 supplier freshness review; it is not called by CI or release admission.
@@ -240,6 +233,8 @@ libraries; select direct Cargo commands when only one package or test is affecte
 | Release/evidence adapters | `make release-tools-check ci-evidence-check` |
 | Generated public consumer tests | `bash scripts/release/test-release-admission.sh --consumers-only`; builds the two retained supplier clients and runs their `tests/contract.rs` targets without release/recovery scenarios |
 | Native evidence scenario | `bash scripts/ci/test-native-evidence.sh --scenario collection-archive-failure`; runs the named workflow recovery case with substituted effects, excluding standalone host/compiler setup checks |
+| Setup diagnostics | `perl scripts/ci/tests/setup-evidence.t`; checks redaction, size limits, hidden log selection, original status, missing evidence and collector failures |
+| Compiler/host setup routing | `bash scripts/ci/test-native-evidence.sh --setup-only`; executes just the extracted compiler and host setup bodies with substituted platform tools |
 | Compiler-policy fixture | `bash scripts/ci/test-rust-compiler.sh`; compiler/version refusals and linked-Wasm evidence custody with substituted compiler commands |
 | Publication-policy fixture | `bash scripts/release/test-publication-policy.sh`; local tag/source/archive/registry-refusal checks with substituted network observations and no uploads |
 | Owned Rust encoding boundary | `make candid-boundary-check` (Candid and CBOR lexical source inspection; no Cargo or macro expansion) |
@@ -516,19 +511,26 @@ OS, architecture and explicit macOS major. Failed observations refuse before
 local PATH changes; the portable fixture does not establish native macOS support.
 
 The workflow captures exact source inputs and host/compiler identities before
-setup, records setup/check/native outcomes and keeps stdout/stderr on failures.
-The Make smoke step has its own setup_smoke outcome in both diagnostic and
-recovery archives, including success, failure and skipped states. A failed smoke
-keeps its stdout/stderr log and prevents later setup/compiler steps.
-Tool candidate selection preserves admitted failed inputs and diagnostics;
-collection failure remains nonzero. Formatter logs outside the fixture scratch
-root are included. Uploads retain `native-ci.tar.gz` and its checksum for 30 days,
-including hidden release/index/configuration evidence inside the outer tar.
-A separately uploaded `native-diagnostics.tar.gz` and checksum contain only
-explicit available top-level logs and source/tool/outcome identities. No tool
-payload, source tree, scratch directory or nested archive is selected. It is
-collected before the complete archive so full collection failures still leave
-readable diagnostics; neither archive silently truncates selected logs.
+setup. Each wrapped setup phase retains at most 64 KiB of sanitized log and a
+small status record under `target/evidence/native-ci/.setup/`; the Actions log
+shows a bounded 4 KiB excerpt. Truncation, empty diagnostics and original failure
+status are explicit. Known credential values, sensitive fields, environment
+assignments and private-key blocks are redacted or omitted. Raw setup output and
+whole tool stores are not uploaded for setup failures.
+
+The setup collector admits only regular `.log`/`.json` files in that explicit
+hidden directory, at most 32 files and 1 MiB combined, without following symlinks.
+The native-diagnostics artifact and checksum are uploaded even when an earlier
+setup step failed. Scanner installation uses the same boundary and a separate
+failure-only artifact. Upload summaries report the artifact URL or its absence
+and the upload/collection outcome; retention is 30 days. Local fixtures qualify
+collection and failure propagation, not hosted upload/retrieval.
+
+Once the native gate actually runs, `native-ci.tar.gz` and its checksum retain
+full scratch and hidden Git recovery state under the existing custody contract.
+The separate diagnostic artifact selects top-level identities and logs before
+full recovery packaging, so an outer archive failure leaves readable diagnostics.
+The full recovery upload is skipped when setup prevents the native gate running.
 
 Toko Tooling owns generic installer, formatting, metadata, release-engine and
 fixture mechanics. Its [producer/consumer boundaries](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/docs/validation/fixtures-helpers.md#producer-and-consumer-fixture-boundaries),
@@ -585,11 +587,13 @@ establish routing and failure propagation, not native macOS or live release proo
 Metrics owns `scripts/ci/package-native-recovery-evidence.sh`, including the full
 scratch tree, hidden Git recovery state and top-level checksum inventory. Its
 round-trip fixture checks payloads, containment, occupied destinations and retained
-inputs/partial output after inventory, tar or checksum failure. The workflow
-publishes sanitized diagnostics first; fatal collector status stops the outer
-archive, while partial collection keeps that archive and remains nonzero.
+inputs/partial output after inventory, tar or checksum failure. After the native
+gate runs, the workflow
+publishes diagnostics first; fatal collector status stops the outer archive,
+while partial collection keeps that archive and remains nonzero.
 Readable diagnostics must survive an outer-archive failure. Formatter logs outside
-scratch and failed/skipped tool setup remain covered. Both uploads disable ZIP
+scratch remain covered; early setup uses the bounded collection path above.
+Both uploads disable ZIP
 compression for their gzip payloads; archive/checksum pairing and 30-day retention
 remain unchanged.
 

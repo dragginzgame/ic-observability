@@ -173,6 +173,7 @@ hook-check:
 	bash scripts/dev/test-format-hook.sh
 
 ci-evidence-check:
+	perl scripts/ci/tests/setup-evidence.t
 	bash scripts/ci/test-native-source-files.sh
 	bash scripts/ci/test-native-evidence.sh
 	bash scripts/ci/test-native-recovery-evidence.sh

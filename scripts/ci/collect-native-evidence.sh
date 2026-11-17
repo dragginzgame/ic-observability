@@ -8,15 +8,12 @@ root="$(cd -P "${root%/*}/../.." && printf '%s/.' "$PWD")"
 root="${root%/.}"
 cd "$root"
 mkdir -p target/evidence/native-ci
-# Project only logs belonging to an action that actually ran.
-case "$TOOLS_OUTCOME" in
-    success|failure|cancelled)
-        if [[ -f "$RUNNER_TEMP/tools-install.log" ]]; then
-            cp "$RUNNER_TEMP/tools-install.log" target/evidence/native-ci/tools-setup.log
-        fi
-        if [[ -f "$RUNNER_TEMP/tools-check.log" ]]; then
-            cp "$RUNNER_TEMP/tools-check.log" target/evidence/native-ci/tools-check.log
-        fi ;;
+# Setup publishes only bounded, sanitized logs and status records. Full recovery
+# custody starts after setup, when the native gate actually runs.
+case "$NATIVE_OUTCOME" in
+    success|failure) ;;
+    *) exec perl scripts/ci/setup-evidence.pl --collect target/evidence/native-ci \
+        target/evidence/native-diagnostics.tar.gz ;;
 esac
 git rev-parse HEAD > target/evidence/native-ci/source-commit.txt
 printf 'native=%s\ninputs=%s\ntools=%s\nhost=%s\ncompiler=%s\ntoolchain=%s\nprerequisites=%s\nhost_tools=%s\ntool_inputs=%s\napplication_sources=%s\nsetup_smoke=%s\n' \

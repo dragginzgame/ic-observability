@@ -4,7 +4,7 @@ set -euo pipefail
 # One roster drives both full qualification and explicit scenario selection.
 scenarios="$(cat <<'SCENARIOS'
 success||no|0|0|0|0|native-ci.log|setup-smoke,host-tools,compiler,tools,application-sources,ci|success|success|success
-skipped-setup||no|0|0|0|0|native-ci.log||skipped|skipped|skipped
+skipped-setup||no|0|0|0|2|native-ci.log||skipped|skipped|skipped
 setup-smoke|setup-smoke|no|0|0|43|0|setup-smoke.log|setup-smoke|skipped|skipped|skipped
 host-tools|host-tools|no|0|0|43|0|native-ci.log|setup-smoke,host-tools|success|skipped|success
 compiler|compiler|no|0|0|43|0|compiler.txt|setup-smoke,host-tools,compiler|success|success|success
@@ -14,16 +14,18 @@ tools-install|tools-install|no|0|0|43|0|tools-setup.log|setup-smoke,host-tools,c
 tools-check|tools-check|no|0|0|43|0|tools-check.log|setup-smoke,host-tools,compiler,tools|success|success|success
 native|ci|no|0|0|43|0|native-ci.log|setup-smoke,host-tools,compiler,tools,application-sources,ci|success|success|success
 formatting|ci|yes|0|0|43|0|native-ci.log|setup-smoke,host-tools,compiler,tools,application-sources,ci|success|success|success
-collection-partial|tools-install|no|1|0|43|1|tools-setup.log|setup-smoke,host-tools,compiler,tools|success|success|success
-collection-failure|tools-install|no|2|0|43|2|tools-setup.log|setup-smoke,host-tools,compiler,tools|success|success|success
+collection-partial|ci|no|1|0|43|1|native-ci.log|setup-smoke,host-tools,compiler,tools,application-sources,ci|success|success|success
+collection-failure|ci|no|2|0|43|2|native-ci.log|setup-smoke,host-tools,compiler,tools,application-sources,ci|success|success|success
 native-archive-failure||no|0|23|0|23|native-ci.log|setup-smoke,host-tools,compiler,tools,application-sources,ci|success|success|success
-collection-archive-failure|tools-install|no|2|23|43|2|tools-setup.log|setup-smoke,host-tools,compiler,tools|success|success|success
+collection-archive-failure|ci|no|2|23|43|2|native-ci.log|setup-smoke,host-tools,compiler,tools,application-sources,ci|success|success|success
 SCENARIOS
 )"
 selected_scenario=''
+setup_only=false
+if [[ "$#" == 1 && "$1" == --setup-only ]]; then setup_only=true; shift; fi
 if [[ "$#" != 0 ]]; then
     [[ "$#" == 2 && "$1" == --scenario && -n "$2" ]] || {
-        echo 'usage: test-native-evidence.sh [--scenario NAME]' >&2
+        echo 'usage: test-native-evidence.sh [--setup-only | --scenario NAME]' >&2
         exit 2
     }
     selected_scenario="$2"
@@ -78,8 +80,8 @@ mkdir -p "$fixture/commands" "$fixture/bin" "$fixture/source"
     (map(.id) | index("application_sources")) < (map(.id) | index("native_ci")) and
     (map(.id) | index("native_inputs")) < (map(.id) | index("prerequisites")) and
     (map(select(.id == "native_inputs"))[0].run ==
-        "bash scripts/ci/record-native-inputs.sh\n") and
-    (map(select(.id == "tools"))[0].uses == "./vendor/toko-tooling/.github/actions/prepare-common-tools") and
+        "perl scripts/ci/setup-evidence.pl target/evidence/native-ci inputs bash scripts/ci/record-native-inputs.sh\n") and
+    (map(select(.id == "tools"))[0].run == "perl scripts/ci/setup-evidence.pl target/evidence/native-ci tools bash vendor/toko-tooling/scripts/ci/prepare-common-tools.sh") and
     (map(select(.id == "native_artifacts"))[0].if ==
         "env.CI_SCOPE != '\''docs'\'' && (always() && steps.checkout.outcome == '\''success'\'')") and
     (map(select(.id == "native_artifacts"))[0].run ==
@@ -98,9 +100,9 @@ mkdir -p "$fixture/commands" "$fixture/bin" "$fixture/source"
         "TOOL_INPUT_OUTCOME": "${{ steps.tool_inputs.outcome }}"
     }) and
     (map(select(.uses != null and .with.name == "native-${{ matrix.runner }}-${{ github.run_attempt }}"))[0].if ==
-        "env.CI_SCOPE != '\''docs'\'' && (always() && steps.checkout.outcome == '\''success'\'')")
+        "env.CI_SCOPE != '\''docs'\'' && (always() && (steps.native_ci.outcome == '\''success'\'' || steps.native_ci.outcome == '\''failure'\''))")
 ' "$fixture/steps.json" > /dev/null
-for step in setup_smoke native_host host_tools toolchain compiler tool_inputs application_sources native_ci; do
+for step in setup_smoke native_host host_tools toolchain compiler tools tool_inputs application_sources native_ci; do
     PATH="${jq%/*}:$PATH" bash "$root/vendor/toko-tooling/scripts/ci/extract-workflow-step.sh" \
         "$fixture/steps.json" "$step" > "$fixture/commands/$step.sh"
 done
@@ -109,19 +111,6 @@ done
 perl -pi -e 's/\$\{\{ matrix\.os \}\}/Linux/g' "$fixture/commands/setup_smoke.sh"
 # Shared owns the action body, Make aggregate, leaf ordering and PATH admission.
 # Supply only its public outcomes/logs to the actual Metrics collector below.
-cat > "$fixture/commands/tools.sh" <<'TOOLS'
-set -euo pipefail
-printf 'tools\n' >> "$FIXTURE_COMMANDS"
-for phase in install check; do
-    printf 'tool action stdout: %s\ntool action stderr: %s\n' "$phase" "$phase" \
-        > "$RUNNER_TEMP/tools-$phase.log"
-    if [[ "$FIXTURE_FAILURE" == "tools-$phase" ]]; then
-        mkdir -p .tools/rust
-        printf 'retained candidate\n' > .tools/rust/failure:payload
-        exit 43
-    fi
-done
-TOOLS
 # Focused recovery cases need only their shared workflow setup above.
 if [[ -z "$selected_scenario" ]]; then
     # Execute the real workflow setup bodies and selected helper. Shared owns
@@ -139,8 +128,13 @@ RUSTUP
     printf '%s\0' toolchain install "$version" --profile minimal \
         ${components[@]+"${components[@]}"} --target wasm32-unknown-unknown > "$fixture/rust-expected"
     for expected_status in 0 49; do
+        case_root="$fixture/rust-case-$expected_status"
+        mkdir -p "$case_root"
+        ln -s "$root/scripts" "$case_root/scripts"
+        ln -s "$root/vendor" "$case_root/vendor"
+        cp "$root/rust-toolchain.toml" "$case_root/rust-toolchain.toml"
         status=0
-        (cd "$root" && PATH="$fixture/rust-bin:$PATH" METRICS_RUSTUP_ARGS="$fixture/rust-actual" \
+        (cd "$case_root" && PATH="$fixture/rust-bin:$PATH" METRICS_RUSTUP_ARGS="$fixture/rust-actual" \
             METRICS_RUSTUP_STATUS="$expected_status" "$BASH" --noprofile --norc -e -o pipefail \
             "$fixture/commands/$command_file.sh") > "$fixture/rust-supported-$expected_status.log" 2>&1 || status=$?
         [[ "$status" == "$expected_status" ]] || exit 1
@@ -161,6 +155,10 @@ VERSION
     chmod +x "$fixture/host-bin/uname" "$fixture/host-bin/sw_vers"
     # Shared owns generic mismatches; retain this workflow's ordering/PATH boundary.
     for scenario in success wrong-os failed-observation; do
+        case_root="$fixture/host-case-$scenario"
+        mkdir -p "$case_root"
+        ln -s "$root/scripts" "$case_root/scripts"
+        ln -s "$root/vendor" "$case_root/vendor"
         host_os=Darwin host_arch=arm64 host_version=15.0 host_status=0
         case "$scenario" in
             wrong-os) host_os=Linux ;;
@@ -170,7 +168,7 @@ VERSION
         [[ "$scenario" != failed-observation ]] || expected_status=43
         : > "$fixture/host-$scenario.path"
         status=0
-        (cd "$root" && PATH="$fixture/host-bin:$PATH" EXPECTED_OS=Darwin EXPECTED_ARCHITECTURE=arm64 \
+        (cd "$case_root" && PATH="$fixture/host-bin:$PATH" EXPECTED_OS=Darwin EXPECTED_ARCHITECTURE=arm64 \
             FIXTURE_HOST_OS="$host_os" FIXTURE_HOST_ARCH="$host_arch" FIXTURE_HOST_VERSION="$host_version" \
             FIXTURE_HOST_STATUS="$host_status" \
             GITHUB_PATH="$fixture/host-$scenario.path" "$BASH" --noprofile --norc -e -o pipefail \
@@ -181,6 +179,11 @@ VERSION
             [[ "$status" == "$expected_status" && ! -s "$fixture/host-$scenario.path" ]] || exit 1
         fi
     done
+fi
+if [[ "$setup_only" == true ]]; then
+    echo 'Actual workflow compiler/host setup and failure routing passed (platform tools substituted).'
+    fixture_complete=true
+    exit 0
 fi
 # Copy the workflow's source inputs and Make/helper closure, including pending
 # untracked helpers. Historical docs/evidence archives are not fixture inputs.
@@ -232,6 +235,14 @@ real_bash="$(command -v bash)"
 printf '#!%s\n' "$real_bash" > "$fixture/bin/bash"
 cat >> "$fixture/bin/bash" <<'BASH'
 set -euo pipefail
+if [[ "$1" == vendor/toko-tooling/scripts/ci/prepare-common-tools.sh ]]; then
+    printf 'tools\n' >> "$FIXTURE_COMMANDS"
+    for phase in install check; do
+        printf 'tool action stdout: %s\ntool action stderr: %s\n' "$phase" "$phase"
+        [[ "$FIXTURE_FAILURE" != "tools-$phase" ]] || exit 43
+    done
+    exit 0
+fi
 if [[ "$1" == scripts/ci/check-setup-smoke.sh ]]; then
     printf 'setup-smoke\n' >> "$FIXTURE_COMMANDS"
     printf 'setup smoke stdout\n'
@@ -371,6 +382,24 @@ while IFS='|' read -r scenario FIXTURE_FAILURE FIXTURE_FORMATTING \
     collection_status=0
     "$real_bash" scripts/ci/collect-native-evidence.sh > archive.log 2>&1 || collection_status=$?
     [[ "$collection_status" == "$expected_collector_status" ]] || exit 1
+    if [[ "$NATIVE_OUTCOME" == skipped ]]; then
+        [[ ! -e target/evidence/native-ci.tar.gz ]] || exit 1
+        if [[ "$scenario" == skipped-setup ]]; then
+            grep -F 'setup diagnostics missing' archive.log > /dev/null
+            exit 0
+        fi
+        check_diagnostic_checksum
+        mkdir diagnostic-readback
+        tar -xzf target/evidence/native-diagnostics.tar.gz -C diagnostic-readback
+        phase="$FIXTURE_FAILURE"
+        case "$scenario" in tools-*) phase=tools ;; esac
+        "$jq" -e '.status == 43' "diagnostic-readback/.setup/$phase.json" > /dev/null
+        [[ -s "diagnostic-readback/.setup/$phase.log" ]] || exit 1
+        [[ ! -e diagnostic-readback/scratch && ! -e diagnostic-readback/tool-candidates.tar.gz ]] || exit 1
+        command_step="${phase//-/_}"
+        grep -F 'status=43' "$worktree/$command_step.log" > /dev/null
+        exit 0
+    fi
     check_diagnostic_checksum
     # Diagnostics remain readable even when complete evidence collection fails.
     if [[ "$scenario" == native-archive-failure || "$scenario" == collection-archive-failure ]]; then
@@ -379,7 +408,7 @@ while IFS='|' read -r scenario FIXTURE_FAILURE FIXTURE_FORMATTING \
         grep -Fx 'outer archive stderr' archive.log > /dev/null
         grep -Fx 'Native recovery archive failed (exit 23)' archive.log > /dev/null
         if [[ "$scenario" == collection-archive-failure ]]; then
-            [[ "$(cat .tools/rust/failure:payload)" == 'retained candidate' ]] || exit 1
+            check_retained_recovery_inputs
         fi
         exit 0
     fi
@@ -454,7 +483,7 @@ while IFS='|' read -r scenario FIXTURE_FAILURE FIXTURE_FORMATTING \
             grep -Fx 'fetch stdout' "diagnostic-readback/$failed_log" > /dev/null
             grep -Fx 'fetch stderr' "diagnostic-readback/$failed_log" > /dev/null
             [[ "$NATIVE_OUTCOME" == skipped ]] || exit 1 ;;
-        tools-*|collection-*)
+        tools-*)
             phase=install
             [[ "$scenario" != tools-check ]] || phase=check
             grep -Fx "tool action stdout: $phase" "unpacked/target/evidence/native-ci/$failed_log" > /dev/null
@@ -462,7 +491,7 @@ while IFS='|' read -r scenario FIXTURE_FAILURE FIXTURE_FORMATTING \
             mkdir recovered-candidates
             tar -xzf unpacked/target/evidence/native-ci/tool-candidates.tar.gz -C recovered-candidates
             cmp .tools/rust/failure:payload recovered-candidates/.tools/rust/failure:payload ;;
-        native|formatting)
+        native|formatting|collection-*)
             grep -Fx "make stdout: $FIXTURE_FAILURE" "unpacked/target/evidence/native-ci/$failed_log" > /dev/null
             grep -Fx "make stderr: $FIXTURE_FAILURE" "unpacked/target/evidence/native-ci/$failed_log" > /dev/null
             [[ ! -f unpacked/target/evidence/native-ci/tool-candidates.tar.gz ]] || exit 1 ;;

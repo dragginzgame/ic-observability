@@ -1,12 +1,12 @@
 # Toko Tooling snapshot v1
-# version	0.44.3
+# version	0.44.11
 # layout	vendor
 format	1
 source	https://crates.io/crates/toko-tooling
-revision	8a9bc7b6827044baac8134cada7ee6bc31f86c70beec9608d1d39d911eba15e1
+revision	7d16b815ae322ae3f88580ee6af1611bdafde08b77592cd886bfa0eece0f1be8
 # entrypoint	vendor/toko-tooling/.githooks/pre-commit
 # entrypoint	vendor/toko-tooling/.github/actions/cache-tool-downloads/action.yml
-# entrypoint	vendor/toko-tooling/.github/actions/prepare-common-tools/action.yml
+# entrypoint	vendor/toko-tooling/scripts/ci/prepare-common-tools.sh
 # entrypoint	CONTRIBUTING.md
 # entrypoint	LICENSE.md
 # entrypoint	TOKO-TOOLING.md
@@ -62,10 +62,10 @@ revision	8a9bc7b6827044baac8134cada7ee6bc31f86c70beec9608d1d39d911eba15e1
 # entrypoint	vendor/toko-tooling/scripts/dev/toko-tooling.sh
 file	1085e5521dfacb38aed065b70f905aab666ab73ef49dd5a25270c2ec2cf63710	x	vendor/toko-tooling/.githooks/pre-commit
 file	6b93b0a15bed59a00eb3bdace46b76ee360c396872702bb4182ad12b9bb4a29c	-	vendor/toko-tooling/.github/actions/cache-tool-downloads/action.yml
-file	70f8ef2994e2d6ac6a3f6a164cdb4db7b8590fda25244f7129a184560abb1a47	-	vendor/toko-tooling/.github/actions/prepare-common-tools/action.yml
+file	9af932476117c5e51a38e2ae07b1f0f83daca9d43a7b950f83d40796283f93e7	-	vendor/toko-tooling/scripts/ci/prepare-common-tools.sh
 file	0ae38d62c728fb06f1a2dd2325f99f2277bfdb0cd48ac6df49d4120c0bfe88bd	-	CONTRIBUTING.md
 file	3f2971bfefccf71cf4929cabd1fa000e0c7b3d4002b9a08ca58821ccb048c123	-	LICENSE.md
-file	16c4657c267dc9bd46111bb83f36defea8a47cdc2d735618bbd7a49a592bfe59	-	TOKO-TOOLING.md
+file	074e30176fed90fca9f0a655c04d597c6b71da54583226ea891f8d3082a6cc39	-	TOKO-TOOLING.md
 file	e32b68b467e75ae309748f3933fa652204617f03fb846cb042f6ab75e46837a2	-	vendor/toko-tooling/ci/ic-tools.tsv
 file	9f29743b6961b36c2fdb285c9b08d2aec4f0dbb5bcf5584b556cb98185540574	-	vendor/toko-tooling/ci/tool-versions.env
 file	07b59f8cc784c79c648d379561f2493e40bac5b7c2809e8eda960cba661fae7d	-	vendor/toko-tooling/make/cargo-dependencies.mk
@@ -83,7 +83,7 @@ file	c9752abb4ae1870321ac6c5891f49b537dd011b440329416b25de41648b3d87d	x	vendor/t
 file	06f16c4a6e7f97e13fc568b75b8adca7e7db399efbead9fa806d4a429bd5b742	-	vendor/toko-tooling/scripts/ci/check-cargo-graph.pl
 file	b3764cf05af99fa9c2ad6f8cf8b84aa768bf10a99fd961875139c95f7d12e6cb	x	vendor/toko-tooling/scripts/ci/check-cargo-package-provenance.sh
 file	3bc051d6988bc7eb8aa35e825231ffd495dcdcef0a9b814203162970635e8bf6	x	vendor/toko-tooling/scripts/ci/check-crates-io-version.sh
-file	e019d9aa7b7415271ec20cd0bd766cc612ed06eabe80a7fc84c26a34898aaec4	x	vendor/toko-tooling/scripts/ci/check-dependency-pins.sh
+file	c06defb66a028d9f34625c71f019b1f8cc8c13045e64b24c53dd10345b0e24d5	x	vendor/toko-tooling/scripts/ci/check-dependency-pins.sh
 file	468ff88c6e6fca8c79447ceaa8d04d11f2e1c668664bb9732da708b696a6041b	x	vendor/toko-tooling/scripts/ci/check-documentation-links.pl
 file	4b6be8e82fd0fd2dd5006da4fc398200710d57dcfb8d3334187b1ef7f2e30064	x	vendor/toko-tooling/scripts/ci/check-formatting-hooks.sh
 file	3bbcd3458afbeee5803bf4f51e624afd2b11578ee961250522c9332ed0fc7b4f	x	vendor/toko-tooling/scripts/ci/check-make-execution.sh
@@ -117,8 +117,6 @@ file	5327cdf29404378b34ce1e3795195d63518f41ef5b06450eea8dddf6c41b2971	x	vendor/t
 file	31c47b675fba90850681c6fac0d685def34b08a68e7e05bc55ae0403419fdf82	x	vendor/toko-tooling/scripts/dev/prepare-rust-toolchain.sh
 file	da86464696f4f600f034566cef732aa680dc9c577e534519c71ee3d07172a875	-	vendor/toko-tooling/scripts/dev/toko-tooling.sh
 file	aec8dfcff940adbf7ca69d0e9edb4cd31b65648e1deef299ffb194e94e64c536	x	vendor/toko-tooling/scripts/ci/verify-toko-tooling-snapshot.sh
-file	4c2ee09c8e87b43397d2df28bdbc1b5fc0197a10ebe0a94d89cb46916b93a9ca	x	vendor/toko-tooling/scripts/ci/cargo-tool-cache-key.sh
-file	9af932476117c5e51a38e2ae07b1f0f83daca9d43a7b950f83d40796283f93e7	-	vendor/toko-tooling/scripts/ci/prepare-common-tools.sh
 file	8f69897f6d700f3cd5c923a5160743f4f9da4bddae9b363739600a8d269c1a83	-	vendor/toko-tooling/scripts/dev/cargo-dependencies.pl
 file	b3c510be7e6255736c812819c7e280618b140cbcf3877acde66ecc5377752569	-	vendor/toko-tooling/scripts/ci/cargo-publication-adapter.sh
 file	46077e4508b98e086e9772ac107b759bb251b3671aa965311c51b35dd71aef8d	x	vendor/toko-tooling/scripts/dev/install-git-hooks.sh
@@ -140,7 +138,7 @@ file	e6f6faf964a19009aa00a07bd1cb491fe9bd728be9d07fcde3a0bc6a00f4f568	-	vendor/t
 file	94bd2fe49818a11955dcb56f5ff6be26f47f50ae0d947d3eba96c15962db0689	-	vendor/toko-tooling/ci/external-ic-dependencies.txt
 file	8de4cc409b28314667ddf6af521c421f9abc9be1e937f6f0130815a6861b7421	-	vendor/toko-tooling/ci/hash-dependencies.json
 file	64462611f6899ba897c4c2768cc27b08fc5d186a87a6df51b46bd333b3ac5c16	x	vendor/toko-tooling/scripts/ci/release-timing.sh
-file	27c70a759e2afc949bfa998a9e10d6fd6e2d25413d4f84c643c944e981a30d54	-	vendor/toko-tooling/scripts/ci/dependency-pins.jq
+file	a4b6d809b689aba87afa73baa0ad8ec93a79f6315dce8a4aff6ab0cdcc06f256	-	vendor/toko-tooling/scripts/ci/dependency-pins.jq
 file	ec5bb55c605efae8b2acce32fedb7e912ace1cbe375b9962ef187bb6d7191499	-	vendor/toko-tooling/scripts/ci/select-rust-formatting-sources.sh
 file	f867fd6250b0a2d475faed5a2d6c7d7feb16c4a9f134aae44d7438ec68bc42a0	-	vendor/toko-tooling/scripts/ci/shared-package-version.pl
 file	eeeca9e6e7b92b888fd6547733d6136f0e7e9859d37c983f8048e60551a15c39	-	vendor/toko-tooling/scripts/ci/StableVersion.pm

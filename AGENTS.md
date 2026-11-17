@@ -101,10 +101,11 @@ consumer-contract or persistence-boundary changes. No baseline exceptions apply.
   `target/` and locked dependencies; do not upgrade dependencies as a side effect.
 - After Rust edits, run `make fmt`, then selected package checks or named tests.
   Focused commands and host qualification are in [docs/development/hosts.md](docs/development/hosts.md).
-  Full `make ci` and `make msrv` are release gates or explicit
+  Full local `make ci` and `make msrv` are release gates or explicit
   check requests. Releases select the qualified
   [group validation plan](docs/releases/independent-releases.md); shared or uncertain inputs
-  retain the full roster. Repository CI still covers both packages.
+  retain the full roster. Hosted CI covers both packages asynchronously; these
+  local gate names do not require a completed GitHub Actions run.
   Follow [the validation policy](TOKO-TOOLING.md#validation-and-evidence)
   for batched focused checks and evidence reuse. Documentation-only work needs
   link, consistency and diff checks.

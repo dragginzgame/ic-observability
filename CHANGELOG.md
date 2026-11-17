@@ -14,7 +14,7 @@ release version. Each group owns its release ledger:
 
 From this repository's root, with the `toko-cloc` PATH launcher installed as in
 the [development guide](docs/development/hosts.md), and Cargo.lock selecting
-toko-tooling 0.44.3:
+toko-tooling 0.44.11:
 
 ```sh
 make toko-tooling-update  # One-time setup: downloads tooling and prepares local tools.

@@ -1,0 +1,117 @@
+use strict;
+use warnings;
+use Test::More;
+use Cwd qw(abs_path getcwd);
+use File::Path qw(make_path);
+use File::Temp qw(tempdir);
+use JSON::PP;
+
+my $root=abs_path('.');
+my $helper="$root/scripts/ci/setup-evidence.pl";
+make_path("$root/target/qualification");
+my $work=tempdir('setup-evidence.XXXXXX',DIR=>"$root/target/qualification",CLEANUP=>0);
+chdir $work or die $!;
+sub run {
+    my ($output,@args)=@_;
+    my $pid=fork(); defined($pid) or die $!;
+    if (!$pid) {open STDOUT,'>',$output or die $!;open STDERR,'>&',STDOUT or die $!;exec @args;die $!;}
+    waitpid($pid,0);return $? >> 8;
+}
+sub read_file {open my $fh,'<',$_[0] or die $!;local $/;return <$fh> // '';}
+$ENV{FIXTURE_SECRET_TOKEN}='fixture-value-must-not-be-published'; # gitleaks:allow synthetic redaction input
+my $code=q{
+    print "noise line $_\n" for 1..12000;
+    print "underlying parser: archive has an invalid header\n";
+    print "authorization: Bearer fixture-auth\n";
+    print "TOKEN=fixture-env\n";
+    print "request uses $ENV{FIXTURE_SECRET_TOKEN}\n";
+    print "https://user:password\@example.invalid/archive\n";
+    print "-----BEGIN PRIVATE KEY-----\nfixture-private-material\n-----END PRIVATE KEY-----\n"; # gitleaks:allow synthetic redaction input
+    print "github token ghp_fixturecredential\n";
+    exit 43;
+};
+is(run('failure.out',$^X,$helper,'target/evidence/native-ci','host-tools',$^X,'-e',$code),43,
+    'setup failure retains the original status');
+my $log=read_file('target/evidence/native-ci/.setup/host-tools.log');
+my $meta=decode_json(read_file('target/evidence/native-ci/.setup/host-tools.json'));
+is($meta->{status},43,'hidden attempt records original status');
+ok($meta->{truncated},'retention truncation is explicit');
+cmp_ok(length($log),'<=',64*1024,'retained log is bounded');
+cmp_ok(length(read_file('failure.out')),'<',5000,'printed excerpt is bounded');
+like($log,qr/underlying parser: archive has an invalid header/,'underlying failure is useful');
+for my $payload ('fixture-auth','fixture-env',$ENV{FIXTURE_SECRET_TOKEN},'user:password',
+    'fixture-private-material','ghp_fixturecredential') {
+    unlike($log,qr/\Q$payload\E/,'retained log excludes a sensitive field');
+    unlike(read_file('failure.out'),qr/\Q$payload\E/,'printed excerpt excludes a sensitive field');
+}
+make_path('target/evidence/native-ci/unrelated');
+open my $unrelated,'>','target/evidence/native-ci/unrelated/token.log' or die $!;
+print {$unrelated} 'unrelated-secret';close $unrelated;
+is(run('collect.out',$^X,$helper,'--collect','target/evidence/native-ci','target/evidence/native-diagnostics.tar.gz'),0,
+    'collector archives selected sanitized hidden files');
+is(run('members.out','tar','-tzf','target/evidence/native-diagnostics.tar.gz'),0,'archive is readable');
+my $members=read_file('members.out');
+like($members,qr{\.setup/host-tools.log},'hidden attempt log is retained');
+unlike($members,qr{unrelated|scratch|\.tools/},'unrelated payloads are excluded');
+isnt(run('missing.out',$^X,$helper,'--collect','target/evidence/missing','target/evidence/missing.tar.gz'),0,
+    'missing evidence fails collection');
+like(read_file('missing.out'),qr/setup diagnostics missing/,'missing diagnostics are explicit');
+make_path('target/evidence/oversized/.setup');
+open my $large,'>','target/evidence/oversized/.setup/phase.log' or die $!;print {$large} 'x' x (64*1024+1);close $large;
+open my $large_meta,'>','target/evidence/oversized/.setup/phase.json' or die $!;print {$large_meta} '{}';close $large_meta;
+isnt(run('oversized.out',$^X,$helper,'--collect','target/evidence/oversized','target/evidence/oversized.tar.gz'),0,
+    'collector refuses an oversized selected file');
+ok(!-e 'target/evidence/oversized.tar.gz','oversized input is not archived');
+make_path('target/evidence/symlink/.setup');
+symlink "$work/target/evidence/native-ci/unrelated/token.log",'target/evidence/symlink/.setup/host.log' or die $!;
+open my $link_meta,'>','target/evidence/symlink/.setup/host.json' or die $!;print {$link_meta} '{}';close $link_meta;
+isnt(run('symlink.out',$^X,$helper,'--collect','target/evidence/symlink','target/evidence/symlink.tar.gz'),0,
+    'collector refuses symlink input');
+ok(!-e 'target/evidence/symlink.tar.gz','symlink target was not archived');
+make_path('bin');
+open my $tar,'>','bin/tar' or die $!;print {$tar} "#!/bin/sh\nexit 31\n";close $tar;chmod 0755,'bin/tar';
+{
+    local $ENV{PATH}="$work/bin:$ENV{PATH}";
+    isnt(run('collector-failure.out',$^X,$helper,'--collect','target/evidence/native-ci','target/evidence/failed.tar.gz'),0,
+        'archiver failure remains a collection failure');
+}
+is($meta->{status},43,'collection cannot relabel the original setup failure');
+like(read_file('collector-failure.out'),qr/setup diagnostic archive failed/,'collector failure is explicit');
+is(run('empty.out',$^X,$helper,'target/evidence/empty','empty',$^X,'-e','exit 44'),44,
+    'missing command diagnostics retain original failure status');
+like(read_file('empty.out'),qr/no diagnostics emitted/,'empty stderr/stdout is explicit');
+make_path('target/evidence/occupied/.setup');
+open my $occupied,'>','target/evidence/occupied/.setup/phase.json' or die $!;close $occupied;
+is(run('occupied.out',$^X,$helper,'target/evidence/occupied','phase',$^X,'-e','exit 43'),43,
+    'diagnostic write failure cannot replace the original failing status');
+like(read_file('occupied.out'),qr/Setup evidence collection failed/,'diagnostic write failure is reported separately');
+
+# Execute the actual scanner setup body with its external download substituted.
+make_path('scripts/ci','vendor/toko-tooling/scripts/ci');
+symlink $helper,'scripts/ci/setup-evidence.pl' or die $!;
+open my $installer,'>','vendor/toko-tooling/scripts/ci/install-ci-tool.sh' or die $!;
+print {$installer} "#!/bin/sh\necho 'scanner checksum mismatch' >&2\nexit 43\n";close $installer;
+is(run('scanner-body.json',"$root/.tools/host/bin/yq",'-o=json',
+    '.jobs.security.steps[] | select(.id == "scanner")',"$root/.github/workflows/ci.yml"),0,'read actual scanner workflow body');
+my $scanner=decode_json(read_file('scanner-body.json'));
+local $ENV{RUNNER_TEMP}="$work/runner-temp";
+local $ENV{GITHUB_ENV}="$work/github-env";
+is(run('scanner.out','bash','-e','-o','pipefail','-c',$scanner->{run}),43,
+    'scanner workflow preserves download failure through command substitution');
+like(read_file('target/evidence/security-setup/.setup/scanner.log'),qr/checksum mismatch/,
+    'scanner workflow retains underlying failure');
+ok(!-e "$work/github-env",'failed scanner is not exported as an installed selection');
+open my $recorder,'>','scripts/ci/record-native-inputs.sh' or die $!;
+print {$recorder} "#!/bin/sh\necho 'missing tracked workflow source' >&2\nexit 43\n";close $recorder;
+is(run('inputs-body.json',"$root/.tools/host/bin/yq",'-o=json',
+    '.jobs.native.steps[] | select(.id == "native_inputs")',"$root/.github/workflows/ci.yml"),0,
+    'read actual earliest native setup body');
+my $inputs=decode_json(read_file('inputs-body.json'));
+# Use a fresh native attempt, rather than overwrite the earlier host-tools case.
+my $body=$inputs->{run}; $body =~ s{target/evidence/native-ci}{target/evidence/input-setup};
+is(run('inputs.out','bash','-e','-o','pipefail','-c',$body),43,
+    'failure before host/tool setup retains the original status');
+like(read_file('target/evidence/input-setup/.setup/inputs.log'),qr/missing tracked workflow source/,
+    'earliest setup failure has retrievable diagnostics');
+chdir $root or die $!;
+done_testing();

@@ -10,10 +10,21 @@ belong here.
 
 ### 🛠️ Tooling
 
-- Adopt published toko-tooling 0.44.3 through the authenticated exporter. Plain
+- Adopt published toko-tooling 0.44.11 through the authenticated exporter. Plain
   `toko-cloc` and `-d 0` show compact totals; repository/workspace `-d 1` adds
   crates and `-d 2` adds modules. Named crate/module selections expand immediate
   children at `-d 1`; JSON counts remain unchanged.
+- Retain bounded, sanitized CI setup diagnostics with original failure status,
+  explicit hidden log selection and upload reporting. Keep full recovery archives
+  for failures after setup; check the early failure paths locally.
+  [Toko Tooling #387](https://github.com/dragginzgame/toko-tooling/issues/387).
+- Admit the canonical exact tooling pin without a consumer pin exception; keep
+  local release plans and asynchronous hosted CI separate.
+- Pre-release registry review confirms stable toko-tooling 0.44.11, num-bigint
+  0.5.1, Serde 1.0.229 and cargo-sort 2.1.4. Defer optional cargo-sort-derives
+  0.15.0 to the next reviewed shared catalog adoption, retaining 0.14.1.
+  Defer IC Build 0.87.3 to the next native-editor maintenance batch; retain
+  qualified 0.83.0 for this delivery.
 
 ## [0.25.8] - 2026-11-15
 

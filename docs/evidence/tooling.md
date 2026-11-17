@@ -1,23 +1,42 @@
 # Contributor tooling
 
-## Local 0.44.3 selection
+## Local 0.44.11 selection
 
-The authenticated crates.io payload selects published toko-tooling **0.44.3**,
-archive SHA-256 `8a9bc7b6827044baac8134cada7ee6bc31f86c70beec9608d1d39d911eba15e1`.
-The exporter updated only the two LOC reporter files, retaining 56 entrypoints
-and 114 files. Plain `toko-cloc` and `-d 0` now show compact totals; repository
-and workspace `-d 1` adds crates and `-d 2` adds top-level modules. Named crate
-and module selections expand their immediate children at `-d 1`.
+Root Cargo selection, Cargo.lock and the authenticated exporter payload select
+published **toko-tooling 0.44.11**, archive SHA-256
+`7d16b815ae322ae3f88580ee6af1611bdafde08b77592cd886bfa0eece0f1be8`.
+The baseline and two pin-checking files updated. The consumer now calls Shared's
+unchanged preparation script through its setup diagnostic boundary; its unused
+composite action and cache-key companion retired through a reviewed exporter
+preview. The final selection has 56 entrypoints and 112 files. The obsolete
+exact-pin exception was removed. Both maintained package directories already
+match their identities; no qualification packages or thiserror selection exist here.
 
-Installation/tool admission and actual repository/workspace/selection reports
-passed. Before/after JSON reports are identical: 5,524 lines and no unclassified
-source. The launcher remains unchanged; no sibling scan or producer fixture suite
-was needed. Pin/lock/snapshot, member selection, formatting, documentation and
-inventory checks complete this adoption; records use `target/evidence/toko-tooling-0443/`.
-Only toko-tooling changed in the incoming lock graph; the separate syn 3.0.10
-edit is preserved. Product versions remain Metrics 0.30.8 and Logging 0.25.8.
-The baseline and all other runtime inputs are unchanged. This selection remains
-local and uncommitted; no new release or deployment ran.
+CI setup and scanner failures now retain original status, a bounded sanitized
+excerpt and selected hidden log/status files. Collection rejects missing,
+oversized and symlinked inputs. Setup failures upload diagnostics rather than
+whole tool candidates or workspace recovery; native-gate failures retain the
+existing full recovery archive. Upload summaries report success/failure and the
+artifact URL or its absence. Local tests prove these boundaries; no hosted
+upload/retrieval has been claimed. Details and limits are in the
+[development guide](../development/hosts.md#native-evidence).
+
+Installation, prepared-tool/snapshot/pin/format/member checks and focused workflow,
+setup-evidence, documentation and inventory checks are recorded under
+`target/evidence/toko-tooling-04411/`. Product versions remain Metrics 0.30.8
+and Logging 0.25.8. Only toko-tooling changed in the incoming lock graph; syn
+3.0.10 and all other selections remain intact. The incoming AGENTS.md edit is
+unchanged, and the handoff's compaction/recovery content is retained. Nothing was
+committed, pushed or deployed for this adoption.
+
+## Prior 0.44.3 adoption
+
+The 0.44.3 adoption is committed in checkpoint `1644e86`, superseding the
+former uncommitted description. Its exporter selected 56 entrypoints and 114
+files. LOC scope-relative depth and unchanged JSON counts were qualified under
+`target/evidence/toko-tooling-0443/`. Those unchanged reporter bytes retain that
+evidence. The current adoption supersedes its tooling selection, without changing
+the historical delivery records below.
 
 ## Delivered 0.44.2 selection
 

@@ -31,12 +31,34 @@ jobs:
       - name: Install pinned secret scanner
         id: scanner
         run: |
-          scanner="$(bash vendor/toko-tooling/scripts/ci/install-ci-tool.sh gitleaks --install-dir "$RUNNER_TEMP/security-bin")"
-          echo "GITLEAKS_BIN=$scanner" >> "$GITHUB_ENV"
+          perl scripts/ci/setup-evidence.pl target/evidence/security-setup scanner bash -e -o pipefail -c '
+            scanner="$(bash vendor/toko-tooling/scripts/ci/install-ci-tool.sh gitleaks --install-dir "$RUNNER_TEMP/security-bin")" || exit $?
+            echo "GITLEAKS_BIN=$scanner" >> "$GITHUB_ENV"'
       - name: Save pinned tool downloads
         uses: ./vendor/toko-tooling/.github/actions/cache-tool-downloads
         with:
           mode: save
+      - name: Collect scanner setup diagnostics
+        if: always() && steps.scanner.outcome == 'failure'
+        run: perl scripts/ci/setup-evidence.pl --collect target/evidence/security-setup target/evidence/security-setup.tar.gz
+      - name: Upload scanner setup diagnostics
+        id: scanner_diagnostics
+        if: always() && steps.scanner.outcome == 'failure'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: scanner-setup-${{ github.run_attempt }}
+          path: |
+            target/evidence/security-setup.tar.gz
+            target/evidence/security-setup.tar.gz.sha256
+          if-no-files-found: error
+          retention-days: 30
+      - name: Report scanner diagnostic upload
+        if: always() && steps.scanner.outcome == 'failure'
+        env:
+          UPLOAD_RESULT: ${{ steps.scanner_diagnostics.outcome }}
+          ARTIFACT_URL: ${{ steps.scanner_diagnostics.outputs.artifact-url }}
+        run: |
+          printf 'Scanner setup failed; diagnostics upload=%s artifact=%s\n' "$UPLOAD_RESULT" "${ARTIFACT_URL:-unavailable}" | tee -a "$GITHUB_STEP_SUMMARY"
       - name: Scan repository history
         id: secrets
         run: '"$GITLEAKS_BIN" git --redact=100 --no-banner --no-color --log-level error'
@@ -99,16 +121,16 @@ jobs:
         if: env.CI_SCOPE != 'docs'
         id: native_inputs
         run: |
-          bash scripts/ci/record-native-inputs.sh
+          perl scripts/ci/setup-evidence.pl target/evidence/native-ci inputs bash scripts/ci/record-native-inputs.sh
       - name: Check consumer Make setup before tool installation
         if: env.CI_SCOPE != 'docs'
         id: setup_smoke
         run: |
           if [[ "${{ matrix.os }}" == Darwin ]]; then
-            bash scripts/ci/check-setup-smoke.sh /usr/bin/make
+            perl scripts/ci/setup-evidence.pl target/evidence/native-ci setup-smoke bash scripts/ci/check-setup-smoke.sh /usr/bin/make
           else
-            bash scripts/ci/check-setup-smoke.sh
-          fi 2>&1 | tee target/evidence/native-ci/setup-smoke.log
+            perl scripts/ci/setup-evidence.pl target/evidence/native-ci setup-smoke bash scripts/ci/check-setup-smoke.sh
+          fi
       - name: Verify native host
         if: env.CI_SCOPE != 'docs'
         id: native_host
@@ -117,22 +139,22 @@ jobs:
           EXPECTED_ARCHITECTURE: ${{ matrix.architecture }}
         run: |
           if [[ "$EXPECTED_OS" == Darwin ]]; then
-            bash vendor/toko-tooling/scripts/ci/check-native-host.sh "$EXPECTED_OS" "$EXPECTED_ARCHITECTURE" 15
+            perl scripts/ci/setup-evidence.pl target/evidence/native-ci host bash vendor/toko-tooling/scripts/ci/check-native-host.sh "$EXPECTED_OS" "$EXPECTED_ARCHITECTURE" 15
             echo /bin >> "$GITHUB_PATH"
           else
-            bash vendor/toko-tooling/scripts/ci/check-native-host.sh "$EXPECTED_OS" "$EXPECTED_ARCHITECTURE"
+            perl scripts/ci/setup-evidence.pl target/evidence/native-ci host bash vendor/toko-tooling/scripts/ci/check-native-host.sh "$EXPECTED_OS" "$EXPECTED_ARCHITECTURE"
           fi
       - name: Install native tooling prerequisites
         if: env.CI_SCOPE != 'docs'
         id: prerequisites
         run: |
-          case "$(uname -s)" in
+          perl scripts/ci/setup-evidence.pl target/evidence/native-ci prerequisites bash -e -o pipefail -c 'case "$(uname -s)" in
             Linux)
               sudo apt-get update && sudo apt-get install -y xz-utils perl
               ;;
             Darwin) brew install xz ;;
             *) echo 'unsupported native host' >&2; exit 1 ;;
-          esac 2>&1 | tee target/evidence/native-ci/prerequisites.log
+          esac'
       - name: Restore pinned tool downloads
         if: env.CI_SCOPE != 'docs'
         id: restore_downloads
@@ -141,23 +163,24 @@ jobs:
         if: env.CI_SCOPE != 'docs'
         id: host_tools
         run: |
-          bash vendor/toko-tooling/scripts/dev/install-host-tools.sh --consumer "$PWD" \
-            2>&1 | tee target/evidence/native-ci/host-tools.log
+          perl scripts/ci/setup-evidence.pl target/evidence/native-ci host-tools \
+            bash vendor/toko-tooling/scripts/dev/install-host-tools.sh --consumer "$PWD"
       - name: Prepare development Rust
         if: env.CI_SCOPE != 'docs'
         id: toolchain
         run: |
-          PATH="$PWD/.tools/host/bin:$PATH" bash vendor/toko-tooling/scripts/dev/prepare-rust-toolchain.sh \
+          PATH="$PWD/.tools/host/bin:$PATH" perl scripts/ci/setup-evidence.pl target/evidence/native-ci toolchain \
+            bash vendor/toko-tooling/scripts/dev/prepare-rust-toolchain.sh \
             --toolchain-file rust-toolchain.toml
       - name: Admit and record the supported compiler
         if: env.CI_SCOPE != 'docs'
         id: compiler
         run: |
-          bash scripts/ci/check-rust-compiler.sh > target/evidence/native-ci/compiler.txt 2>&1
+          perl scripts/ci/setup-evidence.pl target/evidence/native-ci compiler bash scripts/ci/check-rust-compiler.sh
       - name: Install and verify the complete common toolset
         if: env.CI_SCOPE != 'docs'
         id: tools
-        uses: ./vendor/toko-tooling/.github/actions/prepare-common-tools
+        run: perl scripts/ci/setup-evidence.pl target/evidence/native-ci tools bash vendor/toko-tooling/scripts/ci/prepare-common-tools.sh
       - name: Save pinned tool downloads
         if: env.CI_SCOPE != 'docs'
         id: save_downloads
@@ -168,16 +191,16 @@ jobs:
         if: env.CI_SCOPE != 'docs'
         id: tool_inputs
         run: |
-          {
+          perl scripts/ci/setup-evidence.pl target/evidence/native-ci tool-inputs bash -e -o pipefail -c '
             rustc --version
             cargo --version
             bash vendor/toko-tooling/scripts/ci/report-tool-versions.sh "$GITHUB_WORKSPACE"
-          } > target/evidence/native-ci/tool-versions.txt 2>&1
+          '
       - name: Prepare the locked application sources
         if: env.CI_SCOPE != 'docs'
         id: application_sources
         run: |
-          cargo fetch --locked 2>&1 | tee target/evidence/native-ci/application-sources.log
+          perl scripts/ci/setup-evidence.pl target/evidence/native-ci application-sources cargo fetch --locked
       - name: Run native CI
         if: env.CI_SCOPE != 'docs'
         id: native_ci
@@ -206,6 +229,7 @@ jobs:
           bash scripts/ci/collect-native-evidence.sh
       # actions/upload-artifact v7
       - name: Upload native diagnostics
+        id: diagnostics_upload
         if: env.CI_SCOPE != 'docs' && (always() && steps.checkout.outcome == 'success')
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
@@ -218,7 +242,7 @@ jobs:
           retention-days: 30
       # actions/upload-artifact v7
       - name: Upload native evidence
-        if: env.CI_SCOPE != 'docs' && (always() && steps.checkout.outcome == 'success')
+        if: env.CI_SCOPE != 'docs' && (always() && (steps.native_ci.outcome == 'success' || steps.native_ci.outcome == 'failure'))
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: native-${{ matrix.runner }}-${{ github.run_attempt }}
@@ -229,3 +253,11 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 30
+      - name: Report native diagnostic upload
+        if: env.CI_SCOPE != 'docs' && (always() && steps.checkout.outcome == 'success')
+        env:
+          COLLECTION_RESULT: ${{ steps.native_artifacts.outcome }}
+          UPLOAD_RESULT: ${{ steps.diagnostics_upload.outcome }}
+          ARTIFACT_URL: ${{ steps.diagnostics_upload.outputs.artifact-url }}
+        run: |
+          printf 'Native evidence collection=%s diagnostics upload=%s artifact=%s\n' "$COLLECTION_RESULT" "$UPLOAD_RESULT" "${ARTIFACT_URL:-unavailable}" | tee -a "$GITHUB_STEP_SUMMARY"
