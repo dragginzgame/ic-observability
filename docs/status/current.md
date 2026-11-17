@@ -2,46 +2,47 @@
 
 ## State and next action
 
-[Observability #135 — Simplify release gates](https://github.com/dragginzgame/ic-observability/issues/135)
-is implemented locally, pending delivery. Package-only plans now omit five
-unchanged tooling regression stages (Metrics 14, Logging 13); shared/uncertain
-changes and full CI retain all 20. Fresh source, archive and publication admission
-remain unchanged. The [stage/fixture mapping](../releases/independent-releases.md#release-stage-ownership-and-triggers)
-owns commands, proof boundaries and measured substitute dispatch counts/timings.
-Pending compatible notes are Metrics 0.30.10 and Logging 0.25.10; manifests and
-lock identities remain at delivered versions. Cross-group reuse remains disabled
-and separately tracked in [Observability #136](https://github.com/dragginzgame/ic-observability/issues/136).
-Its revised contract is investigated: the 0.44.11 stage runner is exported locally
-(57 roots / 113 files), but no release stage uses it. A synthetic executed/reused
-probe exposed missing non-Cargo receipt sealing;
-[Toko Tooling #389](https://github.com/dragginzgame/toko-tooling/issues/389) owns that
-shared interface. Observability #136 remains open, with integration and sequential
-batch/recovery qualification pending. See the [reuse preparation](../releases/independent-releases.md#stage-reuse-preparation--observability-136).
+[Observability #136 — Reconstruct CI and release tooling](https://github.com/dragginzgame/ic-observability/issues/136)
+is implemented locally, replacing the old caching scope. The local
+pipeline now has three mandatory product stages (admission, strict lint, selected
+product checks); full CI covers both packages and archives. Tooling regression
+qualification is separate. The nested retention coordinator and baseline-driven
+omission selector are removed. No product Rust/API or dependency changes.
+The [guarantee map](../releases/independent-releases.md#release-stage-ownership-and-triggers)
+owns commands, coverage and measured evidence. Focused routing, refusal, evidence
+custody and two-package recovery checks passed. The matched delivery fixture took
+281 → 167 seconds (real product/archive work, local Git/simulated registry, old
+regression bodies stubbed in both runs). No live-release speed claim follows.
+Evidence is under `target/qualification/issue136-rebuild/`; implementation is
+qualified; the user has authorized delivery of both groups. A fresh batch will
+select Metrics 0.30.11 and Logging 0.25.10 with verified publication.
 
-Metrics **0.30.9** and Logging **0.25.9** are delivered to GitHub and independently
-verified on crates.io; never re-upload them. The
-[delivery receipt](../evidence/releases/toko04411-delivery-20261117.md) owns exact
-commits/tags/archive identities, both complete 20-stage workspace plans and
-registry/source readback. Successful batch `batch-n9adqUv3` used source
-`5eb1724462892e1fb8968f192e18438e228da8eb`, with no stage reuse. Stage totals
-were 517 and 500 seconds; its instrumented interval was 1,146.6 seconds.
+The user stopped deployment batch `batch-sSjwd230`. Metrics **0.30.10** was
+published and independently verified at commit
+`b9d488dec7eaf40c79f665880051b2d45c68ae1a`; Logging remains **0.25.9**.
+Logging 0.25.10 has no delivered tag/upload. The stopped candidate retains its
+original adapter, partial validation and durable journal; do not resume it with
+replacement semantics. Normal main was fast-forwarded to the delivered Metrics
+prefix before reconstruction. Pending notes now select Metrics 0.30.11 and
+Logging 0.25.10. The new batch must preserve all stopped-batch custody.
 
-Toko Tooling **0.44.11** is committed in root Cargo, Cargo.lock and the snapshot:
-56 entrypoints and 112 files. Shared's preparation helper is called directly;
-the unused action/cache-key companion and exact-pin exception retired. Product
-Rust/APIs, compiler/lints, production graphs and package identities are unchanged.
-Syn 3.0.10 remains the checkpoint-selected version. The
-[tooling evidence](../evidence/tooling.md) owns focused scope and record paths.
+Metrics 0.30.10 checksum is
+`205286dceb753a70df354e6147e858fc4bfb604815b612f64d2392ae51593d14`;
+34 maintained package files matched source. Local deployment records are under
+`target/deploy/issue135-20261117/` and the frozen candidate's
+`target/publication/verification.sniTvi`. Its Metrics 20-stage plan passed;
+Logging was stopped during the old nested tooling fixture stage.
+Hosted CI [44144314472](https://github.com/dragginzgame/ic-observability/actions/runs/44144314472)
+was last observed in progress; no completed native result is claimed here.
 
-Hosted Metrics CI exposed native-prerequisite shell quoting after publication;
-its security scan passed. The CI-only correction and 58-test workflow-body
-coverage were pushed in `19d0f200911a3a2a21fa664aacff1bf3d6c467cc`, without
-changing package inputs or uploading a version again. The
-[corrected run](https://github.com/dragginzgame/ic-observability/actions/runs/44065264444)
-was observed in progress; no successful hosted native qualification is claimed.
-One real Linux setup-failure diagnostic artifact was downloaded and verified:
-eight hidden records, 873 bytes, matching checksum and original status 2.
-Hosted native and downstream acceptance remain separate and asynchronous.
+Toko Tooling **0.44.11**, Rust **1.100.0** and dependency selections remain intact.
+The exporter retired the unused stage runner and retention probe: 55 roots /
+111 files remain.
+This reconstruction does not depend on
+[Toko Tooling #389](https://github.com/dragginzgame/toko-tooling/issues/389).
+The earlier probe remains historical under `target/qualification/issue136/`.
+Earlier delivered identities and CI repair are in the
+[delivery receipt](../evidence/releases/toko04411-delivery-20261117.md).
 
 ## Ownership and qualification limits
 
@@ -55,8 +56,7 @@ and closed producer issues do not establish IC costs or downstream deployment.
 
 Historical delivery narratives and exact identities remain in the existing
 [receipt chain](../evidence/releases/README.md) and Git history. Do not rerun or
-reinterpret those releases merely to refresh this handoff. Historical plans retain their original obligations. New plans use the qualified
-selector above; stage/version-proof reuse remains disabled.
+reinterpret those releases merely to refresh this handoff. Historical plans retain their original obligations. New plans use explicit selected-package scope; stage/version-proof reuse remains disabled.
 
 ## Deferred work and recovery custody
 

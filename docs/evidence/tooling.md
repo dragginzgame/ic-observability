@@ -1,5 +1,14 @@
 # Contributor tooling
 
+## Pending pipeline reconstruction
+
+[Observability #136](https://github.com/dragginzgame/ic-observability/issues/136)
+retires the unused stage-cache runner and nested retention probe through the same
+authenticated 0.44.11 exporter. Preview selected only those two obsolete files;
+55 entrypoints / 111 files remain. Cargo selections, lock and retained executable
+bytes are unchanged. Preview, installation and offline admission are recorded
+under `target/qualification/issue136-rebuild/`. No tool setup was needed for deletion.
+
 ## Delivered 0.44.11 selection
 
 Published **toko-tooling 0.44.11**, archive SHA-256

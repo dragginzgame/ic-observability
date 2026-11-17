@@ -137,13 +137,12 @@ help:
 	@echo "Clone setup: install-hooks (requires prepared manifest formatter and rustfmt)"
 	@echo "Workspace gates: check, check-wasm, clippy, docs-check, test (both packages; see docs/development/hosts.md for focused Cargo commands)"
 	@echo "Formatting and admission: format-tools-check, fmt, fmt-check, check-doc-links, toko-tooling-check, check-pins"
-	@echo "Dependency declarations and boundary fixtures: production-dependencies-check"
+	@echo "Live dependency declarations: production-dependencies-check; regression fixtures: tooling-check"
 	@echo "Local package inventory: deps-list; explicit Cargo updates: deps-update (optional DEPENDENCY_PACKAGE and DEPENDENCY_PRECISE)"
 	@echo "Link fixed Metrics recording without an allocator: allocation-free-check"
 	@echo "Early setup: setup-smoke-check"
 	@echo "Dependency-free Metrics graphs: metrics-profiles-check; Logging graphs: logging-profiles-check"
 	@echo "Release group-plan scope and recovery fixtures: release-validation-check"
-	@echo "Renew matched full/selected mapping qualification: release-validation-qualify (on relevant changes)"
 	@echo "Broad tooling qualification on wiring changes: hook-check, release-tools-check (local fixture Git effects only)"
 	@echo "Focused release routing: bash scripts/release/test-standard-release.sh --selection-only"
 	@echo "Focused release refusal: bash scripts/release/test-release-admission.sh --refusals-only"
@@ -154,7 +153,7 @@ help:
 	@echo "Recording tests: cargo test -p $(PACKAGE) --features recording --locked <test-name>"
 	@echo "Maintenance task definitions: https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/tasks/README.md (adoption does not activate a schedule)"
 	@echo "Workspace gates cover Metrics and Logging; compiler admission: msrv"
-	@echo "Full workspace validation (explicit check request): ci; releases select a complete group plan"
+	@echo "Product CI: ci; changed tooling qualification: tooling-check; releases validate the selected group"
 
 .PHONY: package-check
 
@@ -163,7 +162,7 @@ help:
 # retain workspace scope, even when RELEASE_GROUP is inherited.
 override validation_cargo_selection = $(if $(filter group,$(OBSERVABILITY_RELEASE_VALIDATION_SCOPE)),-p ic-$(RELEASE_GROUP),--workspace)
 override validation_candid_sources = $(if $(filter group,$(OBSERVABILITY_RELEASE_VALIDATION_SCOPE)),crates/ic-$(RELEASE_GROUP) scripts/release/fixtures/retained-consumer/tests/$(RELEASE_GROUP).rs,crates scripts/release/fixtures/retained-consumer/tests)
-.PHONY: validation-scope-check release-validation-check release-validation-qualify logging-profiles-check
+.PHONY: validation-scope-check release-validation-check logging-profiles-check
 validation-scope-check:
 	@case '$(OBSERVABILITY_RELEASE_VALIDATION_SCOPE)' in ''|workspace) ;; group) bash scripts/release/metadata.sh selection ;; *) exit 2 ;; esac
 	@if test -n "$${OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT:-}"; then perl scripts/release/validation.pl admit "$$OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT" '$(OBSERVABILITY_RELEASE_VALIDATION_SCOPE)' '$(RELEASE_GROUP)'; fi
@@ -218,7 +217,6 @@ ci-selection-check:
 	bash scripts/ci/test-ci-selection.sh
 
 package-doc-links-check:
-	perl scripts/ci/tests/package-doc-links.t
 	perl scripts/ci/check-package-doc-links.pl
 
 metrics-profiles-check:
@@ -229,11 +227,6 @@ logging-profiles-check:
 
 release-validation-check:
 	bash scripts/release/test-validation-plan.sh
-
-# Renew matched full/selected mapping evidence after changes to mapping/runner/
-# configuration/contracts, or by explicit request; ordinary CI keeps wiring tests.
-release-validation-qualify:
-	bash scripts/release/test-validation-plan.sh --qualify
 
 compiler-check:
 	+bash scripts/ci/check-rust-compiler.sh
@@ -248,24 +241,42 @@ check-pins:
 	bash vendor/toko-tooling/scripts/ci/check-dependency-pins.sh --cargo-inheritance
 
 production-dependencies-check: candid-boundary-check cargo-boundaries-check
-	perl scripts/ci/tests/check-process.t
 	perl scripts/ci/check-production-dependencies.pl
-	bash scripts/ci/test-production-dependencies.sh
 
 allocation-free-check:
 	+bash scripts/ci/check-allocation-free.sh
 
-# Broad qualification for changed tooling or explicit CI. Package-only release
-# plans omit this matrix; actual source/archive/publication admission still runs.
-# Retention owns the separate release/publication/hook bodies and custody cases.
+# Tooling qualification is explicit and separate from product delivery.
+.PHONY: tooling-check source-check product-check
+source-check:
+	+$(MAKE) --no-print-directory compiler-check toko-tooling-check tools-check check-pins fmt-check
+	+$(MAKE) --no-print-directory check-doc-links production-dependencies-check package-doc-links-check
+
+product-check: | validation-scope-check
+	+$(MAKE) --no-print-directory docs-check test
+	+@case '$(OBSERVABILITY_RELEASE_VALIDATION_SCOPE):$(RELEASE_GROUP)' in \
+	    group:metrics) $(MAKE) --no-print-directory metrics-profiles-check allocation-free-check ;; \
+	    group:logging) $(MAKE) --no-print-directory logging-profiles-check ;; \
+	    *) $(MAKE) --no-print-directory metrics-profiles-check logging-profiles-check allocation-free-check ;; \
+	esac
+
+tooling-check:
+	+$(MAKE) --no-print-directory compiler-policy-check ci-selection-check release-validation-check
+	perl scripts/ci/tests/check-process.t
+	perl scripts/ci/tests/package-doc-links.t
+	bash scripts/ci/test-production-dependencies.sh
+	+$(MAKE) --no-print-directory ci-evidence-check hook-check release-tools-check
+
 release-tools-check:
 	bash scripts/release/test-tooling-admission.sh
+	bash scripts/release/test-standard-release.sh
+	bash scripts/release/test-publication-make.sh
+	bash scripts/release/test-release-admission.sh --refusals-only
 	bash scripts/release/test-retained-consumer.sh
-	bash scripts/release/test-fixture-retention.sh
 	bash scripts/release/test-publication-policy.sh
 	bash scripts/release/test-release-batch.sh
 
-# One full stage roster drives CI and release selection.
+# CI uses the product gates once for the workspace, then checks both archives.
 include make/validation.mk
 
 # Make admits Cargo recipes; script entrypoints own their compiler admission.

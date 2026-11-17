@@ -114,7 +114,7 @@ export PATH="$fixture/bin:$PATH" RELEASE_DELIVERY=direct RELEASE_REMOTE=origin R
 cd "$fixture/repo"
 # This fixture substitutes broad gates. Two ordered stages prove the actual
 # receipt/renderer lifecycle without replaying every unrelated fake CI target;
-# the mapping qualification owns the production roster and exclusion coverage.
+# the plan fixture owns the production roster and evidence-failure coverage.
 jq -cS '.stages = ["compiler-check", "compiler-policy-check"]' ci/release-validation.json > .fixture-policy
 mv .fixture-policy ci/release-validation.json
 cat >> Makefile <<'MAKE'

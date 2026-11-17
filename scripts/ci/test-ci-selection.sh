@@ -20,6 +20,11 @@ jq -e '
   all(.native.steps[];
     (.if | contains("env.CI_SCOPE")))
 ' "$fixture/jobs.json" > /dev/null
+# Tooling qualification is manually selected once, never a product/release gate.
+jq -e '.native.steps[] | select(.id == "tooling") |
+  (.if | contains("workflow_dispatch") and contains("inputs.tooling") and contains("ubuntu-24.04")) and
+  (.run | contains("make tooling-check")) and (.env.TMPDIR | endswith("/scratch"))' \
+  "$fixture/jobs.json" > /dev/null
 # Security runs once even when native work selects documentation-only scope.
 jq -e '
   .security as $security |

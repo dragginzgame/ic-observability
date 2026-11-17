@@ -1,6 +1,12 @@
 name: CI
 
 on:
+  workflow_dispatch:
+    inputs:
+      tooling:
+        description: Qualify changed CI and release wiring (Linux)
+        type: boolean
+        default: false
   pull_request:
   push:
     branches: [main]
@@ -85,7 +91,7 @@ jobs:
     if: ${{ always() && !cancelled() }}
     env:
       CI_SCOPE: ${{ needs.changes.result == 'success' && needs.changes.outputs.scope == 'docs' && 'docs' || 'full' }}
-    # Cold tool setup and the complete fixture suite share this job budget.
+    # Cold setup and product checks; tooling fixtures run only when requested.
     timeout-minutes: 60
     strategy:
       fail-fast: false
@@ -210,6 +216,12 @@ jobs:
         run: |
           mkdir -p "$TMPDIR"
           make ci 2>&1 | tee target/evidence/native-ci/native-ci.log
+      - name: Qualify CI and release wiring
+        id: tooling
+        if: env.CI_SCOPE != 'docs' && github.event_name == 'workflow_dispatch' && inputs.tooling && matrix.runner == 'ubuntu-24.04'
+        env:
+          TMPDIR: ${{ github.workspace }}/target/evidence/native-ci/scratch
+        run: make tooling-check 2>&1 | tee target/evidence/native-ci/tooling.log
       - name: Retain native artifacts and outcome
         id: native_artifacts
         if: env.CI_SCOPE != 'docs' && (always() && steps.checkout.outcome == 'success')

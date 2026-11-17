@@ -78,53 +78,26 @@ sub configuration {
         host=>observe(qw(uname -sm)), environment=>{map { $_=>$ENV{$_} } @keys}};
 }
 sub selection {
-    my $baseline = $json->decode(observe($^X, $observer, 'baseline', $root,
-        $source, "refs/tags/$group-v$previous"));
-    my @shared = grep {
-        $_ !~ m{\Acrates/ic-\Q$group\E/(?:src/.*\.(?:rs|md)|(?:examples|tests)/.*\.rs|README\.md|CHANGELOG\.md)\z}
-            && $_ ne "releases/$group/CHANGELOG.md"
-    } @{$baseline->{changes}};
-    my $scope = $baseline->{available} && !@shared ? 'group' : 'workspace';
-    return {schema=>1, root=>$root, source=>$source, group=>$group, previous=>$previous, baseline=>$baseline,
-        scope=>$scope, reason=>!$baseline->{available} ? 'No admitted annotated ancestor release baseline'
-            : @shared ? 'Shared or uncertain inputs changed since the selected release'
-            : 'Independent library implementation/docs only; dependency and shared inputs unchanged',
-        configuration=>configuration()};
+    return {schema=>2, root=>$root, source=>$source, group=>$group, previous=>$previous,
+        scope=>'group', configuration=>configuration()};
 }
 sub plan {
-    my ($context) = @_;
-    # Tooling implementation/caller qualification belongs to changed wiring or
-    # explicit full CI, not every use of already-qualified tooling. Group scope
-    # proves all inputs outside this library's implementation/docs unchanged.
-    # Unknown/new stages remain required; workspace fallback never omits stages.
-    my %tooling = map { $_ => 1 } qw(compiler-policy-check ci-selection-check
-        release-validation-check ci-evidence-check release-tools-check);
-    my @stages;
-    for my $target (@targets) {
-        my $owner = $target eq 'logging-profiles-check' ? 'logging'
-            : $target =~ /\A(?:metrics-profiles-check|allocation-free-check)\z/ ? 'metrics' : '';
-        my $regression = $context->{scope} eq 'group' && $tooling{$target};
-        my $required = !$regression && ($context->{scope} eq 'workspace' || !$owner || $owner eq $group);
-        push @stages, {target=>$target, required=>$required ? JSON::PP::true : JSON::PP::false,
-            reason=>$regression ? 'Tooling implementation, callers and configuration unchanged since admitted release; qualification remains in full CI'
-                : !$required ? "Unchanged independent $owner package; no dependency or shared-input changes"
-                : $context->{scope} eq 'workspace' ? $context->{reason}
-                : "Common admission or selected $group package; native/Wasm and all features retained"};
-    }
     my @inputs = split /\0/, observe(qw(git ls-tree -rz --name-only), $source);
-    return {schema=>1, source=>$source, group=>$group, scope=>$context->{scope},
-        policy=>$policy_path, inputs=>[@inputs, $names_path, $context_path], stages=>\@stages};
+    return {schema=>1, source=>$source, group=>$group, scope=>'group',
+        policy=>$policy_path, inputs=>[@inputs, $names_path, $context_path],
+        stages=>[map { {target=>$_, required=>JSON::PP::true,
+            reason=>"Fresh admission and selected $group product guarantees"} } @targets]};
 }
 if ($operation eq 'select') {
     my $context = selection();
     write_document($context_path, $context);
-    write_document($plan_path, plan($context));
+    write_document($plan_path, plan());
     print "$plan_path\n";
     exit;
 }
 my $context = document($root, $context_path);
-same($context, selection(), 'release baseline, scope or host/configuration changed; validate afresh');
-same(document($root, $plan_path), plan($context), 'release validation plan changed');
+same($context, selection(), 'release identity or host/configuration changed; validate afresh');
+same(document($root, $plan_path), plan(), 'release validation plan changed');
 if ($operation eq 'seal') {
     my @runs = glob "$attempt/logs/validation.*";
     @runs == 1 && -d $runs[0] && !-l $runs[0] or die "missing or ambiguous validation execution\n";

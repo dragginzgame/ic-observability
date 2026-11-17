@@ -5,6 +5,20 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.30.11] - Unreleased
+
+### 🧹 Cleanup
+
+- Reconstruct CI and delivery around fresh admission, strict lint and selected
+  product checks. Move tooling qualification out of deployment; retain final-version
+  archives, source custody and interrupted/uncertain-publication recovery.
+  [Observability #136 — Reconstruct CI and release tooling](https://github.com/dragginzgame/ic-observability/issues/136).
+
+- Keep the qualified supplier selections: toko-tooling 0.44.11, num-bigint 0.5.1,
+  Serde 1.0.229 and cargo-sort 2.1.4. Defer optional IC Build 0.87.3 and
+  cargo-sort-derives 0.15.0 to the next requested tooling-maintenance boundary;
+  retain the qualified editor 0.83.0 and formatter 0.14.1.
+
 ## [0.30.10] - 2026-11-17
 
 ### 🧹 Cleanup

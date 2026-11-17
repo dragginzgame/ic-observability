@@ -16,4 +16,4 @@ while IFS= read -r stage; do stages+=("$stage"); done < "$evidence/stages"
 VALIDATION_REPOSITORY_ROOT="$root" TMPDIR="${TMPDIR:-$root/$evidence/tmp}" \
     bash vendor/toko-tooling/scripts/ci/run-validation-targets.sh --fail-fast \
     --input ci/release-validation.json --input ci/cargo-release-groups.json \
-    --input make/validation.mk --input scripts/ci/observability-ci.sh "${stages[@]}"
+    --input make/validation.mk --input scripts/ci/observability-ci.sh "${stages[@]}" package-check

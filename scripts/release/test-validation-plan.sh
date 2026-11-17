@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-qualify=false
-if [[ "${1:-}" == --qualify && $# == 1 ]]; then qualify=true; elif [[ $# != 0 ]]; then exit 2; fi
+[[ $# == 0 ]] || exit 2
 # Real consumer selector/receipts and Shared runner; substitute only Make effects.
 unset MAKEFLAGS MFLAGS MAKEOVERRIDES GNUMAKEFLAGS MAKEFILES RELEASE_COMMIT
 unset OBSERVABILITY_RELEASE_VALIDATION_SCOPE OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT
@@ -20,18 +19,16 @@ trap 'fixture_finish "$?" "$fixture" "Release validation qualification retained"
 mkdir "$fixture/repo"
 bash "$root/vendor/toko-tooling/scripts/ci/prepare-script-fixture.sh" "$root" "$fixture/repo" \
     make/validation.mk scripts/release/validation.pl \
-    ci/release-validation.json ci/cargo-release-groups.json vendor/toko-tooling/scripts/ci/check-pipe-jobserver.pl
+    ci/release-validation.json ci/cargo-release-groups.json
 cd "$fixture/repo"
 # Exercise the actual consumer CI entry and roster without product compilation.
 cat > Makefile <<'MAKE'
 include make/validation.mk
-.PHONY: ci $(shell jq -r '.stages[]' ci/release-validation.json)
-$(shell jq -r '.stages[]' ci/release-validation.json):
-	+@if test "$${REQUIRE_JOBSERVER:-0}" = 1 && test '$@' = compiler-check; then perl vendor/toko-tooling/scripts/ci/check-pipe-jobserver.pl; fi
+.PHONY: ci package-check $(shell jq -r '.stages[]' ci/release-validation.json)
+package-check $(shell jq -r '.stages[]' ci/release-validation.json):
 	@printf '%s\t%s\n' '$@' "$${OBSERVABILITY_RELEASE_VALIDATION_SCOPE:-workspace}" >> .git/commands
 	@printf '%s\n' "$${TMPDIR:-}" >> .git/scratch-roots
 	@test "$${FAIL_TARGET:-}" != '$@'
-	@for stage in $${FAIL_TARGETS:-}; do test "$$stage" != '$@' || exit 1; done
 	@if test "$${DRIFT_TARGET:-}" = '$@'; then printf 'drift\n' >> crates/ic-metrics/src/lib.rs; fi
 MAKE
 mkdir -p crates/ic-metrics/src crates/ic-logging/src releases/metrics releases/logging
@@ -49,8 +46,6 @@ git config core.hooksPath /dev/null
 git add .
 git commit -qm baseline
 baseline="$(git rev-parse HEAD)"
-git tag -am baseline metrics-v0.1.0
-git tag -am baseline logging-v0.1.0
 export RELEASE_PREVIOUS=0.1.0
 select_plan() {
     attempt="target/release-validation/$1"
@@ -87,11 +82,7 @@ for group in metrics logging; do
     refuse perl scripts/release/validation.pl admit "$attempt" group "$other"
     cp "crates/ic-$other/Cargo.toml" "$fixture/$group-other-manifest"
     cp "releases/$other/CHANGELOG.md" "$fixture/$group-other-ledger"
-    # An unrelated failure cannot block this group. All selected stages still run.
-    export FAIL_TARGET="$other-profiles-check"
-    export FAIL_TARGETS='compiler-policy-check ci-selection-check release-validation-check ci-evidence-check release-tools-check'
     run_plan
-    unset FAIL_TARGET FAIL_TARGETS
     seal
     perl scripts/release/validation.pl check "$attempt"
     if [[ "$group" == metrics ]]; then
@@ -126,7 +117,7 @@ for group in metrics logging; do
     cmp "crates/ic-$other/Cargo.toml" "$fixture/$group-other-manifest"
     cmp "releases/$other/CHANGELOG.md" "$fixture/$group-other-ledger"
     select_plan "$group-failure"
-    export FAIL_TARGET="$group-profiles-check"
+    export FAIL_TARGET=product-check
     refuse run_plan
     unset FAIL_TARGET
     refuse perl scripts/release/validation.pl seal "$attempt"
@@ -136,69 +127,36 @@ git reset -q --hard "$baseline"
 printf 'shared lock change\n' >> Cargo.lock
 git add Cargo.lock; git commit -qm shared
 select_plan shared
-jq -e '.scope == "workspace" and all(.stages[]; .required)' "$attempt/plan.json" > /dev/null
-if [[ "$qualify" == true ]]; then
-    : > .git/commands
-    run_plan
-    cp .git/commands "$fixture/full-plan-commands"
-    : > .git/commands
-    parallel=(-j2)
-    if make --help | grep -q -- --jobserver-style; then parallel+=(--jobserver-style=pipe); fi
-    env -u TMPDIR REQUIRE_JOBSERVER=1 make "${parallel[@]}" --no-print-directory ci \
-        OBSERVABILITY_RELEASE_VALIDATION_SCOPE=group > "$fixture/ci.log" 2>&1
-    cmp .git/commands "$fixture/full-plan-commands"
-    case "$(tail -1 .git/scratch-roots)" in "$PWD"/target/qualification/full-roster.*/tmp) ;; *) exit 1 ;; esac
-    refuse env OBSERVABILITY_RELEASE_VALIDATION_SCOPE=group bash scripts/ci/observability-ci.sh
-    cmp .git/commands "$fixture/full-plan-commands"
-    seal
-    # Full CI stops at strict lint failure before expensive product stages.
-    : > .git/commands
-    export FAIL_TARGET=clippy
-    mkdir "$fixture/selected-scratch"
-    TMPDIR="$fixture/selected-scratch" refuse make --no-print-directory ci OBSERVABILITY_RELEASE_VALIDATION_SCOPE=group
-    unset FAIL_TARGET
-    [[ "$(tail -1 .git/scratch-roots)" == "$fixture/selected-scratch" ]]
-    tail -1 .git/commands > "$fixture/last-command"
-    printf 'clippy\tworkspace\n' > "$fixture/last-expected"
-    cmp "$fixture/last-command" "$fixture/last-expected"
-fi
-# Feature/manifests, another group and unknown paths also broaden scope.
-for path in crates/ic-metrics/Cargo.toml crates/ic-logging/src/lib.rs Makefile scripts/release/validation.pl ci/release-validation.json unknown-input; do
-    git reset -q --hard "$baseline"
-    # Valid JSON/code edits keep the real selector executable.
-    case "$path" in
-        ci/release-validation.json)
-            jq -cS '.stages += ["changed-policy"]' "$path" > "$fixture/changed-policy"
-            cp "$fixture/changed-policy" "$path" ;;
-        scripts/release/validation.pl) printf '\n# changed wiring\n' >> "$path" ;;
-        *) printf '# changed input\n' >> "$path" ;;
-    esac
-    git add "$path"; git commit -qm "scope-$path"
-    select_plan "scope-$(printf '%s' "$path" | tr '/.' '--')"
-    jq -e '.scope == "workspace" and all(.stages[]; .required)' "$attempt/plan.json" > /dev/null
-done
-# A changed tooling contract makes its regression mandatory and failure blocks
-# the actual runner before product tests/archives, without creating a proof.
-git reset -q --hard "$baseline"
-printf '\n# changed wiring\n' >> scripts/release/validation.pl
-git add scripts/release/validation.pl; git commit -qm tooling
-select_plan tooling-failure
+jq -e '.scope == "group" and all(.stages[]; .required)' "$attempt/plan.json" > /dev/null
+run_plan
+seal
+# Full CI always selects both independent products, even with a release group in
+# the environment. Archive verification follows the common/product stages.
 : > .git/commands
-export FAIL_TARGET=release-tools-check
-refuse run_plan
+make --no-print-directory ci OBSERVABILITY_RELEASE_VALIDATION_SCOPE=group > "$fixture/ci.log" 2>&1
+printf 'source-check\tworkspace\nclippy\tworkspace\nproduct-check\tworkspace\npackage-check\tworkspace\n' > "$fixture/ci-expected"
+cmp .git/commands "$fixture/ci-expected"
+refuse env OBSERVABILITY_RELEASE_VALIDATION_SCOPE=group bash scripts/ci/observability-ci.sh
+: > .git/commands
+export FAIL_TARGET=clippy
+refuse make --no-print-directory ci
 unset FAIL_TARGET
-refuse perl scripts/release/validation.pl seal "$attempt"
-tail -1 .git/commands | grep -Fx $'release-tools-check\tworkspace'
-if grep -Eq '^(test|package-check)[[:space:]]' .git/commands; then exit 1; fi
+printf 'source-check\tworkspace\nclippy\tworkspace\n' > "$fixture/failed-expected"
+cmp .git/commands "$fixture/failed-expected"
 # Stale source, input drift and unknown product groups refuse.
 select_plan drift
 : > .git/commands
-export DRIFT_TARGET=compiler-check
+export DRIFT_TARGET=source-check
 refuse run_plan
 unset DRIFT_TARGET
-printf 'compiler-check\tworkspace\n' > "$fixture/drift-expected"
+printf 'source-check\tgroup\n' > "$fixture/drift-expected"
 cmp .git/commands "$fixture/drift-expected"
 git restore crates/ic-metrics/src/lib.rs
+refuse perl scripts/release/validation.pl seal "$attempt"
+select_plan missing-input
+mv crates/ic-metrics/src/lib.rs "$fixture/missing-source"
+refuse run_plan
+mv "$fixture/missing-source" crates/ic-metrics/src/lib.rs
 refuse perl scripts/release/validation.pl seal "$attempt"
 select_plan stale
 git commit --allow-empty -qm moved
@@ -213,12 +171,6 @@ select_plan new-stage
 jq -e '.stages[-1] | .target == "new-common-stage" and .required' "$attempt/plan.json" > /dev/null
 perl scripts/release/validation.pl roster > "$fixture/roster"
 tail -1 "$fixture/roster" | grep -Fx new-common-stage
-# Even a new stage in a package-only plan defaults to required.
-git tag -fam baseline metrics-v0.1.0 > /dev/null
-printf 'new implementation\n' >> crates/ic-metrics/src/lib.rs
-git add crates/ic-metrics/src/lib.rs; git commit -qm new-implementation
-select_plan new-stage-group
-jq -e '.scope == "group" and (.stages[-1] | .target == "new-common-stage" and .required)' "$attempt/plan.json" > /dev/null
 cp ci/cargo-release-groups.json "$fixture/groups"
 jq '.groups += [{name:"new-group"}]' "$fixture/groups" > ci/cargo-release-groups.json
 refuse perl scripts/release/validation.pl select target/release-validation/group-roster
@@ -226,9 +178,5 @@ cp "$fixture/groups" ci/cargo-release-groups.json
 jq '(.groups[] | select(.name=="metrics").members) += ["another-member"]' "$fixture/groups" > ci/cargo-release-groups.json
 refuse perl scripts/release/validation.pl select target/release-validation/new-member
 cp "$fixture/groups" ci/cargo-release-groups.json
-# A missing baseline must broaden, including shallow checkout qualification.
-git tag -d metrics-v0.1.0 > /dev/null
-select_plan missing-baseline
-jq -e '.scope == "workspace" and all(.stages[]; .required)' "$attempt/plan.json" > /dev/null
 fixture_complete=true
-printf 'Consumer group plans: mapping, shared evidence custody and recovery passed (matched comparison: %s).\n' "$qualify"
+printf 'Selected product plans: routing, shared evidence custody, fail-fast CI and recovery passed.\n'

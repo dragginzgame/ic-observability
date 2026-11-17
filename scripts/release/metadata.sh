@@ -62,7 +62,7 @@ metadata() {
 }
 validated_identity() {
     release_receipt_identity || return
-    printf 'group-validation:2\n%s\n' "$attempt" || return
+    printf 'group-validation:3\n%s\n' "$attempt" || return
     bash "$root/vendor/toko-tooling/scripts/ci/verify-file-checksum.sh" --print sha256 "$attempt/proof.json"
 }
 validated() {

@@ -40,7 +40,6 @@ revision	7d16b815ae322ae3f88580ee6af1611bdafde08b77592cd886bfa0eece0f1be8
 # entrypoint	vendor/toko-tooling/scripts/ci/collect-native-diagnostics.sh
 # entrypoint	vendor/toko-tooling/scripts/ci/extract-workflow-step.sh
 # entrypoint	vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh
-# entrypoint	vendor/toko-tooling/scripts/ci/fixture-retention-probes.sh
 # entrypoint	vendor/toko-tooling/scripts/ci/install-ci-tool.sh
 # entrypoint	vendor/toko-tooling/scripts/ci/make-adapter-probes.sh
 # entrypoint	vendor/toko-tooling/scripts/ci/prepare-script-fixture.sh
@@ -60,7 +59,6 @@ revision	7d16b815ae322ae3f88580ee6af1611bdafde08b77592cd886bfa0eece0f1be8
 # entrypoint	vendor/toko-tooling/scripts/dev/install-rust-tools.sh
 # entrypoint	vendor/toko-tooling/scripts/dev/prepare-rust-toolchain.sh
 # entrypoint	vendor/toko-tooling/scripts/dev/toko-tooling.sh
-# entrypoint	vendor/toko-tooling/scripts/ci/run-validation-stage.pl
 file	1085e5521dfacb38aed065b70f905aab666ab73ef49dd5a25270c2ec2cf63710	x	vendor/toko-tooling/.githooks/pre-commit
 file	6b93b0a15bed59a00eb3bdace46b76ee360c396872702bb4182ad12b9bb4a29c	-	vendor/toko-tooling/.github/actions/cache-tool-downloads/action.yml
 file	9af932476117c5e51a38e2ae07b1f0f83daca9d43a7b950f83d40796283f93e7	-	vendor/toko-tooling/scripts/ci/prepare-common-tools.sh
@@ -97,7 +95,6 @@ file	57a0d0ff82abe26422adb86b8c5f2474b019202e031bedcaf780910d6757f7e0	-	vendor/t
 file	54f5809789964466af8d3f8bdca5a35f9490e11bb6f91a1799908edc3883f772	-	vendor/toko-tooling/scripts/ci/collect-native-diagnostics.sh
 file	e2825c554ea3952515ecb2938f7ad592d6539ec5304c3b3107d32a1bfc6b4eda	-	vendor/toko-tooling/scripts/ci/extract-workflow-step.sh
 file	523996a3e4eb9dbe87e8daa4285293a28c5e005223feaa84bd5383d430784b09	-	vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh
-file	b195f1442882fc4f07d671e301aceb04ded3633856c6bb52bc71a1af74baf02d	-	vendor/toko-tooling/scripts/ci/fixture-retention-probes.sh
 file	e0f1b194ddbe5e5ae35864edc67727993511e093cff07506b4ffa503681edd52	x	vendor/toko-tooling/scripts/ci/install-ci-tool.sh
 file	f3ccdd33f1322c6069daedf66669b3d4bac267476f80725d7031c741f20cb278	-	vendor/toko-tooling/scripts/ci/make-adapter-probes.sh
 file	ab1281d30aec5f1e756754da13db27b79f1b07896dc11fa1eae63f69b63cfa02	x	vendor/toko-tooling/scripts/ci/prepare-script-fixture.sh
@@ -117,7 +114,6 @@ file	86036e9aa03456ed624d3b890c1917685883421a6098a01193a9637bee427346	x	vendor/t
 file	5327cdf29404378b34ce1e3795195d63518f41ef5b06450eea8dddf6c41b2971	x	vendor/toko-tooling/scripts/dev/install-rust-tools.sh
 file	31c47b675fba90850681c6fac0d685def34b08a68e7e05bc55ae0403419fdf82	x	vendor/toko-tooling/scripts/dev/prepare-rust-toolchain.sh
 file	da86464696f4f600f034566cef732aa680dc9c577e534519c71ee3d07172a875	-	vendor/toko-tooling/scripts/dev/toko-tooling.sh
-file	73108bd2011c48df2be246ea453561de6b648a260ede63075f705f7a3e91979a	x	vendor/toko-tooling/scripts/ci/run-validation-stage.pl
 file	aec8dfcff940adbf7ca69d0e9edb4cd31b65648e1deef299ffb194e94e64c536	x	vendor/toko-tooling/scripts/ci/verify-toko-tooling-snapshot.sh
 file	8f69897f6d700f3cd5c923a5160743f4f9da4bddae9b363739600a8d269c1a83	-	vendor/toko-tooling/scripts/dev/cargo-dependencies.pl
 file	b3c510be7e6255736c812819c7e280618b140cbcf3877acde66ecc5377752569	-	vendor/toko-tooling/scripts/ci/cargo-publication-adapter.sh

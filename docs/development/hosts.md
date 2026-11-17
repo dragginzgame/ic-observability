@@ -6,7 +6,7 @@
 | macOS Intel | Library build and development tooling | `macos-15-intel` |
 | macOS Apple Silicon | Library build and development tooling | `macos-15` |
 
-All three hosts run the complete native suite. Bash 3.2 checks on Linux and Wasm
+All three hosts run the product suite. Bash 3.2 checks on Linux and Wasm
 cross-compilation do not establish native macOS acceptance. Routine CI retains
 the latest workflow/ref run through cancellation; a cancelled run never qualifies
 its source. Native jobs have a 60-minute budget for cold setup and validation.
@@ -418,14 +418,11 @@ for ordinary handoff under [the validation policy](../../TOKO-TOOLING.md#validat
 Run full local suites only for an explicitly authorized release or an explicit
 request for those checks. The full gate is `make ci`; `make msrv` is the same
 compiler admission already included there. Reuse passing evidence only for
-unchanged inputs. Full CI
-reads the single policy roster through Shared's admitted interface, once per
-host. Package-only releases omit five unchanged tooling-regression stages;
-shared/unknown inputs retain the full roster. See the
-[stage and nested-fixture mapping](../releases/independent-releases.md#release-stage-ownership-and-triggers). `make release-validation-qualify` renews matched full/selected mapping
-evidence after mapping/runner/configuration/contract changes; ordinary CI keeps
-the smaller caller-wiring check. These fixtures substitute Make effects and do
-not themselves establish native package acceptance. Full CI
+unchanged inputs. Full CI runs the product policy once per host and checks both
+archives. Releases use explicit selected-package scope, regardless of which
+source paths changed. Tooling regression fixtures run when wiring changes,
+through focused commands or `make tooling-check`; they are not release gates.
+See the [guarantee map](../releases/independent-releases.md#release-stage-ownership-and-triggers). Full CI
 admits tools, pins and formatting before the native/Wasm Clippy gate. Clippy
 denies warnings and runs before test suites, documentation builds and dependency
 qualification fixtures. The complete gate checks both workspace libraries' builds,
@@ -546,30 +543,16 @@ actual callers; it does not replay those generic matrices in its own gates.
 
 | Local entrypoint | Metrics-owned qualification |
 | --- | --- |
-| `make release-tools-check` | Separate release/publication Make dispatch, grouped release admission, hook and failure/custody fixtures. The actual group adapter, renderer and runner exercise local Git releases, exact staging/commits, rollback, receipts/resume, publication selection and consumers pinned to the unaffected identity. Broad gates and registry uploads are substituted. |
-| `bash scripts/release/test-release-batch.sh` | Actual two-group capture, managed candidate setup, native/Wasm lint, archive compilation and content readback, interrupted delivery/publication, offline recovery, deferred lock custody and explicit reconcile/retire. Three real stages replace the full production roster; Git is local and registry effects are simulated. |
+| `make release-tools-check` | Direct Make dispatch, pre-effect refusals, snapshot admission, publication policy and two-group delivery/recovery. Changed-wiring qualification, outside routine deployment. |
+| `bash scripts/release/test-release-batch.sh` | Actual two-group capture, managed candidate setup, native/Wasm lint, archive compilation and content readback, interrupted delivery/publication, offline recovery, deferred lock custody and explicit reconcile/retire. The production roster runs; Git is local and registry effects are simulated. |
 | `make hook-check` | Standalone hook adoption; the actual baseline formatter failure must retain and replay its diagnostic log. |
 | `make ci-evidence-check` | Source selection/hash inputs, actual workflow setup bodies, collector wiring and direct collector/recovery-packager execution with substituted external effects. |
 
-Retention is the single CI entry for the internal release, publication and hook bodies;
-the frozen outer-workflow fixture runs separately once. Each
-full success route runs once; publication-specific child/assertion failures run
-only its focused fixture, keeping unrelated release checks out of those probes. The admission fixture isolates inherited parent
-validation/failure logs and summaries. Each group checks source and tool refusal,
-failed validation, transactional rollback, wrong-group/altered receipts and
-resumption after a real disposable commit/tag. Successful grouped inputs and
-receipts remain retained alongside failed inputs under caller-selected `TMPDIR`,
-defaulting to native CI evidence. The publication fixture owns its assertion-failure
-case and retained-input checksum manifest; the parent verifies both. External
-command failures and nested hook logs remain separately checked. These fixtures
-perform no release in the maintained checkout or registry publication and do not
-qualify hosted execution.
-
-Standalone production-graph, native-source, recovery-archive, formatting-hook and
-standard-release fixtures default to `target/qualification`. Explicit `TMPDIR`
-still selects their scratch root. Successful inputs are removed; failed inputs
-remain at the reported path. The retention coordinator selects its own evidence
-root and passes it to children, preserving the native CI evidence layout.
+The nested retention coordinator is retired. Direct consumer fixtures use Shared
+lifecycle helpers, retain failures under `target/qualification` (or explicit
+`TMPDIR`), and remove successful scratch inputs. Generic EXIT/lifecycle regression
+matrices remain upstream. Full tooling qualification is explicit; normal product
+CI and each package release do not run these suites.
 
 `scripts/release/metadata.sh files` projects the shared admitted group's exact
 NUL-delimited file plan through `make release-files`. Plan admission uses the
@@ -631,8 +614,8 @@ Local captured check observations share `scripts/ci/CheckProcess.pm`: 60 seconds
 never reach parsing; diagnostics remain bounded, and the owned process group is
 terminated with the direct child reaped. These limits apply to captured read-only
 checks, not product builds or the inherited-stream full CI runner.
-The process regressions run in `production-dependencies-check`; missing/nonregular
-package-input regressions run in `package-doc-links-check`. Only Cargo's generated
+Process, production-boundary and missing/nonregular package-input regressions
+run in `tooling-check`; their live policies still run in every `source-check`. Only Cargo's generated
 `Cargo.lock`, `Cargo.toml.orig` and `.cargo_vcs_info.json` may lack package-source
 files; every other listed input must be a regular maintained file.
 

@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
+measure=false
+if [[ $# == 1 && "$1" == --measure ]]; then measure=true; elif [[ $# != 0 ]]; then exit 2; fi
+started=$SECONDS
 # Simulated effects must not enter the invoking deployment's timing journal.
 unset RELEASE_TIMING_JOURNAL RELEASE_TIMING_ATTEMPT RELEASE_TIMING_PARENT
 # Actual capture/setup, metadata, source proofs, native/Wasm lint, archives and
-# publication admission/readback. Only the full gate roster and registry effects
-# are substituted, against a disposable local Git remote.
+# publication admission/readback with the actual product roster. Registry effects
+# are substituted against a disposable local Git remote. --measure also stubs
+# legacy tooling-regression bodies identically for before/after comparisons.
 unset MAKEFLAGS MFLAGS MAKEOVERRIDES GNUMAKEFLAGS MAKEFILES RELEASE_COMMIT RELEASE_SOURCE RELEASE_VERSION
 unset RELEASE_BATCH_ACTIVE RELEASE_GROUPS RELEASE_PUBLISH_TARGET RELEASE_SETUP_MODE
 unset TOKO_TOOLING_ROOT OBSERVABILITY_RELEASE_VALIDATION_SCOPE OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT
@@ -14,7 +18,7 @@ root="$(cd "${BASH_SOURCE[0]%/*}/../.." && pwd -P)"
 export PATH="$root/.tools/host/bin:$root/.tools/rust/common/bin:$PATH"
 source "$root/vendor/toko-tooling/scripts/ci/fixture-lifecycle.sh"
 mkdir -p "$root/target/qualification"
-fixture="$(fixture_create "$root/target/qualification/release-batch-consumer.XXXXXX")"
+fixture="$(fixture_create "${TMPDIR:-$root/target/qualification}/release-batch-consumer.XXXXXX")"
 fixture_complete=false
 finish() {
     local status=$?
@@ -26,8 +30,9 @@ mkdir -p "$fixture/repo" "$fixture/bin" "$fixture/registry"
 (cd "$root" && git ls-files --cached --others --exclude-standard -z | while IFS= read -r -d '' path; do
     [[ ! -f "$path" ]] || printf '%s\0' "$path"
 done | tar --null -T - -cf -) | tar -xf - -C "$fixture/repo"
-export RELEASE_BATCH_FIXTURE="$fixture" RELEASE_BATCH_FIXTURE_REAL_CARGO="$(command -v cargo)"
-export RELEASE_BATCH_FIXTURE_REAL_CURL="$(command -v curl)"
+RELEASE_BATCH_FIXTURE_REAL_CARGO="$(command -v cargo)"
+RELEASE_BATCH_FIXTURE_REAL_CURL="$(command -v curl)"
+export RELEASE_BATCH_FIXTURE="$fixture" RELEASE_BATCH_FIXTURE_REAL_CARGO RELEASE_BATCH_FIXTURE_REAL_CURL
 cat > "$fixture/bin/cargo" <<'CARGO'
 #!/bin/bash
 set -euo pipefail
@@ -75,8 +80,14 @@ export PATH="$fixture/bin:$PATH"
 cd "$fixture/repo"
 # Package repository metadata and source retrieval both point to the local remote.
 REPOSITORY="file://$fixture/remote.git" perl -pi -e 's{^repository = .*}{repository = "$ENV{REPOSITORY}"}' Cargo.toml
-jq -cS '.stages=["compiler-check","clippy","package-check"]' ci/release-validation.json > "$fixture/policy.json"
-cp "$fixture/policy.json" ci/release-validation.json
+if [[ "$measure" == true ]]; then
+    cat >> Makefile <<'MEASURE'
+
+# Measurement excludes regression suites on both revisions, never product gates.
+compiler-policy-check ci-selection-check release-validation-check ci-evidence-check release-tools-check:
+	@:
+MEASURE
+fi
 cat >> Makefile <<'MAKE'
 
 # Qualification fault only; the owning metadata check still executes unchanged.
@@ -156,6 +167,12 @@ cmp "$fixture/preserved-deferred-lock" "$fixture/deferred-lock"
 # of its completed disposable candidate. No real deployment state is selected.
 cp -R "$work/target/publication" "$fixture/publication"
 cp -R "$work/target/release-validation" "$fixture/validation"
+report="$(mktemp -d "${TMPDIR:-$root/target/qualification}/release-batch-report.XXXXXX")"
+make -s release-batch-timings BATCH="$batch" > "$report/phases.json"
+cp -R "$fixture/validation" "$report/validation"
+printf 'elapsed_seconds=%s\nlegacy_regression_substitutes=%s\nregistry=simulated\ngit=local\n' \
+    "$((SECONDS - started))" "$measure" > "$report/scope.txt"
+printf 'Delivery fixture report: %s\n' "$report"
 make release-batch-retire BATCH="$batch" > "$fixture/retire.log" 2>&1
 [[ ! -e "$work" && ! -e ".git/release-state/frozen/$batch" ]]
 for group in metrics logging; do
@@ -164,4 +181,4 @@ for group in metrics logging; do
     [[ "$(git rev-parse "$group-v$version^{commit}")" == "$(git --git-dir="$fixture/remote.git" rev-parse "$group-v$version^{commit}")" ]]
 done
 fixture_complete=true
-printf 'Release batch consumer capture, real setup/lint/archives/readback, offline resume, deferred lock custody and explicit reconcile/retire passed (local Git/registry effects only).\n'
+printf 'Release batch consumer capture, real setup/product gates/archives/readback, offline resume, deferred lock custody and explicit reconcile/retire passed (local Git/registry effects only).\n'

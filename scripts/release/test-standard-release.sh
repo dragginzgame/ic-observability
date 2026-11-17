@@ -57,6 +57,29 @@ selection_dispatch() {
             cmp "$fixture/expected" "$EVENTS"
         done
     done
+    # The product aggregate must route profile/link work to the same selection.
+    cat > "$fixture/product-make" <<'MAKE'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >> "$EVENTS"
+MAKE
+    chmod +x "$fixture/product-make"
+    for scope in metrics logging workspace; do
+        : > "$EVENTS"
+        selected=group
+        [[ "$scope" != workspace ]] || selected=workspace
+        group="$scope"
+        [[ "$scope" != workspace ]] || group=logging
+        PATH="$fixture/bin:$PATH" RELEASE_GROUP="$group" "$real_make" --no-print-directory \
+            -f "$root/Makefile" product-check "MAKE=$fixture/product-make" \
+            "OBSERVABILITY_RELEASE_VALIDATION_SCOPE=$selected" > "$fixture/output" 2>&1
+        printf '%s\n' '--no-print-directory docs-check test' > "$fixture/expected"
+        case "$scope" in
+            metrics) printf '%s\n' '--no-print-directory metrics-profiles-check allocation-free-check' ;;
+            logging) printf '%s\n' '--no-print-directory logging-profiles-check' ;;
+            workspace) printf '%s\n' '--no-print-directory metrics-profiles-check logging-profiles-check allocation-free-check' ;;
+        esac >> "$fixture/expected"
+        cmp "$fixture/expected" "$EVENTS"
+    done
 }
 if [[ "$selection_only" == true ]]; then
     export JOBSERVER_PROBE="$root/vendor/toko-tooling/scripts/ci/check-pipe-jobserver.pl"

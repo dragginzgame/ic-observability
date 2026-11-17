@@ -102,11 +102,10 @@ consumer-contract or persistence-boundary changes. No baseline exceptions apply.
 - After Rust edits, run `make fmt`, then selected package checks or named tests.
   Focused commands and host qualification are in [docs/development/hosts.md](docs/development/hosts.md).
   Full local `make ci` and `make msrv` are release gates or explicit
-  check requests. Releases select the qualified
-  [group validation plan](docs/releases/independent-releases.md); shared or uncertain inputs
-  retain the full roster. Package-only plans omit unchanged tooling regression
-  stages under the qualified selector; fresh product and publication admission
-  remain mandatory. Hosted CI covers both packages asynchronously; these
+  check requests. Releases run fresh admission, strict lint and selected-package
+  product checks under the [delivery plan](docs/releases/independent-releases.md).
+  CI covers both products; changed pipeline wiring uses focused qualification
+  or `make tooling-check`, never a nested regression matrix inside deployment. Hosted CI covers both packages asynchronously; these
   local gate names do not require a completed GitHub Actions run.
   Follow [the validation policy](TOKO-TOOLING.md#validation-and-evidence)
   for batched focused checks and evidence reuse. Documentation-only work needs
