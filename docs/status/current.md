@@ -2,47 +2,45 @@
 
 ## State and next action
 
-[Observability #136 — Reconstruct CI and release tooling](https://github.com/dragginzgame/ic-observability/issues/136)
-is implemented locally, replacing the old caching scope. The local
-pipeline now has three mandatory product stages (admission, strict lint, selected
-product checks); full CI covers both packages and archives. Tooling regression
-qualification is separate. The nested retention coordinator and baseline-driven
-omission selector are removed. No product Rust/API or dependency changes.
-The [guarantee map](../releases/independent-releases.md#release-stage-ownership-and-triggers)
-owns commands, coverage and measured evidence. Focused routing, refusal, evidence
-custody and two-package recovery checks passed. The matched delivery fixture took
-281 → 167 seconds (real product/archive work, local Git/simulated registry, old
-regression bodies stubbed in both runs). No live-release speed claim follows.
-Evidence is under `target/qualification/issue136-rebuild/`; implementation is
-qualified; the user has authorized delivery of both groups. A fresh batch will
-select Metrics 0.30.11 and Logging 0.25.10 with verified publication.
+**Metrics 0.30.11 and Logging 0.25.10 are delivered and independently verified.**
+[Observability #136](https://github.com/dragginzgame/ic-observability/issues/136)
+is closed. Reconstruction source is `3974fd375485c133b5284255c4d09477167b8c32`.
+The [delivery record](../releases/independent-releases.md#live-delivery--2026-11-17)
+owns commits, tags, checksums, timings and verification scope.
 
-The user stopped deployment batch `batch-sSjwd230`. Metrics **0.30.10** was
-published and independently verified at commit
-`b9d488dec7eaf40c79f665880051b2d45c68ae1a`; Logging remains **0.25.9**.
-Logging 0.25.10 has no delivered tag/upload. The stopped candidate retains its
-original adapter, partial validation and durable journal; do not resume it with
-replacement semantics. Normal main was fast-forwarded to the delivered Metrics
-prefix before reconstruction. Pending notes now select Metrics 0.30.11 and
-Logging 0.25.10. The new batch must preserve all stopped-batch custody.
+Batch `batch-dZNTL4CS` completed both groups and reconciled cleanly. Its real
+capture-through-publication interval was **166.8 seconds**. Both three-stage plans
+passed; final-version archives and source/registry readback matched 34 Metrics
+and 16 Logging maintained files. Post-push review found no actionable issue in
+the delivered pipeline/callers or either group's exact metadata increment.
+No product Rust/API, supplier selection or sibling was changed.
 
-Metrics 0.30.10 checksum is
-`205286dceb753a70df354e6147e858fc4bfb604815b612f64d2392ae51593d14`;
-34 maintained package files matched source. Local deployment records are under
-`target/deploy/issue135-20261117/` and the frozen candidate's
-`target/publication/verification.sniTvi`. Its Metrics 20-stage plan passed;
-Logging was stopped during the old nested tooling fixture stage.
-Hosted CI [44144314472](https://github.com/dragginzgame/ic-observability/actions/runs/44144314472)
-was last observed in progress; no completed native result is claimed here.
+The normal checkout now contains both release commits. The completed candidate
+and durable journal remain under `target/release-frozen/batch-dZNTL4CS` and
+`.git/release-state/frozen/batch-dZNTL4CS/`. No retirement or cleanup ran.
+Local delivery records are under `target/deploy/issue136-20261117/`.
+Hosted native CI remains asynchronous; no completed hosted pass is claimed.
 
-Toko Tooling **0.44.11**, Rust **1.100.0** and dependency selections remain intact.
-The exporter retired the unused stage runner and retention probe: 55 roots /
-111 files remain.
-This reconstruction does not depend on
+CI covers both products on the three supported hosts. Releases use fresh
+admission, strict lint and selected-package product checks; tooling qualification
+is separate. The [guarantee map](../releases/independent-releases.md#release-stage-ownership-and-triggers)
+owns commands and proof boundaries. The earlier matched fixture (281 → 167 seconds)
+retains its separate simulated-registry/legacy-fixture-substitution scope under
+`target/qualification/issue136-rebuild/`; it is not the live measurement above.
+
+Stopped historical batch `batch-sSjwd230` remains untouched. It delivered only
+Metrics 0.30.10 at `b9d488dec7eaf40c79f665880051b2d45c68ae1a`; its Logging
+0.25.10 attempt was interrupted before delivery. The new batch independently
+published Logging 0.25.10. Never resume or reinterpret the old attempt with new
+semantics. Its original proof and publication record remain under that candidate
+and `target/deploy/issue135-20261117/`.
+
+Toko Tooling **0.44.11** and Rust **1.100.0** remain selected. The exporter-owned
+snapshot has 55 roots / 111 files after retiring the unused stage runner and
+retention probe. This design does not depend on
 [Toko Tooling #389](https://github.com/dragginzgame/toko-tooling/issues/389).
-The earlier probe remains historical under `target/qualification/issue136/`.
-Earlier delivered identities and CI repair are in the
-[delivery receipt](../evidence/releases/toko04411-delivery-20261117.md).
+Historical probe evidence remains under `target/qualification/issue136/`.
+Earlier delivery identities are in the [receipt chain](../evidence/releases/README.md).
 
 ## Ownership and qualification limits
 

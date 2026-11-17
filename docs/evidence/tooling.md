@@ -1,13 +1,15 @@
 # Contributor tooling
 
-## Pending pipeline reconstruction
+## Delivered pipeline reconstruction
 
 [Observability #136](https://github.com/dragginzgame/ic-observability/issues/136)
 retires the unused stage-cache runner and nested retention probe through the same
 authenticated 0.44.11 exporter. Preview selected only those two obsolete files;
 55 entrypoints / 111 files remain. Cargo selections, lock and retained executable
 bytes are unchanged. Preview, installation and offline admission are recorded
-under `target/qualification/issue136-rebuild/`. No tool setup was needed for deletion.
+under `target/qualification/issue136-rebuild/`. No tool setup was needed for deletion. Metrics 0.30.11 and Logging 0.25.10
+subsequently passed fresh release validation and registry readback; see the
+[live delivery record](../releases/independent-releases.md#live-delivery--2026-11-17).
 
 ## Delivered 0.44.11 selection
 

@@ -80,7 +80,7 @@ Each release validates its explicitly selected product, including after shared
 input changes. CI validates both packages once. Tooling implementation qualification
 is a separate changed-wiring obligation; no result cache or version projection is needed.
 
-The last delivered batch measured 517 seconds for Metrics' stages and 500 for
+The earlier Metrics 0.30.9 / Logging 0.25.9 batch measured 517 seconds for Metrics' stages and 500 for
 Logging's stages. `release-tools-check` dominated at 364 and 355 seconds; native
 evidence checks took 51 seconds each. These are retained stage timings,
 not total deployment time or a forecast; see the
@@ -413,3 +413,38 @@ diagnostic wiring passed. Exporter admission, Perl/Bash syntax, ShellCheck, loca
 links and diff checks passed. Changed-wiring qualification replaces the removed
 nested matrix; generic producer regression remains upstream. No hosted matrix,
 live publication, product source change or sibling mutation is claimed.
+
+### Live delivery — 2026-11-17
+
+The separately authorized delivery completed in batch `batch-dZNTL4CS`, source
+`3974fd375485c133b5284255c4d09477167b8c32`. Both packages reached GitHub and
+crates.io and passed fresh independent archive/source readback:
+
+| Package | Release commit | Annotated tag object | Registry SHA-256 |
+| --- | --- | --- | --- |
+| ic-metrics 0.30.11 | `68b43e14d3144511b845b6c81e42398e97c74d3c` | `0cc2e22a4cc85f0d3222c7e1ebd55caa40950bf3` (`metrics-v0.30.11`) | `668d99823f32f894f87b98c6ece3de57653f5f416d479ad4cd7faca223eb6dc3` |
+| ic-logging 0.25.10 | `35833473a3620c0b50bce94bfa7b1e8d3e38ea66` | `2ad8e67b5796b6704169d77f9f1547ee5c07f81a` (`logging-v0.25.10`) | `73eb1025ecd62fc521536e2efd9995414d97cfd28b1bae6ba2402ebb70796791` |
+
+The real batch interval was **166.8 seconds**, including prepared-tool admission,
+validation, metadata/archive preparation, Git delivery and registry publication.
+It used warm managed tool/download caches and a fresh captured candidate; product
+compiler outputs were reused within that candidate, never as validation evidence.
+No gates or registry effects were substituted. Metrics stages measured 12/5/7
+seconds and Logging 12/3/4 seconds for admission/lint/product checks. Shared's
+complete validation phases, including observation/sealing overhead, measured
+27.8 and 23.9 seconds; metadata plus final archives took 14.5 and 13.9 seconds;
+publication/readback took 8.5 and 9.5 seconds. These are one delivery's timings,
+not a guarantee for cold setup or later registry conditions.
+
+Readback matched all 34 maintained Metrics files and 16 Logging files. Evidence
+is retained in the candidate's `target/publication/verification.EJ8iTk` and
+`target/publication/verification.6PQ4tk`. Delivery logs, supplier review, phase
+journal and focused post-push review are under `target/deploy/issue136-20261117/`.
+The normal branch was reconciled to the delivered Logging commit. Both metadata
+increments touched only their own manifest version, lock entry and ledger date;
+no actionable post-push finding was identified. Hosted CI is asynchronous and
+separate from these completed local/registry checks.
+
+The completed candidate and durable Git journal remain intact. Historical
+`batch-sSjwd230` still has its original stopped state; it is not resumed or
+converted. No sibling delivery, protected cleanup or duplicate upload occurred.
