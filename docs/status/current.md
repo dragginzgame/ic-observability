@@ -2,26 +2,30 @@
 
 ## State and next action
 
-Latest checkpoint: `1644e86` (`on hold`). The new request authorizes Toko Tooling
-adoption only; product work and delivery remain outside this task.
-Metrics **0.30.8** and Logging **0.25.8** were delivered and verified on crates.io;
-never re-upload them. The [delivery receipt](../evidence/releases/toko0442-delivery-20261115.md)
-owns exact identities, complete plans, timing and source/archive readback.
-Hosted native and downstream acceptance remain separate; past observations of
-pending CI are not current qualification.
+Metrics **0.30.9** and Logging **0.25.9** are delivered to GitHub and independently
+verified on crates.io; never re-upload them. The
+[delivery receipt](../evidence/releases/toko04411-delivery-20261117.md) owns exact
+commits/tags/archive identities, both complete 20-stage workspace plans and
+registry/source readback. Successful batch `batch-n9adqUv3` used source
+`5eb1724462892e1fb8968f192e18438e228da8eb`, with no stage reuse. Stage totals
+were 517 and 500 seconds; its instrumented interval was 1,146.6 seconds.
 
-Published Toko Tooling **0.44.11** is selected in root Cargo, Cargo.lock and the
-authenticated snapshot. This adoption is local and uncommitted. The exporter
-retains 56 entrypoints and 112 files, replacing the unused common-tools action
-with its directly called preparation helper and retiring its cache-key companion.
-CI setup/scanner failures now retain bounded sanitized diagnostics with original
-status and explicit collection/upload reporting; later native failures keep full
-recovery custody. Focused local failure/collector tests and snapshot/tool/pin/
-format/member checks passed; hosted upload/retrieval remains unobserved.
-The [tooling evidence](../evidence/tooling.md) owns scope and record paths.
-Both real package locations already satisfy the new layout rule. Product versions
-remain 0.30.8 and 0.25.8; pending notes belong to Metrics 0.30.9 and Logging 0.25.9.
-The unchanged LOC reporter retains its previous scope-relative depth behavior.
+Toko Tooling **0.44.11** is committed in root Cargo, Cargo.lock and the snapshot:
+56 entrypoints and 112 files. Shared's preparation helper is called directly;
+the unused action/cache-key companion and exact-pin exception retired. Product
+Rust/APIs, compiler/lints, production graphs and package identities are unchanged.
+Syn 3.0.10 remains the checkpoint-selected version. The
+[tooling evidence](../evidence/tooling.md) owns focused scope and record paths.
+
+Hosted Metrics CI exposed native-prerequisite shell quoting after publication;
+its security scan passed. The CI-only correction and 58-test workflow-body
+coverage were pushed in `19d0f200911a3a2a21fa664aacff1bf3d6c467cc`, without
+changing package inputs or uploading a version again. The
+[corrected run](https://github.com/dragginzgame/ic-observability/actions/runs/44065264444)
+was observed in progress; no successful hosted native qualification is claimed.
+One real Linux setup-failure diagnostic artifact was downloaded and verified:
+eight hidden records, 873 bytes, matching checksum and original status 2.
+Hosted native and downstream acceptance remain separate and asynchronous.
 
 ## Ownership and qualification limits
 
@@ -40,6 +44,13 @@ obligations and disabled stage/version-proof reuse remain in force.
 
 ## Deferred work and recovery custody
 
+Initial `batch-ex9xCVty` stopped before metadata/delivery at the old security
+fixture assertion, source `d01b3c08bdba7c77b17913715fa558576ad4ae01`. Its candidate
+and partial proof remain; never resume it as repaired. The later CI correction
+was preserved across reconciliation in stash `dca635bcc63ff73ec8553fdc43fcdfc442a0ad4f`,
+pinned by `preserved/ci-prerequisites-toko04411-20261117`, then restored exactly
+and delivered. Keep that stash/ref and all preceding recovery custody.
+
 The checkpoint selects syn 3.0.10; this adoption preserves it. Earlier frozen
 deliveries used syn 3.0.9, with the separate edit retained under its original custody.
 Its current durable stash is `0a33a698131d86db2e68898949aff87045a38a97`, pinned by
@@ -48,9 +59,10 @@ locally after clean reconciliation; never replay the whole prior lock after vers
 All preceding stashes and preservation refs remain retained; the
 [receipt chain](../evidence/releases/README.md) owns their exact identities.
 
-Batch `batch-ux0e618D` completed at index 2 and reconciled cleanly. Execution remains
-under `target/release-frozen/batch-ux0e618D`, with durable recovery under
-`.git/release-state/frozen/batch-ux0e618D/`. Earlier completed batches, including
+Batch `batch-n9adqUv3` completed at index 2 and reconciled cleanly. Execution remains
+under `target/release-frozen/batch-n9adqUv3`, with durable recovery under
+`.git/release-state/frozen/batch-n9adqUv3/`. Earlier completed batches, including
+`batch-ux0e618D`,
 `batch-SPBo7uq9`, `batch-gobrWzyt`, `batch-meIy8QET`, `batch-zAj6vbFx`, `batch-qiGiRmCY`, `batch-z8nN4ysP` and `batch-4BqGe_7B`, retain their candidates
 and recovery. They keep original source, layout, catalogs, journals and proof
 owners; never reinterpret them with this migration. All 20 release obligations and disabled stage/version-proof reuse remain.

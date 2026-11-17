@@ -8,7 +8,7 @@ release version. Each group owns its release ledger:
 - [Coordinated history through 0.23.0](releases/history.md)
 - [Group commands and recovery](docs/releases/independent-releases.md)
 
-## Pending maintainer tooling — Metrics 0.30.9 / Logging 0.25.9
+## Maintainer tooling — Metrics 0.30.9 / Logging 0.25.9
 
 ### ▶️ Try it
 
@@ -28,6 +28,9 @@ toko-cloc -d 1 ic-metrics::recording
 The first two reports are identical compact totals. Repository/workspace `-d 1`
 adds crate rows; `-d 2` adds top-level modules. A named module's `-d 1` expands
 its immediate children. JSON counts are unchanged.
+
+The CI-only follow-up corrects native-prerequisite shell quoting and qualifies
+the actual workflow body for Linux/macOS setup and failure paths.
 
 ## Maintainer tooling — Metrics 0.30.8 / Logging 0.25.8
 

@@ -1,33 +1,30 @@
 # Contributor tooling
 
-## Local 0.44.11 selection
+## Delivered 0.44.11 selection
 
-Root Cargo selection, Cargo.lock and the authenticated exporter payload select
-published **toko-tooling 0.44.11**, archive SHA-256
-`7d16b815ae322ae3f88580ee6af1611bdafde08b77592cd886bfa0eece0f1be8`.
-The baseline and two pin-checking files updated. The consumer now calls Shared's
-unchanged preparation script through its setup diagnostic boundary; its unused
-composite action and cache-key companion retired through a reviewed exporter
-preview. The final selection has 56 entrypoints and 112 files. The obsolete
-exact-pin exception was removed. Both maintained package directories already
-match their identities; no qualification packages or thiserror selection exist here.
+Published **toko-tooling 0.44.11**, archive SHA-256
+`7d16b815ae322ae3f88580ee6af1611bdafde08b77592cd886bfa0eece0f1be8`,
+is selected by root Cargo, Cargo.lock and the authenticated snapshot. The
+exporter retained 56 entrypoints and 112 files, selecting the preparation helper
+directly and retiring its unused composite action/cache-key companion. The
+obsolete exact-pin exception is gone. Package locations already conform; no
+qualification package or thiserror migration was needed.
 
-CI setup and scanner failures now retain original status, a bounded sanitized
-excerpt and selected hidden log/status files. Collection rejects missing,
-oversized and symlinked inputs. Setup failures upload diagnostics rather than
-whole tool candidates or workspace recovery; native-gate failures retain the
-existing full recovery archive. Upload summaries report success/failure and the
-artifact URL or its absence. Local tests prove these boundaries; no hosted
-upload/retrieval has been claimed. Details and limits are in the
-[development guide](../development/hosts.md#native-evidence).
+Metrics 0.30.9 and Logging 0.25.9 are published and independently verified.
+The [protected receipt](releases/toko04411-delivery-20261117.md) owns both complete
+plans, exact identities, timing, stopped-attempt custody and supplier dispositions.
+It also records the hosted prerequisite-quoting failure, Git-only correction
+`19d0f200911a3a2a21fa664aacff1bf3d6c467cc`, 58-test regression coverage and one
+verified hosted setup-diagnostic artifact readback. This is not successful hosted
+native qualification; the corrected matrix was observed in progress.
 
-Installation, prepared-tool/snapshot/pin/format/member checks and focused workflow,
-setup-evidence, documentation and inventory checks are recorded under
-`target/evidence/toko-tooling-04411/`. Product versions remain Metrics 0.30.8
-and Logging 0.25.8. Only toko-tooling changed in the incoming lock graph; syn
-3.0.10 and all other selections remain intact. The incoming AGENTS.md edit is
-unchanged, and the handoff's compaction/recovery content is retained. Nothing was
-committed, pushed or deployed for this adoption.
+Setup failures retain bounded sanitized hidden logs/status records; later native
+failures keep full recovery custody. Product Rust/APIs, compiler/lints and
+production graphs remain unchanged. Syn 3.0.10 was selected in the preceding
+checkpoint and remains selected. Initial adoption records use
+`target/evidence/toko-tooling-04411/`; delivery and correction records use
+`target/deploy/toko04411-20261117/`. Earlier receipt and preservation identities
+remain intact; no sibling was changed or deployed.
 
 ## Prior 0.44.3 adoption
 
