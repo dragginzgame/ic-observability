@@ -19,6 +19,8 @@ Metrics and Logging each own their package version and release notes.
   [Toko Tooling #387](https://github.com/dragginzgame/toko-tooling/issues/387).
 - Admit the canonical exact tooling pin without a consumer pin exception; keep
   local release plans and asynchronous hosted CI separate.
+- Keep the secret scan unconditional while admitting its failure-only diagnostic
+  steps in the consumer CI-selection fixture.
 - Pre-release registry review confirms stable toko-tooling 0.44.11, num-bigint
   0.5.1, Serde 1.0.229 and cargo-sort 2.1.4. Defer optional cargo-sort-derives
   0.15.0 to the next reviewed shared catalog adoption, retaining 0.14.1.

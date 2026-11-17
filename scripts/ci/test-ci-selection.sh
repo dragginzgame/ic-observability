@@ -25,7 +25,11 @@ jq -e '
   .security as $security |
   ($security | has("needs") or has("if") or has("strategy") | not) and
   ($security.steps[0].with["fetch-depth"] == 0) and
-  all($security.steps[]; has("if") or has("continue-on-error") | not) and
+  ($security.steps[0] | has("if") | not) and
+  all($security.steps[]; has("continue-on-error") | not) and
+  all($security.steps[] | select(.id == "scanner" or .id == "secrets"); has("if") | not) and
+  all($security.steps[] | select(has("if"));
+    .if == "always() && steps.scanner.outcome == '\''failure'\''") and
   ([.[] | .steps[] | select(.id == "secrets")] | length == 1) and
   (.native.steps | map(.id) |
     index("restore_downloads") < index("host_tools") and
