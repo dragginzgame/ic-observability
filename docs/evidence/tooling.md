@@ -1,5 +1,31 @@
 # Contributor tooling
 
+## Pending 0.45.0 adoption
+
+Published toko-tooling 0.45.0 is selected by root Cargo and Cargo.lock, checksum
+`3789a925c1165317eff84cc80436195b66c0478b0c2b441bc2f1a755caf6a23a`.
+The authenticated exporter retained all 55 entrypoints / 111 files. Only the
+baseline and the group/qualification metadata helpers changed; tool catalogs,
+validation runner and installed tool selections are unchanged. The optional
+grouped candidate-projection API is not called here, and the unselected stage-cache
+runner remains absent. No stage-reuse capability or performance gain is claimed.
+
+The new flow rules match the existing guarantee/trigger map and qualified
+three-stage delivery design. Common admission binds each freshly prepared source;
+publication lint admits the final version/source, separately from pre-version
+validation. No local runner, cache, new mandatory gate or qualification package
+was introduced.
+
+Preview, installation, locked fetch and focused metadata/caller records are under
+`target/qualification/toko-adoption-20261118/`. Both groups passed real metadata
+prepare/check, failed-editor rollback, wrong-primary refusal and preservation of
+unrelated identities/lock entries. Actual Make leaf routing passed with Cargo
+effects substituted. Snapshot/tool admission, pin/format checks, live production
+boundaries, local links and diff checks passed. No full product suite, hosted
+matrix or deployment ran for this tooling-only change. Product Rust, APIs, versions and
+unrelated dependency selections remain unchanged. Historical delivery timings
+and recovery records below retain their original snapshots and scope.
+
 ## Delivered pipeline reconstruction
 
 [Observability #136](https://github.com/dragginzgame/ic-observability/issues/136)

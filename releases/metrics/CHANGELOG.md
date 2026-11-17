@@ -5,6 +5,18 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.30.12] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt published toko-tooling 0.45.0 through the authenticated exporter. Keep
+  selected-package release checks and independent metadata ownership; receive
+  the shared group metadata helper's byte-checked TOML parse reuse.
+- Pre-release supplier review retains qualified IC Build 0.83.0 and
+  cargo-sort-derives 0.14.1. Available 0.87.4 and 0.15.0 are optional upgrades
+  deferred to the next requested tooling maintenance pass; current product
+  and test dependency selections remain unchanged.
+
 ## [0.30.11] - 2026-11-17
 
 ### 🧹 Cleanup

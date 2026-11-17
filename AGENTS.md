@@ -30,7 +30,7 @@ consumer-contract or persistence-boundary changes. No baseline exceptions apply.
   The shared observability contract owns the application-tree instrumentation
   boundary and Canic's reporting authority. The concrete public API and remaining
   consumer repair map are recorded in [the API inventory](docs/architecture/metrics-api.md).
-  [#130 — Restrict Metrics to instrumentation](https://github.com/dragginzgame/ic-observability/issues/130)
+  [Observability #130 — Restrict Metrics to instrumentation](https://github.com/dragginzgame/ic-observability/issues/130)
   is closed for its producer scope; consumer acceptance stays with its owner.
   Historical receipts retain their original scope.
   Release, resume and publication require an explicit RELEASE_GROUP; no default
@@ -48,23 +48,20 @@ consumer-contract or persistence-boundary changes. No baseline exceptions apply.
   validation and projection without making report readers depend on Metrics.
   Numeric implementation details stay private. Governed storage adapters use
   only the explicit `persistence` restoration contract; heap retention stays optional.
-- IC Storage owns the separately opted-in `ic-metrics-storage` package, its
-  governed Storage integration, tests and release. This repository owns
-  recording and the explicitly selected `recording` store. Hosts retain allocator
-  selection, lifecycle, instance identity and write cadence.
-  Never add stable-memory dependencies to the instrumentation package.
-- IC Storage likewise owns the separately selected `ic-logging-storage`
-  adapter, durable codec and governed storage qualification. Logging owns passive
-  checkpoints and canonical restoration, including sequence/time watermarks after
-  complete retention. Keep its heap engine dependency-free; hosts select durable
-  identity, allocation, lifecycle and checkpoint cadence.
-- IC Tooling owns the published `ic-host-wasm-inspect` CLI, its installation guide
-  and Rust floor. Optional evidence experiments select their own qualified tool
-  identity; Metrics owns no inspector wrapper, pin or workspace dependency.
-  Source-less lock packages must be workspace-owned; external path dependencies
-  are not permitted. Release metadata advances only the selected release group;
-  other groups' identities and ledgers remain unchanged. Publication selects the
-  group's packages separately from release delivery.
+- Governed durable adapters belong at the Storage integration boundary, outside
+  these instrumentation packages. Historical `ic-metrics-storage` and
+  `ic-logging-storage` names do not establish availability in the current Storage
+  product. Review its current public contract before planning an adapter; do not
+  recreate retired packages or add stable-memory dependencies here. Preserve
+  Logging's passive checkpoints, sequence/time watermarks and canonical restoration.
+  Hosts own durable identity, allocation, lifecycle and checkpoint cadence.
+- Wasm inspection tooling belongs to its supplying native-tool owner. The former
+  `ic-host-wasm-inspect` package is historical, not an assumed current executable.
+  Optional experiments select an available, qualified tool; Metrics owns no
+  inspector wrapper, pin or workspace dependency.
+- Source-less lock packages must be workspace-owned; external path dependencies
+  are not permitted. Metadata advances only the selected group; other groups
+  retain their identities and ledgers. Publication selects that group's packages.
 - Consumer code owns measurement attribution, labels, registry limits, replication
   policy, reset authorization, restart identity, persistence, lifecycle hooks, and endpoints.
 - Metrics' maintainer-selected bounded recording extension (2026-10-28) permits
@@ -77,7 +74,7 @@ consumer-contract or persistence-boundary changes. No baseline exceptions apply.
 - Units and overflow are explicit. Zero is a valid sample; no samples is a
   different state. Overflowed totals are unsuitable for exact interval arithmetic.
   Counter identity must be established before comparing snapshots.
-- Native substitutes are not IC measurements. Never add timing benchmarks or
+- Native substitutes are not IC measurements. Never add product timing benchmarks or
   convert instruction counts into estimated cycles. Permitted performance
   evidence is instruction counts, IC cycles, and raw Wasm bytes.
 - Public evidence must exclude private sibling source, search excerpts and issue
@@ -101,8 +98,9 @@ consumer-contract or persistence-boundary changes. No baseline exceptions apply.
   `target/` and locked dependencies; do not upgrade dependencies as a side effect.
 - After Rust edits, run `make fmt`, then selected package checks or named tests.
   Focused commands and host qualification are in [docs/development/hosts.md](docs/development/hosts.md).
-  Full local `make ci` and `make msrv` are release gates or explicit
-  check requests. Releases run fresh admission, strict lint and selected-package
+  Full local `make ci` is for explicitly requested aggregate checks; `make msrv`
+  admits the pinned compiler. Neither is an additional full release gate.
+  Releases run fresh admission, strict lint and selected-package
   product checks under the [delivery plan](docs/releases/independent-releases.md).
   CI covers both products; changed pipeline wiring uses focused qualification
   or `make tooling-check`, never a nested regression matrix inside deployment. Hosted CI covers both packages asynchronously; these
@@ -118,11 +116,10 @@ consumer-contract or persistence-boundary changes. No baseline exceptions apply.
 
 ## Dependency qualification
 
-- Follow [shared local setup](https://github.com/dragginzgame/toko-tooling/blob/8eb734758129eef2d2190c4fd22e00b52525f41a/docs/adoption/local-setup.md) and the selected catalogs
-  in `vendor/toko-tooling/ci/tool-versions.env` and `vendor/toko-tooling/ci/ic-tools.tsv`; Metrics has no tool-catalog
-  exception. [vendor/toko-tooling/make/consumer.mk](vendor/toko-tooling/make/consumer.mk) owns common setup/check,
-  formatting, hook and release recipes. Local host qualification and commands
-  remain in [docs/development/hosts.md](docs/development/hosts.md).
+- Use the installed common setup/check interface and its selected host/IC catalogs.
+  No Metrics tool-catalog exception applies. Local commands and native qualification
+  belong in [host guidance](docs/development/hosts.md); follow the installed
+  baseline's revision-bound setup references rather than a parallel policy.
 - Metrics selects the released IC Build metadata editor in `ci/release-tools.env`.
   Explicit setup installs it through the shared managed installer; checks and
   metadata preparation only admit an already prepared selection. It is tooling,
@@ -130,10 +127,8 @@ consumer-contract or persistence-boundary changes. No baseline exceptions apply.
 - `make check-pins` requires prepared Git, jq and Mike Farah yq. Checks never
   install tools or unlock dependency graphs. Select product CLI adapters through
   the shared managed installer; local selectors implement the approved compiler policy.
-- Shared structural reviews use [the common methods](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/audits/README.md), with
-  this overlay's allocation, units, counter identity and ownership constraints.
-  Source scope includes `crates/ic-metrics`, `crates/ic-logging`, owning
-  tooling and the affected downstream contracts in `docs/architecture/extraction.md`; focused
-  commands remain in `docs/development/hosts.md`.
+- Apply the baseline's common audit methods only when requested. Product scope is
+  Metrics/Logging and their owning tooling; affected consumer contracts are mapped
+  in [the extraction contract](docs/architecture/extraction.md).
   Existing performance evidence under `docs/evidence` retains its domain scope
   and original identities. Audit adoption schedules no review or broad gate.

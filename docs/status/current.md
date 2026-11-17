@@ -1,6 +1,16 @@
-# Current handoff — 2026-11-17
+# Current handoff — 2026-11-18
 
 ## State and next action
+
+Toko Tooling **0.45.0** is adopted locally through the authenticated exporter;
+Cargo updated only its tooling lock entry. Installation and prepared-tool admission
+passed. Both-group metadata/rollback checks, selected Make routing, formatting,
+pins, production boundaries and local links passed. Evidence is recorded under
+`target/qualification/toko-adoption-20261118/`. Pending compatible notes are
+Metrics 0.30.12 and Logging 0.25.11; product versions remain unchanged.
+The maintainer has authorized delivery of both pending groups. The supplied
+AGENTS.md corrections are preserved in this source checkpoint; fresh selected
+release gates and independent registry readback follow frozen capture.
 
 **Metrics 0.30.11 and Logging 0.25.10 are delivered and independently verified.**
 [Observability #136](https://github.com/dragginzgame/ic-observability/issues/136)
@@ -35,7 +45,7 @@ published Logging 0.25.10. Never resume or reinterpret the old attempt with new
 semantics. Its original proof and publication record remain under that candidate
 and `target/deploy/issue135-20261117/`.
 
-Toko Tooling **0.44.11** and Rust **1.100.0** remain selected. The exporter-owned
+Toko Tooling **0.45.0** and Rust **1.100.0** are selected. The exporter-owned
 snapshot has 55 roots / 111 files after retiring the unused stage runner and
 retention probe. This design does not depend on
 [Toko Tooling #389](https://github.com/dragginzgame/toko-tooling/issues/389).
