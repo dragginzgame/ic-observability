@@ -2,6 +2,22 @@
 
 ## State and next action
 
+[Observability #135 — Simplify release gates](https://github.com/dragginzgame/ic-observability/issues/135)
+is implemented locally, pending delivery. Package-only plans now omit five
+unchanged tooling regression stages (Metrics 14, Logging 13); shared/uncertain
+changes and full CI retain all 20. Fresh source, archive and publication admission
+remain unchanged. The [stage/fixture mapping](../releases/independent-releases.md#release-stage-ownership-and-triggers)
+owns commands, proof boundaries and measured substitute dispatch counts/timings.
+Pending compatible notes are Metrics 0.30.10 and Logging 0.25.10; manifests and
+lock identities remain at delivered versions. Cross-group reuse remains disabled
+and separately tracked in [Observability #136](https://github.com/dragginzgame/ic-observability/issues/136).
+Its revised contract is investigated: the 0.44.11 stage runner is exported locally
+(57 roots / 113 files), but no release stage uses it. A synthetic executed/reused
+probe exposed missing non-Cargo receipt sealing;
+[Toko Tooling #389](https://github.com/dragginzgame/toko-tooling/issues/389) owns that
+shared interface. Observability #136 remains open, with integration and sequential
+batch/recovery qualification pending. See the [reuse preparation](../releases/independent-releases.md#stage-reuse-preparation--observability-136).
+
 Metrics **0.30.9** and Logging **0.25.9** are delivered to GitHub and independently
 verified on crates.io; never re-upload them. The
 [delivery receipt](../evidence/releases/toko04411-delivery-20261117.md) owns exact
@@ -39,8 +55,8 @@ and closed producer issues do not establish IC costs or downstream deployment.
 
 Historical delivery narratives and exact identities remain in the existing
 [receipt chain](../evidence/releases/README.md) and Git history. Do not rerun or
-reinterpret those releases merely to refresh this handoff. All 20 release
-obligations and disabled stage/version-proof reuse remain in force.
+reinterpret those releases merely to refresh this handoff. Historical plans retain their original obligations. New plans use the qualified
+selector above; stage/version-proof reuse remains disabled.
 
 ## Deferred work and recovery custody
 
@@ -65,7 +81,7 @@ under `target/release-frozen/batch-n9adqUv3`, with durable recovery under
 `batch-ux0e618D`,
 `batch-SPBo7uq9`, `batch-gobrWzyt`, `batch-meIy8QET`, `batch-zAj6vbFx`, `batch-qiGiRmCY`, `batch-z8nN4ysP` and `batch-4BqGe_7B`, retain their candidates
 and recovery. They keep original source, layout, catalogs, journals and proof
-owners; never reinterpret them with this migration. All 20 release obligations and disabled stage/version-proof reuse remain.
+owners; never reinterpret them with this migration. Original full-roster proofs retain their scope; stage/version-proof reuse remains disabled.
 
 Stopped/failed pre-delivery batches `batch-wmST1LGL`, `batch-9uizEjhh` and
 `batch-C8a10ddy` retain original source and partial evidence. Do not resume them as

@@ -3,12 +3,13 @@ set -euo pipefail
 # Simulated effects must not enter the invoking deployment's timing journal.
 unset RELEASE_TIMING_JOURNAL RELEASE_TIMING_ATTEMPT RELEASE_TIMING_PARENT
 consumers_only=false
+refusals_only=false
 if [[ "$#" != 0 ]]; then
-    [[ "$#" == 1 && "$1" == --consumers-only ]] || {
-        echo 'usage: test-release-admission.sh [--consumers-only]' >&2
+    [[ "$#" == 1 && ( "$1" == --consumers-only || "$1" == --refusals-only ) ]] || {
+        echo 'usage: test-release-admission.sh [--consumers-only|--refusals-only]' >&2
         exit 2
     }
-    consumers_only=true
+    if [[ "$1" == --consumers-only ]]; then consumers_only=true; else refusals_only=true; fi
 fi
 # Actual consumer policy, editor, runner, Git, group metadata and publication plan.
 # Only setup, broad gates, archive compilation and registry upload are substituted.
@@ -217,7 +218,7 @@ for group in metrics logging; do
     other_ledger="$(RELEASE_GROUP="$other" bash scripts/release/metadata.sh plan | jq -er .changelog)"
     cp "$other_ledger" "$fixture/$group-other-ledger"
     cp "crates/ic-$other/Cargo.toml" "$fixture/$group-other-manifest"
-    freeze_consumer "$group" "$other" "$other_version"
+    if [[ "$refusals_only" != true ]]; then freeze_consumer "$group" "$other" "$other_version"; fi
     cargo metadata --locked --offline --format-version 1 > "$fixture/$group-before.json"
     source="$(git rev-parse HEAD)"
     # Cargo accepts an unused alias with a stale version. The actual group
@@ -262,6 +263,14 @@ for group in metrics logging; do
     cmp .git/gates "$fixture/$group-drift-expected"
     [[ ! -e ".git/release-state/$group-$candidate/validated" ]]
     git restore Cargo.lock
+    if [[ "$refusals_only" == true ]]; then
+        [[ "$(git rev-parse HEAD)" == "$source" && -z "$(git status --porcelain)" ]]
+        [[ ! -s "$FIXTURE_PUBLICATION_EVENTS" ]]
+        [[ "$(git --git-dir="$fixture/remote.git" rev-parse main)" == "$source" ]]
+        [[ -z "$(git tag --list)" ]]
+        echo "$group: source, tools, required gates and input drift refuse before protected effects"
+        continue
+    fi
     # The actual shared transaction restores every selected file on renderer refusal.
     bash scripts/release/metadata.sh files > "$fixture/$group-plan-files"
     while IFS= read -r -d '' path; do shasum -a 256 "$path"; done < "$fixture/$group-plan-files" > "$fixture/$group-originals"

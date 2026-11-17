@@ -31,6 +31,7 @@ $(shell jq -r '.stages[]' ci/release-validation.json):
 	@printf '%s\t%s\n' '$@' "$${OBSERVABILITY_RELEASE_VALIDATION_SCOPE:-workspace}" >> .git/commands
 	@printf '%s\n' "$${TMPDIR:-}" >> .git/scratch-roots
 	@test "$${FAIL_TARGET:-}" != '$@'
+	@for stage in $${FAIL_TARGETS:-}; do test "$$stage" != '$@' || exit 1; done
 	@if test "$${DRIFT_TARGET:-}" = '$@'; then printf 'drift\n' >> crates/ic-metrics/src/lib.rs; fi
 MAKE
 mkdir -p crates/ic-metrics/src crates/ic-logging/src releases/metrics releases/logging
@@ -67,6 +68,11 @@ refuse() {
 }
 seal() {
     release_receipt_write "$attempt/proof.json" perl scripts/release/validation.pl seal "$attempt"
+    # Retain comparable successful dispatch counts/timings in the caller's log.
+    # These are substituted Make effects, not product build latency.
+    awk -F '\t' -v name="${attempt##*/}" 'NR > 1 { count++; seconds += $3 }
+        END { printf "dispatch %s: %d stages, %d runner seconds (substitutes)\n", name, count, seconds }' \
+        "$attempt"/logs/validation.*/timings.tsv
 }
 for group in metrics logging; do
     export RELEASE_GROUP="$group"
@@ -83,8 +89,9 @@ for group in metrics logging; do
     cp "releases/$other/CHANGELOG.md" "$fixture/$group-other-ledger"
     # An unrelated failure cannot block this group. All selected stages still run.
     export FAIL_TARGET="$other-profiles-check"
+    export FAIL_TARGETS='compiler-policy-check ci-selection-check release-validation-check ci-evidence-check release-tools-check'
     run_plan
-    unset FAIL_TARGET
+    unset FAIL_TARGET FAIL_TARGETS
     seal
     perl scripts/release/validation.pl check "$attempt"
     if [[ "$group" == metrics ]]; then
@@ -156,13 +163,33 @@ if [[ "$qualify" == true ]]; then
     cmp "$fixture/last-command" "$fixture/last-expected"
 fi
 # Feature/manifests, another group and unknown paths also broaden scope.
-for path in crates/ic-metrics/Cargo.toml crates/ic-logging/src/lib.rs unknown-input; do
+for path in crates/ic-metrics/Cargo.toml crates/ic-logging/src/lib.rs Makefile scripts/release/validation.pl ci/release-validation.json unknown-input; do
     git reset -q --hard "$baseline"
-    printf 'changed input\n' >> "$path"
+    # Valid JSON/code edits keep the real selector executable.
+    case "$path" in
+        ci/release-validation.json)
+            jq -cS '.stages += ["changed-policy"]' "$path" > "$fixture/changed-policy"
+            cp "$fixture/changed-policy" "$path" ;;
+        scripts/release/validation.pl) printf '\n# changed wiring\n' >> "$path" ;;
+        *) printf '# changed input\n' >> "$path" ;;
+    esac
     git add "$path"; git commit -qm "scope-$path"
     select_plan "scope-$(printf '%s' "$path" | tr '/.' '--')"
     jq -e '.scope == "workspace" and all(.stages[]; .required)' "$attempt/plan.json" > /dev/null
 done
+# A changed tooling contract makes its regression mandatory and failure blocks
+# the actual runner before product tests/archives, without creating a proof.
+git reset -q --hard "$baseline"
+printf '\n# changed wiring\n' >> scripts/release/validation.pl
+git add scripts/release/validation.pl; git commit -qm tooling
+select_plan tooling-failure
+: > .git/commands
+export FAIL_TARGET=release-tools-check
+refuse run_plan
+unset FAIL_TARGET
+refuse perl scripts/release/validation.pl seal "$attempt"
+tail -1 .git/commands | grep -Fx $'release-tools-check\tworkspace'
+if grep -Eq '^(test|package-check)[[:space:]]' .git/commands; then exit 1; fi
 # Stale source, input drift and unknown product groups refuse.
 select_plan drift
 : > .git/commands
@@ -177,6 +204,7 @@ select_plan stale
 git commit --allow-empty -qm moved
 refuse run_plan
 refuse env RELEASE_GROUP=unknown perl scripts/release/validation.pl select target/release-validation/unknown
+refuse env -u RELEASE_GROUP perl scripts/release/validation.pl select target/release-validation/missing
 # New stages have one owner and become required in the full and selected roster.
 cp ci/release-validation.json "$fixture/policy"
 jq -cS '.stages += ["new-common-stage"]' "$fixture/policy" > ci/release-validation.json
@@ -185,6 +213,12 @@ select_plan new-stage
 jq -e '.stages[-1] | .target == "new-common-stage" and .required' "$attempt/plan.json" > /dev/null
 perl scripts/release/validation.pl roster > "$fixture/roster"
 tail -1 "$fixture/roster" | grep -Fx new-common-stage
+# Even a new stage in a package-only plan defaults to required.
+git tag -fam baseline metrics-v0.1.0 > /dev/null
+printf 'new implementation\n' >> crates/ic-metrics/src/lib.rs
+git add crates/ic-metrics/src/lib.rs; git commit -qm new-implementation
+select_plan new-stage-group
+jq -e '.scope == "group" and (.stages[-1] | .target == "new-common-stage" and .required)' "$attempt/plan.json" > /dev/null
 cp ci/cargo-release-groups.json "$fixture/groups"
 jq '.groups += [{name:"new-group"}]' "$fixture/groups" > ci/cargo-release-groups.json
 refuse perl scripts/release/validation.pl select target/release-validation/group-roster

@@ -93,13 +93,21 @@ sub selection {
 }
 sub plan {
     my ($context) = @_;
+    # Tooling implementation/caller qualification belongs to changed wiring or
+    # explicit full CI, not every use of already-qualified tooling. Group scope
+    # proves all inputs outside this library's implementation/docs unchanged.
+    # Unknown/new stages remain required; workspace fallback never omits stages.
+    my %tooling = map { $_ => 1 } qw(compiler-policy-check ci-selection-check
+        release-validation-check ci-evidence-check release-tools-check);
     my @stages;
     for my $target (@targets) {
         my $owner = $target eq 'logging-profiles-check' ? 'logging'
             : $target =~ /\A(?:metrics-profiles-check|allocation-free-check)\z/ ? 'metrics' : '';
-        my $required = $context->{scope} eq 'workspace' || !$owner || $owner eq $group;
+        my $regression = $context->{scope} eq 'group' && $tooling{$target};
+        my $required = !$regression && ($context->{scope} eq 'workspace' || !$owner || $owner eq $group);
         push @stages, {target=>$target, required=>$required ? JSON::PP::true : JSON::PP::false,
-            reason=>!$required ? "Unchanged independent $owner package; no dependency or shared-input changes"
+            reason=>$regression ? 'Tooling implementation, callers and configuration unchanged since admitted release; qualification remains in full CI'
+                : !$required ? "Unchanged independent $owner package; no dependency or shared-input changes"
                 : $context->{scope} eq 'workspace' ? $context->{reason}
                 : "Common admission or selected $group package; native/Wasm and all features retained"};
     }

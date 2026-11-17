@@ -204,8 +204,10 @@ admit that architecture. Metrics keeps all-feature native/Wasm lint, Rustdoc,
 tests and archives, dependency-free feature graphs, public API/persistence checks
 and the allocator-free Wasm link.
 Logging keeps the same package gates and its dependency-free native/Wasm graphs.
-Common tools, policies, formatting, documentation, evidence and release fixtures
-remain required; package-document link checks still inspect both archives.
+Common tool admission, pins, formatting and documentation checks remain required;
+package-document link checks still inspect both archives. Five tooling regression
+stages run only in full CI or when shared/uncertain changes select workspace
+scope; their fresh admission counterparts still run for every release.
 
 Manifests/features, Cargo.lock, compiler policy, shared code, CI/release machinery,
 other-group changes and unknown paths select the complete workspace gate. A
@@ -215,7 +217,7 @@ not establish downstream consumer or native/IC runtime acceptance. Services
 retain their own Wire/report DTO qualification; IC Storage retains governed storage adapters.
 
 The local mapping retains these product obligations for
-[#129](https://github.com/dragginzgame/ic-observability/issues/129):
+[Observability #129](https://github.com/dragginzgame/ic-observability/issues/129):
 
 | Boundary | Required obligations and owner |
 | --- | --- |
@@ -301,11 +303,12 @@ fixture's initialization/EXIT boundary against the real consumer root using
 Shared's vendor-aware exit helper, which resolves its companions from its installed
 directory while retaining the consumer root. All 18 checks remain; the consumer
 workaround is removed. These focused forms omit other kinds, nested
-group admission and generic lifecycle probes; the no-argument release gate retains
+group admission and generic lifecycle probes; the no-argument tooling qualification retains
 the complete roster. Use the group-admission and frozen-batch fixtures separately
 when their actual transaction/capture wiring changes.
 
-`make release-tools-check` is an aggregate of the consumer-owned fixtures below.
+`make release-tools-check` is broad tooling qualification, not an ordinary
+package-only release gate. It aggregates the consumer-owned fixtures below.
 The standard/internal-hook and group admission fixtures exercise the actual
 adapter, shared runner/editor and
 local Git remotes in disposable repositories. It checks both group directions,
@@ -338,7 +341,16 @@ integration tests under each client's `tests/contract.rs`, and executes those
 named targets with locked dependencies. The no-argument fixture retains the
 complete group transaction, rollback, recovery and unaffected-identity checks.
 
-`make release-validation-check` keeps lightweight product mapping, exclusion,
+`bash scripts/release/test-standard-release.sh --selection-only` checks actual
+Metrics/Logging native/Wasm lint, docs, test and package arguments under parallel
+Make, with Cargo effects substituted. It omits the unrelated hook, execution-mode
+and metadata matrices.
+`bash scripts/release/test-release-admission.sh --refusals-only` checks both groups
+for missing/invalid selection, dirty source, failed preparation/required gates and
+input drift before commits, tags, remote updates or registry calls. It omits
+successful transaction, rollback, publication and generated-client compilation.
+
+`make release-validation-check` keeps product mapping, exclusion,
 Shared-helper wiring and receipt-custody regressions in routine CI.
 `make release-validation-qualify` additionally compares full and selected command
 traces and proves full-CI workspace selection/lint ordering. Renew that matched
@@ -346,3 +358,162 @@ qualification when mapping, runner, relevant configuration or covered contracts
 change, or by explicit request; it does not run permanently in every ordinary CI
 change. Its Make effects are substituted, so applicable native acceptance still
 belongs to the three-host CI matrix and real package gates.
+
+## Release stage ownership and triggers
+
+[Observability #135 — Simplify release gates](https://github.com/dragginzgame/ic-observability/issues/135)
+separates using tooling from qualifying its implementation. The existing Shared
+runner, plan schema, source checkpoint and protected receipt remain the only
+execution/evidence mechanism. The ordered JSON roster remains unchanged.
+
+A package-only change must fit the selector's existing explicit implementation,
+example, test and documentation paths relative to that group's admitted annotated
+ancestor tag. No dependency, manifest, compiler, tooling, workflow or unknown path
+may have changed. Only then are the following five regression stages omitted.
+New stages default to required. Missing baselines and all shared/uncertain changes
+retain all 20 stages; there is no environment skip switch or cross-group reuse.
+This maintenance change itself therefore selects the full roster on deployment.
+
+| Stage | Guarantee, inputs and owner | Execution trigger |
+| --- | --- | --- |
+| compiler-check | Consumer compiler/catalog admission, using Shared checker | Every release and full CI |
+| compiler-policy-check | Consumer compiler/refusal and allocator-link caller fixture | Tooling qualification/full CI or workspace release scope |
+| toko-tooling-check | Shared marker/lock/snapshot integrity for this checkout | Every release and custom deployment entry |
+| check-doc-links | Shared link checker over consumer docs and package links | Every release and full CI |
+| ci-selection-check | Consumer workflow source/security/native selection | Tooling qualification/full CI or workspace release scope |
+| release-validation-check | Consumer selection, failure, proof custody and recovery wiring | Tooling qualification/full CI or workspace release scope |
+| tools-check | Shared installed tool admission plus consumer metadata editor | Every release and full CI; preparation stays separate |
+| check-pins | Shared policy over current manifests, catalog and lock | Every release and full CI |
+| fmt-check | Shared formatter over consumer selected sources/manifests | Every release and full CI |
+| clippy | Consumer strict native/all-target and Wasm-library lint | Selected package or both packages for workspace scope; early, fail closed |
+| production-dependencies-check | Consumer dependency-free declarations, encoding/Cargo boundaries, process and declaration regressions | Every release and full CI; small boundary fixtures retained because this is a live product architecture guard |
+| metrics-profiles-check | Consumer Metrics normal/build closures across four target/feature profiles | Metrics or workspace scope |
+| logging-profiles-check | Consumer Logging normal/build closures on native/Wasm | Logging or workspace scope |
+| allocation-free-check | Consumer fresh fixed-recorder Wasm link without allocator | Metrics or workspace scope |
+| ci-evidence-check | Consumer setup, workflow, collection and recovery archive qualification | Tooling qualification/full CI or workspace release scope |
+| release-tools-check | Consumer metadata/publication/capture/recovery qualification (nested inventory below) | Tooling qualification/full CI or workspace release scope |
+| docs-check | Native/Wasm warning-denied Rustdoc | Selected package or workspace |
+| test | All-feature unit, integration, example and doc tests | Selected package or workspace |
+| package-check | Real locked/offline all-feature archive compilation | Selected package or workspace; selected final-version archive also checked after metadata preparation |
+| package-doc-links-check | Consumer packaged Markdown paths plus rejection fixture | Every release and full CI |
+
+The retained boundary fixtures in production-dependencies-check and
+package-doc-links-check are not generic Shared regression suites. Neither their
+live product checks nor their local rejection tests were removed in this slice.
+Source/tag/registry admission, independent versions, metadata transactions,
+uncertain-publication readback and frozen custody execute at their existing
+boundaries regardless of whether the tooling fixtures are selected.
+
+### Nested tooling qualification
+
+| Entry | Nested execution / guarantee | Inputs and retained owner |
+| --- | --- | --- |
+| release-tools-check → test-tooling-admission | Six real custom-adapter entry/operation calls refuse snapshot drift before effects | Consumer setup/publication/metadata adapters |
+| → test-retained-consumer | Both supplier directions preserve parsed manifest fields and independent identities | Consumer retained-client renderer |
+| → test-fixture-retention | Standard body twice (success/child failure); publication body three times (success/child/assertion failure); hook body twice (success/format failure); group admission once; six fixture EXIT prefixes × three scenarios | Consumer fixture call sites/custody; Shared supplies lifecycle/probe mechanics |
+| retention → test-standard-release | Actual Make routing, invalid delivery, unsafe execution, jobserver, group leaf selection, archive/status propagation | Consumer Make includes/adapters; generic flag permutations remain upstream |
+| retention → test-publication-make | Real Make publication group, source/lint ordering, status and selection | Consumer publication projection over Shared recipe |
+| retention → test-format-hook | Shared formatting-adoption helper exercised with consumer Rust inputs and hook | Consumer hook/format selection; generic sorter implementation remains upstream |
+| retention → test-release-admission | Both group transactions, wrong/missing selection, rollback, exact staging, sealed evidence/resume, unaffected supplier clients | Consumer metadata/editor and Shared runner integration; broad gates/upload substituted |
+| → test-publication-policy | Real tag/source admission and archive readback, changed contents/provenance/refusal; HTTP substituted | Consumer publication policy; Shared provenance/hash observations |
+| → test-release-batch | Real two-group capture/setup/lint/archives with interrupted push and uncertain upload, offline recovery, deferred edits and reconciliation | Consumer frozen hooks; local Git remote and simulated registry, three real stages instead of product roster |
+| ci-evidence-check | Setup redaction/status tests; native-source selector; actual workflow bodies and collector scenarios; recovery archive fixture | Consumer workflow and selected evidence; external effects substituted |
+
+No generic producer matrix is installed or added. These retained fixtures prove
+consumer wiring; broad suites remain available for changes to that wiring and
+explicit CI coverage. No wrapper became obsolete: removal would discard a named
+consumer recovery proof. Generic runner/installer/parser regressions stay with
+Toko Tooling. Historical receipts, failed attempts and recovery references remain
+bound to their original source and are not reinterpreted by this selector.
+
+Ordinary development uses the named package test or narrow fixture for its edit.
+For selector changes run `make release-validation-qualify`, plus the two narrow
+selection/refusal commands above. For changed publication policy use
+`bash scripts/release/test-publication-policy.sh`; for changed outer capture use
+`bash scripts/release/test-release-batch.sh`. Broad tooling qualification is
+`make release-tools-check ci-evidence-check`; full repository CI remains
+`make ci`. Explicit release/publication commands above are unchanged. Selection
+never changes optional volatile/stable storage ownership or product persistence.
+
+### Mapping qualification — 2026-11-17
+
+Compared against clean source `ba4e4f19c046dff092f9f27abe2a180b50d86880`,
+with the same installed Toko Tooling 0.44.11, Rust 1.100.0, Linux host and stub
+Make stage bodies. The existing runner's timings (integer seconds) and actual
+successful dispatch counts were recorded by the same instrumented fixture:
+
+| Successful plan | Before stages / seconds | After stages / seconds |
+| --- | --- | --- |
+| Metrics implementation only | 19 / 4 | 14 / 3 |
+| Logging implementation only | 18 / 4 | 13 / 3 |
+| Shared lock change | 20 / 4 | 20 / 5 |
+
+These measure substituted dispatch/checkpoint overhead, **not product builds or
+release latency**. No Cargo compilation cache is involved in these stage bodies.
+Full-CI traces matched the 20-stage shared plan on both sides. Both measurement
+fixtures have identical script hashes and inputs except the old/new consumer
+selector, exported through the installed fixture helper into separate scratch
+roots and executed sequentially. Integer timings vary even for the unchanged
+shared plan; no end-to-end savings claim follows. The expanded acceptance suite
+also passed tooling-failure, configuration and missing-group cases. Historical
+real-release times above remain historical, not a savings estimate.
+
+Logs are retained under `target/qualification/issue135/`:
+`matched-before.log`, `matched-after.log`, `matched-inputs.sha256`,
+`after-final.log`,
+`dispatch.log`, `standard-full.log`, `refusals.log`,
+`admission-docs.log` and `shellcheck.log`.
+The first expanded fixture correctly refused a noncanonical JSON test edit;
+that failed attempt remains retained, and the test now makes a canonical policy
+change. Shared's immutable snapshot is unchanged. No full product suite, hosted
+matrix, real release or upload is part of this implementation qualification.
+
+## Stage reuse preparation — Observability #136
+
+[Observability #136 — Qualify scoped validation reuse](https://github.com/dragginzgame/ic-observability/issues/136)
+remains open. The revised 2026-11-17 contract requires actual group-receipt
+consumption, not an unused stage cache. The published 0.44.11 exact-input runner
+was added through the authenticated exporter with all existing entrypoints
+preserved: 57 roots / 113 files. The Cargo selection is unchanged. No release
+stage calls it yet; all current execution and recovery obligations remain active.
+
+The first proposed bounded slice is the recovery-archive qualification inside
+`ci-evidence-check`: `test-native-recovery-evidence.sh` operates on synthetic
+fixture data and the actual consumer recovery packager. Its inventory must cover
+that script, the packager, checksum/lifecycle helpers and their expanded companion
+closure, the calling recipe/observer, Perl modules, shell/archive/hash utilities
+and native runtime dependencies. Enumerate directories as well as existing files;
+bind byte identities, host, physical cwd and an explicit bounded environment.
+It must exclude no input merely to obtain a match. Only a qualified Linux contract
+could activate initially; other hosts retain ordinary execution. No such complete
+observer or native reuse qualification is claimed by the interface probe below.
+The parent evidence stage previously cost 51 seconds, but the cost of this slice
+has not been measured. Larger release fixtures read actual manifests and locks;
+they remain ineligible across metadata preparation without separately qualified
+final-candidate inputs. No local Cargo version projector is permitted.
+
+A supplier interface gap blocks receipt integration:
+[Toko Tooling #389 — Provide non-Cargo stage admission sealing](https://github.com/dragginzgame/toko-tooling/issues/389).
+The published generic runner accepts non-Cargo observation configuration, while
+its packaged sealer requires a Cargo candidate identity and emits a Cargo-specific
+sealed record. The current group verifier binds whole-plan PASS/log checkpoints;
+it does not independently seal original generic execution/admission records.
+Do not fabricate candidate identity fields, relabel old receipts or add another
+consumer proof validator to bridge that gap.
+
+A disposable interface probe produced one executed admission for synthetic
+Metrics source and one reused admission for synthetic Logging source, referencing
+the original proof. The packaged sealer then refused the generic admission with
+`stage execution context differs` and no output. The existing timing journal
+recorded 0.082588 seconds executed and 0.040536 seconds reused. These are tiny
+interface-probe timings, not real product/stage qualification or release savings.
+Exporter preview/install, probe inputs/results and journal readback remain under
+`target/qualification/issue136/`. Snapshot and prepared-tool admission passed.
+
+After the supplier contract is available, adopt it through the exporter, implement
+the bounded observer and consume its sealed bindings in a new group receipt kind.
+Then qualify sequential Metrics/Logging preparation, changed inventory/tools/host/
+environment, missing/tampered/interrupted proof, seal retry and publication recovery
+without duplicate upload. Extend to the needed common stages before claiming
+Observability #136 complete. Fresh whole-source custody, actual final-version
+archives and selected-package registry readback remain separate throughout.

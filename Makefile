@@ -144,7 +144,9 @@ help:
 	@echo "Dependency-free Metrics graphs: metrics-profiles-check; Logging graphs: logging-profiles-check"
 	@echo "Release group-plan scope and recovery fixtures: release-validation-check"
 	@echo "Renew matched full/selected mapping qualification: release-validation-qualify (on relevant changes)"
-	@echo "Tooling fixtures: hook-check, release-tools-check (no release Git effects)"
+	@echo "Broad tooling qualification on wiring changes: hook-check, release-tools-check (local fixture Git effects only)"
+	@echo "Focused release routing: bash scripts/release/test-standard-release.sh --selection-only"
+	@echo "Focused release refusal: bash scripts/release/test-release-admission.sh --refusals-only"
 	@echo "CI evidence fixture: ci-evidence-check (substitute action results and Make effects, no hosted run)"
 	@echo "Owned Rust source encoding boundary: candid-boundary-check"
 	@echo "Shared Cargo declaration boundaries: cargo-boundaries-check"
@@ -253,6 +255,8 @@ production-dependencies-check: candid-boundary-check cargo-boundaries-check
 allocation-free-check:
 	+bash scripts/ci/check-allocation-free.sh
 
+# Broad qualification for changed tooling or explicit CI. Package-only release
+# plans omit this matrix; actual source/archive/publication admission still runs.
 # Retention owns the separate release/publication/hook bodies and custody cases.
 release-tools-check:
 	bash scripts/release/test-tooling-admission.sh

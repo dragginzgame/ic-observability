@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
+selection_only=false
+if [[ "${1:-}" == --selection-only && $# == 1 ]]; then selection_only=true; elif [[ $# != 0 ]]; then exit 2; fi
 unset MAKEFLAGS MFLAGS MAKEOVERRIDES GNUMAKEFLAGS MAKEFILES
 unset RELEASE_GROUPS RELEASE_PUBLISH_TARGET RELEASE_SETUP_TARGET RELEASE_SETUP_MODE
 unset VALIDATION_REPOSITORY_ROOT VALIDATION_RUNNER_SNAPSHOT_PATH
@@ -33,6 +35,38 @@ prepare_make_fixture "$root" "$fixture"
 real_bash="$STANDARD_RELEASE_REAL_BASH"
 cd "$fixture"
 real_make="$(command -v make)"
+selection_dispatch() {
+    # The same Cargo recipes select either independent package under group scope;
+    # full CI remains workspace-scoped. Inspect actual dispatch, including Wasm.
+    for group in metrics logging; do
+        for target in clippy docs-check test package-check; do
+            : > "$EVENTS"
+            PATH="$fixture/bin:$PATH" REQUIRE_JOBSERVER=1 RELEASE_GROUP="$group" \
+                "$real_make" "${parallel[@]}" --no-print-directory -f "$root/Makefile" \
+                "$target" OBSERVABILITY_RELEASE_VALIDATION_SCOPE=group > "$fixture/output" 2>&1
+            case "$target" in
+                clippy)
+                    printf '%s\n' clippy -p "ic-$group" --all-targets --all-features --locked \
+                        clippy -p "ic-$group" --lib --all-features --locked --target wasm32-unknown-unknown > "$fixture/expected" ;;
+                docs-check)
+                    printf '%s\n' doc -p "ic-$group" --all-features --locked --no-deps \
+                        doc -p "ic-$group" --all-features --locked --no-deps --target wasm32-unknown-unknown > "$fixture/expected" ;;
+                test) printf '%s\n' test -p "ic-$group" --all-features --locked > "$fixture/expected" ;;
+                package-check) printf '%s\n' package -p "ic-$group" --all-features --locked --offline --allow-dirty > "$fixture/expected" ;;
+            esac
+            cmp "$fixture/expected" "$EVENTS"
+        done
+    done
+}
+if [[ "$selection_only" == true ]]; then
+    export JOBSERVER_PROBE="$root/vendor/toko-tooling/scripts/ci/check-pipe-jobserver.pl"
+    parallel=(-j4)
+    if "$real_make" --help | grep -q -- --jobserver-style; then parallel+=(--jobserver-style=pipe); fi
+    selection_dispatch
+    fixture_complete=true
+    echo "Both group selections reach native/Wasm lint, docs, tests and archives (Cargo substituted)."
+    exit 0
+fi
 # The actual Make entry projects the metadata owner's NUL-delimited roster.
 (cd "$root" && "$real_make" --no-print-directory release-files) > "$fixture/release-files"
 printf '%s\0' Cargo.toml Cargo.lock releases/metrics/CHANGELOG.md crates/ic-metrics/Cargo.toml > "$fixture/expected-release-files"
@@ -196,27 +230,7 @@ PATH="$fixture/bin:$PATH" REQUIRE_JOBSERVER=1 CLIPPY_FAILURE=native "$real_make"
 printf '%s\n' clippy --workspace --all-targets --all-features --locked > "$fixture/expected"
 cmp "$fixture/expected" "$EVENTS"
 
-# The same Cargo recipes select either independent package under group scope;
-# full CI remains workspace-scoped. Inspect actual dispatch, including Wasm.
-for group in metrics logging; do
-    for target in clippy docs-check test package-check; do
-        : > "$EVENTS"
-        PATH="$fixture/bin:$PATH" REQUIRE_JOBSERVER=1 RELEASE_GROUP="$group" \
-            "$real_make" "${parallel[@]}" --no-print-directory -f "$root/Makefile" \
-            "$target" OBSERVABILITY_RELEASE_VALIDATION_SCOPE=group > "$fixture/output" 2>&1
-        case "$target" in
-            clippy)
-                printf '%s\n' clippy -p "ic-$group" --all-targets --all-features --locked \
-                    clippy -p "ic-$group" --lib --all-features --locked --target wasm32-unknown-unknown > "$fixture/expected" ;;
-            docs-check)
-                printf '%s\n' doc -p "ic-$group" --all-features --locked --no-deps \
-                    doc -p "ic-$group" --all-features --locked --no-deps --target wasm32-unknown-unknown > "$fixture/expected" ;;
-            test) printf '%s\n' test -p "ic-$group" --all-features --locked > "$fixture/expected" ;;
-            package-check) printf '%s\n' package -p "ic-$group" --all-features --locked --offline --allow-dirty > "$fixture/expected" ;;
-        esac
-        cmp "$fixture/expected" "$EVENTS"
-    done
-done
+selection_dispatch
 
 # The real CI entry forces workspace scope through recursive Make. The named
 # mapping qualification separately exercises shared dispatch and lint ordering.

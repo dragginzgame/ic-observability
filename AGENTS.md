@@ -104,7 +104,9 @@ consumer-contract or persistence-boundary changes. No baseline exceptions apply.
   Full local `make ci` and `make msrv` are release gates or explicit
   check requests. Releases select the qualified
   [group validation plan](docs/releases/independent-releases.md); shared or uncertain inputs
-  retain the full roster. Hosted CI covers both packages asynchronously; these
+  retain the full roster. Package-only plans omit unchanged tooling regression
+  stages under the qualified selector; fresh product and publication admission
+  remain mandatory. Hosted CI covers both packages asynchronously; these
   local gate names do not require a completed GitHub Actions run.
   Follow [the validation policy](TOKO-TOOLING.md#validation-and-evidence)
   for batched focused checks and evidence reuse. Documentation-only work needs

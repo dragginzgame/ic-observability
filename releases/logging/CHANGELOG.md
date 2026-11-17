@@ -6,6 +6,26 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.25.10] - Unreleased
+
+### 🧹 Cleanup
+
+- Package-only releases keep product checks and fresh publication admission while
+  omitting unchanged tooling regression matrices. Shared/uncertain changes and
+  full CI retain the complete roster; focused commands qualify group dispatch
+  and refusal before release effects.
+  [Observability #135 — Simplify release gates](https://github.com/dragginzgame/ic-observability/issues/135).
+
+- Prepare the published exact-input validation-stage runner through the snapshot
+  exporter. Release reuse remains disabled pending the shared non-Cargo receipt
+  interface and consumer qualification in
+  [Observability #136 — Qualify scoped validation reuse](https://github.com/dragginzgame/ic-observability/issues/136).
+
+- Keep the qualified supplier selections for this release. Registry review confirms
+  toko-tooling 0.44.11, num-bigint 0.5.1, Serde 1.0.229 and cargo-sort 2.1.4.
+  Defer optional IC Build 0.87.3 and cargo-sort-derives 0.15.0 adoption; retain
+  the qualified metadata editor 0.83.0 and formatter 0.14.1.
+
 ## [0.25.9] - 2026-11-17
 
 ### 🛠️ Tooling

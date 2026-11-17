@@ -230,7 +230,9 @@ libraries; select direct Cargo commands when only one package or test is affecte
 | Local process capture | `perl scripts/ci/tests/check-process.t`; byte limits, child status, timeout, interruption and reaping without product compilation |
 | Packaged documentation admission | `perl scripts/ci/tests/package-doc-links.t`; rejects missing, symlink and directory inputs while admitting known Cargo-generated absences |
 | Local tools/hooks | `make tools-check`; `CDPATH=. make hook-check` checks installed hook formatting, edit preservation and installation/refusal with CDPATH set |
-| Release/evidence adapters | `make release-tools-check ci-evidence-check` |
+| Release group dispatch | `bash scripts/release/test-standard-release.sh --selection-only`; actual package/native/Wasm argv with substituted Cargo |
+| Release refusals | `bash scripts/release/test-release-admission.sh --refusals-only`; both groups, no successful release/upload |
+| Broad release/evidence qualification | `make release-tools-check ci-evidence-check`; nested matrices, select only for affected wiring or explicit coverage |
 | Generated public consumer tests | `bash scripts/release/test-release-admission.sh --consumers-only`; builds the two retained supplier clients and runs their `tests/contract.rs` targets without release/recovery scenarios |
 | Native evidence scenario | `bash scripts/ci/test-native-evidence.sh --scenario collection-archive-failure`; runs the named workflow recovery case with substituted effects, excluding standalone host/compiler setup checks |
 | Setup diagnostics | `perl scripts/ci/tests/setup-evidence.t`; checks redaction, size limits, hidden log selection, original status, missing evidence and collector failures |
@@ -418,7 +420,9 @@ request for those checks. The full gate is `make ci`; `make msrv` is the same
 compiler admission already included there. Reuse passing evidence only for
 unchanged inputs. Full CI
 reads the single policy roster through Shared's admitted interface, once per
-host. `make release-validation-qualify` renews matched full/selected mapping
+host. Package-only releases omit five unchanged tooling-regression stages;
+shared/unknown inputs retain the full roster. See the
+[stage and nested-fixture mapping](../releases/independent-releases.md#release-stage-ownership-and-triggers). `make release-validation-qualify` renews matched full/selected mapping
 evidence after mapping/runner/configuration/contract changes; ordinary CI keeps
 the smaller caller-wiring check. These fixtures substitute Make effects and do
 not themselves establish native package acceptance. Full CI
