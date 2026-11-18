@@ -8,7 +8,7 @@ release version. Each group owns its release ledger:
 - [Coordinated history through 0.23.0](releases/history.md)
 - [Group commands and recovery](docs/releases/independent-releases.md)
 
-## Maintainer tooling — Unreleased
+## Maintainer tooling — Metrics 0.30.13 / Logging 0.25.12
 
 - Adopt Toko Tooling 0.45.3 through the authenticated exporter, including frozen
   batch timing summaries and publication package-count observations. Retain fresh

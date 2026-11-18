@@ -283,6 +283,45 @@ Services coordinate their own Wire identities and schemas; persistence
 adapters retain their own integration/release owners. Arithmetic, Serde fields,
 encoded bytes and Logging's retained-data contract do not change in this split.
 
+## Tooling 0.45.3 delivery — 2026-11-18
+
+Batch `batch-WcMBa4Gv` captured `88ac178bb534f95a889eeeac6ae19dbbb6152789`,
+delivered both groups with verified publication, and reconciled the normal
+checkout cleanly. The source includes the authenticated 0.45.3 adoption,
+Observability #137 cleanup and the setup profile below. Product Rust/APIs and
+unrelated dependency selections remain unchanged; supplier dispositions are in
+each group's ledger. No optional stage sealer or validation reuse was enabled.
+
+| Package | Published version | Source commit | Registry archive SHA-256 |
+| --- | --- | --- | --- |
+| `ic-metrics` | 0.30.13 | `2407be9864a7c1af70ac32c9a745cab101509456` | `d6a7392a38636946c8d717f715062b5f8c1797eb37a548b56357e23e8930d7dc` |
+| `ic-logging` | 0.25.12 | `b7a7f54610cd18ee76a6fb80f09d6930b8140886` | `f52e344254c89fd37209131929cbd36c7627daacb1a3c34ec05656882286ee78` |
+
+Both annotated group tags and release commits reached GitHub. Fresh three-stage
+group validation, final-version archive compilation and independent registry
+readback passed, matching 34 Metrics and 16 Logging maintained files. Focused
+review of the pushed adoption, affected callers and each metadata increment found
+no actionable issue. The changed publication caller's selection, lint-failure and
+upload/readback ordering fixture passed with substituted effects; the new summary
+correctly read the prior retained batch. Hosted CI remains asynchronous.
+
+The successful batch took **170.1 seconds**, compared with 188.1 seconds for
+`batch-C6LML5zV`. Outer phases totalled release 121.0s, setup 29.9s and publication
+18.6s. Two uploaded packages were observed; no admissions were reused. Cache
+warmth was unrecorded, so this is an observation rather than a causal speedup claim.
+Logs and phase JSON are under `target/deploy/toko0453-20261118/`; the candidate
+and durable journal remain under `target/release-frozen/batch-WcMBa4Gv/` and
+`.git/release-state/frozen/batch-WcMBa4Gv/`.
+
+The preceding failed batch `batch-ahGwBRzT`, source
+`f27a5bcd3ba382b67c430f25d2670fe72eb75a41`, stopped at ledger preflight before
+validation, metadata or delivery. Generic Unreleased headings were corrected to
+numbered pending entries and checked before the fresh batch. Its original
+candidate and logs remain; the 170.1-second successful timing excludes that
+attempt and maintenance work. No older recovery state was retired or reinterpreted.
+Retired local npm artifacts were preserved under
+`target/deploy/toko0453-20261118/preserved-typescript-node_modules/`.
+
 ## Setup command profile — 2026-11-18
 
 Local maintenance adopted Toko Tooling 0.45.2 through the authenticated exporter.
