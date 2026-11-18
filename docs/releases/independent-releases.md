@@ -285,6 +285,38 @@ Services coordinate their own Wire identities and schemas; persistence
 adapters retain their own integration/release owners. Arithmetic, Serde fields,
 encoded bytes and Logging's retained-data contract do not change in this split.
 
+## Tooling 0.45.8 delivery — 2026-11-18
+
+Batch `batch-UmMkf0J8` captured `27e7516880de9669faf67479c22e4b443ac1ee06`,
+published both selected groups, independently verified their registry archives,
+and reconciled the normal checkout. Source includes the 0.45.8 adoption, Rust
+layout/lint cleanup and fixes for
+[Observability #138](https://github.com/dragginzgame/ic-observability/issues/138) and
+[Observability #139](https://github.com/dragginzgame/ic-observability/issues/139).
+The prior local handoff commit is also delivered. Product APIs remain unchanged.
+
+| Package | Version | Source commit | Registry archive SHA-256 |
+| --- | --- | --- | --- |
+| `ic-metrics` | 0.30.14 | `e5314eb5fd035fea0339b1c0e04670236d6e831d` | `9e8a3b60fb25c50dc3d46021af953901d36c56d7d09aa5f14ca3e57d6ba69087` |
+| `ic-logging` | 0.25.13 | `864c209308eb6e61dcb80c7a5089e47691668510` | `b92c305f3ce1286d458358675f321097d45c764d4be127f9f2923d3ef2eecf0a` |
+
+Fresh admission, strict lint, selected-package product checks, final-version
+archives and registry content verification passed (34 Metrics / 16 Logging
+maintained files). Both annotated tags and commits reached GitHub. The earlier
+21 package-inventory and 72 diagnostic regression assertions retain their exact
+repair scope. Review of the pushed adoption, affected callers and both metadata
+increments found no actionable issue. Hosted CI remains asynchronous; no new
+completed hosted pass or downstream acceptance is claimed.
+
+The batch took **204.8 seconds**, versus 170.1 seconds previously. Outer phases
+totalled release 142.0s, setup 35.0s and publication 22.0s. Two uploaded packages
+were observed and no admissions were reused. Cache warmth is unrecorded, so the
+34.7-second difference does not identify a causal regression. No gate was widened.
+Logs, reconciliation and phase JSON are in `target/deploy/toko0458-20261118/`.
+The candidate and recovery journal remain under
+`target/release-frozen/batch-UmMkf0J8/` and
+`.git/release-state/frozen/batch-UmMkf0J8/`; older recovery custody is unchanged.
+
 ## Tooling 0.45.3 delivery — 2026-11-18
 
 Batch `batch-WcMBa4Gv` captured `88ac178bb534f95a889eeeac6ae19dbbb6152789`,

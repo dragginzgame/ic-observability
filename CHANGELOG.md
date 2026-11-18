@@ -8,7 +8,7 @@ release version. Each group owns its release ledger:
 - [Coordinated history through 0.23.0](releases/history.md)
 - [Group commands and recovery](docs/releases/independent-releases.md)
 
-## Maintainer tooling — Unreleased
+## Maintainer tooling — Metrics 0.30.14 / Logging 0.25.13
 
 - Reject missing, empty, malformed or incomplete Cargo package inventories before
   package-document validation can report success.

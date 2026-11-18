@@ -2,13 +2,19 @@
 
 ## State and next action
 
-Local maintenance adopts **Toko Tooling 0.45.8**, with locked Cargo calls preserving
+**Metrics 0.30.14 and Logging 0.25.13 are published and independently verified.**
+The delivery adopts **Toko Tooling 0.45.8**, with locked Cargo calls preserving
 caller network settings, Rust test-module/import layout cleanup and removal of an
-unused broad lint allowance. Product versions/APIs remain unchanged. This work is
-uncommitted and unpublished; the prior handoff commit `57d4a78` remains local after
-automatic approval review rejected its additional documentation push.
+unused broad lint allowance. Product APIs remain unchanged. Batch `batch-UmMkf0J8`
+completed in **204.8 seconds** and reconciled cleanly. Fresh package gates,
+final-version archives and registry readback passed (34 Metrics / 16 Logging files).
+The prior handoff commit `57d4a78` is now delivered. The
+[delivery record](../releases/independent-releases.md#tooling-0458-delivery--2026-11-18)
+owns exact identities and timing limits. Evidence is under
+`target/deploy/toko0458-20261118/`. Post-push review found no actionable issue;
+hosted CI remains asynchronous. No completed hosted pass is claimed.
 The full hygiene/adoption review found two independently reproduced tooling gaps,
-now repaired locally with focused regression checks:
+now repaired and delivered with focused regression checks:
 [Observability #138](https://github.com/dragginzgame/ic-observability/issues/138)
 (empty package metadata passes) and
 [Observability #139](https://github.com/dragginzgame/ic-observability/issues/139)
@@ -17,14 +23,14 @@ a complete, nonempty member roster before staging. Setup redaction uses the
 authenticated Shared helper; paths, original statuses and existing secret
 coverage remain consumer-owned. The 21 package-input and 72 diagnostic assertions,
 real package-document check and snapshot admission passed. Evidence is under
-`target/qualification/issues138-139-20261118/`. Both repairs remain uncommitted
-and unpublished. The original audit remains historical pre-repair evidence.
+`target/qualification/issues138-139-20261118/`. Both issues are closed.
+The original audit remains historical pre-repair evidence.
 The [audit report](../reports/audits/2026/11/18/hygiene-adoption/01/report.md)
 records scope, evidence and limits. Current evidence is under
 `target/qualification/toko0458-hygiene-20261118/`.
 
-**Metrics 0.30.13 and Logging 0.25.12 are delivered and independently verified.**
-The delivery selects Toko Tooling **0.45.3** through the authenticated
+The preceding Metrics 0.30.13 / Logging 0.25.12 delivery selected
+Toko Tooling **0.45.3** through the authenticated
 exporter, adding batch timing summaries and publication package-count
 observations. Explicit tool installation/admission passed. No optional stage
 sealer is selected and no product gate changed. Batch `batch-WcMBa4Gv` completed
