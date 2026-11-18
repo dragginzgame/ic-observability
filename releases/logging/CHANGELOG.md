@@ -6,7 +6,7 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
-## [Unreleased]
+## [0.25.12] - Unreleased
 
 ### 🛠️ Tooling
 
