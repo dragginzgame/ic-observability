@@ -8,6 +8,15 @@ release version. Each group owns its release ledger:
 - [Coordinated history through 0.23.0](releases/history.md)
 - [Group commands and recovery](docs/releases/independent-releases.md)
 
+## Maintainer tooling — Unreleased
+
+- Adopt Toko Tooling 0.45.3 through the authenticated exporter, including frozen
+  batch timing summaries and publication package-count observations. Retain fresh
+  product gates without enabling optional stage sealing or changing other dependencies.
+- Remove orphaned TypeScript npm configuration and its obsolete ignore entry;
+  preserve installed-dependency exclusion coverage with a synthetic fixture.
+  [Observability #137](https://github.com/dragginzgame/ic-observability/issues/137).
+
 ## Maintainer tooling — Metrics 0.30.9 / Logging 0.25.9
 
 ### ▶️ Try it

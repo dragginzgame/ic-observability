@@ -5,6 +5,19 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [Unreleased]
+
+### 🛠️ Tooling
+
+- Adopt Toko Tooling 0.45.3 with frozen-batch timing summaries and publication
+  package-count observations; keep the three fresh selected-package gates.
+- Remove orphaned npm configuration while preserving dependency-exclusion coverage.
+  [Observability #137](https://github.com/dragginzgame/ic-observability/issues/137).
+- Review published suppliers: num-bigint 0.5.1, Serde 1.0.229 and cargo-sort 2.1.4
+  remain current. Retain qualified IC Build 0.83.0 and cargo-sort-derives 0.14.1;
+  defer optional 0.87.4 and 0.15.0 upgrades to the next requested tooling-maintenance
+  pass. No production dependencies or product APIs change.
+
 ## [0.30.12] - 2026-11-17
 
 ### 🛠️ Tooling

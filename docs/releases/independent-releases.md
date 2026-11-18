@@ -137,6 +137,7 @@ selects that group; a multiple-group batch requires an explicit ordered roster:
 make release-patch RELEASE_GROUP=metrics RELEASE_GROUPS=metrics,logging \
   RELEASE_PUBLISH_TARGET=publish-verified
 make release-batch-status BATCH=batch-XXXXXXXX
+make release-batch-summary BATCH=batch-XXXXXXXX  # Read-only timing comparison
 make release-batch-resume RELEASE_GROUP=metrics BATCH=batch-XXXXXXXX
 make release-batch-reconcile BATCH=batch-XXXXXXXX
 make release-batch-retire BATCH=batch-XXXXXXXX
@@ -281,6 +282,47 @@ Independent releases do not make incompatible integration stacks compatible.
 Services coordinate their own Wire identities and schemas; persistence
 adapters retain their own integration/release owners. Arithmetic, Serde fields,
 encoded bytes and Logging's retained-data contract do not change in this split.
+
+## Setup command profile — 2026-11-18
+
+Local maintenance adopted Toko Tooling 0.45.2 through the authenticated exporter.
+The existing 111 selected files are byte-identical to 0.45.0; optional stage
+sealing is not selected. Product versions, gates and other dependency selections
+remain unchanged. This is not a release or a replay of the 188.1-second batch.
+
+Two sequential warm passes timed the candidate setup's underlying commands on
+Linux x86_64 with Rust 1.100.0, after explicit tool installation. Each command ran
+under `/usr/bin/time`, recording elapsed seconds and exit status independently.
+Make targets used `make --no-print-directory`; the fetch used `cargo fetch
+--locked`. Both passes used the same normal checkout without metadata increments.
+They omit the candidate wrapper's group selection, pin-guard overhead and frozen
+capture context; they identify component costs, not exact release-span timings.
+
+| Command | Pass 1 (s) | Pass 2 (s) |
+| --- | ---: | ---: |
+| `toko-tooling-check` | 0.77 | 0.71 |
+| `install-host-tools` | 0.19 | 0.20 |
+| `compiler-check` | 0.08 | 0.08 |
+| `cargo fetch --locked` | 0.03 | 0.03 |
+| `install-rust-tools` | 4.49 | 4.49 |
+| `rust-tools-check` | 4.52 | 4.64 |
+| `install-release-editor` | 2.44 | 2.41 |
+| `release-editor-check` | 2.33 | 2.44 |
+| Total | 14.85 | 15.00 |
+
+All commands passed. Before/after SHA-256 checks matched for root Cargo manifest,
+lockfile, compiler selection, host/Rust catalog, release-editor catalog and
+candidate setup script. Installer logs report selection reuse, not compilation.
+Raw timings, logs, input hashes and the measurement script are retained under
+`target/qualification/toko0452-setup-20261118/`.
+
+Common Rust tooling plus editor preparation/admission accounts for about 93% of
+both passes. Fresh locked fetch is negligible here. Keep the current gates:
+matching repository files alone does not bind all mutable tool-store selections,
+receipts, executable bytes and native build inputs admitted by the installer.
+Any future reuse should first qualify that complete boundary with Toko Tooling,
+including changed-tool rejection; a generic stage seal alone is insufficient.
+These measurements establish no cold-cache, other-host or IC product cost.
 
 ## Release stage ownership and triggers
 

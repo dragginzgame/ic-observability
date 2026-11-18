@@ -4,6 +4,5 @@
 .DS_Store
 .shared-tooling-refresh.*
 .shared-tooling-payload.*
-/ci/typescript/node_modules/
 .toko-tooling-refresh.*
 .toko-tooling-payload.*

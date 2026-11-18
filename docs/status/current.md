@@ -2,6 +2,22 @@
 
 ## State and next action
 
+Pending delivery selects Toko Tooling **0.45.3** through the authenticated
+exporter, adding batch timing summaries and publication package-count
+observations. Explicit tool installation/admission passed. No optional stage
+sealer is selected and no product gate changed. Both groups are selected for
+patch release with verified publication under the current deployment request.
+Two warm setup command passes took 14.85/15.00 seconds; Rust tool and editor
+preparation/admission account for about 93%. Keep fresh checks; the
+[profile](../releases/independent-releases.md#setup-command-profile--2026-11-18)
+records inputs, method and the limits of possible reuse.
+Observability #137's orphaned npm configuration cleanup is locally complete and
+[the issue](https://github.com/dragginzgame/ic-observability/issues/137) is closed;
+the native-source fixture passed. Existing local node_modules artifacts are
+preserved under `target/deploy/toko0453-20261118/preserved-typescript-node_modules/`.
+These changes are not yet released. The delivery below remains
+the latest release, distinct from this pending maintenance.
+
 **Metrics 0.30.12 and Logging 0.25.11 are delivered and independently verified.**
 Toko Tooling **0.45.0** is adopted through the authenticated exporter. The supplied
 AGENTS.md corrections are included. Product Rust/APIs and unrelated dependencies
@@ -39,7 +55,7 @@ published Logging 0.25.10. Never resume or reinterpret the old attempt with new
 semantics. Its original proof and publication record remain under that candidate
 and `target/deploy/issue135-20261117/`.
 
-Toko Tooling **0.45.0** and Rust **1.100.0** are selected. The exporter-owned
+Toko Tooling **0.45.3** and Rust **1.100.0** are selected locally. The exporter-owned
 snapshot has 55 roots / 111 files after retiring the unused stage runner and
 retention probe. This design does not depend on
 [Toko Tooling #389](https://github.com/dragginzgame/toko-tooling/issues/389).

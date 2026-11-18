@@ -11,7 +11,7 @@ mkdir -p "$root/target/qualification"
 fixture="$(fixture_create "${TMPDIR:-$root/target/qualification}/metrics-native-source.XXXXXX")"
 fixture_complete=false
 trap 'fixture_finish "$?" "$fixture" "Failed native source fixture retained"' EXIT
-mkdir -p "$fixture/scripts/ci" "$fixture/crates/example" "$fixture/qualification/probe" "$fixture/ci/typescript/node_modules" "$fixture/docs/evidence" "$fixture/.tools" "$fixture/.private-evidence" "$fixture/target"
+mkdir -p "$fixture/scripts/ci" "$fixture/crates/example" "$fixture/qualification/probe" "$fixture/ci/synthetic-dependency/node_modules" "$fixture/docs/evidence" "$fixture/.tools" "$fixture/.private-evidence" "$fixture/target"
 cp "$root/scripts/ci/native-source-files.sh" "$fixture/scripts/ci/"
 mkdir -p "$fixture/vendor/toko-tooling/scripts/ci"
 printf 'shared executable\n' > "$fixture/vendor/toko-tooling/scripts/ci/probe.sh"
@@ -23,7 +23,8 @@ printf 'packaged pending README\n' > "$fixture/README.md"
 printf 'installed snapshot identity\n' > "$fixture/.toko-tooling.snapshot"
 printf 'pending\n' > "$fixture/crates/example/pending.rs"
 printf 'qualification\n' > "$fixture/qualification/probe/lib.rs"
-printf 'installed compiler\n' > "$fixture/ci/typescript/node_modules/tsc"
+# Keep this unignored by Git to exercise the selector's node_modules exclusion.
+printf 'installed dependency\n' > "$fixture/ci/synthetic-dependency/node_modules/payload"
 for directory in docs/evidence .tools .private-evidence target crates/example/target crates/example/.tools crates/example/.private-evidence; do mkdir -p "$fixture/$directory"; printf 'excluded\n' > "$fixture/$directory/payload"; done
 bash "$fixture/scripts/ci/native-source-files.sh" > "$fixture/selected.nul"
 count=0
