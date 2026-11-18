@@ -1,5 +1,8 @@
 //! Heap-local reset bookkeeping for consumer-defined measurement state.
 
+#[cfg(test)]
+mod tests;
+
 /// A reset window containing any consumer-defined combination of metric shapes.
 ///
 /// The reset sequence is local to this instance and becomes unavailable rather
@@ -44,6 +47,3 @@ impl<T> MeasurementWindow<T> {
         self.sequence = self.sequence.and_then(|value| value.checked_add(1));
     }
 }
-
-#[cfg(test)]
-mod tests;

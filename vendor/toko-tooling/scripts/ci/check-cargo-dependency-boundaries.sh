@@ -22,7 +22,7 @@ cd -P -- "$consumer"
 case "$PWD" in *$'\n'*|*$'\r'*) echo 'resolved consumer directory contains CR/LF' >&2; exit 2 ;; esac
 [[ -f Cargo.toml && ! -L Cargo.toml ]] || { echo 'consumer requires a regular Cargo.toml' >&2; exit 2; }
 policy=ci/cargo-dependency-boundaries.json
-CARGO_NET_OFFLINE=true RUSTUP_AUTO_INSTALL=0 perl -MJSON::PP -e '
+RUSTUP_AUTO_INSTALL=0 perl -MJSON::PP -e '
         use strict;
         use warnings;
         use Errno qw(ENOENT);

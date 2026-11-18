@@ -8,6 +8,20 @@ release version. Each group owns its release ledger:
 - [Coordinated history through 0.23.0](releases/history.md)
 - [Group commands and recovery](docs/releases/independent-releases.md)
 
+## Maintainer tooling — Unreleased
+
+- Reject missing, empty, malformed or incomplete Cargo package inventories before
+  package-document validation can report success.
+  [Observability #138](https://github.com/dragginzgame/ic-observability/issues/138).
+- Delegate setup redaction to the selected shared diagnostic helper, excluding
+  URL fragments and queries from console output and collected artifacts while
+  preserving command status and the existing environment-secret coverage.
+  [Observability #139](https://github.com/dragginzgame/ic-observability/issues/139).
+- Adopt Toko Tooling 0.45.8 through the authenticated exporter; preserve caller
+  Cargo network settings while retaining locked dependencies and explicit offline
+  fixture cases. Move remaining test declarations, group the persistence imports
+  and remove the unused broad line-count lint allowance.
+
 ## Maintainer tooling — Metrics 0.30.13 / Logging 0.25.12
 
 - Adopt Toko Tooling 0.45.3 through the authenticated exporter, including frozen

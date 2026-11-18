@@ -7,7 +7,7 @@ if [[ "${1:-}" == clippy && "${CARGO_BUILD_WARNINGS:-}" != deny ]]; then
     echo 'Clippy must deny Cargo warnings' >&2
     exit 92
 fi
-if [[ "$*" == 'metadata --no-deps --locked --offline --format-version 1' ]]; then
+if [[ "$*" == 'metadata --no-deps --locked --format-version 1' ]]; then
     cat "${EVENTS%/*}/publication-metadata.json"
     exit 0
 fi

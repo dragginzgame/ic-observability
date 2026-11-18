@@ -21,9 +21,10 @@ sub write_file {
     print {$out} $_[1] or die $!;
     close $out or die $!;
 }
-write_file("$fixture/metadata.json", encode_json({workspace_members => ['fixture'], packages => [{
+my $valid_metadata = {version => 1, workspace_members => ['fixture'], packages => [{
     id => 'fixture', name => 'fixture', manifest_path => "$fixture/package/Cargo.toml",
-}]}));
+}]};
+write_file("$fixture/metadata.json", encode_json($valid_metadata));
 write_file("$fixture/package/Cargo.toml", "[package]\n");
 write_file("$fixture/package/README.md", "Fixture documentation.\n");
 write_file("$fixture/package/src/lib.rs", "// maintained\n");
@@ -40,6 +41,31 @@ chmod 0755, "$fixture/bin/cargo" or die $!;
 local $ENV{DOC_INPUT_FIXTURE} = $fixture;
 local $ENV{PATH} = "$fixture/bin:$ENV{PATH}";
 my $roster = "Cargo.toml\nCargo.toml.orig\nCargo.lock\n.cargo_vcs_info.json\nREADME.md\nsrc/lib.rs\n";
+write_file("$fixture/roster", $roster);
+for my $case (
+    ['absent inventory', {}],
+    ['wrong schema', {%$valid_metadata, version => 2}],
+    ['string schema', {%$valid_metadata, version => '1'}],
+    ['boolean schema', {%$valid_metadata, version => JSON::PP::true}],
+    ['empty members', {%$valid_metadata, workspace_members => []}],
+    ['missing packages', {version => 1, workspace_members => ['fixture']}],
+    ['empty packages', {%$valid_metadata, packages => []}],
+    ['duplicate members', {%$valid_metadata, workspace_members => ['fixture', 'fixture']}],
+    ['missing member', {%$valid_metadata, workspace_members => ['fixture', 'absent']}],
+    ['duplicate packages', {%$valid_metadata, packages => [(@{$valid_metadata->{packages}}) x 2]}],
+    ['invalid member', {%$valid_metadata, workspace_members => [{}]}],
+    ['invalid package', {%$valid_metadata, packages => [undef]}],
+    ['missing name', {%$valid_metadata, packages => [{id => 'fixture', manifest_path => "$fixture/package/Cargo.toml"}]}],
+    ['missing manifest', {%$valid_metadata, packages => [{id => 'fixture', name => 'fixture'}]}],
+) {
+    write_file("$fixture/metadata.json", encode_json($case->[1]));
+    ok(!eval { observe($^X, "$fixture/scripts/ci/check-package-doc-links.pl"); 1 }, "$case->[0] refuses");
+}
+write_file("$fixture/metadata.json", encode_json({%$valid_metadata, future_field => {},
+    packages => [@{$valid_metadata->{packages}}, {id => 'external'}]}));
+ok(eval { observe($^X, "$fixture/scripts/ci/check-package-doc-links.pl"); 1 },
+    'unknown optional metadata and nonmember packages are permitted');
+write_file("$fixture/metadata.json", encode_json($valid_metadata));
 for my $case ('valid', 'missing', 'symlink', 'directory') {
     my $selected = $roster;
     if ($case ne 'valid') {
@@ -54,7 +80,7 @@ for my $case ('valid', 'missing', 'symlink', 'directory') {
     unlink "$fixture/package/src/required.rs" if $case eq 'symlink';
     rmdir "$fixture/package/src/required.rs" if $case eq 'directory';
 }
-write_file("$fixture/metadata.json", encode_json({workspace_members => ['fixture'], packages => [{
+write_file("$fixture/metadata.json", encode_json({version => 1, workspace_members => ['fixture'], packages => [{
     id => 'fixture', name => 'fixture', manifest_path => "$fixture/package/Cargo.toml",
     license_file => '../LICENSE.md',
 }]}));

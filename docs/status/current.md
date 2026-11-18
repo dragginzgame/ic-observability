@@ -2,6 +2,27 @@
 
 ## State and next action
 
+Local maintenance adopts **Toko Tooling 0.45.8**, with locked Cargo calls preserving
+caller network settings, Rust test-module/import layout cleanup and removal of an
+unused broad lint allowance. Product versions/APIs remain unchanged. This work is
+uncommitted and unpublished; the prior handoff commit `57d4a78` remains local after
+automatic approval review rejected its additional documentation push.
+The full hygiene/adoption review found two independently reproduced tooling gaps,
+now repaired locally with focused regression checks:
+[Observability #138](https://github.com/dragginzgame/ic-observability/issues/138)
+(empty package metadata passes) and
+[Observability #139](https://github.com/dragginzgame/ic-observability/issues/139)
+(URL fragment diagnostic redaction). Package inventory admission now requires
+a complete, nonempty member roster before staging. Setup redaction uses the
+authenticated Shared helper; paths, original statuses and existing secret
+coverage remain consumer-owned. The 21 package-input and 72 diagnostic assertions,
+real package-document check and snapshot admission passed. Evidence is under
+`target/qualification/issues138-139-20261118/`. Both repairs remain uncommitted
+and unpublished. The original audit remains historical pre-repair evidence.
+The [audit report](../reports/audits/2026/11/18/hygiene-adoption/01/report.md)
+records scope, evidence and limits. Current evidence is under
+`target/qualification/toko0458-hygiene-20261118/`.
+
 **Metrics 0.30.13 and Logging 0.25.12 are delivered and independently verified.**
 The delivery selects Toko Tooling **0.45.3** through the authenticated
 exporter, adding batch timing summaries and publication package-count
@@ -62,8 +83,9 @@ published Logging 0.25.10. Never resume or reinterpret the old attempt with new
 semantics. Its original proof and publication record remain under that candidate
 and `target/deploy/issue135-20261117/`.
 
-Toko Tooling **0.45.3** and Rust **1.100.0** are selected. The exporter-owned
-snapshot has 55 roots / 111 files after retiring the unused stage runner and
+Toko Tooling **0.45.8** and Rust **1.100.0** are selected locally. The exporter-owned
+snapshot has 56 roots / 112 files after selecting the shared diagnostic helper
+and previously retiring the unused stage runner and
 retention probe. This design does not depend on
 [Toko Tooling #389](https://github.com/dragginzgame/toko-tooling/issues/389).
 Historical probe evidence remains under `target/qualification/issue136/`.

@@ -2,6 +2,9 @@
 //!
 //! Callers own authorization, scheduling, time and any durable storage.
 
+#[cfg(test)]
+mod tests;
+
 use alloc::{collections::VecDeque, string::String, vec::Vec};
 use core::{num::NonZeroUsize, ops::ControlFlow};
 
@@ -707,6 +710,3 @@ fn message_parts(message: &str, max_bytes: usize) -> (&str, &'static str) {
     }
     (&message[..end], suffix)
 }
-
-#[cfg(test)]
-mod tests;

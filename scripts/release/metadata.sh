@@ -99,7 +99,7 @@ case "$operation" in
             OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT="$attempt" VALIDATION_LOG_DIR="$attempt/logs" \
         VALIDATION_FAILURE_LOG_DIR="$(git rev-parse --git-path release-state)/validation-failures" \
             VALIDATION_REPOSITORY_ROOT="$root" TMPDIR="${TMPDIR:-$root/$attempt/tmp}" \
-                CARGO_NET_OFFLINE=true bash "$root/vendor/toko-tooling/scripts/ci/run-validation-targets.sh" \
+                bash "$root/vendor/toko-tooling/scripts/ci/run-validation-targets.sh" \
             --plan "$attempt/plan.json"
         bash "$root/vendor/toko-tooling/scripts/ci/check-release-source.sh"
         release_receipt_write "$attempt/proof.json" perl "$root/scripts/release/validation.pl" seal "$attempt"

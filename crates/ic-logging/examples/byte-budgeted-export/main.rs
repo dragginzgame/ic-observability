@@ -1,5 +1,8 @@
 //! Caller-owned UTF-8 export with a body budget and lossless cursor continuation.
 
+#[cfg(test)]
+mod tests;
+
 use ic_logging::{EntryInput, Filter, Level, Limits, Log, PageRequest};
 use std::{fmt::NumBuffer, num::NonZeroUsize, ops::ControlFlow};
 
@@ -110,6 +113,3 @@ fn main() {
     assert_eq!(third.body, "0: a\n");
     assert_eq!(third.next_before, None);
 }
-
-#[cfg(test)]
-mod tests;

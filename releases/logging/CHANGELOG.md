@@ -6,6 +6,22 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.25.13] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt Toko Tooling 0.45.8 and its shared diagnostic sanitizer. Keep locked
+  dependencies while preserving caller-selected Cargo network settings.
+- Reject incomplete package-document inventories and redact URL fragments/queries
+  from setup output and artifacts. Fixes
+  [Observability #138](https://github.com/dragginzgame/ic-observability/issues/138) and
+  [Observability #139](https://github.com/dragginzgame/ic-observability/issues/139).
+- Align test-module layout and remove an unused broad lint allowance;
+  product APIs and behavior remain unchanged.
+- Supplier review retains current num-bigint 0.5.1, Serde 1.0.229 and cargo-sort
+  2.1.4. Defer optional IC Build 0.87.4 and cargo-sort-derives 0.15.0 to the next
+  requested tooling-maintenance pass; qualified 0.83.0 and 0.14.1 remain selected.
+
 ## [0.25.12] - 2026-11-18
 
 ### 🛠️ Tooling

@@ -110,7 +110,9 @@ while retaining exact version, archive-checksum and packaged-lock admission.
 Build/check/test/metadata/publication commands keep their meaningful `--locked`.
 Clippy now uses qualified Cargo warning denial; Rustdoc's explicit denial remains.
 Fresh captured delivery prepares its own tools through the existing managed
-owners before version lookup. Recovery and validation admit that selection offline.
+owners before version lookup. Recovery and validation admit that selection without
+installing executable tools. Cargo preserves caller-selected network settings;
+select offline mode explicitly when required for an invocation.
 
 ```sh
 make release-version RELEASE_GROUP=metrics   # Metrics current version
@@ -148,7 +150,7 @@ from workspace membership or clear it to request live delivery. The captured
 checkout under `target/release-frozen/BATCH` uses its own tools and the saved
 source, group, remote and branch. Candidate setup prepares host parsers, admits
 the compiler, then delegates locked fetch and Rust/editor preparation to Shared.
-Subsequent preflight and resumed setup only check prepared tools offline. External
+Subsequent preflight and resumed setup only check prepared tools. External
 tool-catalog overrides refuse; Shared also rejects unsupported Git/Cargo contexts.
 This qualifies the captured catalogs and default context, not arbitrary host inputs.
 

@@ -168,7 +168,7 @@ validation-scope-check:
 	@if test -n "$${OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT:-}"; then perl scripts/release/validation.pl admit "$$OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT" '$(OBSERVABILITY_RELEASE_VALIDATION_SCOPE)' '$(RELEASE_GROUP)'; fi
 
 package-check:
-	+cargo package $(validation_cargo_selection) --all-features --locked --offline --allow-dirty
+	+cargo package $(validation_cargo_selection) --all-features --locked --allow-dirty
 
 hook-check:
 	bash scripts/dev/test-format-hook.sh

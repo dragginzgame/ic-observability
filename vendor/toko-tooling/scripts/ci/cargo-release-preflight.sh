@@ -25,12 +25,11 @@ helper="${BASH_SOURCE[0]%/*}/verify-file-checksum.sh"
 for pin in "${pins[@]}"; do digests+=("$(bash "$helper" --print sha256 "$pin")"); done
 if [[ "$prepare" == 1 ]]; then
     [[ ${#preparation[@]} != 0 ]] || exit 2
-    cargo fetch --locked
     selected=("${preparation[@]}")
 else
-    cargo fetch --locked --offline
     selected=("${checks[@]}")
 fi
+cargo fetch --locked
 for target in "${selected[@]}"; do
     "${RELEASE_MAKE:-make}" --no-print-directory -C "$root" "$target"
     for ((index=0; index<${#pins[@]}; index++)); do

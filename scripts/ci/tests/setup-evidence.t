@@ -19,13 +19,18 @@ sub run {
 }
 sub read_file {open my $fh,'<',$_[0] or die $!;local $/;return <$fh> // '';}
 $ENV{FIXTURE_SECRET_TOKEN}='fixture-value-must-not-be-published'; # gitleaks:allow synthetic redaction input
+$ENV{FIXTURE_AUTHORIZATION}="opaque-auth-line\nopaque-auth-second";
+$ENV{FIXTURE_ACCESS_KEY}='opaque-access-value';
 my $code=q{
     print "noise line $_\n" for 1..12000;
     print "underlying parser: archive has an invalid header\n";
     print "authorization: Bearer fixture-auth\n";
     print "TOKEN=fixture-env\n";
     print "request uses $ENV{FIXTURE_SECRET_TOKEN}\n";
+    print "$ENV{FIXTURE_AUTHORIZATION}\n$ENV{FIXTURE_ACCESS_KEY}\n";
     print "https://user:password\@example.invalid/archive\n";
+    print "download failed: https://example.invalid/#opaque-canary-value\n";
+    print "download failed: HTTPS://example.invalid/file?q=opaque-query-value\n";
     print "-----BEGIN PRIVATE KEY-----\nfixture-private-material\n-----END PRIVATE KEY-----\n"; # gitleaks:allow synthetic redaction input
     print "github token ghp_fixturecredential\n";
     exit 43;
@@ -35,12 +40,14 @@ is(run('failure.out',$^X,$helper,'target/evidence/native-ci','host-tools',$^X,'-
 my $log=read_file('target/evidence/native-ci/.setup/host-tools.log');
 my $meta=decode_json(read_file('target/evidence/native-ci/.setup/host-tools.json'));
 is($meta->{status},43,'hidden attempt records original status');
-ok($meta->{truncated},'retention truncation is explicit');
+ok($meta->{bounded},'bounded diagnostic retention is explicit');
+is($meta->{retained_bytes},length($log),'metadata counts the retained sanitized bytes');
 cmp_ok(length($log),'<=',64*1024,'retained log is bounded');
 cmp_ok(length(read_file('failure.out')),'<',5000,'printed excerpt is bounded');
 like($log,qr/underlying parser: archive has an invalid header/,'underlying failure is useful');
 for my $payload ('fixture-auth','fixture-env',$ENV{FIXTURE_SECRET_TOKEN},'user:password',
-    'fixture-private-material','ghp_fixturecredential') {
+    'fixture-private-material','ghp_fixturecredential','opaque-canary-value','opaque-query-value',
+    'opaque-auth-line','opaque-auth-second','opaque-access-value') {
     unlike($log,qr/\Q$payload\E/,'retained log excludes a sensitive field');
     unlike(read_file('failure.out'),qr/\Q$payload\E/,'printed excerpt excludes a sensitive field');
 }
@@ -53,6 +60,11 @@ is(run('members.out','tar','-tzf','target/evidence/native-diagnostics.tar.gz'),0
 my $members=read_file('members.out');
 like($members,qr{\.setup/host-tools.log},'hidden attempt log is retained');
 unlike($members,qr{unrelated|scratch|\.tools/},'unrelated payloads are excluded');
+is(run('archived-log.out','tar','-xOzf','target/evidence/native-diagnostics.tar.gz','.setup/host-tools.log'),0,
+    'read the actual archived diagnostic');
+is(read_file('archived-log.out'),$log,'archive contains the exact sanitized log');
+unlike(read_file('archived-log.out'),qr/opaque-canary-value|opaque-query-value/,
+    'URL fragments and queries are absent from the uploaded payload');
 isnt(run('missing.out',$^X,$helper,'--collect','target/evidence/missing','target/evidence/missing.tar.gz'),0,
     'missing evidence fails collection');
 like(read_file('missing.out'),qr/setup diagnostics missing/,'missing diagnostics are explicit');
@@ -79,7 +91,7 @@ is($meta->{status},43,'collection cannot relabel the original setup failure');
 like(read_file('collector-failure.out'),qr/setup diagnostic archive failed/,'collector failure is explicit');
 is(run('empty.out',$^X,$helper,'target/evidence/empty','empty',$^X,'-e','exit 44'),44,
     'missing command diagnostics retain original failure status');
-like(read_file('empty.out'),qr/no diagnostics emitted/,'empty stderr/stdout is explicit');
+like(read_file('empty.out'),qr/no usable diagnostic output/,'empty stderr/stdout is explicit');
 make_path('target/evidence/occupied/.setup');
 open my $occupied,'>','target/evidence/occupied/.setup/phase.json' or die $!;close $occupied;
 is(run('occupied.out',$^X,$helper,'target/evidence/occupied','phase',$^X,'-e','exit 43'),43,

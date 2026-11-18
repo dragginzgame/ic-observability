@@ -5,9 +5,11 @@
 //! They do not validate arbitrary report DTOs or establish observation provenance.
 //! Recorder types deliberately implement neither Serde nor Wire traits.
 
-use crate::HistogramBoundsError;
 pub use crate::state::MeasurementStateError;
-use crate::{MeasurementAggregate, MeasurementCounter, MeasurementHistogram, MeasurementSummary};
+use crate::{
+    HistogramBoundsError, MeasurementAggregate, MeasurementCounter, MeasurementHistogram,
+    MeasurementSummary,
+};
 
 /// Restore retained sample count, total, maximum and actual-overflow quality.
 ///

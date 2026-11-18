@@ -52,7 +52,7 @@ selection_dispatch() {
                     printf '%s\n' doc -p "ic-$group" --all-features --locked --no-deps \
                         doc -p "ic-$group" --all-features --locked --no-deps --target wasm32-unknown-unknown > "$fixture/expected" ;;
                 test) printf '%s\n' test -p "ic-$group" --all-features --locked > "$fixture/expected" ;;
-                package-check) printf '%s\n' package -p "ic-$group" --all-features --locked --offline --allow-dirty > "$fixture/expected" ;;
+                package-check) printf '%s\n' package -p "ic-$group" --all-features --locked --allow-dirty > "$fixture/expected" ;;
             esac
             cmp "$fixture/expected" "$EVENTS"
         done
@@ -239,7 +239,7 @@ for failure in none metadata package; do
     if [[ "$failure" == none ]]; then [[ "$status" == 0 ]] || exit 1; else [[ "$status" != 0 ]] || exit 1; fi
     printf 'metadata prepare\n' > "$fixture/expected"
     if [[ "$failure" != metadata ]]; then
-        printf '%s\n' package -p ic-metrics --all-features --locked --offline --allow-dirty >> "$fixture/expected"
+        printf '%s\n' package -p ic-metrics --all-features --locked --allow-dirty >> "$fixture/expected"
     fi
     cmp "$fixture/expected" "$EVENTS"
 done
@@ -293,7 +293,7 @@ for fail in 0 1; do
     PATH="$fixture/bin:$PATH" FAIL_PACKAGE="$fail" "$real_make" --no-print-directory \
         -f "$root/Makefile" package-check > "$fixture/output" 2>&1 || status=$?
     if [[ "$fail" == 0 ]]; then [[ "$status" == 0 ]] || exit 1; else [[ "$status" != 0 ]] || exit 1; fi
-    printf '%s\n' package --workspace --all-features --locked --offline --allow-dirty > "$fixture/expected"
+    printf '%s\n' package --workspace --all-features --locked --allow-dirty > "$fixture/expected"
     cmp "$fixture/expected" "$EVENTS"
 done
 

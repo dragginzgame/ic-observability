@@ -20,7 +20,14 @@ and observed versions through Toko Tooling; compiler selection stays local. Fail
 CI prepares pinned host parsers before reading Rust policy from TOML. The
 consumer [setup wrapper](../../scripts/ci/setup-evidence.pl) records the phase,
 command identity, original status and bounded sanitized output for native setup
-and scanner installation. The selected `prepare-common-tools.sh` helper retains
+and scanner installation.
+Shared's `SetupDiagnostics.pm` now owns stream redaction and bounded excerpts;
+the wrapper retains artifact paths, command-status handling and the collector.
+Metadata records sanitized `retained_bytes` and `bounded`, rather than claiming
+raw output byte counts or completeness. Existing authorization/access-key and
+multiline environment secrets are supplied through private local secret aliases
+after the command is forked; those aliases never enter the child environment.
+The selected `prepare-common-tools.sh` helper retains
 Shared's installation, offline checking and PATH publication after success;
 its unused composite action and cache-key companion retired through the exporter.
 The always-run [collector](../../scripts/ci/collect-native-evidence.sh) publishes
@@ -30,7 +37,7 @@ is reported separately and cannot make the original failed step successful.
 
 ## Prerequisites and focused checks
 
-Root `[workspace.dependencies]` declares `toko-tooling = "=0.45.3"` once.
+Root `[workspace.dependencies]` declares `toko-tooling = "=0.45.8"` once.
 Both real members inherit it unconditionally as a dev-dependency and merge the
 name into cargo-machete ignored metadata, without a Rust import. Cargo.lock pins
 the registry version/checksum; no selection-only package or separate tooling
@@ -47,10 +54,15 @@ consumer checkout, because the installed runner now lives beneath the vendor tre
 Use `make deps-update` for explicit Cargo updates (`cargo update -v`), optionally
 with `DEPENDENCY_PACKAGE` and `DEPENDENCY_PRECISE` to select one dependency.
 For example, after editing the root tooling pin, run
-`make deps-update DEPENDENCY_PACKAGE=toko-tooling DEPENDENCY_PRECISE=0.45.3`,
+`make deps-update DEPENDENCY_PACKAGE=toko-tooling DEPENDENCY_PRECISE=0.45.8`,
 then `make toko-tooling-update`. This repository has only the root maintained
 workspace. The command preserves manifest requirements and is separate from
 supplier freshness review; it is not called by CI or release admission.
+
+Normal Cargo checks preserve the caller's network settings and may retrieve
+missing locked dependencies. Select `CARGO_NET_OFFLINE=true` explicitly for an
+offline invocation. Deterministic offline fixtures retain their own selection;
+checks never install executable tools or unlock the dependency graph.
 
 Repository CI owns one Linux security job with a full-history, fully redacted
 Gitleaks scan, including documentation-only runs. The pinned shared installer
@@ -147,7 +159,7 @@ no local exception or temporary policy-reference override is needed.
 Both product members and generated retained consumers inherit root lint policy.
 The root keeps safe-only `unsafe_code = "forbid"`, strict warning-denied Clippy
 and Rustdoc gates, and reviewed pedantic checks without blanket nursery selection.
-`make deps-list` lists actual package versions and release groups offline.
+`make deps-list` lists actual package versions and release groups using locked metadata.
 The root retains only dependencies inherited by real members; display-only
 product aliases and their unused-dependency lint allowance are removed.
 The 0.41.0 Cargo/Rustdoc minimum is inherited by both packages. `make clippy`
@@ -215,14 +227,14 @@ libraries; select direct Cargo commands when only one package or test is affecte
 | Focused library checks | `cargo check -p PACKAGE --all-targets --locked`; library Wasm: `cargo check -p PACKAGE --locked --target wasm32-unknown-unknown`; `CARGO_BUILD_WARNINGS=deny cargo clippy -p PACKAGE --all-targets --locked` |
 | Named tests | `cargo test -p ic-metrics --locked <test-name>`; package doctests: `cargo test -p PACKAGE --locked --doc` |
 | Logging | `cargo test -p ic-logging --lib --locked`; `cargo test -p ic-logging --doc --locked`; `CARGO_BUILD_WARNINGS=deny cargo clippy -p ic-logging --lib --tests --examples --locked` |
-| Explicit persistence clients | `cargo test -p ic-metrics --test persistence --all-features --locked --offline`; negative API checks: `cargo test -p ic-metrics --doc --all-features --locked --offline` |
-| Fixed instrumentation | `cargo test -p ic-metrics --lib --no-default-features --locked --offline aggregate::tests`; native/Wasm production graphs exclude all external dependencies |
+| Explicit persistence clients | `cargo test -p ic-metrics --test persistence --all-features --locked`; negative API checks: `cargo test -p ic-metrics --doc --all-features --locked` |
+| Fixed instrumentation | `cargo test -p ic-metrics --lib --no-default-features --locked aggregate::tests`; native/Wasm production graphs exclude all external dependencies |
 | Instrumentation feature graphs | `make metrics-profiles-check`; checks dependency-free native minimal, recording, default and all-feature Wasm normal/build closures. `make logging-profiles-check` independently checks Logging |
-| Log export recipe | `cargo test -p ic-logging --example byte-budgeted-export --locked --offline`; execute the walkthrough with `cargo run -p ic-logging --example byte-budgeted-export --locked --offline` |
-| Recording model | `cargo test -p ic-metrics --lib --no-default-features --features recording --locked --offline recording::tests::model` |
-| Reset-window tests | `cargo test -p ic-metrics --lib --all-features --locked --offline window::tests` |
-| Logging operation model | `cargo test -p ic-logging --lib --locked --offline log::tests::mixed`; exercises journal-based state, paging and visitor stops across admission, retention and restoration |
-| Histogram restoration oracle | `cargo test -p ic-metrics --lib --no-default-features --locked --offline histogram::tests::restoration`; exhaustive small-domain bounds/distributions and exact weighted overflow histories |
+| Log export recipe | `cargo test -p ic-logging --example byte-budgeted-export --locked`; execute the walkthrough with `cargo run -p ic-logging --example byte-budgeted-export --locked` |
+| Recording model | `cargo test -p ic-metrics --lib --no-default-features --features recording --locked recording::tests::model` |
+| Reset-window tests | `cargo test -p ic-metrics --lib --all-features --locked window::tests` |
+| Logging operation model | `cargo test -p ic-logging --lib --locked log::tests::mixed`; exercises journal-based state, paging and visitor stops across admission, retention and restoration |
+| Histogram restoration oracle | `cargo test -p ic-metrics --lib --no-default-features --locked histogram::tests::restoration`; exhaustive small-domain bounds/distributions and exact weighted overflow histories |
 | Allocator-free fixed recording link | `make allocation-free-check` |
 | Recording library checks | `cargo check -p ic-metrics --lib --features recording --locked`; Wasm: `cargo check -p ic-metrics --lib --features recording --locked --target wasm32-unknown-unknown`; lint: `CARGO_BUILD_WARNINGS=deny cargo clippy -p ic-metrics --lib --tests --features recording --locked` |
 | Recording tests and examples | `cargo test -p ic-metrics --lib --features recording --locked <test-name>`; doctests: `cargo test -p ic-metrics --doc --features recording --locked` |
@@ -240,7 +252,7 @@ libraries; select direct Cargo commands when only one package or test is affecte
 | Compiler-policy fixture | `bash scripts/ci/test-rust-compiler.sh`; compiler/version refusals and linked-Wasm evidence custody with substituted compiler commands |
 | Publication-policy fixture | `bash scripts/release/test-publication-policy.sh`; local tag/source/archive/registry-refusal checks with substituted network observations and no uploads |
 | Owned Rust encoding boundary | `make candid-boundary-check` (Candid and CBOR lexical source inspection; no Cargo or macro expansion) |
-| Shared Cargo declaration boundary | `make cargo-boundaries-check` (locked, offline metadata; includes development, optional and inactive target declarations) |
+| Shared Cargo declaration boundary | `make cargo-boundaries-check` (locked metadata; includes development, optional and inactive target declarations) |
 | Maintained docs | `make check-doc-links`, consistency review and `git diff --check` |
 
 Default-feature commands above cover fixed instrumentation. Recording is
@@ -255,7 +267,7 @@ removed general numeric and transport APIs to their owners. Earlier Wire/Serde
 qualification receipts retain their original package identities.
 
 For Logging's extended model exploration, run
-`cargo test -p ic-logging --lib --locked --offline log::tests::mixed::long_utf8_histories_match_independent_event_history -- --ignored --exact`.
+`cargo test -p ic-logging --lib --locked log::tests::mixed::long_utf8_histories_match_independent_event_history -- --ignored --exact`.
 Fixed short histories and generated snapshot corruption cases remain in normal
 Logging tests. The extended test is deterministic and reports its seed/text for
 replay; it adds no dependency or performance measurement.
@@ -273,7 +285,7 @@ package file selection in staging that cannot borrow repository-only link target
 `make allocation-free-check` links the runtime-input instrumentation fixture for
 `wasm32-unknown-unknown`, with no standard library or global allocator. Linker
 exports and dead-code retention keep the exercised recording in the executable.
-The check uses locked offline dependencies and this repository's `target/`;
+The check uses locked dependencies and this repository's `target/`;
 CI runs it once on the pinned/support compiler. This is a link-contract check,
 not an IC cost measurement. Each native job selects
 `ALLOCATION_FREE_EVIDENCE_ROOT` to capture a successfully linked Wasm before later
@@ -328,13 +340,14 @@ The root dependency catalog selects `num-bigint` for the
 restoration overflow oracle and Serde for public API trait-refusal checks. Neither
 enters production. IC Storage owns adapter graph and retained-format qualification.
 
-The root catalog follows the shared formatter; Cargo role/group headings are optional.
+The root catalog contains only test/tooling dependencies. Mixed-role catalogs
+require the shared Production / Production and tests / Tests and tooling headings.
 `make fmt`, `make fmt-check` and hooks use that shared default; every release
 adapter ordering check uses `--manifest-order-grouped` against its current or
 selected committed source. No paired formatter override is needed here.
 
 `make production-dependencies-check` admits both libraries through successful
-locked, offline Cargo metadata. Neither library admits normal/build dependencies. Local features may compose
+locked Cargo metadata. Neither library admits normal/build dependencies. Local features may compose
 local switches, never forward dependency features. The retired `native-wire`
 feature and all Wire-family dependencies, including development inputs, refuse.
 Metrics has no recorder Serde implementation or transport dependency.
@@ -374,7 +387,7 @@ diagnostics and installation checks. Failed nested checker evidence stays retain
 explicit non-Rust overlays remain local.
 The shared locked release-preflight helper owns fetch/tool sequencing and pin
 rechecks; Metrics admits source/recovery first and selects preparation authority,
-tool targets and pin files. Checks remain offline and never install tools.
+tool targets and pin files. Checks preserve Cargo network settings and never install tools.
 
 `ci/release-tools.env` selects published IC Build 0.83.0's
 `ic-build-release-metadata` executable with its required `cli` feature and a
@@ -466,7 +479,7 @@ install or select another workspace tool. A Linux parser check does not establis
 native macOS execution. Fresh candidate setup prepares host tools, admits the
 compiler, and delegates locked fetch and common Rust/editor preparation to the
 shared preflight helper once. Captured preflight and recovery admit prepared
-selections offline without installation. Preparation and late checks
+selections without tool installation. Preparation and late checks
 bind the selected release commit rather than newer working-tree metadata.
 Late metadata checks use Shared's `--manifest-order-grouped` option to check ordering
 in that same selected source; literal version preparation never sorts it.
@@ -556,7 +569,7 @@ CI and each package release do not run these suites.
 
 `scripts/release/metadata.sh files` projects the shared admitted group's exact
 NUL-delimited file plan through `make release-files`. Plan admission uses the
-prepared parsers and locked offline Cargo metadata. Consumer fixtures retain
+prepared parsers and locked Cargo metadata. Consumer fixtures retain
 unsafe Make-mode refusal before effects, explicit tool-catalog routing and
 selected-source checks. The old coordinated metadata/admission helpers have been
 replaced by the actual grouped integration fixture.
@@ -635,8 +648,8 @@ They are not current platform readers, validation commands or acceptance of a
 later dependency graph. Actual IC execution and callback attribution belong to
 the owning consumers under [the extraction contract](../architecture/extraction.md#downstream-contract-checks).
 
-`make package-check` builds and verifies both workspace package archives offline.
+`make package-check` builds and verifies both workspace package archives with locked dependencies.
 IC Storage owns stable-adapter compilation, tests and archive qualification.
 It allows pending source changes for review, never uploads, and runs after
 Clippy in CI and again after release metadata preparation before staging.
-Prepared dependency sources are required; it does not install or update them.
+Cargo may retrieve missing locked sources; it does not upgrade their versions.

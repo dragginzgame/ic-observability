@@ -1,6 +1,10 @@
 #!/usr/bin/env perl
+# Shared companions: vendor/toko-tooling/scripts/ci/SetupDiagnostics.pm
 use strict;
 use warnings;
+use FindBin qw($RealBin);
+use lib "$RealBin/../../vendor/toko-tooling/scripts/ci";
+use SetupDiagnostics qw(excerpt);
 use Fcntl qw(:DEFAULT :mode);
 use File::Path qw(make_path);
 use File::Temp qw(tempdir);
@@ -66,48 +70,31 @@ if ($collect) {
 }
 defined($phase) && $phase =~ /\A[a-z0-9-]+\z/ && @command
     or die "usage: setup-evidence.pl ROOT PHASE COMMAND [ARG...]\n";
-my @secrets=map {split /\n/,$ENV{$_}} grep {
-    /(?:TOKEN|SECRET|PASSWORD|PRIVATE_KEY|CREDENTIAL|ACCESS_KEY|AUTHORIZATION)/i
-        && defined($ENV{$_}) && length($ENV{$_})>=4
-} keys %ENV;
-@secrets=grep {length($_)>=4} @secrets;
-my ($tail,$pending,$seen,$omitted,$oversized,$key)=('', '',0,0,0,0);
-sub retain_line {
-    my ($line)=@_;
-    $line =~ s/\e\[[0-?]*[ -\/]*[\@-~]//g;
-    $line =~ s/[\x00-\x08\x0b-\x1f\x7f]//g;
-    if ($line =~ /-----BEGIN .*PRIVATE KEY-----/) {$key=1; $line="[private key omitted]\n";}
-    elsif ($key) {$key=0 if $line =~ /-----END .*PRIVATE KEY-----/; return;}
-    for my $secret (@secrets) {$line =~ s/\Q$secret\E/[REDACTED]/g;}
-    $line="[sensitive field or environment assignment omitted]\n"
-        if $line =~ /(?:token|secret|password|credential|authorization|private[_ -]?key|access[_ -]?key)\s*["']?\s*[:=]/i
-        || $line =~ /\A[A-Za-z_][A-Za-z0-9_]*=/;
-    $line =~ s{(https?://)[^/\s]*\@}{${1}[REDACTED]\@}g;
-    $line =~ s/\b(?:gh[pousr]_[A-Za-z0-9_]+|github_pat_[A-Za-z0-9_]+)\b/[REDACTED]/g;
-    $line="[encoded payload omitted]\n" if $line =~ /\A[A-Za-z0-9+\/=]{40,}\s*\z/;
-    $tail.=$line;
-    while(length($tail)>$limit-128) {$tail =~ s/\A[^\n]*\n// or $tail=''; $omitted=1;}
-}
 my $pid=open my $pipe,'-|'; defined($pid) or die "start setup command: $!\n";
 if (!$pid) {open STDERR,'>&',STDOUT or die $!; exec {$command[0]} @command; die "exec setup command: $!\n";}
-while (1) {
-    my $n=sysread($pipe,my $chunk,4096); defined($n) or die "read setup output: $!\n"; last unless $n;
-    $seen+=$n; $pending.=$chunk;
-    while($pending =~ s/\A([^\n]*\n)//) {
-        my $line=$1;
-        if($oversized || length($line)>4096) {retain_line("[oversized line omitted]\n");$omitted=1;$oversized=0;}
-        else {retain_line($line);}
-    }
-    if(length($pending)>4096) {$pending='';$oversized=1;$omitted=1;}
-}
-retain_line($oversized ? "[oversized line omitted]\n" : "$pending\n") if length($pending) || $oversized;
+my $tail=eval {
+    # Preserve this adapter's existing environment-secret coverage, including
+    # multiline values and authorization/access-key names. Shared recognizes
+    # SECRET aliases; these local aliases never enter the already-forked command.
+    my @values=map {split /\n/,$ENV{$_}} grep {
+        /TOKEN|SECRET|PASSWORD|PRIVATE_KEY|CREDENTIAL|ACCESS_KEY|AUTHORIZATION/i
+            && defined($ENV{$_})
+    } keys %ENV;
+    local %ENV=%ENV;
+    my $index=0;
+    for my $value (@values) { $ENV{'OBSERVABILITY_SECRET_' . $index++}=$value if length($value)>=4; }
+    excerpt($pipe);
+};
 close $pipe;
 my $status=$? == -1 ? 127 : ($? & 127) ? 128+($? & 127) : $? >> 8;
+if (!defined $tail) { $tail="[setup output collection failed]\n"; $status ||= 2; }
 my $log="$root/.setup/$phase.log";
-my $metadata={phase=>$phase,tool=>$command[0],status=>$status,bytes_seen=>$seen,
-    truncated=>$omitted ? JSON::PP::true : JSON::PP::false,log=>$log};
+# Shared owns stream redaction and retention; report retained bytes, not an
+# invented raw-byte count or completeness claim about the original stream.
+my $metadata={phase=>$phase,tool=>$command[0],status=>$status,retained_bytes=>length($tail),
+    bounded=>JSON::PP::true,log=>$log};
 my $saved=eval {
-    my $diagnostic=($omitted ? "[output truncated; retained tail]\n" : '').($tail || "[no diagnostics emitted]\n");
+    my $diagnostic=$tail;
     write_new($log,$diagnostic);
     write_new("$root/.setup/$phase.json",JSON::PP->new->canonical->encode($metadata)."\n");
     my %legacy=('setup-smoke'=>'setup-smoke.log','host-tools'=>'host-tools.log',
@@ -118,7 +105,7 @@ my $saved=eval {
 };
 print "CI setup phase=$phase tool=$command[0] status=$status evidence=$log\n";
 my $excerpt=substr($tail,-4096); $excerpt =~ s/\A[^\n]*\n// if length($tail)>4096;
-print "[diagnostic excerpt truncated]\n" if length($tail)>4096 || $omitted;
+print "[diagnostic excerpt truncated]\n" if length($tail)>4096;
 print length($excerpt) ? $excerpt : "[no diagnostics emitted]\n";
 if (!$saved) {print STDERR "Setup evidence collection failed: $@"; $status ||= 2;}
 exit $status;

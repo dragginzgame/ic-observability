@@ -22,6 +22,7 @@ unset OBSERVABILITY_RELEASE_VALIDATION_SCOPE OBSERVABILITY_RELEASE_VALIDATION_AT
 # This fixture owns the standard hooks inside a captured checkout. The frozen
 # fixture separately qualifies outer capture, deferred edits and publication.
 export RELEASE_BATCH_ACTIVE=1
+export FIXTURE_EXPECTED_OFFLINE="${CARGO_NET_OFFLINE:-false}"
 root="${BASH_SOURCE[0]}"
 [[ "$root" == /* ]] || root="$PWD/$root"
 root="$(cd -P "${root%/*}/../.." && printf '%s/.' "$PWD")"
@@ -133,7 +134,7 @@ compiler-check:
 	@if test -z "$${OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT:-}"; then bash scripts/ci/check-rust-compiler.sh; else \
 	    test ! -e .git/fail-validation && \
 	    test "$${TMPDIR:-}" = "$${FIXTURE_SUPPLIED_TMPDIR:-$$PWD/$$OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT/tmp}" && \
-	    test -z "$${IC_METRICS_RELEASE_CACHE_PREPARE+x}" && test "$${CARGO_NET_OFFLINE:-false}" = true && \
+    test -z "$${IC_METRICS_RELEASE_CACHE_PREPARE+x}" && test "$${CARGO_NET_OFFLINE:-false}" = "$${FIXTURE_EXPECTED_OFFLINE:-false}" && \
 	    printf 'ci\n' >> .git/gates && \
 	    { test ! -e .git/drift-input || printf '\n# fixture drift\n' >> Cargo.lock; }; fi
 compiler-policy-check:

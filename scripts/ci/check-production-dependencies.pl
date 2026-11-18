@@ -20,7 +20,7 @@ if (@ARGV) {
 getcwd() !~ /[\r\n]/ or die "resolved consumer path contains CR/LF\n";
 $ENV{RUSTUP_AUTO_INSTALL} = '0';
 
-my $bytes = observe(qw(cargo metadata --no-deps --locked --offline --format-version 1));
+my $bytes = observe(qw(cargo metadata --no-deps --locked --format-version 1));
 my $metadata = eval { decode_json($bytes) };
 $@ and die "invalid Cargo workspace metadata\n";
 ref($metadata) eq 'HASH' && ($metadata->{version} // 0) == 1
