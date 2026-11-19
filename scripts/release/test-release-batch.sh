@@ -1,14 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
-measure=false
-if [[ $# == 1 && "$1" == --measure ]]; then measure=true; elif [[ $# != 0 ]]; then exit 2; fi
+[[ $# == 0 ]] || exit 2
 started=$SECONDS
 # Simulated effects must not enter the invoking deployment's timing journal.
 unset RELEASE_TIMING_JOURNAL RELEASE_TIMING_ATTEMPT RELEASE_TIMING_PARENT
 # Actual capture/setup, metadata, source proofs, native/Wasm lint, archives and
 # publication admission/readback with the actual product roster. Registry effects
-# are substituted against a disposable local Git remote. --measure also stubs
-# legacy tooling-regression bodies identically for before/after comparisons.
+# are substituted against a disposable local Git remote.
 unset MAKEFLAGS MFLAGS MAKEOVERRIDES GNUMAKEFLAGS MAKEFILES RELEASE_COMMIT RELEASE_SOURCE RELEASE_VERSION
 unset RELEASE_BATCH_ACTIVE RELEASE_GROUPS RELEASE_PUBLISH_TARGET RELEASE_SETUP_MODE
 unset TOKO_TOOLING_ROOT OBSERVABILITY_RELEASE_VALIDATION_SCOPE OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT
@@ -80,14 +78,6 @@ export PATH="$fixture/bin:$PATH"
 cd "$fixture/repo"
 # Package repository metadata and source retrieval both point to the local remote.
 REPOSITORY="file://$fixture/remote.git" perl -pi -e 's{^repository = .*}{repository = "$ENV{REPOSITORY}"}' Cargo.toml
-if [[ "$measure" == true ]]; then
-    cat >> Makefile <<'MEASURE'
-
-# Measurement excludes regression suites on both revisions, never product gates.
-compiler-policy-check ci-selection-check release-validation-check ci-evidence-check release-tools-check:
-	@:
-MEASURE
-fi
 cat >> Makefile <<'MAKE'
 
 # Qualification fault only; the owning metadata check still executes unchanged.
@@ -170,8 +160,8 @@ cp -R "$work/target/release-validation" "$fixture/validation"
 report="$(mktemp -d "${TMPDIR:-$root/target/qualification}/release-batch-report.XXXXXX")"
 make -s release-batch-timings BATCH="$batch" > "$report/phases.json"
 cp -R "$fixture/validation" "$report/validation"
-printf 'elapsed_seconds=%s\nlegacy_regression_substitutes=%s\nregistry=simulated\ngit=local\n' \
-    "$((SECONDS - started))" "$measure" > "$report/scope.txt"
+printf 'elapsed_seconds=%s\nregistry=simulated\ngit=local\n' \
+    "$((SECONDS - started))" > "$report/scope.txt"
 printf 'Delivery fixture report: %s\n' "$report"
 make release-batch-retire BATCH="$batch" > "$fixture/retire.log" 2>&1
 [[ ! -e "$work" && ! -e ".git/release-state/frozen/$batch" ]]

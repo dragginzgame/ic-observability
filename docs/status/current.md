@@ -2,6 +2,13 @@
 
 ## State and next action
 
+The working tree selects Toko Tooling **0.45.18**. Its new endpoint layout rules
+apply to canisters. Here the Wasm guards remain scoped to the allocator-free
+fixture. Both packages passed `wasm32-unknown-unknown` Clippy, rustdoc and
+production dependency checks. The allocator-free Metrics fixture also linked
+with default features disabled. Logs are under
+`target/qualification/toko04518-wasm/`.
+
 **Metrics 0.30.16 and Logging 0.25.15 are published and independently verified.**
 Batch `batch-OrDta2hg` delivered Toko Tooling **0.45.16** to both groups and
 reconciled the normal checkout. The authenticated snapshot retains 56 entrypoints

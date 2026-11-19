@@ -6,6 +6,16 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.25.16] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt Toko Tooling 0.45.18 and verify the existing Wasm checks.
+- Remove the historical release-batch measurement mode. The ordinary fixture
+  still exercises uncertain-upload recovery.
+- Retain qualified IC Build 0.83.0 and cargo-sort-derives 0.14.1. Defer newer
+  versions to dedicated editor and formatter qualification.
+
 ## [0.25.15] - 2026-11-19
 
 ### 🛠️ Tooling
