@@ -1,8 +1,7 @@
 //! Link fixture for fixed application recording without a Wasm allocator or std.
 //! The historical example name remains the owning CI artifact identity.
 
-#![cfg_attr(target_family = "wasm", no_std)]
-#![cfg_attr(target_family = "wasm", no_main)]
+#![cfg_attr(target_family = "wasm", no_std, no_main)]
 #![forbid(unsafe_code)]
 
 use ic_metrics::{
@@ -45,11 +44,15 @@ pub fn recording(input: u64) -> Option<u128> {
     )
 }
 
+// The native executable needs a Rust entry point. The Wasm linker retains the
+// shared recording function without one.
 #[cfg(not(target_family = "wasm"))]
 fn main() {
     assert_eq!(recording(7), Some(35));
 }
 
+// The freestanding Wasm binary needs its own panic handler. Native std
+// supplies the panic handler for the hosted executable.
 #[cfg(target_family = "wasm")]
 #[panic_handler]
 fn panic(_: &core::panic::PanicInfo<'_>) -> ! {

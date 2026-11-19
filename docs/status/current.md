@@ -2,6 +2,12 @@
 
 ## State and next action
 
+Local work adopts Toko Tooling **0.45.16** and reviews the Rust and Cargo
+configuration guards. The allocator-free Metrics fixture shares its recording
+code across native and Wasm and selects each target's entry point and panic
+handling. The native executable and Wasm link passed. Guard-removal probes and
+feature-specific test logs are under `target/qualification/toko04516-cfg/`.
+
 **Metrics 0.30.15 and Logging 0.25.14 are published and independently verified.**
 Batch `batch-R73F5ykH` delivered Toko Tooling **0.45.15** to both groups and
 reconciled the normal checkout. The authenticated snapshot retains 56 entrypoints

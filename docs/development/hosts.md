@@ -284,6 +284,12 @@ package file selection in staging that cannot borrow repository-only link target
 `make allocation-free-check` links the runtime-input instrumentation fixture for
 `wasm32-unknown-unknown`, with no standard library or global allocator. Linker
 exports and dead-code retention keep the exercised recording in the executable.
+The same fixture has a native executable that asserts the shared recording
+result. It uses the standard entry point and panic implementation. The Wasm
+link uses `no_std`, `no_main` and a fixture-owned panic handler. Removing
+`no_main` makes Rust require a Wasm `main`. Enabling the native `main` on Wasm
+fails the dead-code lint. Linking `std` on Wasm or enabling the fixture's
+panic handler on native produces duplicate panic handlers.
 The check uses locked dependencies and this repository's `target/`;
 CI runs it once on the pinned/support compiler. This is a link-contract check,
 not an IC cost measurement. Each native job selects
