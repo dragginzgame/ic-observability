@@ -285,6 +285,35 @@ Services coordinate their own Wire identities and schemas; persistence
 adapters retain their own integration/release owners. Arithmetic, Serde fields,
 encoded bytes and Logging's retained-data contract do not change in this split.
 
+## Tooling 0.45.16 delivery — 2026-11-19
+
+Batch `batch-OrDta2hg` captured `e7c014cf1bc8202aec05c2eb564fd58cb5b42325`.
+It delivered the authenticated 0.45.16 baseline and the allocator-free Metrics
+fixture's consolidated Wasm attributes. Both groups completed direct GitHub
+delivery and verified crates.io publication. The normal checkout fast-forwarded
+cleanly to the final release commit.
+
+| Package | Version | Source commit | Registry archive SHA-256 |
+| --- | --- | --- | --- |
+| `ic-metrics` | 0.30.16 | `08d69020da57cd18fefc0017e3688ae4339b995c` | `0627367d4f264e4aed074ce071ae40e62408e4eaaa38eb150adc564afd855aa8` |
+| `ic-logging` | 0.25.15 | `2524625b3257000203c1dd22e7e1fe57fc46ead4` | `cff0a2a668e38603ba2317f4ca235dca2afd9cdd723037e4726e30e78ab49ad3` |
+
+Fresh source admission, strict native and Wasm Clippy, selected product checks
+and final-version archive verification passed. Metrics' allocator-free Wasm
+link passed in the release gate. Registry readback matched 34 maintained Metrics
+files and 16 Logging files to the tagged commits. A follow-up check confirmed
+the annotated tags, peeled commits, non-yanked index entries and checksums.
+Review of the pushed adoption and both increments found no actionable issue.
+Hosted CI is asynchronous.
+
+The batch took **177.0 seconds**, compared with 173.1 seconds for
+`batch-R73F5ykH`. Outer phases totaled 127.9 seconds for release, 30.0 for
+setup and 18.6 for publication. Cargo observed two uploads and no admissions
+were reused. Cache warmth is unrecorded. Logs, phase timings and reconciliation
+are under `target/deploy/toko04516-20261119/`. The completed candidate and
+recovery state remain under `target/release-frozen/batch-OrDta2hg` and
+`.git/release-state/frozen/batch-OrDta2hg/`.
+
 ## Tooling 0.45.15 delivery — 2026-11-19
 
 Batch `batch-R73F5ykH` captured `1903bc0ceb4129d25af747faa4b83b5cedd95ffa`,

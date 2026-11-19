@@ -2,22 +2,21 @@
 
 ## State and next action
 
-Local work adopts Toko Tooling **0.45.16** and reviews the Rust and Cargo
-configuration guards. The allocator-free Metrics fixture shares its recording
-code across native and Wasm and selects each target's entry point and panic
-handling. The native executable and Wasm link passed. Guard-removal probes and
-feature-specific test logs are under `target/qualification/toko04516-cfg/`.
-
-**Metrics 0.30.15 and Logging 0.25.14 are published and independently verified.**
-Batch `batch-R73F5ykH` delivered Toko Tooling **0.45.15** to both groups and
+**Metrics 0.30.16 and Logging 0.25.15 are published and independently verified.**
+Batch `batch-OrDta2hg` delivered Toko Tooling **0.45.16** to both groups and
 reconciled the normal checkout. The authenticated snapshot retains 56 entrypoints
 and 112 files. Rust **1.100.0** and the prepared tool catalog remain selected.
-The [delivery record](../releases/independent-releases.md#tooling-04515-delivery--2026-11-19)
+The [delivery record](../releases/independent-releases.md#tooling-04516-delivery--2026-11-19)
 owns the exact identities and validation limits. Evidence is under
-`target/deploy/toko04515-20261119/`. Hosted CI is asynchronous.
-The [hygiene report](../reports/audits/2026/11/19/hygiene-adoption/02/report.md)
-records the rules pass.
+`target/deploy/toko04516-20261119/`. Hosted CI is asynchronous.
 
+The allocator-free Metrics fixture shares its recording code across native and
+Wasm and selects each target's entry point and panic handling. The native
+executable and Wasm link passed. Guard-removal probes and feature-specific tests
+are recorded under `target/qualification/toko04516-cfg/`.
+
+The [0.45.15 delivery record](../releases/independent-releases.md#tooling-04515-delivery--2026-11-19)
+retains the Metrics 0.30.15 and Logging 0.25.14 identities.
 The [0.45.8 delivery record](../releases/independent-releases.md#tooling-0458-delivery--2026-11-18)
 retains the Metrics 0.30.14 and Logging 0.25.13 identities.
 [Observability #138](https://github.com/dragginzgame/ic-observability/issues/138)
