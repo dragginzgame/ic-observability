@@ -285,6 +285,35 @@ Services coordinate their own Wire identities and schemas; persistence
 adapters retain their own integration/release owners. Arithmetic, Serde fields,
 encoded bytes and Logging's retained-data contract do not change in this split.
 
+## Tooling 0.45.15 delivery — 2026-11-19
+
+Batch `batch-R73F5ykH` captured `1903bc0ceb4129d25af747faa4b83b5cedd95ffa`,
+which includes the authenticated tooling adoption, Rust module layout cleanup,
+CI redaction coverage and documentation corrections. Both selected groups
+completed direct GitHub delivery and verified crates.io publication. The
+normal checkout fast-forwarded cleanly to the final release commit.
+
+| Package | Version | Source commit | Registry archive SHA-256 |
+| --- | --- | --- | --- |
+| `ic-metrics` | 0.30.15 | `f35515ce30f4dd14116abeb8fadec09a1a32f4bf` | `bf6dd03dec76e3e3f4fd9b415020c6588961f4968d57c333e5fae20bff1586f5` |
+| `ic-logging` | 0.25.14 | `6c394593502cdd67011bc0d9e784914ade474c98` | `9dfb8e84abba7483562f11bf9101fecf00cffe5b61c1ce103b162fb46a40e17b` |
+
+For both groups, fresh source admission, strict native and Wasm Clippy, selected
+product checks and final-version archive verification passed. Registry readback
+matched 34 maintained Metrics files and 16 Logging files to the tagged commits.
+The follow-up check confirmed both annotated tag objects, peeled commits,
+non-yanked index entries and archive checksums. Review of the delivered adoption
+and both group increments found no actionable issue. Hosted CI is asynchronous.
+
+The batch took **173.1 seconds**, compared with 204.8 seconds for
+`batch-UmMkf0J8`. Outer phases totaled 124.8 seconds for release, 30.3 for setup
+and 17.5 for publication. Cargo observed two uploads and no admissions were
+reused. Cache warmth is unrecorded, so the difference is an observation.
+Logs, phase timings and reconciliation are under
+`target/deploy/toko04515-20261119/`. The completed candidate and recovery data
+remain under `target/release-frozen/batch-R73F5ykH` and
+`.git/release-state/frozen/batch-R73F5ykH/`.
+
 ## Tooling 0.45.8 delivery — 2026-11-18
 
 Batch `batch-UmMkf0J8` captured `27e7516880de9669faf67479c22e4b443ac1ee06`,

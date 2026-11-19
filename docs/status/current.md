@@ -2,18 +2,18 @@
 
 ## State and next action
 
-The working tree adopts Toko Tooling **0.45.15** from crates.io. The authenticated
-snapshot retains 56 entrypoints and 112 files. Rust **1.100.0** and the prepared
-tool catalog remain selected. The [hygiene report](../reports/audits/2026/11/19/hygiene-adoption/02/report.md)
-records the rules pass and local verification. The pending entries in the
-[Metrics](../../releases/metrics/CHANGELOG.md) and
-[Logging](../../releases/logging/CHANGELOG.md) ledgers describe this local change.
+**Metrics 0.30.15 and Logging 0.25.14 are published and independently verified.**
+Batch `batch-R73F5ykH` delivered Toko Tooling **0.45.15** to both groups and
+reconciled the normal checkout. The authenticated snapshot retains 56 entrypoints
+and 112 files. Rust **1.100.0** and the prepared tool catalog remain selected.
+The [delivery record](../releases/independent-releases.md#tooling-04515-delivery--2026-11-19)
+owns the exact identities and validation limits. Evidence is under
+`target/deploy/toko04515-20261119/`. Hosted CI is asynchronous.
+The [hygiene report](../reports/audits/2026/11/19/hygiene-adoption/02/report.md)
+records the rules pass.
 
-**Metrics 0.30.14 and Logging 0.25.13 are published and independently verified.**
-The [delivery record](../releases/independent-releases.md#tooling-0458-delivery--2026-11-18)
-owns the exact identities and limits for batch `batch-UmMkf0J8`, which adopted
-Toko Tooling 0.45.8. The batch reconciled cleanly. Evidence is under
-`target/deploy/toko0458-20261118/`. Hosted CI is asynchronous.
+The [0.45.8 delivery record](../releases/independent-releases.md#tooling-0458-delivery--2026-11-18)
+retains the Metrics 0.30.14 and Logging 0.25.13 identities.
 [Observability #138](https://github.com/dragginzgame/ic-observability/issues/138)
 and [Observability #139](https://github.com/dragginzgame/ic-observability/issues/139)
 are closed. Their pre-repair findings remain in the
