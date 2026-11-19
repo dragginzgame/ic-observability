@@ -1,13 +1,13 @@
 //! Typed lexical-prefix retention with complete aggregate loss accounting.
 
+#[cfg(test)]
+mod tests;
+
 use alloc::collections::BTreeMap;
 use core::{borrow::Borrow, fmt};
 
 use super::{MeasurementAttribution, MeasurementOmission, MeasurementTableLimits};
 use crate::MeasurementAggregate;
-
-#[cfg(test)]
-mod tests;
 
 /// Invalid limits for arrival-order-independent lexical retention.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

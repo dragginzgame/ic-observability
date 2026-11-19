@@ -13,11 +13,9 @@ libraries; their application, storage and reporting adapters have separate owner
 | Heap logging, checkpoints and durable-adapter boundary | [Logging contract](architecture/logging.md) |
 | Component origins and external build inputs | [Source inventory](governance/source-origins.md) |
 
-IC Storage owns the separately selected
-[`ic-metrics-storage`](https://github.com/dragginzgame/ic-storage/tree/main/crates/ic-metrics-storage)
-and [`ic-logging-storage`](https://github.com/dragginzgame/ic-storage/tree/main/crates/ic-logging-storage)
-adapters. These are external to this workspace. Neither library includes a
-storage dependency.
+Governed persistence belongs at the [IC Storage integration boundary](https://github.com/dragginzgame/ic-storage).
+The former `ic-metrics-storage` and `ic-logging-storage` package names refer to
+historical adapters. Both observability libraries are dependency-free in production.
 
 ## Development and delivery
 

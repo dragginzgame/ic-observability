@@ -37,7 +37,8 @@ is reported separately and cannot make the original failed step successful.
 
 ## Prerequisites and focused checks
 
-Root `[workspace.dependencies]` declares `toko-tooling = "=0.45.8"` once.
+Root [Cargo.toml](../../Cargo.toml) declares the exact `toko-tooling` pin once
+under `[workspace.dependencies]`.
 Both real members inherit it unconditionally as a dev-dependency and merge the
 name into cargo-machete ignored metadata, without a Rust import. Cargo.lock pins
 the registry version/checksum; no selection-only package or separate tooling
@@ -53,9 +54,8 @@ consumer checkout, because the installed runner now lives beneath the vendor tre
 
 Use `make deps-update` for explicit Cargo updates (`cargo update -v`), optionally
 with `DEPENDENCY_PACKAGE` and `DEPENDENCY_PRECISE` to select one dependency.
-For example, after editing the root tooling pin, run
-`make deps-update DEPENDENCY_PACKAGE=toko-tooling DEPENDENCY_PRECISE=0.45.8`,
-then `make toko-tooling-update`. This repository has only the root maintained
+After editing the root tooling pin, run `make deps-update DEPENDENCY_PACKAGE=toko-tooling`,
+`make toko-tooling-preview`, then `make toko-tooling-update`. This repository has only the root maintained
 workspace. The command preserves manifest requirements and is separate from
 supplier freshness review; it is not called by CI or release admission.
 
@@ -202,10 +202,9 @@ against the committed tree. The selected-commit metadata fixture reads committed
 so its graph must also be prepared when local manifest/lock edits differ from
 HEAD; a prepared working-tree graph alone cannot qualify that offline check.
 
-Optional structural Wasm inspection follows the
-[IC Host inspector guide](https://github.com/dragginzgame/ic-tooling/tree/main/apps/ic-host-wasm-inspect).
-Experiments select their qualified published version, managed installation and
-budgets directly. Metrics has no inspector wrapper, pin or Make targets; common
+Optional structural Wasm inspection uses an available native tool qualified for
+the experiment. Record its version, installation and budgets directly. Metrics
+has no inspector wrapper, pin or Make targets. Common
 setup/check, CI, release preflight and the instrumentation library require no inspector.
 Existing experiment sources, executable identities and artifacts remain frozen.
 The reviewed snapshot owns default pins in `vendor/toko-tooling/ci/tool-versions.env` and
@@ -362,7 +361,7 @@ children and malformed/incomplete metadata. CI and release
 verification use the same check.
 
 IC Storage owns stable-adapter dependency policy and qualification. Follow
-[its guide](https://github.com/dragginzgame/ic-storage/tree/main/crates/ic-metrics-storage)
+[its current guide](https://github.com/dragginzgame/ic-storage)
 for governed handles, collection identity and retained-data requirements.
 This repository has no deployment entrypoint or final canister artifact;
 applications qualify their own target, features and resolved dependency graph.
@@ -373,7 +372,7 @@ builds before source mutation or compilation. Bare Cargo commands select both
 libraries; use `-p ic-metrics` or `-p ic-logging` for focused work. Builds use
 locked dependencies. Both libraries have no production dependencies. Neither owns platform readers or a server harness.
 Stable storage qualification belongs to IC Storage.
-The inspector's CLI checks stay at IC Host. Historical smoke paths under
+Inspector CLI checks stay with the tool supplier. Historical smoke paths under
 `target/evidence/wasm-inspector/` do not establish current artifact availability
 or qualify the current source.
 

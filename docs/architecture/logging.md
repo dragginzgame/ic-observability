@@ -51,19 +51,15 @@ No prior stable format is imported or migrated by the heap engine.
 
 ## Durable adapter
 
-IC Storage owns the independently selected `ic-logging-storage` package,
-its bounded IC Wire codec, governed Memory/Storage map, continuity checks and
-installed qualification. Hosts load a log, use the heap engine's append/prune/page
-operations and save at explicit checkpoint boundaries. Neither package installs
-a clock, timer, endpoint, lifecycle hook or global recorder.
+Durable checkpoint integration belongs at the Storage boundary. Hosts load a
+log, call the heap engine's append/prune/page operations and save at explicit
+checkpoint boundaries. Consult the [current IC Storage contract](https://github.com/dragginzgame/ic-storage)
+before selecting an integration. `ic-logging-storage` refers to a historical adapter.
 
 The original adapter qualification and publication integration are recorded in
 the former Persistence repository:
 [PR #138 — Qualify stable Logging rollback and upgrade behavior](https://github.com/dragginzgame/ic-persistence/pull/138)
 and [PR #139 — Enable coordinated publication of IC Logging Stable](https://github.com/dragginzgame/ic-persistence/pull/139).
-The current [adapter guide](https://github.com/dragginzgame/ic-storage/tree/main/crates/ic-logging-storage)
-owns its current codec, bounds and dependency requirements. These PRs and workspace
-release tags do not by themselves establish registry availability.
 
 Original installed receipts qualify their exact source, graph and tools for
 query non-persistence, update/upgrade rollback, reopen and empty-history

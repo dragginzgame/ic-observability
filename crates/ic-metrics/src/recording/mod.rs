@@ -1,16 +1,15 @@
 //! Bounded heap retention of same-unit measurements, without platform or report policy.
 
+mod counter_table;
+mod lexical;
+#[cfg(test)]
+mod tests;
+
 use alloc::{boxed::Box, collections::BTreeMap};
 
 use crate::MeasurementAggregate;
-
-mod counter_table;
-mod lexical;
 pub use counter_table::BoundedCounterTable;
 pub use lexical::{LexicalMeasurementTable, LexicalTableLimitsError};
-
-#[cfg(test)]
-mod tests;
 
 /// Consumer-selected retention limits.
 ///

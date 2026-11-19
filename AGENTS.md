@@ -2,10 +2,8 @@
 
 Apply the installed [Toko Tooling baseline](TOKO-TOOLING.md) and its
 revision-bound references. [.toko-tooling.snapshot](.toko-tooling.snapshot)
-records the adopted payload; do not edit it or follow a moving sibling baseline.
-This overlay owns product safeguards, local commands and approved exceptions.
-The baseline owns common action authority, validation, compiler and reporting rules,
-including scoped `git add -N` when validation requires new task-owned paths.
+records the exporter-managed payload. This overlay owns product safeguards,
+local commands and approved exceptions.
 
 Read [the current handoff](docs/status/current.md), and
 [the extraction contract](docs/architecture/extraction.md) before recording,
@@ -84,18 +82,13 @@ consumer-contract or persistence-boundary changes. No baseline exceptions apply.
 
 ## Work and validation
 
-- Mutate only this repository unless exact sibling targets are explicitly
-  authorized. The shared [contribution rules](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/rules/contributions.md) govern
-  authorized PRs and release effects.
 - This consumer supports `RELEASE_DELIVERY=direct` only. PR release delivery
-  needs separately adopted merged-checkout adapters and qualification; ordinary
-  contribution PRs retain the shared contribution rules. Group increments use
+  needs separately adopted merged-checkout adapters and qualification. Group increments use
   Shared's automatic frozen capture with the locally qualified candidate setup
   and hooks; publication remains explicit. See [independent releases](docs/releases/independent-releases.md)
   for deferred-work custody and batch recovery.
-- Use Rust edition 2024. No string matching on errors or production panics.
-- Check for active builds before source edits or compilation. Use this repo's
-  `target/` and locked dependencies; do not upgrade dependencies as a side effect.
+- Use Rust edition 2024 and this repository's `target/`. No string matching on
+  errors or production panics.
 - After Rust edits, run `make fmt`, then selected package checks or named tests.
   Focused commands and host qualification are in [docs/development/hosts.md](docs/development/hosts.md).
   Full local `make ci` is for explicitly requested aggregate checks; `make msrv`

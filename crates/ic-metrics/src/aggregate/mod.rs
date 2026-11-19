@@ -1,9 +1,9 @@
 //! Application-owned observations, without report arithmetic.
 
-use crate::{MeasurementStateError, add_count, add_total};
-
 #[cfg(test)]
 mod tests;
+
+use crate::{MeasurementStateError, add_count, add_total};
 
 /// Mergeable count, total and maximum in one consumer-selected unit.
 ///

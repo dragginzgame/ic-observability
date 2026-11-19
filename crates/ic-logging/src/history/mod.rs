@@ -1,10 +1,10 @@
 //! Opaque structured history; consumers own payload admission and timestamp semantics.
 
-use alloc::collections::VecDeque;
-use core::fmt;
-
 #[cfg(test)]
 mod tests;
+
+use alloc::collections::VecDeque;
+use core::fmt;
 
 /// Immutable bounds on row count and caller-accounted payload bytes.
 ///

@@ -5,6 +5,16 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.30.15] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt Toko Tooling 0.45.15. CI setup diagnostics omit bare Bearer values and
+  labeled payloads from console output and retained logs. Place Rust module
+  declarations before imports.
+- Retain the qualified IC Build 0.83.0 and cargo-sort-derives 0.14.1. Defer
+  0.87.5 and 0.15.0 to their next dedicated editor and formatter qualification.
+
 ## [0.30.14] - 2026-11-18
 
 ### 🛠️ Tooling

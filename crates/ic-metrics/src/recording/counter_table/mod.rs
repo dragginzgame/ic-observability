@@ -1,13 +1,13 @@
 //! First-admitted typed scalar diagnostics, with no measurement-sample conversion.
 
+#[cfg(test)]
+mod tests;
+
 use alloc::collections::BTreeMap;
 use core::borrow::Borrow;
 
 use super::{MeasurementAttribution, MeasurementOmission, MeasurementTableLimits};
 use crate::MeasurementCounter;
-
-#[cfg(test)]
-mod tests;
 
 /// First-admitted typed identities with canonical scalar/omitted counters.
 ///

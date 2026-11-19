@@ -1,9 +1,9 @@
 //! Ordered application observations without attribution policy.
 
-use crate::{MeasurementAggregate, MeasurementStateError};
-
 #[cfg(test)]
 mod tests;
+
+use crate::{MeasurementAggregate, MeasurementStateError};
 
 /// Ordered observations with a mergeable aggregate and a separate latest value.
 ///

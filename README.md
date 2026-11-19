@@ -43,11 +43,10 @@ The [API inventory](docs/architecture/metrics-api.md) and [Logging contract](doc
 describe current behavior. Earlier migration guides retain their recorded scope
 and are grouped in the [documentation index](docs/README.md#earlier-contracts).
 
-[IC Storage](https://github.com/dragginzgame/ic-storage) owns
-governed Storage integration, `ic-metrics-storage` and the separately selected
-`ic-logging-storage` adapter. Logging's passive checkpoints carry validated state;
-its heap engine acquires no storage dependency. See [the boundary](docs/architecture/logging.md)
-for checkpoint, persistence and consumer qualification responsibilities.
+Governed persistence belongs at the Storage integration boundary. Logging's
+passive checkpoints carry validated state, and the heap engine has no storage
+dependency. See the [Logging boundary](docs/architecture/logging.md) and the
+[current IC Storage contract](https://github.com/dragginzgame/ic-storage).
 
 ## Release and package publication
 
@@ -96,20 +95,19 @@ common-tool preparation through `make install-tools` and offline admission with
 Select the affected package during development:
 
 ```sh
-cargo test --locked --offline -p ic-logging --lib
-cargo test --locked --offline -p ic-logging --doc
-cargo run --locked --offline -p ic-logging --example worker
+cargo test --locked -p ic-logging --lib
+cargo test --locked -p ic-logging --doc
+cargo run --locked -p ic-logging --example worker
 ```
 
 Use `-p ic-metrics` for Metrics checks and select `--features recording` for its
-optional recorder. The [host guide](docs/development/hosts.md) owns focused commands and
-evidence limits. Aggregate Make checks and full release gates cover both members
-and retain their explicit validation authority. Registry publication remains a
-separately selected action per package.
+optional recorder. The [host guide](docs/development/hosts.md) owns focused
+commands and evidence limits. Aggregate CI covers both members. Release checks
+and registry publication use the explicitly selected release group.
 
 [Ownership](docs/architecture/extraction.md) · [Logging boundary](docs/architecture/logging.md) ·
 [Changelogs](CHANGELOG.md) · [Current handoff](docs/status/current.md) ·
-[Contribution rules](https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/rules/contributions.md)
+[Contribution rules](TOKO-TOOLING.md#scope-and-authorization)
 
 ## Licence
 

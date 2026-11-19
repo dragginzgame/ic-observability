@@ -1,9 +1,9 @@
-use super::*;
-use alloc::format;
-
 mod adversarial;
 mod contract;
 mod mixed;
+
+use super::*;
+use alloc::format;
 
 fn positive(value: usize) -> NonZeroUsize {
     NonZeroUsize::new(value).expect("positive fixture value")

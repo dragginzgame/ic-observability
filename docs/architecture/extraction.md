@@ -12,8 +12,6 @@ retained-data adoption boundary and new summary/histogram report contracts.
 | --- | --- |
 | `ic-metrics` | Application instrumentation and the optional bounded recorder contract below |
 | `ic-logging` | Heap admission, retention and paging; [logging contract](logging.md) |
-| `ic-metrics-storage` | IC Storage; separately selected governed storage adapter |
-| `ic-logging-storage` | IC Storage; separately selected durable checkpoints over Logging's validated restoration contract |
 
 ## Measurement contract
 
@@ -82,22 +80,18 @@ Consumers read counter 1 through their own adapters: IcyDB and Canic use
 Inclusive overlapping IcyDB spans and exclusive Canic endpoint accounting remain
 separate contracts; there is no attribution-mode switch or product dependency.
 
-IC Storage owns the optional
-[storage adapter](https://github.com/dragginzgame/ic-storage/tree/main/crates/ic-metrics-storage),
-including persisted records, governed collection integration, restoration and
-checkpoint validation. Its canonical guide and
-[migration guide](https://github.com/dragginzgame/ic-storage/blob/main/docs/migration/ic-metrics-stable.md)
-own version selection and retained-data compatibility. Hosts retain allocation,
-identities, lifecycle, write cadence and reset policy. Metrics supplies canonical retained-state admission only through its explicit
-`persistence` module. Storage owns the codec and retained bytes; there is no
-recorder transport contract or stable-memory dependency. Historical storage receipts below retain their
-original source and graph identities.
+Governed persistence belongs at the Storage integration boundary, including
+the codec, retained bytes and checkpoint validation. Hosts retain allocation,
+identities, lifecycle, write cadence and reset policy. Metrics supplies
+canonical retained-state admission through its explicit `persistence` module.
+The historical `ic-metrics-storage` receipts retain their original source and
+dependency graphs. Consult the [current IC Storage contract](https://github.com/dragginzgame/ic-storage)
+before selecting a durable integration.
 
-The published [IC Host Wasm inspector](https://github.com/dragginzgame/ic-tooling/tree/main/apps/ic-host-wasm-inspect)
-owns bounded structural inspection and its managed installation guide. Optional
-experiments retain their own qualified tool identity; Metrics maintains no CLI
-adapter or pin. Common setup, CI and release preflight require no inspector. It
-does not execute canisters or estimate instruction/cycle costs. PocketIC provisioning and lifecycle
+Optional Wasm inspection belongs to its native-tool supplier. The former
+`ic-host-wasm-inspect` package identifies historical evidence. Experiments
+select an available tool and record its qualified identity. Metrics maintains
+no inspector adapter or pin. PocketIC provisioning and lifecycle
 belong to IC Testkit; this workspace has no maintained server caller.
 No IC Host package is required to compile or use the instrumentation library.
 

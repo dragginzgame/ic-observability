@@ -15,28 +15,28 @@
 
 #[cfg(feature = "recording")]
 extern crate alloc;
-#[cfg(feature = "recording")]
-mod recording;
-#[cfg(feature = "recording")]
-pub use recording::{
-    BoundedCounterTable, BoundedMeasurementTable, LexicalMeasurementTable, LexicalTableLimitsError,
-    MeasurementAttribution, MeasurementOmission, MeasurementTableLimits,
-};
 
 mod aggregate;
 mod counter;
 mod histogram;
 pub mod persistence;
+#[cfg(feature = "recording")]
+mod recording;
 mod state;
 mod summary;
 mod window;
-pub use window::MeasurementWindow;
 
 pub use aggregate::MeasurementAggregate;
 pub use counter::{MeasurementCounter, MeasurementCounterError};
 pub use histogram::{HistogramBoundsError, HistogramMergeError, MeasurementHistogram};
+#[cfg(feature = "recording")]
+pub use recording::{
+    BoundedCounterTable, BoundedMeasurementTable, LexicalMeasurementTable, LexicalTableLimitsError,
+    MeasurementAttribution, MeasurementOmission, MeasurementTableLimits,
+};
 pub(crate) use state::MeasurementStateError;
 pub use summary::MeasurementSummary;
+pub use window::MeasurementWindow;
 
 // One owner for tracked overflow; flags never infer loss from the numeric cap.
 const fn add_count(value: &mut u64, overflowed: &mut bool, increment: u64) {

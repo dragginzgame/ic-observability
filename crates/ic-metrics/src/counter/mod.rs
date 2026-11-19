@@ -1,11 +1,11 @@
 //! Tracked scalar accumulation without observation statistics or attribution.
 
+#[cfg(test)]
+mod tests;
+
 use core::fmt;
 
 use crate::{MeasurementStateError, add_total};
-
-#[cfg(test)]
-mod tests;
 
 /// Why a scalar counter cannot supply an exact total or difference.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

@@ -1,6 +1,6 @@
-use super::*;
-
 mod model;
+
+use super::*;
 
 fn table() -> BoundedMeasurementTable {
     BoundedMeasurementTable::new(MeasurementTableLimits {

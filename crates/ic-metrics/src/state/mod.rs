@@ -1,9 +1,9 @@
 //! Admission of restored arithmetic state, without a storage format or identity.
 
-use core::fmt;
-
 #[cfg(test)]
 mod tests;
+
+use core::fmt;
 
 /// Why restored fields cannot represent a consistent measurement state.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

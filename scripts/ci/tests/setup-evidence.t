@@ -25,6 +25,8 @@ my $code=q{
     print "noise line $_\n" for 1..12000;
     print "underlying parser: archive has an invalid header\n";
     print "authorization: Bearer fixture-auth\n";
+    print "request failed with Bearer opaque-bearer-value\n";
+    print 'response {"payload":"opaque-payload-value"}', "\n";
     print "TOKEN=fixture-env\n";
     print "request uses $ENV{FIXTURE_SECRET_TOKEN}\n";
     print "$ENV{FIXTURE_AUTHORIZATION}\n$ENV{FIXTURE_ACCESS_KEY}\n";
@@ -45,7 +47,8 @@ is($meta->{retained_bytes},length($log),'metadata counts the retained sanitized 
 cmp_ok(length($log),'<=',64*1024,'retained log is bounded');
 cmp_ok(length(read_file('failure.out')),'<',5000,'printed excerpt is bounded');
 like($log,qr/underlying parser: archive has an invalid header/,'underlying failure is useful');
-for my $payload ('fixture-auth','fixture-env',$ENV{FIXTURE_SECRET_TOKEN},'user:password',
+for my $payload ('fixture-auth','opaque-bearer-value','opaque-payload-value',
+    'fixture-env',$ENV{FIXTURE_SECRET_TOKEN},'user:password',
     'fixture-private-material','ghp_fixturecredential','opaque-canary-value','opaque-query-value',
     'opaque-auth-line','opaque-auth-second','opaque-access-value') {
     unlike($log,qr/\Q$payload\E/,'retained log excludes a sensitive field');

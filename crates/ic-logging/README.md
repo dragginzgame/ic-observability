@@ -151,8 +151,8 @@ assert_eq!(restored.into_snapshot(), checkpoint);
 ```
 
 The library performs no authorization, timer registration, IC calls, serialization
-or stable writes. IC Storage owns the separately selected `ic-logging-storage`
-adapter, its durable format and governed Memory/Storage integration. Hosts own
+or stable writes. Durable formats and governed allocation belong at the
+[Storage integration boundary](https://github.com/dragginzgame/ic-storage). Hosts own
 checkpoint cadence, lifecycle, retention scheduling and stable identity; linking
 the heap crate selects no persistence. Diagnostic logs must not be treated as
 evidence that a paid effect completed.

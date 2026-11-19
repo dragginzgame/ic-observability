@@ -66,10 +66,10 @@ semantics are unchanged. This narrow capability is tracked in
 
 ## Explicit governed persistence
 
-`persistence` is the sole public reconstruction module. IC Storage's
-`ic-metrics-storage` adapter already owns its encoding, collection identity,
-configuration/continuity admission and lifecycle. Older Persistence receipts
-retain their original package names and graphs.
+`persistence` is the sole public reconstruction module. Governed integrations
+own encoding, collection identity, configuration and continuity checks, and
+lifecycle. Historical Persistence receipts retain their original adapter package
+names and graphs.
 
 | Public item | Contract and required owner |
 | --- | --- |

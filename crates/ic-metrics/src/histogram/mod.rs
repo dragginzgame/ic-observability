@@ -1,14 +1,13 @@
 //! Fixed-size distributions without sampling or reporting policy.
 
+mod restoration;
+#[cfg(test)]
+mod tests;
+
 use core::fmt;
 
 use crate::{MeasurementAggregate, MeasurementStateError, add_count};
-
-mod restoration;
 use restoration::validate_distribution;
-
-#[cfg(test)]
-mod tests;
 
 /// A bound is not strictly greater than the preceding bound.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
