@@ -124,6 +124,7 @@ impl core::fmt::Display for AppendError {
                     Label::Source => "source",
                     Label::Topic => "topic",
                 };
+
                 write!(
                     formatter,
                     "log {label} label exceeds {max_bytes} bytes ({actual_bytes} supplied)"
@@ -190,6 +191,7 @@ impl Filter<'_> {
             TopicMatch::Exact(topic) => entry.topic.as_deref() == Some(topic),
         };
         let level_matches = self.min_level.is_none_or(|level| entry.level >= level);
+
         source_matches && topic_matches && level_matches
     }
 }
@@ -404,6 +406,7 @@ impl Log {
             next_sequence,
             last_created_at_secs,
         } = snapshot;
+
         Ok(Self {
             limits,
             entries: entries.into(),
@@ -480,6 +483,7 @@ impl Log {
         self.retained_text_bytes += text_bytes;
         self.next_sequence = sequence.checked_add(1);
         self.last_created_at_secs = Some(input.created_at_secs);
+
         Ok(AppendReceipt {
             sequence,
             truncated,
@@ -501,6 +505,7 @@ impl Log {
             self.remove_oldest();
             removed += 1;
         }
+
         RetentionBatch {
             removed,
             more_due: self.expired_before(cutoff),
@@ -524,8 +529,10 @@ impl Log {
         let mut entries = Vec::new();
         let scan = self.visit_page(filter, request, |entry| {
             entries.push(entry);
+
             ControlFlow::Continue(())
         });
+
         Page {
             entries,
             scanned: scan.scanned,
@@ -564,6 +571,7 @@ impl Log {
                 }
             }
         }
+
         PageScan {
             matched,
             scanned,
@@ -585,6 +593,7 @@ impl Log {
                 max_bytes: self.limits.max_label_bytes,
             });
         }
+
         Ok(())
     }
 
@@ -602,6 +611,7 @@ impl Log {
         for bytes in text_lengths(&entry.source, entry.topic.as_deref(), entry.message.len()) {
             self.retained_text_bytes -= bytes;
         }
+
         true
     }
 }
@@ -666,6 +676,7 @@ fn validate_snapshot(snapshot: &LogSnapshot) -> Result<usize, RestoreError> {
             return Err(RestoreError::InvalidTimestamp);
         }
     }
+
     Ok(retained_text_bytes)
 }
 
@@ -689,6 +700,7 @@ fn valid_retained_message(entry: &Entry, max_bytes: usize) -> bool {
         return false;
     };
     let budget = max_bytes - suffix.len();
+
     budget.saturating_sub(prefix.len()) < 4
 }
 
@@ -696,6 +708,7 @@ fn bounded_message(prefix: &str, suffix: &str) -> String {
     let mut retained = String::with_capacity(prefix.len() + suffix.len());
     retained.push_str(prefix);
     retained.push_str(suffix);
+
     retained
 }
 
@@ -708,5 +721,6 @@ fn message_parts(message: &str, max_bytes: usize) -> (&str, &'static str) {
     while !message.is_char_boundary(end) {
         end -= 1;
     }
+
     (&message[..end], suffix)
 }

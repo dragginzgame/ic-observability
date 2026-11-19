@@ -42,12 +42,14 @@ fn replay(limits: MeasurementTableLimits, history: &[(&'static str, u64)]) -> Mo
         } else {
             let index = existing.unwrap_or_else(|| {
                 model.retained.push((key, Vec::new()));
+
                 model.retained.len() - 1
             });
             model.retained[index].1.push(observation);
             model.last = Some(MeasurementAttribution::Retained);
         }
     }
+
     model
 }
 
@@ -112,12 +114,14 @@ fn mixed_record_clear_and_window_reset_match_event_journal() {
                             0 => {
                                 window.state_mut().clear();
                                 history.clear();
+
                                 None
                             }
                             1 => {
                                 window.reset(BoundedMeasurementTable::new(limits));
                                 sequence += 1;
                                 history.clear();
+
                                 None
                             }
                             _ => {
@@ -128,6 +132,7 @@ fn mixed_record_clear_and_window_reset_match_event_journal() {
                                     _ => state,
                                 };
                                 history.push((key, observation));
+
                                 Some(window.state_mut().record(key, observation))
                             }
                         };

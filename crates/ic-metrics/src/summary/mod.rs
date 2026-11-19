@@ -51,6 +51,7 @@ impl MeasurementSummary {
         {
             return Err(MeasurementStateError::InvalidLatest);
         }
+
         Ok(Self { aggregate, latest })
     }
 

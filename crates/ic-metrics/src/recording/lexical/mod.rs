@@ -65,6 +65,7 @@ impl<K: Ord> LexicalMeasurementTable<K> {
         if required > limits.total_key_bytes {
             return Err(LexicalTableLimitsError::KeyBudgetTooSmall);
         }
+
         Ok(Self {
             limits,
             entries: BTreeMap::new(),
@@ -106,6 +107,7 @@ impl<K: Ord> LexicalMeasurementTable<K> {
         aggregate.record(observation);
         self.entries.insert(key, (key_bytes, aggregate));
         self.retained_key_bytes += key_bytes;
+
         MeasurementAttribution::Retained
     }
 
@@ -117,6 +119,7 @@ impl<K: Ord> LexicalMeasurementTable<K> {
     {
         self.entries.get_mut(key).is_some_and(|(_, aggregate)| {
             aggregate.record(observation);
+
             true
         })
     }
@@ -138,6 +141,7 @@ impl<K: Ord> LexicalMeasurementTable<K> {
         reason: MeasurementOmission,
     ) -> MeasurementAttribution {
         self.record_omitted(observation);
+
         MeasurementAttribution::Omitted(reason)
     }
 

@@ -88,6 +88,7 @@ impl BoundedMeasurementTable {
         }
         if let Some(aggregate) = self.entries.get_mut(key) {
             aggregate.record(observation);
+
             return MeasurementAttribution::Retained;
         }
         if self.entries.len() >= self.limits.entries {
@@ -105,6 +106,7 @@ impl BoundedMeasurementTable {
         aggregate.record(observation);
         self.entries.insert(Box::from(key), aggregate);
         self.retained_key_bytes += key.len();
+
         MeasurementAttribution::Retained
     }
 
@@ -114,6 +116,7 @@ impl BoundedMeasurementTable {
         reason: MeasurementOmission,
     ) -> MeasurementAttribution {
         self.omitted.record(observation);
+
         MeasurementAttribution::Omitted(reason)
     }
 

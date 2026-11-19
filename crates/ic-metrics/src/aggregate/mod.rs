@@ -58,6 +58,7 @@ impl MeasurementAggregate {
         {
             return Err(MeasurementStateError::InvalidTotal);
         }
+
         Ok(Self {
             samples,
             total,

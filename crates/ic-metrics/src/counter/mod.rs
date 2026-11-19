@@ -79,6 +79,7 @@ impl MeasurementCounter {
         if total_overflowed && total != u128::MAX {
             return Err(MeasurementStateError::InvalidOverflowFlag);
         }
+
         Ok(Self {
             total,
             total_overflowed,

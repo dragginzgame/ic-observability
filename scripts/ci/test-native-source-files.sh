@@ -22,17 +22,19 @@ git -C "$fixture" add Cargo.toml
 printf 'packaged pending README\n' > "$fixture/README.md"
 printf 'installed snapshot identity\n' > "$fixture/.toko-tooling.snapshot"
 printf 'pending\n' > "$fixture/crates/example/pending.rs"
-printf 'qualification\n' > "$fixture/qualification/probe/lib.rs"
+# The retired root is outside the native source roster even if Git tracks it.
+printf 'retired qualification\n' > "$fixture/qualification/probe/lib.rs"
+git -C "$fixture" add qualification/probe/lib.rs
 # Keep this unignored by Git to exercise the selector's node_modules exclusion.
 printf 'installed dependency\n' > "$fixture/ci/synthetic-dependency/node_modules/payload"
 for directory in docs/evidence .tools .private-evidence target crates/example/target crates/example/.tools crates/example/.private-evidence; do mkdir -p "$fixture/$directory"; printf 'excluded\n' > "$fixture/$directory/payload"; done
 bash "$fixture/scripts/ci/native-source-files.sh" > "$fixture/selected.nul"
 count=0
 while IFS= read -r -d '' file; do
-    case "$file" in README.md|Cargo.toml|.toko-tooling.snapshot|scripts/ci/native-source-files.sh|crates/example/*|qualification/probe/lib.rs|vendor/toko-tooling/scripts/ci/probe.sh) ;; *) exit 1 ;; esac
+    case "$file" in README.md|Cargo.toml|.toko-tooling.snapshot|scripts/ci/native-source-files.sh|crates/example/*|vendor/toko-tooling/scripts/ci/probe.sh) ;; *) exit 1 ;; esac
     count=$((count + 1))
 done < "$fixture/selected.nul"
-[[ "$count" == 7 ]]
+[[ "$count" == 6 ]]
 # Missing tracked source stays selected so the hash boundary cannot silently omit it.
 rm "$fixture/Cargo.toml"
 bash "$fixture/scripts/ci/native-source-files.sh" > "$fixture/missing.nul"

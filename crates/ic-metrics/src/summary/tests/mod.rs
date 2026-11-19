@@ -10,6 +10,7 @@ fn summary_recording_and_restoration_support_constant_evaluation() {
         let mut summary = MeasurementSummary::EMPTY;
         summary.record(9);
         summary.record(0);
+
         summary
     };
     const RESTORED: MeasurementSummary =

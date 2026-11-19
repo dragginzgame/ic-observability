@@ -36,6 +36,7 @@ pub fn recording(input: u64) -> Option<u128> {
     .ok()?;
     let mut window = MeasurementWindow::new(restored);
     window.reset(summary.aggregate());
+
     Some(
         counter.total()
             + aggregate.total()

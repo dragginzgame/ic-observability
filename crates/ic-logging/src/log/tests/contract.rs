@@ -190,6 +190,7 @@ fn visitor_stops_after_delivery_and_resumes_before_the_consumed_row() {
     };
     let first = log.visit_page(filter, request(None, 3, 6), |entry| {
         assert_eq!(entry.sequence, 4);
+
         ControlFlow::Break(())
     });
     assert_eq!(
@@ -205,6 +206,7 @@ fn visitor_stops_after_delivery_and_resumes_before_the_consumed_row() {
     let second = log.visit_page(filter, request(first.next_before, 2, 4), |entry| {
         sequences[index] = entry.sequence;
         index += 1;
+
         ControlFlow::Continue(())
     });
     assert_eq!(sequences, [2, 0]);

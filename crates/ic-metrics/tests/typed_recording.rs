@@ -23,6 +23,7 @@ const NO_IDENTITIES: MeasurementTableLimits = MeasurementTableLimits {
 const OMITTED_COUNTERS: BoundedCounterTable<Identity> = {
     let mut table = BoundedCounterTable::new(NO_IDENTITIES);
     table.add_omitted(u128::MAX);
+
     table
 };
 const OMITTED_MEASUREMENTS: Result<LexicalMeasurementTable<Identity>, LexicalTableLimitsError> = {
@@ -31,6 +32,7 @@ const OMITTED_MEASUREMENTS: Result<LexicalMeasurementTable<Identity>, LexicalTab
         table.record_omitted(0);
         table.record_omitted(19);
     }
+
     result
 };
 

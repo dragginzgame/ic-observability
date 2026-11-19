@@ -155,6 +155,7 @@ fn check_histogram_restoration<const N: usize>(bounds: [u64; N]) {
             let counts = std::array::from_fn(|_| {
                 let count = u64::try_from(distribution % 5).unwrap();
                 distribution /= 5;
+
                 count
             });
             let overflow = u64::try_from(distribution).unwrap();
@@ -199,6 +200,7 @@ fn check_histogram_bound_sets<const N: usize>() {
         let bounds: [u64; N] = std::array::from_fn(|_| {
             let value = encoded % 4;
             encoded /= 4;
+
             value
         });
         if bounds.windows(2).all(|pair| pair[0] < pair[1]) {

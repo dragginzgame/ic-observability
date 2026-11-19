@@ -169,6 +169,7 @@ fn construction_rejection_and_recording_are_available_in_constant_evaluation() {
                 histogram.record(0);
                 histogram.record(5);
                 histogram.record(11);
+
                 Ok(histogram)
             }
             Err(error) => Err(error),
@@ -248,6 +249,7 @@ fn histogram_merging_supports_constant_evaluation() {
         let mut right = left;
         left.record(0);
         right.record(11);
+
         match left.merge(&right) {
             Ok(()) => Ok(left),
             Err(error) => Err(error),

@@ -55,12 +55,14 @@ impl<K: Ord> BoundedCounterTable<K> {
         };
         if let Some(reason) = reason {
             self.add_omitted(increment);
+
             return MeasurementAttribution::Omitted(reason);
         }
         let mut counter = MeasurementCounter::ZERO;
         counter.add(increment);
         self.entries.insert(key, counter);
         self.retained_key_bytes += key_bytes;
+
         MeasurementAttribution::Retained
     }
 
@@ -84,6 +86,7 @@ impl<K: Ord> BoundedCounterTable<K> {
     {
         self.entries.get_mut(key).is_some_and(|counter| {
             counter.add(increment);
+
             true
         })
     }

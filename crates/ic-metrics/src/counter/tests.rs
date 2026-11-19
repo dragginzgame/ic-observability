@@ -88,11 +88,13 @@ fn addition_merge_and_restoration_are_const() {
             panic!("exact batch")
         };
         counter.merge(batch);
+
         counter.exact_total()
     };
     const EXACT: Result<u128, Error> = {
         let mut counter = Counter::ZERO;
         counter.add(u128::MAX);
+
         counter.exact_total()
     };
     assert_eq!(RESULT, Ok(14));

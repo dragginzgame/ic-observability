@@ -148,6 +148,7 @@ impl<T> BoundedHistory<T> {
             payload_bytes,
         });
         self.payload_bytes += payload_bytes;
+
         Ok(receipt)
     }
 

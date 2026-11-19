@@ -49,7 +49,7 @@ provenance checks; they are outside the maintained-file byte comparison.
 
 ## Published consumer acceptance
 
-After publication, the [registry consumer](../../../qualification/wire-published/README.md)
+After publication, the [registry consumer](https://github.com/dragginzgame/ic-observability/blob/8cb68c14f88ddbc73da189540f3ca084dc08cb87/qualification/wire-published/README.md)
 was deliberately advanced from Metrics 0.24.3 to **0.24.4**. Only that package's
 version/checksum changed in its independent lock. Root Cargo.lock and all other
 qualified supplier records were preserved during this follow-up. The graph

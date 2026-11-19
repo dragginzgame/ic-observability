@@ -5,6 +5,17 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.30.18] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt Toko Tooling 0.45.21, including its workspace Clippy policy and return
+  spacing in Metrics code, tests and the allocator-free fixture.
+- Retire the historical Wire qualification directory from native source
+  selection. Release history links to the archived references.
+- Retain qualified IC Build 0.83.0 and cargo-sort-derives 0.14.1. Defer newer
+  versions to dedicated editor and formatter qualification.
+
 ## [0.30.17] - 2026-11-19
 
 ### 🛠️ Tooling

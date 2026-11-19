@@ -7,6 +7,7 @@ fn aggregate(values: &[u64]) -> MeasurementAggregate {
     for &value in values {
         result.record(value);
     }
+
     result
 }
 
@@ -102,6 +103,7 @@ fn recording_and_merging_support_constant_evaluation() {
         let mut right = MeasurementAggregate::EMPTY;
         right.record(7);
         left.merge(right);
+
         left
     };
     assert_eq!(RESULT, aggregate(&[0, 7]));

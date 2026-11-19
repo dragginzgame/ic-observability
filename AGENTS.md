@@ -23,8 +23,8 @@ consumer-contract or persistence-boundary changes. No baseline exceptions apply.
   Use `make deps-list` for package versions and release-group membership.
   Both product packages remain under `crates/` in the virtual root workspace,
   which explicitly excludes `qualification`. No maintained qualification package
-  or workspace exists here; the two `qualification/` README files retain retired
-  history only. Unit tests, integration tests and examples remain package-local.
+  or workspace exists here. The [Wire history](docs/evidence/wire-history.md)
+  records the retired qualification. Tests and examples remain package-local.
   The shared observability contract owns the application-tree instrumentation
   boundary and Canic's reporting authority. The concrete public API and remaining
   consumer repair map are recorded in [the API inventory](docs/architecture/metrics-api.md).

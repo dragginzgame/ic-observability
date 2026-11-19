@@ -49,6 +49,7 @@ fn export(
             } else {
                 Ok(true)
             };
+
             return ControlFlow::Break(());
         }
         body.reserve(required_bytes);
@@ -58,9 +59,11 @@ fn export(
         body.push('\n');
         emitted += 1;
         last_emitted = Some(entry.sequence);
+
         ControlFlow::Continue(())
     });
     let stopped_for_budget = stopped_for_budget?;
+
     Ok(ExportPage {
         body,
         emitted,
@@ -100,6 +103,7 @@ fn history() -> Log {
         })
         .unwrap();
     }
+
     log
 }
 

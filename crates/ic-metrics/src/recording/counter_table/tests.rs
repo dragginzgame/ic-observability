@@ -158,6 +158,7 @@ fn typed_counters_match_independent_first_admission_and_scalar_conservation() {
                     MeasurementAttribution::Omitted(MeasurementOmission::KeyBytes)
                 } else if let Some((_, _, counter)) = existing {
                     *counter += amount;
+
                     MeasurementAttribution::Retained
                 } else if admitted.len() >= capacity {
                     MeasurementAttribution::Omitted(MeasurementOmission::Entries)
@@ -165,6 +166,7 @@ fn typed_counters_match_independent_first_admission_and_scalar_conservation() {
                     MeasurementAttribution::Omitted(MeasurementOmission::TotalKeyBytes)
                 } else {
                     admitted.push((key, charge, amount));
+
                     MeasurementAttribution::Retained
                 };
                 if matches!(expected, MeasurementAttribution::Omitted(_)) {

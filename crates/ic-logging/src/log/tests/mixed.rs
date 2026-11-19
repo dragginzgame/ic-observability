@@ -64,6 +64,7 @@ impl History {
                 entry.source = "source-over-limit";
                 entry.topic = Some("topic-is-over-limit");
                 entry.created_at_secs = time - 1;
+
                 Err(AppendError::LabelTooLong {
                     label: Label::Source,
                     actual_bytes: entry.source.len(),
@@ -73,6 +74,7 @@ impl History {
             Action::TopicTooLong => {
                 entry.topic = Some("topic-is-over-limit");
                 entry.created_at_secs = time - 1;
+
                 Err(AppendError::LabelTooLong {
                     label: Label::Topic,
                     actual_bytes: entry.topic.unwrap().len(),
@@ -81,6 +83,7 @@ impl History {
             }
             Action::RegressedTime => {
                 entry.created_at_secs = time - 1;
+
                 self.time.map_or_else(
                     || self.next.ok_or(AppendError::SequenceExhausted),
                     |previous| {
@@ -156,12 +159,14 @@ impl History {
                 *bytes += entry.source.len()
                     + entry.topic.as_ref().map_or(0, String::len)
                     + entry.message.len();
+
                 (*bytes <= text_budget).then_some(())
             })
             .count();
         self.removed = self.accepted.len() - keep;
         self.next = sequence.checked_add(1);
         self.time = Some(input.created_at_secs);
+
         Ok(AppendReceipt {
             sequence,
             truncated,
@@ -200,6 +205,7 @@ impl History {
             .count();
         let removed = due.min(limit);
         self.removed += removed;
+
         RetentionBatch {
             removed,
             more_due: due > removed,
@@ -265,6 +271,7 @@ impl History {
             let mut visited = Vec::new();
             let scan = log.visit_page(filter, request(before, results, scanned), |entry| {
                 visited.push(entry);
+
                 if visited.len() == stop_after {
                     ControlFlow::Break(())
                 } else {
@@ -279,6 +286,7 @@ impl History {
                 (consumed < candidates.len()).then(|| candidates[consumed - 1].sequence)
             );
         }
+
         next
     }
 }

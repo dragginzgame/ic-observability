@@ -2,6 +2,14 @@
 
 ## State and next action
 
+Local work adopts Toko Tooling **0.45.21** and applies its return-spacing and
+workspace Clippy rules. The [hygiene report](../reports/audits/2026/11/19/hygiene-adoption/03/report.md)
+owns the scope and focused checks.
+
+Local cleanup removes the retired Wire qualification directory and its source
+and documentation scan entries. The [legacy audit](../reports/audits/2026/11/19/legacy-cleanup/01/report.md)
+records the archived references, retained callers and validation.
+
 **Metrics 0.30.17 and Logging 0.25.16 are published and independently verified.**
 Batch `batch-ZvQZRkx2` delivered Toko Tooling **0.45.18** and the release-batch
 fixture cleanup. The normal checkout reconciled cleanly. The authenticated

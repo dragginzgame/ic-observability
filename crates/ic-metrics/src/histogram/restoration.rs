@@ -108,6 +108,7 @@ impl DistributionFacts {
         if facts.samples != 0 {
             facts.totals.include_maximum(maximum, maximum_lower);
         }
+
         Ok(facts)
     }
 
@@ -118,6 +119,7 @@ impl DistributionFacts {
         {
             return false;
         }
+
         self.samples == 0 || self.totals.admits(aggregate)
     }
 }
@@ -135,6 +137,7 @@ const fn bucket_limits(upper_bounds: &[u64], index: usize, maximum: u64) -> (u64
     } else {
         maximum
     };
+
     (lower, upper)
 }
 
@@ -161,6 +164,7 @@ pub(super) const fn validate_distribution<const N: usize>(
         Ok(facts) => facts,
         Err(error) => return Err(error),
     };
+
     if facts.admits(aggregate) {
         Ok(())
     } else {

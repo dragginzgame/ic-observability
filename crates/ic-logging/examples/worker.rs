@@ -37,6 +37,7 @@ fn main() {
         },
         |entry| {
             println!("{} {:?}: {}", entry.sequence, entry.level, entry.message);
+
             ControlFlow::Continue(())
         },
     );

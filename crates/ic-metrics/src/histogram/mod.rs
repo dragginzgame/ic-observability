@@ -131,6 +131,7 @@ impl<const N: usize> MeasurementHistogram<N> {
         ) {
             return Err(error);
         }
+
         Ok(Self {
             upper_bounds,
             bucket_counts,
@@ -154,6 +155,7 @@ impl<const N: usize> MeasurementHistogram<N> {
         if let Err(error) = validate_histogram_bounds(&upper_bounds) {
             return Err(error);
         }
+
         Ok(Self {
             upper_bounds,
             bucket_counts: [0; N],
@@ -179,6 +181,7 @@ impl<const N: usize> MeasurementHistogram<N> {
                     &mut self.bucket_overflowed[index],
                     1,
                 );
+
                 return;
             }
             index += 1;
@@ -263,6 +266,7 @@ impl<const N: usize> MeasurementHistogram<N> {
         );
         self.overflow_count_overflowed |= other.overflow_count_overflowed;
         self.aggregate.merge(other.aggregate);
+
         Ok(())
     }
 }
@@ -285,5 +289,6 @@ pub const fn validate_histogram_bounds(upper_bounds: &[u64]) -> Result<(), Histo
         }
         index += 1;
     }
+
     Ok(())
 }

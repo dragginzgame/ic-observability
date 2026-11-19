@@ -204,7 +204,7 @@ docs-check:
 check-doc-links:
 	perl vendor/toko-tooling/scripts/ci/check-documentation-links.pl --root "$(CURDIR)" \
 		README.md AGENTS.md TOKO-TOOLING.md LICENSE.md CONTRIBUTING.md CHANGELOG.md \
-		releases docs qualification
+		releases docs
 	perl vendor/toko-tooling/scripts/ci/check-documentation-links.pl --root "$(CURDIR)" \
 		crates/ic-metrics/src/*.md crates/ic-metrics/README.md crates/ic-metrics/CHANGELOG.md \
 		crates/ic-logging/README.md crates/ic-logging/CHANGELOG.md
