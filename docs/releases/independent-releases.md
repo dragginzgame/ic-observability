@@ -285,6 +285,36 @@ Services coordinate their own Wire identities and schemas; persistence
 adapters retain their own integration/release owners. Arithmetic, Serde fields,
 encoded bytes and Logging's retained-data contract do not change in this split.
 
+## Tooling 0.45.18 delivery — 2026-11-19
+
+Batch `batch-ZvQZRkx2` captured `48ec97d72faab6db210df4b0ec5adf6feb1ab5f6`.
+It delivered the authenticated 0.45.18 baseline and removed the historical
+measurement mode from the release-batch fixture. The ordinary fixture passed
+uncertain-upload recovery with exactly one simulated upload per group before
+delivery. Both groups completed direct GitHub delivery and verified crates.io
+publication. The normal checkout fast-forwarded cleanly.
+
+| Package | Version | Source commit | Registry archive SHA-256 |
+| --- | --- | --- | --- |
+| `ic-metrics` | 0.30.17 | `333c81d3a93585ca042dbda896776007cf5da108` | `228324edcf86d04e7a73136d2e1a668345f8a621b8dce2f59983431704ceacba` |
+| `ic-logging` | 0.25.16 | `8a8b969f1da1d03226821e8356dfc8dfe76c0d1a` | `87fbe6dee4618dfb16d643a66554c8cbf900daba125d4af131e765dc3d4298b8` |
+
+Fresh source admission, strict native and Wasm Clippy, selected product checks
+and final-version archive verification passed. Wasm rustdoc and production graph
+checks passed for both groups, and Metrics passed the allocator-free Wasm link.
+Registry readback matched 34 maintained Metrics files and 16 Logging files to
+the tagged commits. The follow-up check confirmed the annotated tags,
+non-yanked index entries and archive checksums. Review of the pushed adoption
+and both increments found no actionable issue. Hosted CI is asynchronous.
+
+The batch took **192.4 seconds**, compared with 177.0 seconds for
+`batch-OrDta2hg`. Outer phases totaled 137.2 seconds for release, 32.1 for setup
+and 19.6 for publication. Cargo observed two uploads and no admissions were
+reused. Cache warmth is unrecorded. Logs, timings and reconciliation are under
+`target/deploy/toko04518-20261119/`. The completed candidate and recovery journal
+remain under `target/release-frozen/batch-ZvQZRkx2` and
+`.git/release-state/frozen/batch-ZvQZRkx2/`.
+
 ## Tooling 0.45.16 delivery — 2026-11-19
 
 Batch `batch-OrDta2hg` captured `e7c014cf1bc8202aec05c2eb564fd58cb5b42325`.

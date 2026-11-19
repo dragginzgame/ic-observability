@@ -2,26 +2,22 @@
 
 ## State and next action
 
-The working tree selects Toko Tooling **0.45.18**. Its new endpoint layout rules
-apply to canisters. Here the Wasm guards remain scoped to the allocator-free
-fixture. Both packages passed `wasm32-unknown-unknown` Clippy, rustdoc and
-production dependency checks. The allocator-free Metrics fixture also linked
-with default features disabled. Logs are under
-`target/qualification/toko04518-wasm/`.
-
-**Metrics 0.30.16 and Logging 0.25.15 are published and independently verified.**
-Batch `batch-OrDta2hg` delivered Toko Tooling **0.45.16** to both groups and
-reconciled the normal checkout. The authenticated snapshot retains 56 entrypoints
-and 112 files. Rust **1.100.0** and the prepared tool catalog remain selected.
-The [delivery record](../releases/independent-releases.md#tooling-04516-delivery--2026-11-19)
+**Metrics 0.30.17 and Logging 0.25.16 are published and independently verified.**
+Batch `batch-ZvQZRkx2` delivered Toko Tooling **0.45.18** and the release-batch
+fixture cleanup. The normal checkout reconciled cleanly. The authenticated
+snapshot retains 56 entrypoints and 112 files. Rust **1.100.0** and the prepared
+tool catalog remain selected.
+The [delivery record](../releases/independent-releases.md#tooling-04518-delivery--2026-11-19)
 owns the exact identities and validation limits. Evidence is under
-`target/deploy/toko04516-20261119/`. Hosted CI is asynchronous.
+`target/deploy/toko04518-20261119/`. Hosted CI is asynchronous.
 
-The allocator-free Metrics fixture shares its recording code across native and
-Wasm and selects each target's entry point and panic handling. The native
-executable and Wasm link passed. Guard-removal probes and feature-specific tests
-are recorded under `target/qualification/toko04516-cfg/`.
+Both packages passed `wasm32-unknown-unknown` Clippy, rustdoc and resolved
+production dependency checks. The allocator-free Metrics fixture linked with
+default features disabled. Logs are under `target/qualification/toko04518-wasm/`.
 
+The [0.45.16 delivery record](../releases/independent-releases.md#tooling-04516-delivery--2026-11-19)
+retains the Metrics 0.30.16 and Logging 0.25.15 identities. The guard-removal
+probes remain under `target/qualification/toko04516-cfg/`.
 The [0.45.15 delivery record](../releases/independent-releases.md#tooling-04515-delivery--2026-11-19)
 retains the Metrics 0.30.15 and Logging 0.25.14 identities.
 The [0.45.8 delivery record](../releases/independent-releases.md#tooling-0458-delivery--2026-11-18)
