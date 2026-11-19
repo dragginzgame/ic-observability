@@ -285,6 +285,35 @@ Services coordinate their own Wire identities and schemas; persistence
 adapters retain their own integration/release owners. Arithmetic, Serde fields,
 encoded bytes and Logging's retained-data contract do not change in this split.
 
+## Tooling 0.45.21 delivery — 2026-11-19
+
+Batch `batch-CTcAw4Gy` captured `83b3b6491532b4f320f820c588b5be038465bb12`.
+It delivered the 0.45.21 baseline, workspace Clippy policy, Rust return formatting,
+and removal of the retired Wire qualification directory. The
+[legacy audit](../reports/audits/2026/11/19/legacy-cleanup/01/report.md) records
+the archived references and focused native source verification. Both groups
+completed GitHub and crates.io delivery, and the normal checkout fast-forwarded.
+
+| Package | Version | Source commit | Registry archive SHA-256 |
+| --- | --- | --- | --- |
+| `ic-metrics` | 0.30.18 | `7eb06919a11b532fcc18493d3618284398a368a0` | `2b5df552f826d1fe9a30fa2d39d981d5e6931f6373007581672b68b19392c0bd` |
+| `ic-logging` | 0.25.17 | `d4565e1781d655f395c9192f41a479cc077e93b9` | `51abc8de3f55dc3f1bb4a3b62f395ea268b1c6a480944448e8fddb90a65402cf` |
+
+Fresh source admission, strict native and Wasm Clippy, selected product checks
+and final-version archive verification passed. Metrics passed the allocator-free
+Wasm link. Registry readback matched 34 maintained Metrics files and 16 Logging
+files to their tagged commits. The follow-up check confirmed the annotated tags,
+non-yanked registry entries and archive checksums. Review of the delivered adoption
+and version increments found no actionable issue. Hosted CI is asynchronous.
+
+The batch took **189.3 seconds**, compared with 192.4 seconds for
+`batch-ZvQZRkx2`. Outer phases totaled 135.1 seconds for release, 35.4 for setup
+and 18.3 for publication. Cargo observed two uploads and no admissions were
+reused. Cache warmth is unrecorded. Logs, timings and reconciliation are under
+`target/deploy/toko04521-20261119/`. The completed candidate and recovery journal
+remain under `target/release-frozen/batch-CTcAw4Gy` and
+`.git/release-state/frozen/batch-CTcAw4Gy/`.
+
 ## Tooling 0.45.18 delivery — 2026-11-19
 
 Batch `batch-ZvQZRkx2` captured `48ec97d72faab6db210df4b0ec5adf6feb1ab5f6`.

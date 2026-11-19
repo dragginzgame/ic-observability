@@ -2,27 +2,22 @@
 
 ## State and next action
 
-Local work adopts Toko Tooling **0.45.21** and applies its return-spacing and
-workspace Clippy rules. The [hygiene report](../reports/audits/2026/11/19/hygiene-adoption/03/report.md)
-owns the scope and focused checks.
-
-Local cleanup removes the retired Wire qualification directory and its source
-and documentation scan entries. The [legacy audit](../reports/audits/2026/11/19/legacy-cleanup/01/report.md)
-records the archived references, retained callers and validation.
-
-**Metrics 0.30.17 and Logging 0.25.16 are published and independently verified.**
-Batch `batch-ZvQZRkx2` delivered Toko Tooling **0.45.18** and the release-batch
-fixture cleanup. The normal checkout reconciled cleanly. The authenticated
+**Metrics 0.30.18 and Logging 0.25.17 are published and independently verified.**
+Batch `batch-CTcAw4Gy` delivered Toko Tooling **0.45.21**, return formatting,
+workspace Clippy policy, and removal of the retired Wire qualification directory.
+The normal checkout reconciled cleanly. The authenticated
 snapshot retains 56 entrypoints and 112 files. Rust **1.100.0** and the prepared
 tool catalog remain selected.
-The [delivery record](../releases/independent-releases.md#tooling-04518-delivery--2026-11-19)
+The [delivery record](../releases/independent-releases.md#tooling-04521-delivery--2026-11-19)
 owns the exact identities and validation limits. Evidence is under
-`target/deploy/toko04518-20261119/`. Hosted CI is asynchronous.
+`target/deploy/toko04521-20261119/`. Hosted CI is asynchronous.
 
-Both packages passed `wasm32-unknown-unknown` Clippy, rustdoc and resolved
-production dependency checks. The allocator-free Metrics fixture linked with
-default features disabled. Logs are under `target/qualification/toko04518-wasm/`.
+The [hygiene report](../reports/audits/2026/11/19/hygiene-adoption/03/report.md)
+records the rules pass. The [legacy audit](../reports/audits/2026/11/19/legacy-cleanup/01/report.md)
+records the archived references, retained callers and native source checks.
 
+The [0.45.18 delivery record](../releases/independent-releases.md#tooling-04518-delivery--2026-11-19)
+retains the Metrics 0.30.17 and Logging 0.25.16 identities.
 The [0.45.16 delivery record](../releases/independent-releases.md#tooling-04516-delivery--2026-11-19)
 retains the Metrics 0.30.16 and Logging 0.25.15 identities. The guard-removal
 probes remain under `target/qualification/toko04516-cfg/`.
