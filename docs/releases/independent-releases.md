@@ -285,6 +285,34 @@ Services coordinate their own Wire identities and schemas; persistence
 adapters retain their own integration/release owners. Arithmetic, Serde fields,
 encoded bytes and Logging's retained-data contract do not change in this split.
 
+## Tooling 0.45.22 delivery — 2026-11-20
+
+Batch `batch-oDhWitQt` captured `096d351d72804a4c5f259f0f16e8821175cdf037`.
+It delivered the authenticated 0.45.22 selection and the shared lint setting.
+The [rules and hygiene report](../reports/audits/2026/11/20/hygiene-adoption/01/report.md)
+records the on-demand audit of the three Cargo manifests. Both groups completed
+GitHub and crates.io delivery. The normal checkout fast-forwarded cleanly.
+
+| Package | Version | Source commit | Registry archive SHA-256 |
+| --- | --- | --- | --- |
+| `ic-metrics` | 0.30.19 | `c54d82056d13e6208a1d757a9040607a5db5de0b` | `3e382f8d7e879d695ff8565919a7c534fd234b40149a1c12de8b7f02955a58ce` |
+| `ic-logging` | 0.25.18 | `cb2bfea9e34f6b0ee3c7a6728f25b30dd890f60e` | `43e22596d429261fd8fe837a77f0aa48cfb519cfadd90ef35b6853f46b511463` |
+
+Fresh source admission, strict native and Wasm Clippy, selected product checks
+and final-version archive verification passed. Metrics passed the allocator-free
+Wasm link. Registry readback matched 34 maintained Metrics files and 16 Logging
+files to their tagged commits. A follow-up check confirmed the annotated tags,
+non-yanked registry entries and archive checksums. Review of the delivered
+adoption and version increments found no actionable issue. Hosted CI is asynchronous.
+
+The batch took **168.4 seconds**, compared with 189.3 seconds for
+`batch-CTcAw4Gy`. Outer phases totaled 119.1 seconds for release, 31.5 for setup
+and 17.2 for publication. Cargo observed two uploads and no admissions were
+reused. Cache warmth is unrecorded. Logs, timings and reconciliation are under
+`target/deploy/toko04522-20261120/`. The completed candidate and recovery journal
+remain under `target/release-frozen/batch-oDhWitQt` and
+`.git/release-state/frozen/batch-oDhWitQt/`.
+
 ## Tooling 0.45.21 delivery — 2026-11-19
 
 Batch `batch-CTcAw4Gy` captured `83b3b6491532b4f320f820c588b5be038465bb12`.

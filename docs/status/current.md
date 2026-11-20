@@ -2,25 +2,22 @@
 
 ## State and next action
 
-The working tree adopts Toko Tooling **0.45.22**. Its on-demand lint auditor
-found no discrepancies across all three Cargo manifests. The
-[rules and hygiene report](../reports/audits/2026/11/20/hygiene-adoption/01/report.md)
-records the review and the native and Wasm checks.
-
-**Metrics 0.30.18 and Logging 0.25.17 are published and independently verified.**
-Batch `batch-CTcAw4Gy` delivered Toko Tooling **0.45.21**, return formatting,
-workspace Clippy policy, and removal of the retired Wire qualification directory.
-The normal checkout reconciled cleanly. The authenticated
-snapshot retains 56 entrypoints and 112 files. Rust **1.100.0** and the prepared
-tool catalog remain selected.
-The [delivery record](../releases/independent-releases.md#tooling-04521-delivery--2026-11-19)
+**Metrics 0.30.19 and Logging 0.25.18 are published and independently verified.**
+Batch `batch-oDhWitQt` delivered Toko Tooling **0.45.22** and the shared
+workspace lint settings. The normal checkout reconciled cleanly. The snapshot
+retains 56 entrypoints and 112 files. Rust **1.100.0** and the prepared tool
+catalog remain selected.
+The [delivery record](../releases/independent-releases.md#tooling-04522-delivery--2026-11-20)
 owns the exact identities and validation limits. Evidence is under
-`target/deploy/toko04521-20261119/`. Hosted CI is asynchronous.
+`target/deploy/toko04522-20261120/`. Hosted CI is asynchronous.
 
-The [hygiene report](../reports/audits/2026/11/19/hygiene-adoption/03/report.md)
-records the rules pass. The [legacy audit](../reports/audits/2026/11/19/legacy-cleanup/01/report.md)
-records the archived references, retained callers and native source checks.
+The [rules and hygiene report](../reports/audits/2026/11/20/hygiene-adoption/01/report.md)
+records the lint audit across all three manifests and native and Wasm checks.
 
+The [0.45.21 delivery record](../releases/independent-releases.md#tooling-04521-delivery--2026-11-19)
+retains the Metrics 0.30.18 and Logging 0.25.17 identities. The
+[legacy audit](../reports/audits/2026/11/19/legacy-cleanup/01/report.md)
+records the retired qualification references and source checks.
 The [0.45.18 delivery record](../releases/independent-releases.md#tooling-04518-delivery--2026-11-19)
 retains the Metrics 0.30.17 and Logging 0.25.16 identities.
 The [0.45.16 delivery record](../releases/independent-releases.md#tooling-04516-delivery--2026-11-19)
