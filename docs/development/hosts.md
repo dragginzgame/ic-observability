@@ -45,7 +45,7 @@ the registry version/checksum; no selection-only package or separate tooling
 lock is used. After intentionally changing the root pin, resolve Cargo.lock with
 Cargo and run `make toko-tooling-update` or `make toko-tooling-install`.
 Neither installer edits manifests or Cargo.lock. Installation runs `install-tools`
-and `tools-check`; offline `toko-tooling-check` admits all member declarations,
+and `tools-check`; local `toko-tooling-check` admits all member declarations,
 the exact root pin, Cargo.lock and installed snapshot. CI/release Make entrypoints and
 the custom candidate, metadata and publication scripts check tooling before effects.
 Local full-CI and release-plan callers scope `VALIDATION_REPOSITORY_ROOT` to the
@@ -59,10 +59,11 @@ After editing the root tooling pin, run `make deps-update DEPENDENCY_PACKAGE=tok
 workspace. The command preserves manifest requirements and is separate from
 supplier freshness review; it is not called by CI or release admission.
 
-Normal Cargo checks preserve the caller's network settings and may retrieve
-missing locked dependencies. Select `CARGO_NET_OFFLINE=true` explicitly for an
-offline invocation. Deterministic offline fixtures retain their own selection;
-checks never install executable tools or unlock the dependency graph.
+Cargo checks and fixtures preserve the caller's network settings and may
+retrieve missing locked dependencies. Select `CARGO_NET_OFFLINE=true`
+explicitly for an offline invocation. Deterministic refusal fixtures use local
+inputs or substituted failures. Tool and snapshot checks use local inputs and
+never install executable tools or unlock the dependency graph.
 
 Repository CI owns one Linux security job with a full-history, fully redacted
 Gitleaks scan, including documentation-only runs. The pinned shared installer
@@ -193,7 +194,7 @@ to `make install-ic-tools` and `make ic-tools-check`, such as `IC_TOOLS=wasm-opt
 The full reviewed catalog remains intact, and previous IC bundles are retained.
 The native version report uses its host/Cargo-only interface; failed setup still
 retains full tool evidence, including existing unselected IC bundles.
-Prepare the locked application sources before offline release-fixture checks;
+Prepare the locked application sources before running release fixtures offline;
 common tool setup prepares different Cargo graphs. Native CI fetches explicitly
 before `make ci`. A snapshot retirement leaves tracked deletions until committed;
 source hashing deliberately refuses missing tracked files. Qualify that prepared
@@ -562,7 +563,7 @@ actual callers; it does not replay those generic matrices in its own gates.
 | Local entrypoint | Metrics-owned qualification |
 | --- | --- |
 | `make release-tools-check` | Direct Make dispatch, pre-effect refusals, snapshot admission, publication policy and two-group delivery/recovery. Changed-wiring qualification, outside routine deployment. |
-| `bash scripts/release/test-release-batch.sh` | Actual two-group capture, managed candidate setup, native/Wasm lint, archive compilation and content readback, interrupted delivery/publication, offline recovery, deferred lock custody and explicit reconcile/retire. The production roster runs; Git is local and registry effects are simulated. |
+| `bash scripts/release/test-release-batch.sh` | Actual two-group capture, managed candidate setup, native/Wasm lint, archive compilation and content readback, interrupted delivery/publication, resume with prepared tools, deferred lock custody and explicit reconcile/retire. The production roster runs; Git is local and registry effects are simulated. |
 | `make hook-check` | Standalone hook adoption; the actual baseline formatter failure must retain and replay its diagnostic log. |
 | `make ci-evidence-check` | Source selection/hash inputs, actual workflow setup bodies, collector wiring and direct collector/recovery-packager execution with substituted external effects. |
 

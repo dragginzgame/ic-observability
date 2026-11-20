@@ -157,7 +157,6 @@ help:
 
 .PHONY: package-check
 
-# Verify both workspace archives offline. No registry upload or version mutation.
 # Only the release adapter selects group scope. Ordinary commands and full CI
 # retain workspace scope, even when RELEASE_GROUP is inherited.
 override validation_cargo_selection = $(if $(filter group,$(OBSERVABILITY_RELEASE_VALIDATION_SCOPE)),-p ic-$(RELEASE_GROUP),--workspace)
@@ -167,6 +166,7 @@ validation-scope-check:
 	@case '$(OBSERVABILITY_RELEASE_VALIDATION_SCOPE)' in ''|workspace) ;; group) bash scripts/release/metadata.sh selection ;; *) exit 2 ;; esac
 	@if test -n "$${OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT:-}"; then perl scripts/release/validation.pl admit "$$OBSERVABILITY_RELEASE_VALIDATION_ATTEMPT" '$(OBSERVABILITY_RELEASE_VALIDATION_SCOPE)' '$(RELEASE_GROUP)'; fi
 
+# Verify package archives against the locked graph using the caller's Cargo settings.
 package-check:
 	+cargo package $(validation_cargo_selection) --all-features --locked --allow-dirty
 

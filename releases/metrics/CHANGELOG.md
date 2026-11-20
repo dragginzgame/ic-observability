@@ -5,6 +5,19 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.30.20] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt Toko Tooling 0.45.23 and its caller-owned Cargo network policy.
+- Preserve the caller's Cargo network settings in dependency and release
+  fixtures while retaining lockfile, refusal, and recovery checks. Use the
+  same default in the Metrics README validation commands.
+  [Observability #140 — Stop forcing Cargo offline in repository-owned checks](https://github.com/dragginzgame/ic-observability/issues/140).
+- Retain the qualified IC Build 0.83.0 release editor and cargo-sort 2.1.4 /
+  cargo-sort-derives 0.14.1 formatters. Defer 0.87.6 to release-editor
+  qualification and 2.1.5 / 0.15.0 to formatter qualification.
+
 ## [0.30.19] - 2026-11-20
 
 ### 🛠️ Tooling

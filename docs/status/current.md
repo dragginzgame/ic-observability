@@ -2,6 +2,13 @@
 
 ## State and next action
 
+The working checkout adopts Toko Tooling **0.45.23** and applies its
+caller-owned Cargo network policy to dependency and release fixtures and the
+Metrics validation examples. The
+[0.45.23 rules and hygiene report](../reports/audits/2026/11/20/hygiene-adoption/02/report.md)
+records the local checks. [Observability #140](https://github.com/dragginzgame/ic-observability/issues/140)
+is closed. The updated snapshot is pending delivery.
+
 **Metrics 0.30.19 and Logging 0.25.18 are published and independently verified.**
 Batch `batch-oDhWitQt` delivered Toko Tooling **0.45.22** and the shared
 workspace lint settings. The normal checkout reconciled cleanly. The snapshot

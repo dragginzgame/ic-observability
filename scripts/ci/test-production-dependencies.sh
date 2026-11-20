@@ -10,7 +10,7 @@ mkdir -p "$root/target/qualification"
 fixture="$(fixture_create "${TMPDIR:-$root/target/qualification}/metrics-production-graph.XXXXXX")"
 fixture_complete=false
 trap 'fixture_finish "$?" "$fixture" "Failed production graph fixture retained"' EXIT
-export CARGO_NET_OFFLINE=true RUSTUP_AUTO_INSTALL=0
+export RUSTUP_AUTO_INSTALL=0
 checker="$root/scripts/ci/check-production-dependencies.pl"
 real_cargo="$(command -v cargo)"
 
@@ -38,7 +38,7 @@ TRANSPORT
 }
 check_case() {
     local label="$1" expected="$2" status=0
-    "$real_cargo" generate-lockfile --offline --manifest-path "$fixture/workspace/Cargo.toml" > "$fixture/lock.log" 2>&1 || {
+    "$real_cargo" generate-lockfile --manifest-path "$fixture/workspace/Cargo.toml" > "$fixture/lock.log" 2>&1 || {
         status=$?; cat "$fixture/lock.log" >&2; return "$status"
     }
     perl "$checker" --consumer "$fixture/workspace" > "$fixture/$label.log" 2>&1 || status=$?

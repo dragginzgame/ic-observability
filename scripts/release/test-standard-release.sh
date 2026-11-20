@@ -7,6 +7,7 @@ unset RELEASE_GROUPS RELEASE_PUBLISH_TARGET RELEASE_SETUP_TARGET RELEASE_SETUP_M
 unset VALIDATION_REPOSITORY_ROOT VALIDATION_RUNNER_SNAPSHOT_PATH
 export RELEASE_DELIVERY=direct
 export RELEASE_GROUP=metrics
+export STANDARD_RELEASE_EXPECTED_OFFLINE="${CARGO_NET_OFFLINE-unset}"
 # Standard-runner projection inside a captured checkout, not outer capture.
 export RELEASE_BATCH_ACTIVE=1
 root="${BASH_SOURCE[0]}"
@@ -150,13 +151,13 @@ for policy in pr invalid ''; do
 done
 export STANDARD_RELEASE_PHASE=real
 
-# Captured standard entries admit prepared tools and retain caller offline mode.
+# Captured standard entries admit prepared tools and preserve the caller's network mode.
 mkdir -p scripts/ci
 cat > vendor/toko-tooling/scripts/ci/run-release.sh <<'RUNNER'
 #!/usr/bin/env bash
 set -euo pipefail
 [[ "${IC_METRICS_RELEASE_CACHE_PREPARE:-}" == "${EXPECTED_CACHE_PREPARE:-0}" ]] || exit 1
-[[ "${CARGO_NET_OFFLINE:-}" == true ]] || exit 1
+[[ "${CARGO_NET_OFFLINE-unset}" == "$STANDARD_RELEASE_EXPECTED_OFFLINE" ]] || exit 1
 printf '%s\n' "$@" > "$EVENTS"
 exit "${CACHE_ENTRY_RESULT:-0}"
 RUNNER
@@ -166,7 +167,7 @@ for target in patch minor major resume; do
     for result in 0 17; do
         : > "$EVENTS"
         status=0
-        CACHE_ENTRY_RESULT="$result" CARGO_NET_OFFLINE=true "$real_make" --no-print-directory \
+        CACHE_ENTRY_RESULT="$result" "$real_make" --no-print-directory \
             -f "$root/Makefile" "release-$target" VERSION=0.1.2 RELEASE_REMOTE=review \
             RELEASE_BRANCH=main > "$fixture/output" 2>&1 || status=$?
         if [[ "$result" == 0 ]]; then [[ "$status" == 0 ]] || exit 1; else [[ "$status" != 0 ]] || exit 1; fi
@@ -181,7 +182,7 @@ export RELEASE_DELIVERY=direct
 
 # Earlier standalone recovery keeps its preparation lane; outer increments use
 # the separately qualified batch runner instead.
-CARGO_NET_OFFLINE=true EXPECTED_CACHE_PREPARE=1 "$real_make" --no-print-directory \
+EXPECTED_CACHE_PREPARE=1 "$real_make" --no-print-directory \
     -f "$root/Makefile" release-resume RELEASE_BATCH_ACTIVE= VERSION=0.1.2 \
     RELEASE_REMOTE=review RELEASE_BRANCH=main > "$fixture/output" 2>&1
 printf '%s\n' resume 0.1.2 review main > "$fixture/cache-entry-expected"
@@ -194,7 +195,7 @@ recursive-entry:
 	+@$(MAKE) release-patch
 MAKE
 : > "$EVENTS"
-CARGO_NET_OFFLINE=true "$real_make" -j2 --no-print-directory \
+"$real_make" -j2 --no-print-directory \
     -f "$root/Makefile" -f "$fixture/recursive.mk" recursive-entry \
     "MAKE=$real_make --no-print-directory -f $root/Makefile -f $fixture/recursive.mk" \
     RELEASE_BRANCH=main > "$fixture/output" 2>&1
@@ -279,7 +280,7 @@ done
 # runner substituted, including parallel mode and a quoted ordinary selection.
 for selection in '' --no-print-directory; do
     : > "$EVENTS"
-    CARGO_NET_OFFLINE=true "$real_make" -j2 --no-print-directory -f "$root/Makefile" \
+    "$real_make" -j2 --no-print-directory -f "$root/Makefile" \
         release-patch "MAKEFLAGS=$selection" RELEASE_REMOTE=review RELEASE_BRANCH=main \
         "AUDIT_SELECTION=owner's selection" > "$fixture/output" 2>&1
     printf '%s\n' patch review main > "$fixture/cache-entry-expected"

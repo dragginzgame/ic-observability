@@ -97,8 +97,8 @@ Rust 1.100.0 is the floor and pinned compiler on native and Wasm. Focused checks
 
 ```sh
 make fmt
-cargo clippy -p ic-metrics --all-targets --all-features --locked --offline -- -D warnings
-cargo test -p ic-metrics --all-features --locked --offline
+cargo clippy -p ic-metrics --all-targets --all-features --locked -- -D warnings
+cargo test -p ic-metrics --all-features --locked
 make metrics-profiles-check allocation-free-check
 ```
 

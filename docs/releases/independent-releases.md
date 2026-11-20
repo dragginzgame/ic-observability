@@ -586,8 +586,8 @@ fixtures remain direct commands, outside routine CI and deployment:
   dirty source, preparation/gate failures and input drift before effects.
 - `bash scripts/release/test-release-batch.sh`: actual two-group capture, setup,
   editor, source/index admission, archives and content verification against local
-  Git/registry fixtures; push failure, uncertain upload, offline resume and deferred
-  lock custody. It preserves one-upload-per-package assertions.
+  Git/registry fixtures with push failure, uncertain upload, resume with prepared
+  tools and deferred lock custody. It preserves one-upload-per-package assertions.
 - `bash scripts/release/test-publication-policy.sh`: actual source/tag/content policy
   with simulated HTTP; `make ci-evidence-check` qualifies diagnostic collectors.
 

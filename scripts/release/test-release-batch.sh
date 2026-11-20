@@ -31,9 +31,11 @@ done | tar --null -T - -cf -) | tar -xf - -C "$fixture/repo"
 RELEASE_BATCH_FIXTURE_REAL_CARGO="$(command -v cargo)"
 RELEASE_BATCH_FIXTURE_REAL_CURL="$(command -v curl)"
 export RELEASE_BATCH_FIXTURE="$fixture" RELEASE_BATCH_FIXTURE_REAL_CARGO RELEASE_BATCH_FIXTURE_REAL_CURL
+export RELEASE_BATCH_FIXTURE_EXPECTED_OFFLINE="${CARGO_NET_OFFLINE-unset}"
 cat > "$fixture/bin/cargo" <<'CARGO'
 #!/bin/bash
 set -euo pipefail
+[[ "${CARGO_NET_OFFLINE-unset}" == "$RELEASE_BATCH_FIXTURE_EXPECTED_OFFLINE" ]] || exit 93
 [[ "${1:-}" == publish ]] || exec "$RELEASE_BATCH_FIXTURE_REAL_CARGO" "$@"
 selection='' previous=''
 for value in "$@"; do
@@ -42,7 +44,7 @@ for value in "$@"; do
 done
 [[ -n "$selection" && "$selection" == *@* ]]
 package="${selection%@*}" version="${selection##*@}"
-"$RELEASE_BATCH_FIXTURE_REAL_CARGO" package --package "$selection" --locked --offline
+"$RELEASE_BATCH_FIXTURE_REAL_CARGO" package --package "$selection" --locked
 archive="$PWD/target/package/$package-$version.crate"
 checksum="$(bash vendor/toko-tooling/scripts/ci/verify-file-checksum.sh --print sha256 "$archive")"
 cp "$archive" "$RELEASE_BATCH_FIXTURE/registry/$package-$version.crate"
@@ -171,4 +173,4 @@ for group in metrics logging; do
     [[ "$(git rev-parse "$group-v$version^{commit}")" == "$(git --git-dir="$fixture/remote.git" rev-parse "$group-v$version^{commit}")" ]]
 done
 fixture_complete=true
-printf 'Release batch consumer capture, real setup/product gates/archives/readback, offline resume, deferred lock custody and explicit reconcile/retire passed (local Git/registry effects only).\n'
+printf 'Release batch consumer capture, real setup/product gates/archives/readback, prepared-tool resume, deferred lock custody and explicit reconcile/retire passed (local Git/registry effects only).\n'

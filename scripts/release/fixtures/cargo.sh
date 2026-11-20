@@ -1,5 +1,8 @@
 # shellcheck shell=bash
 set -euo pipefail
+if [[ -n "${STANDARD_RELEASE_EXPECTED_OFFLINE+x}" ]]; then
+    [[ "${CARGO_NET_OFFLINE-unset}" == "$STANDARD_RELEASE_EXPECTED_OFFLINE" ]] || exit 93
+fi
 if [[ "${REQUIRE_JOBSERVER:-0}" == 1 ]]; then
     perl "$JOBSERVER_PROBE"
 fi
