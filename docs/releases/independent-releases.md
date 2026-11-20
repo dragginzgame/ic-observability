@@ -12,9 +12,9 @@ on one another. [The declared policy](../../ci/cargo-release-groups.json) owns m
 
 The root is the only maintained Cargo workspace. Both product packages already
 use the standard `crates/<package-name>/` locations; their ordinary tests and
-examples remain with them. The root explicitly excludes `qualification`.
-That tree contains two historical README files and no maintained packages,
-manifest or lock, so no qualification workspace or package move is needed.
+examples remain with them. The root explicitly excludes the retired
+`qualification` path. The [Wire history](../evidence/wire-history.md#historical-qualification)
+records the old qualification and where to find its source.
 Generated release-test workspaces beneath `target/` are disposable fixtures,
 not maintained qualification packages. Cargo metadata supplies actual members;
 the release policy maps those product identities to their independent groups.
@@ -27,11 +27,11 @@ converted to a literal version; Metrics followed at its released 0.23.1 version.
 Neither conversion changes a package's numeric identity.
 Earlier coordinated releases remain once in [shared history](../../releases/history.md), through 0.23.0;
 both group ledgers link to that history. Existing tags and receipts are retained.
-Tooling has no selection-only package or release-group membership. One exact
-root dependency pins toko-tooling 0.45.0; both libraries inherit it only for
-development, and Cargo.lock owns its registry checksum. Root dependency entries
-serve actual member inheritance; no display-only aliases or lint allowances are
-needed. Both product packages remain in their groups' `members` rosters, with
+Tooling has no selection-only package or release-group membership. The exact
+pin lives in the [root manifest](../../Cargo.toml). Both libraries inherit it
+only for development, and Cargo.lock owns its registry checksum. Root dependency
+entries serve actual member inheritance; no display-only aliases or lint allowances
+are needed. Both product packages remain in their groups' `members` rosters, with
 empty `dependencies` rosters because neither library depends on the other.
 Publication derives the selected package directory from the admitted member
 manifest, independently of dependency aliases.
@@ -284,6 +284,35 @@ Independent releases do not make incompatible integration stacks compatible.
 Services coordinate their own Wire identities and schemas; persistence
 adapters retain their own integration/release owners. Arithmetic, Serde fields,
 encoded bytes and Logging's retained-data contract do not change in this split.
+
+## Tooling 0.45.23 delivery — 2026-11-20
+
+Batch `batch-CkJiiVNm` captured `9cc428e859fc767f9ba3b04b3833dcb09ea417a4`.
+It delivered the authenticated 0.45.23 snapshot and the
+[#140 Cargo network policy fix](https://github.com/dragginzgame/ic-observability/issues/140).
+The [rules and hygiene report](../reports/audits/2026/11/20/hygiene-adoption/02/report.md)
+records workspace lint and fixture verification. Both groups completed GitHub
+and crates.io delivery. The normal checkout fast-forwarded cleanly.
+
+| Package | Version | Source commit | Registry archive SHA-256 |
+| --- | --- | --- | --- |
+| `ic-metrics` | 0.30.20 | `5fd3d9c73f7ce966eccc7a80d0c9f63a2320ec3c` | `b81df66fe4067fdc703b2a70ba076f8cb2c560a2f5e6333200048c1dcda3a0ad` |
+| `ic-logging` | 0.25.19 | `7913b0e584b765703bde3ea524ec9f86f5644870` | `0c00d1b09ef3d794150b9b14053666d3963a7d6cfacc82e2bd6ef46e9af4e1da` |
+
+Fresh source admission, strict native and Wasm Clippy, selected product checks
+and final-version archive verification passed. Metrics passed the allocator-free
+Wasm link. Registry readback matched 34 maintained Metrics files and 16 Logging
+files to their tagged source. The annotated tags and non-yanked index entries
+were confirmed independently, and their archive checksums matched. The focused
+post-push review corrected the release guide's stale tooling pin and retired
+qualification description. Hosted CI runs asynchronously.
+
+The batch took **180.3 seconds**. Outer phases totaled 131.5 seconds for release,
+31.1 for setup and 17.1 for publication. Cargo observed two uploads and the batch
+reused zero admissions. Cache warmth is unrecorded. Logs, phase timings and
+reconciliation are under `target/deploy/toko04523-20261120/`. The completed
+candidate and journal remain under `target/release-frozen/batch-CkJiiVNm/` and
+`.git/release-state/frozen/batch-CkJiiVNm/`.
 
 ## Tooling 0.45.22 delivery — 2026-11-20
 

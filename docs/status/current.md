@@ -2,24 +2,21 @@
 
 ## State and next action
 
-The working checkout adopts Toko Tooling **0.45.23** and applies its
-caller-owned Cargo network policy to dependency and release fixtures and the
-Metrics validation examples. The
-[0.45.23 rules and hygiene report](../reports/audits/2026/11/20/hygiene-adoption/02/report.md)
-records the local checks. [Observability #140](https://github.com/dragginzgame/ic-observability/issues/140)
-is closed. The updated snapshot is pending delivery.
+**Metrics 0.30.20 and Logging 0.25.19 are published and independently verified.**
+Batch `batch-CkJiiVNm` delivered Toko Tooling **0.45.23** and the caller-owned
+Cargo network policy. The normal checkout reconciled cleanly. The snapshot
+retains 56 entrypoints and 112 files. Rust **1.100.0** and the qualified tools
+remain selected. The
+[delivery record](../releases/independent-releases.md#tooling-04523-delivery--2026-11-20)
+owns exact identities and validation scope. Evidence is under
+`target/deploy/toko04523-20261120/`. Hosted CI runs asynchronously.
 
-**Metrics 0.30.19 and Logging 0.25.18 are published and independently verified.**
-Batch `batch-oDhWitQt` delivered Toko Tooling **0.45.22** and the shared
-workspace lint settings. The normal checkout reconciled cleanly. The snapshot
-retains 56 entrypoints and 112 files. Rust **1.100.0** and the prepared tool
-catalog remain selected.
-The [delivery record](../releases/independent-releases.md#tooling-04522-delivery--2026-11-20)
-owns the exact identities and validation limits. Evidence is under
-`target/deploy/toko04522-20261120/`. Hosted CI is asynchronous.
-
-The [rules and hygiene report](../reports/audits/2026/11/20/hygiene-adoption/01/report.md)
-records the lint audit across all three manifests and native and Wasm checks.
+The [0.45.23 rules and hygiene report](../reports/audits/2026/11/20/hygiene-adoption/02/report.md)
+records the lint, fixture and Wasm checks.
+[Observability #140](https://github.com/dragginzgame/ic-observability/issues/140)
+is closed. The
+[0.45.22 delivery record](../releases/independent-releases.md#tooling-04522-delivery--2026-11-20)
+retains the Metrics 0.30.19 and Logging 0.25.18 identities.
 
 The [0.45.21 delivery record](../releases/independent-releases.md#tooling-04521-delivery--2026-11-19)
 retains the Metrics 0.30.18 and Logging 0.25.17 identities. The
