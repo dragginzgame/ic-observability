@@ -6,6 +6,15 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.25.18] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt Toko Tooling 0.45.22. Audit workspace lint inheritance and keep the
+  shared function-length policy.
+- Retain qualified cargo-sort 2.1.4, cargo-sort-derives 0.14.1 and IC Build
+  0.83.0. Defer their optional updates to dedicated tool qualification.
+
 ## [0.25.17] - 2026-11-19
 
 ### 🛠️ Tooling

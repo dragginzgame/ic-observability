@@ -1,6 +1,11 @@
-# Current handoff — 2026-11-19
+# Current handoff — 2026-11-20
 
 ## State and next action
+
+The working tree adopts Toko Tooling **0.45.22**. Its on-demand lint auditor
+found no discrepancies across all three Cargo manifests. The
+[rules and hygiene report](../reports/audits/2026/11/20/hygiene-adoption/01/report.md)
+records the review and the native and Wasm checks.
 
 **Metrics 0.30.18 and Logging 0.25.17 are published and independently verified.**
 Batch `batch-CTcAw4Gy` delivered Toko Tooling **0.45.21**, return formatting,
