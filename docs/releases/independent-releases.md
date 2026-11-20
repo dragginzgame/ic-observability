@@ -285,6 +285,35 @@ Services coordinate their own Wire identities and schemas; persistence
 adapters retain their own integration/release owners. Arithmetic, Serde fields,
 encoded bytes and Logging's retained-data contract do not change in this split.
 
+## Tooling 0.46.0 delivery — 2026-11-20
+
+Batch `batch-0swpY8gC` captured `805d77fa309506764f56d22a4a7c9027e217bf55`.
+It delivered the authenticated 0.46.0 snapshot, the Rust type and spacing rules,
+and host-owned metrics guidance. The
+[rules and hygiene report](../reports/audits/2026/11/20/hygiene-adoption/03/report.md)
+records the full local CI and focused fixture checks. Both groups completed
+GitHub and crates.io delivery. The normal checkout fast-forwarded, and separate
+downstream roster edits were restored locally.
+
+| Package | Version | Source commit | Registry archive SHA-256 |
+| --- | --- | --- | --- |
+| `ic-metrics` | 0.30.21 | `0d57fff0b6052b369114fd8d8b395d92c92f0a35` | `c00ef25ff7952d6b6e667ba64f5840fdf3c933cabe2e03a34a42ce4e92cad488` |
+| `ic-logging` | 0.25.20 | `6b3572dc0a3dfe4cf89a2fad9bcf98916454c725` | `7d953bdc17bc0642e0c09de2dbf6f5dca41730571499588ee904c564166a2e6e` |
+
+Fresh source admission, strict native and Wasm Clippy, selected product checks
+and final-version archive verification passed. Metrics passed the allocator-free
+Wasm link. Registry readback matched 34 maintained Metrics files and 16 Logging
+files to their tagged source. Independent checks confirmed the annotated tags,
+non-yanked index entries and archive checksums. Review of the delivered adoption
+and version increments found no actionable issue. Hosted CI runs asynchronously.
+
+The batch took **183.3 seconds**. Outer phases totaled 133.0 seconds for release,
+31.2 for setup and 18.0 for publication. Cargo observed two uploads and the batch
+reused zero admissions. Logs, phase timings and reconciliation are under
+`target/deploy/toko0460-20261120/`. The completed candidate and recovery journal
+remain under `target/release-frozen/batch-0swpY8gC/` and
+`.git/release-state/frozen/batch-0swpY8gC/`.
+
 ## Tooling 0.45.23 delivery — 2026-11-20
 
 Batch `batch-CkJiiVNm` captured `9cc428e859fc767f9ba3b04b3833dcb09ea417a4`.

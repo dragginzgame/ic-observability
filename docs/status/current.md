@@ -2,22 +2,19 @@
 
 ## State and next action
 
-The working checkout adopts Toko Tooling **0.46.0** and applies its Rust
-type-header and spacing rules to both packages. The
-[0.46.0 rules and hygiene report](../reports/audits/2026/11/20/hygiene-adoption/03/report.md)
-records the adoption and local CI scope.
-
-**Metrics 0.30.20 and Logging 0.25.19 are published and independently verified.**
-Batch `batch-CkJiiVNm` delivered Toko Tooling **0.45.23** and the caller-owned
-Cargo network policy. The normal checkout reconciled cleanly. The snapshot
-retains 56 entrypoints and 112 files. Rust **1.100.0** and the qualified tools
-remain selected. The
-[delivery record](../releases/independent-releases.md#tooling-04523-delivery--2026-11-20)
+**Metrics 0.30.21 and Logging 0.25.20 are published and independently verified.**
+Batch `batch-0swpY8gC` delivered Toko Tooling **0.46.0**, Rust source hygiene,
+and the shared metrics storage guidance. The normal checkout reconciled. The
+snapshot retains 56 entrypoints and 112 files. Rust **1.100.0** and the qualified
+tools remain selected. The
+[delivery record](../releases/independent-releases.md#tooling-0460-delivery--2026-11-20)
 owns exact identities and validation scope. Evidence is under
-`target/deploy/toko04523-20261120/`. Hosted CI runs asynchronously.
+`target/deploy/toko0460-20261120/`. Hosted CI runs asynchronously.
 
-The [0.45.23 rules and hygiene report](../reports/audits/2026/11/20/hygiene-adoption/02/report.md)
-records the lint, fixture and Wasm checks.
+The [0.46.0 rules and hygiene report](../reports/audits/2026/11/20/hygiene-adoption/03/report.md)
+records the adoption and local CI scope. The
+[0.45.23 delivery record](../releases/independent-releases.md#tooling-04523-delivery--2026-11-20)
+retains the Metrics 0.30.20 and Logging 0.25.19 identities.
 [Observability #140](https://github.com/dragginzgame/ic-observability/issues/140)
 is closed. The
 [0.45.22 delivery record](../releases/independent-releases.md#tooling-04522-delivery--2026-11-20)
