@@ -5,6 +5,8 @@ mod tests;
 
 use crate::{MeasurementStateError, add_count, add_total};
 
+///
+/// `MeasurementAggregate`
 /// Mergeable count, total and maximum in one consumer-selected unit.
 ///
 /// Counts clip at `u64::MAX` and totals at `u128::MAX`; sticky flags record actual
@@ -12,6 +14,8 @@ use crate::{MeasurementStateError, add_count, add_total};
 /// observation and remains valid after overflow. There is no latest observation:
 /// unordered batches cannot establish ordering. Every `u64` sample fits in a
 /// `u128` total while the sample count remains exact. No allocation or platform reads.
+///
+
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct MeasurementAggregate {
     samples: u64,

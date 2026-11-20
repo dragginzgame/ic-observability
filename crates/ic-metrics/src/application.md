@@ -30,9 +30,15 @@ assert_eq!(retries.exact_total()?, 1);
 The application supplies real observations and owns platform counter reads,
 units, operation attribution, replicated-execution admission, limits, labels,
 instance identity, lifecycle and reset authorization. `IcyDB`'s overlapping spans
-and Canic's exclusive endpoint accounting remain separate consumer contracts.
+and Canic's synchronous handler measurements have separate attribution rules.
 Native substitutes are not IC measurements. Diagnostic counters never confer
 spending authority or replace balances, budgets or journal debt.
+
+In a shared heap store, keep one typed source per producer. The host supplies
+its storage at the producer's initialization boundary or passes a mutable
+recorder to the operation. The producer records each admitted event once.
+Readers look up existing sources, project snapshots and keep an unavailable
+source distinct from an initialized source with zero observations.
 
 ### Overflow and reporting
 

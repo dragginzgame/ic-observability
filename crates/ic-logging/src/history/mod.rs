@@ -6,12 +6,16 @@ mod tests;
 use alloc::collections::VecDeque;
 use core::fmt;
 
+///
+/// `HistoryLimits`
 /// Immutable bounds on row count and caller-accounted payload bytes.
 ///
 /// Bytes are a consumer-defined charge, not a measurement of all heap memory.
 /// Consumers must bound each payload's fields before appending and account for
 /// their retained content consistently. Inline metadata, spare capacity and
 /// allocator overhead are not automatically charged.
+///
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct HistoryLimits {
     /// Maximum retained rows; zero disables admission.
@@ -20,7 +24,11 @@ pub struct HistoryLimits {
     pub payload_bytes: usize,
 }
 
+///
+/// `HistoryAppend`
 /// Successful admission and the oldest history removed to make room.
+///
+
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct HistoryAppend {
     /// Number of evicted rows.
@@ -29,7 +37,11 @@ pub struct HistoryAppend {
     pub evicted_payload_bytes: usize,
 }
 
+///
+/// `HistoryRejectionReason`
 /// Why an opaque history refused an input before changing retained state.
+///
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum HistoryRejectionReason {
     /// The configured row capacity is zero.
@@ -57,7 +69,11 @@ impl fmt::Display for HistoryRejectionReason {
 
 impl core::error::Error for HistoryRejectionReason {}
 
+///
+/// `HistoryRejection`
 /// Refused input, returned intact without requiring cloning.
+///
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct HistoryRejection<T> {
     /// Input whose ownership returns to the caller.
@@ -74,12 +90,19 @@ impl<T> fmt::Display for HistoryRejection<T> {
 
 impl<T: fmt::Debug> core::error::Error for HistoryRejection<T> {}
 
+///
+/// `Row`
+/// A retained payload and its caller-accounted byte charge.
+///
+
 #[derive(Clone, Debug)]
 struct Row<T> {
     value: T,
     payload_bytes: usize,
 }
 
+///
+/// `BoundedHistory`
 /// Count- and payload-bounded heap history of consumer-owned structured rows.
 ///
 /// Oldest rows are evicted first. Iteration borrows immutable rows in append
@@ -88,6 +111,8 @@ struct Row<T> {
 /// checkpoint or global recorder. Consumers retain sanitization, field bounds,
 /// privacy, synchronization and lifecycle; this is not a durable byte format.
 /// Interior-mutability payloads must not grow their charged content while retained.
+///
+
 #[derive(Clone, Debug)]
 pub struct BoundedHistory<T> {
     limits: HistoryLimits,
@@ -143,6 +168,7 @@ impl<T> BoundedHistory<T> {
                 receipt.evicted_payload_bytes += row.payload_bytes;
             }
         }
+
         self.rows.push_back(Row {
             value,
             payload_bytes,

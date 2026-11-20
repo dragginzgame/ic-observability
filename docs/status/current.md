@@ -2,6 +2,11 @@
 
 ## State and next action
 
+The working checkout adopts Toko Tooling **0.46.0** and applies its Rust
+type-header and spacing rules to both packages. The
+[0.46.0 rules and hygiene report](../reports/audits/2026/11/20/hygiene-adoption/03/report.md)
+records the adoption and local CI scope.
+
 **Metrics 0.30.20 and Logging 0.25.19 are published and independently verified.**
 Batch `batch-CkJiiVNm` delivered Toko Tooling **0.45.23** and the caller-owned
 Cargo network policy. The normal checkout reconciled cleanly. The snapshot

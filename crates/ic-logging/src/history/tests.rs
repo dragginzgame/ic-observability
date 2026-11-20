@@ -1,6 +1,11 @@
 use super::*;
 use alloc::{string::String, vec::Vec};
 
+///
+/// `Diagnostic`
+/// A typed diagnostic payload used to exercise history retention.
+///
+
 #[derive(Debug, Eq, PartialEq)]
 struct Diagnostic {
     time_ns: u64,

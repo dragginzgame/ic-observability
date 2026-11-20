@@ -5,6 +5,8 @@ mod tests;
 
 use crate::{MeasurementAggregate, MeasurementStateError};
 
+///
+/// `MeasurementSummary`
 /// Ordered observations with a mergeable aggregate and a separate latest value.
 ///
 /// Count and total saturate independently, tracking actual overflow. An exactly
@@ -14,6 +16,8 @@ use crate::{MeasurementAggregate, MeasurementStateError};
 /// Consumers own units, identity, ordering and reset boundaries.
 /// Project counts, totals and maximum through [`Self::aggregate`], just
 /// as for a histogram; this type adds ordered recording and [`Self::latest`].
+///
+
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct MeasurementSummary {
     aggregate: MeasurementAggregate,

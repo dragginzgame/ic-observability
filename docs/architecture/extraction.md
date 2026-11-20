@@ -74,11 +74,19 @@ not a reason to retain general integer reporting helpers today.
 
 ## Platform and persistence boundaries
 
-Consumers read counter 1 through their own adapters: IcyDB and Canic use
-`ic_cdk::api::call_context_instruction_counter()`, while IC Timers uses
-`ic0::performance_counter(1)`. Native substitutes are not IC measurements.
-Inclusive overlapping IcyDB spans and exclusive Canic endpoint accounting remain
-separate contracts; there is no attribution-mode switch or product dependency.
+Consumers select and read their own platform counters. IcyDB's overlapping
+spans use call-context counter 1. Canic's current synchronous endpoint recorder
+uses IC Platform Runtime's message counter 0 to bracket the handler after
+admission and decoding and before reply encoding. IC Timers 0.46.13 records
+lifecycle event counts. Keep these cohorts and units separate.
+
+Canic owns its per-canister heap store. It keeps endpoint instruction summaries
+and Timers' counters under distinct typed sources. Initialization supplies
+Timers with the same storage handle the report adapter later reads. Endpoint
+recording updates its own source when the handler returns. Both report paths
+look up existing storage and project snapshots. Metrics supplies the recorder
+values; the host owns registration, availability, access control and upgrade
+reset behavior.
 
 Governed persistence belongs at the Storage integration boundary, including
 the codec, retained bytes and checkpoint validation. Hosts retain allocation,

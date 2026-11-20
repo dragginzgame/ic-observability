@@ -6,6 +6,11 @@ mod tests;
 use ic_logging::{EntryInput, Filter, Level, Limits, Log, PageRequest};
 use std::{fmt::NumBuffer, num::NonZeroUsize, ops::ControlFlow};
 
+///
+/// `ExportPage`
+/// Formatted rows and the continuation for the next export call.
+///
+
 #[derive(Debug, Eq, PartialEq)]
 struct ExportPage {
     body: String,
@@ -13,6 +18,11 @@ struct ExportPage {
     scanned: usize,
     next_before: Option<u64>,
 }
+
+///
+/// `ExportError`
+/// The first matching entry exceeds the entire export body budget.
+///
 
 #[derive(Debug, Eq, PartialEq)]
 enum ExportError {
@@ -36,6 +46,7 @@ fn export(
     let mut last_emitted = None;
     let mut stopped_for_budget = Ok(false);
     let mut sequence_buffer = NumBuffer::new();
+
     let scan = log.visit_page(filter, request, |entry| {
         let sequence = entry.sequence.format_into(&mut sequence_buffer);
         let required_bytes = sequence.len() + 2 + entry.message.len() + 1;
@@ -52,6 +63,7 @@ fn export(
 
             return ControlFlow::Break(());
         }
+
         body.reserve(required_bytes);
         body.push_str(sequence);
         body.push_str(": ");

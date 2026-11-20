@@ -11,11 +11,15 @@ use crate::MeasurementAggregate;
 pub use counter_table::BoundedCounterTable;
 pub use lexical::{LexicalMeasurementTable, LexicalTableLimitsError};
 
+///
+/// `MeasurementTableLimits`
 /// Consumer-selected retention limits.
 ///
 /// Zero entry capacity omits every observation. Zero key-byte budgets still
 /// permit the empty identity when entry capacity is available.
 /// Key bytes bound retained UTF-8 content, not allocator or tree-node overhead.
+///
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct MeasurementTableLimits {
     /// Maximum number of retained identities.
@@ -26,7 +30,11 @@ pub struct MeasurementTableLimits {
     pub total_key_bytes: usize,
 }
 
+///
+/// `MeasurementOmission`
 /// Why an observation was retained only in the unattributed aggregate.
+///
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum MeasurementOmission {
     /// This identity exceeds the per-key byte limit.
@@ -37,7 +45,11 @@ pub enum MeasurementOmission {
     TotalKeyBytes,
 }
 
+///
+/// `MeasurementAttribution`
 /// The retained attribution of one recorded observation.
+///
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum MeasurementAttribution {
     /// The observation belongs to a retained identity.
@@ -46,6 +58,8 @@ pub enum MeasurementAttribution {
     Omitted(MeasurementOmission),
 }
 
+///
+/// `BoundedMeasurementTable`
 /// First-admitted bounded identities with an aggregate for all omitted observations.
 ///
 /// Every observation in this table must use the same consumer-selected unit and
@@ -56,6 +70,8 @@ pub enum MeasurementAttribution {
 ///
 /// Clearing loses the observations. Consumers coordinate resets with all related
 /// state and establish heap/instance identity before comparing snapshots.
+///
+
 #[derive(Clone, Debug)]
 pub struct BoundedMeasurementTable {
     limits: MeasurementTableLimits,
@@ -91,6 +107,7 @@ impl BoundedMeasurementTable {
 
             return MeasurementAttribution::Retained;
         }
+
         if self.entries.len() >= self.limits.entries {
             return self.omit(observation, MeasurementOmission::Entries);
         }
@@ -102,6 +119,7 @@ impl BoundedMeasurementTable {
         {
             return self.omit(observation, MeasurementOmission::TotalKeyBytes);
         }
+
         let mut aggregate = MeasurementAggregate::EMPTY;
         aggregate.record(observation);
         self.entries.insert(Box::from(key), aggregate);

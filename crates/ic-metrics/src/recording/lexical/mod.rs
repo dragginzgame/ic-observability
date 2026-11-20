@@ -9,7 +9,11 @@ use core::{borrow::Borrow, fmt};
 use super::{MeasurementAttribution, MeasurementOmission, MeasurementTableLimits};
 use crate::MeasurementAggregate;
 
+///
+/// `LexicalTableLimitsError`
 /// Invalid limits for arrival-order-independent lexical retention.
+///
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum LexicalTableLimitsError {
     /// Entry capacity times the per-key maximum cannot be represented.
@@ -31,6 +35,8 @@ impl fmt::Display for LexicalTableLimitsError {
 
 impl core::error::Error for LexicalTableLimitsError {}
 
+///
+/// `LexicalMeasurementTable`
 /// Bounded typed observation identities selected by lexical order, not arrival order.
 ///
 /// Consumers supply stable `Ord` identity and a consistent key-payload byte charge.
@@ -44,6 +50,8 @@ impl core::error::Error for LexicalTableLimitsError {}
 /// overflow quality. Omitted history is never reconstructed.
 /// The retained identity set is order-independent for fixed key eligibility.
 /// Units, attribution, reset identity and reporting remain consumer-owned.
+///
+
 #[derive(Clone, Debug)]
 pub struct LexicalMeasurementTable<K> {
     limits: MeasurementTableLimits,
@@ -87,6 +95,7 @@ impl<K: Ord> LexicalMeasurementTable<K> {
         if self.record_existing(&key, observation) {
             return MeasurementAttribution::Retained;
         }
+
         if self.limits.entries == 0 {
             return self.omit(observation, MeasurementOmission::Entries);
         }
@@ -103,6 +112,7 @@ impl<K: Ord> LexicalMeasurementTable<K> {
                 self.omitted.merge(aggregate);
             }
         }
+
         let mut aggregate = MeasurementAggregate::EMPTY;
         aggregate.record(observation);
         self.entries.insert(key, (key_bytes, aggregate));

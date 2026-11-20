@@ -6,6 +6,16 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.25.20] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt Toko Tooling 0.46.0 and its consolidated release version helper.
+- Apply the shared Rust type headers and function spacing to Logging.
+- Retain qualified IC Build 0.83.0, cargo-sort 2.1.4 and cargo-sort-derives
+  0.14.1. Defer 0.87.6 to editor qualification and 2.1.5 / 0.15.0 to
+  formatter qualification.
+
 ## [0.25.19] - 2026-11-20
 
 ### 🛠️ Tooling

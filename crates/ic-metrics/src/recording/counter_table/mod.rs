@@ -9,6 +9,8 @@ use core::borrow::Borrow;
 use super::{MeasurementAttribution, MeasurementOmission, MeasurementTableLimits};
 use crate::MeasurementCounter;
 
+///
+/// `BoundedCounterTable`
 /// First-admitted typed identities with canonical scalar/omitted counters.
 ///
 /// Consumers supply stable identity ordering and a consistent retained key-payload
@@ -16,6 +18,8 @@ use crate::MeasurementCounter;
 /// allocator overhead. Key fields and their charged content must not mutate while
 /// retained. These are diagnostic increments, never balances or spending authority.
 /// Iteration is lexical by `K::Ord`, not admission order. No DTO or codec is owned.
+///
+
 #[derive(Clone, Debug)]
 pub struct BoundedCounterTable<K> {
     limits: MeasurementTableLimits,
@@ -58,6 +62,7 @@ impl<K: Ord> BoundedCounterTable<K> {
 
             return MeasurementAttribution::Omitted(reason);
         }
+
         let mut counter = MeasurementCounter::ZERO;
         counter.add(increment);
         self.entries.insert(key, counter);

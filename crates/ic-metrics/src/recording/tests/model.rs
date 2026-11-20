@@ -8,6 +8,11 @@ use crate::{
 };
 use std::vec::Vec;
 
+///
+/// `Model`
+/// Retained observations and omissions recomputed from the test event journal.
+///
+
 #[derive(Default)]
 struct Model {
     retained: Vec<(&'static str, Vec<u64>)>,

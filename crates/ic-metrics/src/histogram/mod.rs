@@ -9,7 +9,11 @@ use core::fmt;
 use crate::{MeasurementAggregate, MeasurementStateError, add_count};
 use restoration::validate_distribution;
 
+///
+/// `HistogramBoundsError`
 /// A bound is not strictly greater than the preceding bound.
+///
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct HistogramBoundsError {
     index: usize,
@@ -35,7 +39,11 @@ impl fmt::Display for HistogramBoundsError {
 
 impl core::error::Error for HistogramBoundsError {}
 
+///
+/// `HistogramMergeError`
 /// Why two histogram distributions cannot be combined.
+///
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct HistogramMergeError {
     index: usize,
@@ -57,6 +65,8 @@ impl fmt::Display for HistogramMergeError {
 
 impl core::error::Error for HistogramMergeError {}
 
+///
+/// `MeasurementHistogram`
 /// Fixed-size histogram of observations in one consumer-selected unit.
 ///
 /// `N` strictly increasing inclusive upper bounds define `N` disjoint buckets.
@@ -91,6 +101,8 @@ impl core::error::Error for HistogramMergeError {}
 /// # Ok(())
 /// # }
 /// ```
+///
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct MeasurementHistogram<const N: usize> {
     upper_bounds: [u64; N],

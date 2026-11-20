@@ -10,7 +10,11 @@ use core::{num::NonZeroUsize, ops::ControlFlow};
 
 const TRUNCATION_SUFFIX: &str = "...[truncated]";
 
+///
+/// `Level`
 /// Severity ordering used by minimum-level filters.
+///
+
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub enum Level {
     /// Development detail.
@@ -25,7 +29,11 @@ pub enum Level {
     Error,
 }
 
+///
+/// `Limits`
 /// Fixed limits chosen by the host before constructing a log.
+///
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct Limits {
     /// Maximum retained rows; count eviction removes the oldest row.
@@ -39,7 +47,11 @@ pub struct Limits {
     pub max_text_bytes: usize,
 }
 
+///
+/// `EntryInput`
 /// Borrowed append input; bounded retained strings are copied only after admission.
+///
+
 #[derive(Clone, Copy, Debug)]
 pub struct EntryInput<'a> {
     /// Caller-supplied whole seconds; may not regress within this log.
@@ -54,7 +66,11 @@ pub struct EntryInput<'a> {
     pub message: &'a str,
 }
 
+///
+/// `Entry`
 /// Immutable retained row; sequence identities belong to one log instance.
+///
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Entry {
     /// Monotonic identity, starting at zero and never reused within one log.
@@ -73,7 +89,11 @@ pub struct Entry {
     pub truncated: bool,
 }
 
+///
+/// `Label`
 /// Label rejected by append admission.
+///
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Label {
     /// Application or component source.
@@ -82,7 +102,11 @@ pub enum Label {
     Topic,
 }
 
+///
+/// `AppendError`
 /// Append refusal; every variant leaves entries and watermarks unchanged.
+///
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum AppendError {
     /// A label exceeded its configured byte ceiling.
@@ -148,7 +172,11 @@ impl core::fmt::Display for AppendError {
 
 impl core::error::Error for AppendError {}
 
+///
+/// `AppendReceipt`
 /// Receipt for one admitted append; eviction is oldest-first across both ceilings.
+///
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct AppendReceipt {
     /// Newly issued identity.
@@ -159,7 +187,11 @@ pub struct AppendReceipt {
     pub evicted: usize,
 }
 
+///
+/// `TopicMatch`
 /// Match any topic, no topic, or one exact topic (including an empty label).
+///
+
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub enum TopicMatch<'a> {
     /// Do not filter on topic presence or value.
@@ -171,7 +203,11 @@ pub enum TopicMatch<'a> {
     Exact(&'a str),
 }
 
+///
+/// `Filter`
 /// Optional exact label filters and a minimum severity; all supplied filters apply.
+///
+
 #[derive(Clone, Copy, Debug, Default)]
 pub struct Filter<'a> {
     /// Match this exact source when present.
@@ -196,7 +232,11 @@ impl Filter<'_> {
     }
 }
 
+///
+/// `PageRequest`
 /// One newest-first scan using an exclusive sequence cursor.
+///
+
 #[derive(Clone, Copy, Debug)]
 pub struct PageRequest {
     /// Scan entries older than this sequence, or begin at the newest entry.
@@ -207,7 +247,11 @@ pub struct PageRequest {
     pub max_scanned: NonZeroUsize,
 }
 
+///
+/// `Page`
 /// Borrowed page; a continuation can be present even when no row matched.
+///
+
 #[derive(Debug)]
 pub struct Page<'a> {
     /// Matching rows, newest first.
@@ -218,7 +262,11 @@ pub struct Page<'a> {
     pub next_before: Option<u64>,
 }
 
+///
+/// `PageScan`
 /// Progress of one bounded visitor scan, including a caller-requested early stop.
+///
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct PageScan {
     /// Matching rows delivered to the visitor, including a row returning `Break`.
@@ -229,8 +277,12 @@ pub struct PageScan {
     pub next_before: Option<u64>,
 }
 
+///
+/// `LogCheckpoint`
 /// Borrowed complete checkpoint view; obtaining/iterating it allocates nothing.
 /// Hosts own encoding budgets. The immutable borrow keeps rows and watermarks fixed.
+///
+
 #[derive(Clone, Copy, Debug)]
 pub struct LogCheckpoint<'a> {
     limits: Limits,
@@ -264,7 +316,11 @@ impl<'a> LogCheckpoint<'a> {
     }
 }
 
+///
+/// `RetentionBatch`
 /// Result of a bounded age-retention call.
+///
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct RetentionBatch {
     /// Number of rows removed by this call.
@@ -273,10 +329,14 @@ pub struct RetentionBatch {
     pub more_due: bool,
 }
 
+///
+/// `LogSnapshot`
 /// Complete passive checkpoint, with rows ordered oldest first.
 ///
 /// This is not a byte format or an instance identity. Restore only through
 /// [`Log::restore`]; consumers own durable encoding, identity and allocation.
+///
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct LogSnapshot {
     /// Fixed bounds of the original log.
@@ -289,7 +349,11 @@ pub struct LogSnapshot {
     pub last_created_at_secs: Option<u64>,
 }
 
+///
+/// `RestoreError`
 /// Refusal of a checkpoint that the maintained engine cannot produce.
+///
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum RestoreError {
     /// Retained row count exceeds the fixed limit.
@@ -318,7 +382,11 @@ impl core::fmt::Display for RestoreError {
 
 impl core::error::Error for RestoreError {}
 
+///
+/// `Log`
 /// Caller-owned heap history with fixed limits and monotonic append watermarks.
+///
+
 #[derive(Debug)]
 pub struct Log {
     limits: Limits,
@@ -440,6 +508,7 @@ impl Log {
         if let Some(topic) = input.topic {
             self.validate_label(Label::Topic, topic)?;
         }
+
         if let Some(previous) = self.last_created_at_secs
             && input.created_at_secs < previous
         {
@@ -449,6 +518,7 @@ impl Log {
             });
         }
         let sequence = self.next_sequence.ok_or(AppendError::SequenceExhausted)?;
+
         let (prefix, suffix) = message_parts(input.message, self.limits.max_message_bytes);
         // Message parts together fit the configured usize-sized message limit.
         let required_bytes = text_lengths(input.source, input.topic, prefix.len() + suffix.len())
@@ -462,6 +532,7 @@ impl Log {
                 required_bytes,
                 max_bytes: self.limits.max_text_bytes,
             })?;
+
         let truncated = input.message.len() > self.limits.max_message_bytes;
         let entry = Entry {
             sequence,
@@ -472,6 +543,7 @@ impl Log {
             message: bounded_message(prefix, suffix),
             truncated,
         };
+
         let mut evicted = 0;
         while (self.entries.len() >= self.limits.max_entries.get()
             || self.retained_text_bytes > self.limits.max_text_bytes - text_bytes)
@@ -479,6 +551,7 @@ impl Log {
         {
             evicted += 1;
         }
+
         self.entries.push_back(entry);
         self.retained_text_bytes += text_bytes;
         self.next_sequence = sequence.checked_add(1);
@@ -555,6 +628,7 @@ impl Log {
                 .binary_search_by_key(&sequence, |entry| entry.sequence)
                 .unwrap_or_else(|index| index)
         });
+
         let mut matched = 0;
         let mut scanned = 0;
         while cursor > 0
@@ -607,6 +681,7 @@ impl Log {
         let Some(entry) = self.entries.pop_front() else {
             return false;
         };
+
         // Each component was admitted into the cached sum before insertion.
         for bytes in text_lengths(&entry.source, entry.topic.as_deref(), entry.message.len()) {
             self.retained_text_bytes -= bytes;
@@ -629,6 +704,7 @@ fn validate_snapshot(snapshot: &LogSnapshot) -> Result<usize, RestoreError> {
         last_created_at_secs,
     } = snapshot;
     let (next_sequence, last_created_at_secs) = (*next_sequence, *last_created_at_secs);
+
     if entries.len() > limits.max_entries.get() {
         return Err(RestoreError::TooManyEntries);
     }
@@ -640,6 +716,7 @@ fn validate_snapshot(snapshot: &LogSnapshot) -> Result<usize, RestoreError> {
     if entries.is_empty() && last_created_at_secs == Some(u64::MAX) {
         return Err(RestoreError::InvalidTimestamp);
     }
+
     let mut previous: Option<&Entry> = None;
     let mut retained_text_bytes = 0_usize;
     for entry in entries {
@@ -652,12 +729,14 @@ fn validate_snapshot(snapshot: &LogSnapshot) -> Result<usize, RestoreError> {
         {
             return Err(RestoreError::InvalidEntry);
         }
+
         for bytes in text_lengths(&entry.source, entry.topic.as_deref(), entry.message.len()) {
             retained_text_bytes = retained_text_bytes
                 .checked_add(bytes)
                 .filter(|total| *total <= limits.max_text_bytes)
                 .ok_or(RestoreError::TextBudgetExceeded)?;
         }
+
         if let Some(previous) = previous {
             if previous.sequence.checked_add(1) != Some(entry.sequence) {
                 return Err(RestoreError::InvalidSequence);
@@ -668,6 +747,7 @@ fn validate_snapshot(snapshot: &LogSnapshot) -> Result<usize, RestoreError> {
         }
         previous = Some(entry);
     }
+
     if let Some(last) = previous {
         if last.sequence.checked_add(1) != next_sequence {
             return Err(RestoreError::InvalidSequence);

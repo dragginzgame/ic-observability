@@ -2,6 +2,11 @@
 
 use crate::{MeasurementAggregate, MeasurementStateError, add_count, add_total};
 
+///
+/// `TotalRange`
+/// Lower and upper bounds on the restored histogram total.
+///
+
 struct TotalRange {
     minimum: u128,
     minimum_overflowed: bool,
@@ -26,6 +31,7 @@ impl TotalRange {
             &mut self.minimum_overflowed,
             minimum_count * lower as u128,
         );
+
         if lost && upper != 0 {
             self.maximum_overflowed = true;
         }
@@ -57,6 +63,11 @@ impl TotalRange {
     }
 }
 
+///
+/// `DistributionFacts`
+/// Derived count, maximum placement, and total bounds used to admit a histogram.
+///
+
 struct DistributionFacts {
     samples: u64,
     samples_overflowed: bool,
@@ -81,6 +92,7 @@ impl DistributionFacts {
         };
         let mut maximum_lower = 0;
         let mut index = 0;
+
         while index <= N {
             let (count, lost) = if index < N {
                 (bucket_counts[index], bucket_overflowed[index])
@@ -90,8 +102,10 @@ impl DistributionFacts {
             if lost && count != u64::MAX {
                 return Err(MeasurementStateError::InvalidOverflowFlag);
             }
+
             add_count(&mut facts.samples, &mut facts.samples_overflowed, count);
             facts.samples_overflowed |= lost;
+
             if count != 0 {
                 let (lower, upper) = bucket_limits(upper_bounds, index, maximum);
                 facts.maximum_matches = if index < N {
@@ -105,6 +119,7 @@ impl DistributionFacts {
             }
             index += 1;
         }
+
         if facts.samples != 0 {
             facts.totals.include_maximum(maximum, maximum_lower);
         }

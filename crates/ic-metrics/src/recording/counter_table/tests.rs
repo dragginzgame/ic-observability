@@ -9,6 +9,11 @@ fn limits() -> MeasurementTableLimits {
     }
 }
 
+///
+/// `TargetMethod`
+/// Typed target and method identity for counter table tests.
+///
+
 #[derive(Debug, Eq, Ord, PartialEq, PartialOrd)]
 struct TargetMethod {
     target: u64,

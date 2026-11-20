@@ -14,6 +14,11 @@ use Action::{
 use alloc::{string::String, vec::Vec};
 use std::ops::ControlFlow;
 
+///
+/// `Action`
+/// One append, prune, or restore operation in the mixed-history model.
+///
+
 #[derive(Clone, Copy)]
 enum Action {
     Append,
@@ -28,8 +33,12 @@ enum Action {
     CopyRestore,
 }
 
-// Keep every accepted event; retention only advances an index into this journal.
-// This deliberately does not model the engine's deque or binary cursor search.
+///
+/// `History`
+/// Keep every accepted event; retention only advances an index into this journal.
+/// This deliberately does not model the engine's deque or binary cursor search.
+///
+
 struct History {
     accepted: Vec<Entry>,
     removed: usize,

@@ -5,7 +5,11 @@ mod tests;
 
 use core::fmt;
 
+///
+/// `MeasurementStateError`
 /// Why restored fields cannot represent a consistent measurement state.
+///
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum MeasurementStateError {
     /// An empty count has nonempty observations, totals or overflow flags.

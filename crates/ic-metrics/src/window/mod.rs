@@ -3,6 +3,8 @@
 #[cfg(test)]
 mod tests;
 
+///
+/// `MeasurementWindow`
 /// A reset window containing any consumer-defined combination of metric shapes.
 ///
 /// The reset sequence is local to this instance and becomes unavailable rather
@@ -10,6 +12,8 @@ mod tests;
 /// Consumers must establish the same host/heap lifetime, units and append-only
 /// continuity before using it to qualify numeric deltas. Platform clocks,
 /// replication decisions and reset authorization remain consumer-owned.
+///
+
 #[derive(Clone, Debug)]
 pub struct MeasurementWindow<T> {
     state: T,

@@ -6,6 +6,11 @@ use ic_metrics::{
 };
 use std::cmp::Ordering;
 
+///
+/// `Identity`
+/// Owned target and method key for the public typed recorder tests.
+///
+
 #[derive(Debug, Eq, Ord, PartialEq, PartialOrd)]
 struct Identity {
     target: u64,
@@ -49,6 +54,11 @@ fn external_explicit_omission_is_const_without_constructing_owned_keys() {
     assert_eq!(measurements.entries().len(), 0);
     assert_eq!(measurements.retained_key_bytes(), 0);
 }
+
+///
+/// `NeverCompared`
+/// Test key that rejects comparisons during explicit omission.
+///
 
 #[derive(Debug, Eq, PartialEq)]
 struct NeverCompared(u8);

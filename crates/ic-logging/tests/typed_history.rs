@@ -2,6 +2,11 @@
 
 use ic_logging::{BoundedHistory, HistoryLimits, HistoryRejectionReason};
 
+///
+/// `Failure`
+/// A domain failure retained as typed history payload.
+///
+
 #[derive(Debug, PartialEq)]
 struct Failure {
     occurred_at_ns: u64,

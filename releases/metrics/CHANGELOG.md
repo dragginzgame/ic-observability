@@ -5,6 +5,17 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.30.21] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt Toko Tooling 0.46.0 and its consolidated release version helper.
+- Apply the shared Rust type headers and function spacing to Metrics.
+- Document host-owned metrics storage and Canic's current instruction sampling boundary.
+- Retain qualified IC Build 0.83.0, cargo-sort 2.1.4 and cargo-sort-derives
+  0.14.1. Defer 0.87.6 to editor qualification and 2.1.5 / 0.15.0 to
+  formatter qualification.
+
 ## [0.30.20] - 2026-11-20
 
 ### 🛠️ Tooling

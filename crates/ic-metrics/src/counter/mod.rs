@@ -7,7 +7,11 @@ use core::fmt;
 
 use crate::{MeasurementStateError, add_total};
 
+///
+/// `MeasurementCounterError`
 /// Why a scalar counter cannot supply an exact total or difference.
+///
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum MeasurementCounterError {
     /// A required counter total has actually overflowed.
@@ -24,6 +28,8 @@ impl fmt::Display for MeasurementCounterError {
 
 impl core::error::Error for MeasurementCounterError {}
 
+///
+/// `MeasurementCounter`
 /// A scalar total in one consumer-selected unit with tracked actual overflow.
 ///
 /// Use for diagnostic event counts, item counts or quantities such as bytes.
@@ -51,6 +57,8 @@ impl core::error::Error for MeasurementCounterError {}
 /// # Ok(())
 /// # }
 /// ```
+///
+
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct MeasurementCounter {
     total: u128,
