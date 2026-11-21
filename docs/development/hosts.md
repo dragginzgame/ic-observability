@@ -151,9 +151,9 @@ channels and conflicting `MSRV` overrides. Checks disable Rustup auto-install.
 Setup remains explicit and preserves the default toolchain. Help and unrelated
 Make targets do not parse Cargo to choose a compiler.
 
-`make msrv` remains a compatibility alias for compiler admission. `make ci`
-provides the compilation proof once on this same compiler; see the coverage map
-below. Both Metrics and Logging require Rust 1.100.0 on native and Wasm. The adopted
+`make ci` uses `compiler-check` for admission and provides the compilation proof
+once on that compiler. See the coverage map below. Both Metrics and Logging
+require Rust 1.100.0 on native and Wasm. The adopted
 Toko Tooling baseline now owns this same compiler policy;
 no local exception or temporary policy-reference override is needed.
 
@@ -310,7 +310,7 @@ The former minimum/development duplication is consolidated as follows:
 
 The native matrix still covers Linux x86_64, macOS x86_64 and macOS arm64.
 Service owners retain browser/schema qualification. No required-check dependency in this
-repository selects the retired `msrv` job. Optional installed-runtime evidence
+repository selects the retired compiler-only job. Optional installed-runtime evidence
 retains its own tooling and scope. Historical evidence keeps its original compiler.
 Experimental evidence follows the [compact topic index](../evidence/README.md).
 Historical raw bundles/checksums and obsolete source/report snapshots were retired
@@ -435,8 +435,8 @@ selection includes both contracts in `make fmt`, `make fmt-check` and the hook.
 Focused checks for changed behavior and directly affected callers are sufficient
 for ordinary handoff under [the validation policy](../../TOKO-TOOLING.md#validation-and-evidence).
 Run full local suites only for an explicitly authorized release or an explicit
-request for those checks. The full gate is `make ci`; `make msrv` is the same
-compiler admission already included there. Reuse passing evidence only for
+request for those checks. The full `make ci` gate includes `compiler-check`
+for compiler admission. Reuse passing evidence only for
 unchanged inputs. Full CI runs the product policy once per host and checks both
 archives. Releases use explicit selected-package scope, regardless of which
 source paths changed. Tooling regression fixtures run when wiring changes,
@@ -609,9 +609,8 @@ The native job records compiler admission in `target/evidence/native-ci/compiler
 before managed-tool preparation or application compilation. Its outcome is
 included in diagnostic and recovery archives, including partial output on failure.
 The allocator-free Wasm is retained inside the full native recovery archive after
-a successful link. Historical TypeScript, source and registry probes retain
-their original compiler receipts. Existing historical
-`msrv-ci` evidence is preserved; new runs no longer produce a duplicate archive.
+a successful link. Historical TypeScript, source, registry and compiler-only
+probes retain their original receipts.
 
 `make compiler-policy-check` exercises policy mismatches, failed executable
 observations and successful/failed link custody with substituted compiler effects.

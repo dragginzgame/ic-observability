@@ -92,7 +92,7 @@ release-prepared-check release-committed-check release-tagged-check release-push
 release-files:
 	@bash scripts/release/metadata.sh files
 
-.PHONY: help install-hooks hook-check check check-wasm clippy docs-check check-doc-links test msrv compiler-check compiler-policy-check toko-tooling-check check-pins release-tools-check ci
+.PHONY: help install-hooks hook-check check check-wasm clippy docs-check check-doc-links test compiler-check compiler-policy-check toko-tooling-check check-pins release-tools-check ci
 .PHONY: ci-evidence-check candid-boundary-check
 .PHONY: production-dependencies-check cargo-boundaries-check
 .PHONY: allocation-free-check
@@ -152,7 +152,7 @@ help:
 	@echo "Named tests: cargo test -p PACKAGE --locked <test-name> (ic-metrics or ic-logging)"
 	@echo "Recording tests: cargo test -p $(PACKAGE) --features recording --locked <test-name>"
 	@echo "Maintenance task definitions: https://github.com/dragginzgame/toko-tooling/blob/12459b6029115b830b8477879d3bea2f030b6e63/tasks/README.md (adoption does not activate a schedule)"
-	@echo "Workspace gates cover Metrics and Logging; compiler admission: msrv"
+	@echo "Workspace gates cover Metrics and Logging; compiler admission: compiler-check"
 	@echo "Product CI: ci; changed tooling qualification: tooling-check; releases validate the selected group"
 
 .PHONY: package-check
@@ -230,9 +230,6 @@ release-validation-check:
 
 compiler-check:
 	+bash scripts/ci/check-rust-compiler.sh
-
-# Compatibility entry point: compilation is covered once by ci.
-msrv: compiler-check
 
 compiler-policy-check:
 	bash scripts/ci/test-rust-compiler.sh

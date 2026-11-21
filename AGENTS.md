@@ -91,8 +91,8 @@ consumer-contract or persistence-boundary changes. No baseline exceptions apply.
   errors or production panics.
 - After Rust edits, run `make fmt`, then selected package checks or named tests.
   Focused commands and host qualification are in [docs/development/hosts.md](docs/development/hosts.md).
-  Full local `make ci` is for explicitly requested aggregate checks; `make msrv`
-  admits the pinned compiler. Neither is an additional full release gate.
+  Run full local `make ci` for explicitly requested aggregate checks. Use
+  `make compiler-check` to admit the pinned compiler.
   Releases run fresh admission, strict lint and selected-package
   product checks under the [delivery plan](docs/releases/independent-releases.md).
   CI covers both products; changed pipeline wiring uses focused qualification

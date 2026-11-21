@@ -139,8 +139,8 @@ compiler-check:
 	    printf 'ci\n' >> .git/gates && \
 	    { test ! -e .git/drift-input || printf '\n# fixture drift\n' >> Cargo.lock; }; fi
 compiler-policy-check:
-	@test ! -e .git/fail-msrv
-	@printf 'msrv\n' >> .git/gates
+	@test ! -e .git/fail-compiler-policy
+	@printf 'compiler-policy-check\n' >> .git/gates
 package-check:
 	@printf 'package-check\n' >> .git/gates
 clippy:
@@ -252,9 +252,9 @@ for group in metrics logging; do
     rm .git/fail-validation
     [[ ! -e ".git/release-state/$group-$candidate/validated" ]]
     [[ "$(make -s release-version)" == "$previous" && "$(git rev-parse HEAD)" == "$source" ]]
-    touch .git/fail-msrv
-    if make "release-$kind" > "$fixture/$group-msrv-refusal.log" 2>&1; then exit 1; fi
-    rm .git/fail-msrv
+    touch .git/fail-compiler-policy
+    if make "release-$kind" > "$fixture/$group-compiler-policy-refusal.log" 2>&1; then exit 1; fi
+    rm .git/fail-compiler-policy
     [[ ! -e ".git/release-state/$group-$candidate/validated" ]]
     # A gate that changes an admitted Cargo input cannot reach the second gate.
     : > .git/gates

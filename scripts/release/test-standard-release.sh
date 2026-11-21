@@ -215,7 +215,7 @@ export STANDARD_RELEASE_PHASE=metadata
 # Shared Tooling owns flag aliases and inheritance permutations. Keep all actual
 # consumer targets under each unsafe behavior, without repeating that matrix.
 PATH="$fixture/bin:$PATH" make_probe_target_admission "$real_make" "$root/Makefile" "$fixture" "$EVENTS" \
-    release-patch release-minor release-major release-resume fmt fmt-check compiler-check msrv \
+    release-patch release-minor release-major release-resume fmt fmt-check compiler-check \
     "${cargo_targets[@]}" "${metadata_targets[@]}"
 export STANDARD_RELEASE_PHASE=real
 

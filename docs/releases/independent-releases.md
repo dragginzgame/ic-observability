@@ -195,8 +195,8 @@ Preflight admits prepared tools. Release validation adopts Toko Tooling's
 [roster](../../ci/release-validation.json) is the single ordered declaration for full
 CI and release selection. Shared's roster helper admits the projected Cargo group
 names; neither caller parses Make recipes or maintains another stage list.
-Compiler admission is the same check exposed by `msrv`, without a second compiler
-matrix. Repository CI still covers both libraries on all three required hosts.
+Both paths use `compiler-check` for compiler admission. Repository CI covers
+both libraries on all three required hosts.
 
 Releases always select the requested independent package. Fresh common checks
 admit the dependency-free architecture, shared manifests, lock and tool selection;
