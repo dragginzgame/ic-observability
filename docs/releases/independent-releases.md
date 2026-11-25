@@ -285,6 +285,34 @@ Services coordinate their own Wire identities and schemas; persistence
 adapters retain their own integration/release owners. Arithmetic, Serde fields,
 encoded bytes and Logging's retained-data contract do not change in this split.
 
+## Tooling 0.46.4 delivery — 2026-11-25
+
+Batch `batch-BtpbTSKF` captured `914ce740db423ddbfba2d6e77f49012dc9e1713f`.
+It delivered the authenticated 0.46.4 snapshot and the associated
+[rules and hygiene changes](../reports/audits/2026/11/25/hygiene-adoption/01/report.md).
+Both groups completed GitHub and crates.io delivery, and the normal checkout
+fast-forwarded.
+
+| Package | Version | Source commit | Registry archive SHA-256 |
+| --- | --- | --- | --- |
+| `ic-metrics` | 0.30.22 | `7a6d0e2d4cf6e298eca910dc166bc0fbbdf86545` | `4a2030cb94b787738a7a6905fed339a69713e10c3a439aaceab4ab99bac9e14c` |
+| `ic-logging` | 0.25.21 | `f0bbf14cec17eb18eea58c1938c85a66ebdf7826` | `a4878cc180abd68f4b364f76ea61006c015eeffc865e88ab9ad3efc87209a6b7` |
+
+Fresh source admission, strict native and Wasm Clippy, selected product checks
+and final-version archive verification passed for both groups. Registry
+readback matched 34 maintained Metrics files and 16 Logging files to their
+tagged source. Independent verification confirmed the annotated tags, non-yanked
+index entries, archive checksums and canonical licence bytes in both archives.
+Post-push review of the adoption, release increments and affected callers
+found no actionable issue.
+
+The batch took **167.4 seconds**. Outer phases totaled 119.7 seconds for
+release, 29.5 for setup and 17.7 for publication. Cargo observed two uploads
+and the batch reused zero admissions. Logs, timings and tag verification are
+under `target/deploy/toko0464-20261125/`. The completed candidate and journal
+remain under `target/release-frozen/batch-BtpbTSKF/` and
+`.git/release-state/frozen/batch-BtpbTSKF/`.
+
 ## Tooling 0.46.0 delivery — 2026-11-20
 
 Batch `batch-0swpY8gC` captured `805d77fa309506764f56d22a4a7c9027e217bf55`.

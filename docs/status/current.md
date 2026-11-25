@@ -2,21 +2,19 @@
 
 ## State and next action
 
-The working tree selects Toko Tooling **0.46.4**. The
+**Metrics 0.30.22 and Logging 0.25.21 are published and independently verified.**
+Batch `batch-BtpbTSKF` delivered Toko Tooling **0.46.4** and the rules and
+hygiene changes. The normal checkout reconciled. The
+[delivery record](../releases/independent-releases.md#tooling-0464-delivery--2026-11-25)
+owns the exact release identities and evidence. The
 [rules and hygiene report](../reports/audits/2026/11/25/hygiene-adoption/01/report.md)
-records the snapshot, review scope and local validation.
+records the snapshot and local qualification. Hosted CI runs asynchronously.
 
-**Metrics 0.30.21 and Logging 0.25.20 are published and independently verified.**
-Batch `batch-0swpY8gC` delivered Toko Tooling **0.46.0**, Rust source hygiene,
-and the shared metrics storage guidance. The normal checkout reconciled. The
-snapshot retains 56 entrypoints and 112 files. Rust **1.100.0** and the qualified
-tools remain selected. The
-[delivery record](../releases/independent-releases.md#tooling-0460-delivery--2026-11-20)
-owns exact identities and validation scope. Evidence is under
-`target/deploy/toko0460-20261120/`. Hosted CI runs asynchronously.
+The snapshot retains 56 entrypoints and 112 files. Rust **1.100.0** and the
+qualified tools remain selected.
 
-The [0.46.0 rules and hygiene report](../reports/audits/2026/11/20/hygiene-adoption/03/report.md)
-records the adoption and local CI scope. The
+The [0.46.0 delivery record](../releases/independent-releases.md#tooling-0460-delivery--2026-11-20)
+retains the Metrics 0.30.21 and Logging 0.25.20 identities. The
 [0.45.23 delivery record](../releases/independent-releases.md#tooling-04523-delivery--2026-11-20)
 retains the Metrics 0.30.20 and Logging 0.25.19 identities.
 [Observability #140](https://github.com/dragginzgame/ic-observability/issues/140)
