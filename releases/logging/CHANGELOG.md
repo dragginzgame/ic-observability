@@ -8,6 +8,13 @@ belong here.
 
 ## [0.25.21] - Unreleased
 
+### 🛠️ Tooling
+
+- Adopt Toko Tooling 0.46.4, including its Cargo workspace admission and
+  publication evidence path fixes.
+- Retain the qualified IC Build 0.83.0 release editor. Defer 0.87.7 to the
+  next release-editor qualification.
+
 ### 🗑️ Removed
 
 - Remove the `make msrv` alias. Use `make compiler-check` to admit the pinned compiler.

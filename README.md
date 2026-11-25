@@ -111,7 +111,7 @@ and registry publication use the explicitly selected release group.
 
 ## Licence
 
-[Toko Studios Network Licence 1.0](LICENSE.md).
+[Toko Studios Network Licence 1.1](LICENSE.md).
 
 The [source inventory](docs/governance/source-origins.md) records current component origins
 and the distinction between maintained source and external build inputs.

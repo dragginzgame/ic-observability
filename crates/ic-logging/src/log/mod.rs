@@ -8,8 +8,6 @@ mod tests;
 use alloc::{collections::VecDeque, string::String, vec::Vec};
 use core::{num::NonZeroUsize, ops::ControlFlow};
 
-const TRUNCATION_SUFFIX: &str = "...[truncated]";
-
 ///
 /// `Level`
 /// Severity ordering used by minimum-level filters.
@@ -650,7 +648,6 @@ impl Log {
             matched,
             scanned,
             // Nonzero limits guarantee a visit whenever the initial cursor is nonzero.
-            // The cursor now identifies the last consumed candidate.
             next_before: if cursor > 0 {
                 self.entries.get(cursor).map(|entry| entry.sequence)
             } else {
@@ -759,6 +756,8 @@ fn validate_snapshot(snapshot: &LogSnapshot) -> Result<usize, RestoreError> {
 
     Ok(retained_text_bytes)
 }
+
+const TRUNCATION_SUFFIX: &str = "...[truncated]";
 
 const fn truncation_suffix(max_bytes: usize) -> &'static str {
     if max_bytes > TRUNCATION_SUFFIX.len() {

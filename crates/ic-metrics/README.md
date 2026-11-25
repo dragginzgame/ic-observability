@@ -116,6 +116,6 @@ original source, package, schema and runtime qualification identities.
 
 ## Licence
 
-[Toko Studios Network Licence 1.0](https://github.com/dragginzgame/ic-observability/blob/main/LICENSE.md).
+[Toko Studios Network Licence 1.1](https://github.com/dragginzgame/ic-observability/blob/main/LICENSE.md).
 
 Copyright (c) 2026 ic-metrics contributors

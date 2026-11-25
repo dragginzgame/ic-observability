@@ -1,13 +1,10 @@
 # IC Observability Agent Rules
 
-Apply the installed [Toko Tooling baseline](TOKO-TOOLING.md) and its
-revision-bound references. [.toko-tooling.snapshot](.toko-tooling.snapshot)
-records the exporter-managed payload. This overlay owns product safeguards,
-local commands and approved exceptions.
-
-Read [the current handoff](docs/status/current.md), and
-[the extraction contract](docs/architecture/extraction.md) before recording,
-consumer-contract or persistence-boundary changes. No baseline exceptions apply.
+Apply the installed [Toko Tooling baseline](TOKO-TOOLING.md) and read
+[the current handoff](docs/status/current.md).
+Read [the extraction contract](docs/architecture/extraction.md) before
+recording, consumer-contract or persistence-boundary changes.
+No baseline exceptions apply.
 
 ## Ownership
 

@@ -1,6 +1,10 @@
-# Current handoff — 2026-11-20
+# Current handoff — 2026-11-25
 
 ## State and next action
+
+The working tree selects Toko Tooling **0.46.4**. The
+[rules and hygiene report](../reports/audits/2026/11/25/hygiene-adoption/01/report.md)
+records the snapshot, review scope and local validation.
 
 **Metrics 0.30.21 and Logging 0.25.20 are published and independently verified.**
 Batch `batch-0swpY8gC` delivered Toko Tooling **0.46.0**, Rust source hygiene,

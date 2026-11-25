@@ -6,17 +6,6 @@ use ic_metrics::{
 };
 use std::cmp::Ordering;
 
-///
-/// `Identity`
-/// Owned target and method key for the public typed recorder tests.
-///
-
-#[derive(Debug, Eq, Ord, PartialEq, PartialOrd)]
-struct Identity {
-    target: u64,
-    method: String,
-}
-
 const NO_IDENTITIES: MeasurementTableLimits = MeasurementTableLimits {
     entries: 0,
     key_bytes: 0,
@@ -40,6 +29,17 @@ const OMITTED_MEASUREMENTS: Result<LexicalMeasurementTable<Identity>, LexicalTab
 
     result
 };
+
+///
+/// `Identity`
+/// Owned target and method key for the public typed recorder tests.
+///
+
+#[derive(Debug, Eq, Ord, PartialEq, PartialOrd)]
+struct Identity {
+    target: u64,
+    method: String,
+}
 
 #[test]
 fn external_explicit_omission_is_const_without_constructing_owned_keys() {

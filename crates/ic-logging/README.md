@@ -163,6 +163,6 @@ and any report DTOs; linking Logging adds no Metrics or schema dependency.
 
 ## Licence
 
-[Toko Studios Network Licence 1.0](https://github.com/dragginzgame/ic-observability/blob/main/LICENSE.md).
+[Toko Studios Network Licence 1.1](https://github.com/dragginzgame/ic-observability/blob/main/LICENSE.md).
 
 Copyright (c) 2024 Canic contributors
