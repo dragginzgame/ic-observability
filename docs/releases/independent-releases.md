@@ -285,6 +285,34 @@ Services coordinate their own Wire identities and schemas; persistence
 adapters retain their own integration/release owners. Arithmetic, Serde fields,
 encoded bytes and Logging's retained-data contract do not change in this split.
 
+## Tooling 0.46.5 delivery — 2026-11-26
+
+Logging's minor batch `batch-QCRaus2d` captured
+`d304e2c3133061912fb62373485963fb80e9bb7d`. It delivered
+[#141 — Support a single retained-byte budget and constant-time usage for Log](https://github.com/dragginzgame/ic-observability/issues/141)
+with the authenticated 0.46.5 snapshot. Metrics' patch batch
+`batch-U8ydQ_oX` captured the released Logging commit and delivered the shared
+tooling update. The [rules and hygiene report](../reports/audits/2026/11/26/hygiene-adoption/01/report.md)
+records the inventory probe and local qualification.
+
+| Package | Version | Source commit | Registry archive SHA-256 |
+| --- | --- | --- | --- |
+| `ic-logging` | 0.26.0 | `d295cef690a9046c050f09ad085d4a2d458ef692` | `8e308210a87930cd0e7952b29ba1e65936b744a69b021d4563f603ec6f4c836f` |
+| `ic-metrics` | 0.30.23 | `9154e8b018636891efddc10e168b37115dd3b11b` | `4a660931e647630fa56265b19ca9a83383f9c1c2353226449540d6d4b8ffb490` |
+
+Both groups passed fresh source admission, strict native and Wasm Clippy,
+selected product checks and final archive verification. Registry readback
+matched 16 maintained Logging files and 34 Metrics files to their tagged
+source. Independent verification confirmed annotated tags, non-yanked index
+entries, archive checksums and canonical licence bytes. The normal checkout
+fast-forwarded after each batch. Post-push review found no actionable issue.
+
+The Logging batch took **82.4 seconds** and the Metrics batch **87.0 seconds**.
+Each batch observed one upload and reused zero admissions. Delivery logs,
+timings and verification are under `target/deploy/toko-20261126/`. The captured
+candidates and their journals remain under `target/release-frozen/` and
+`.git/release-state/frozen/`.
+
 ## Tooling 0.46.4 delivery — 2026-11-25
 
 Batch `batch-BtpbTSKF` captured `914ce740db423ddbfba2d6e77f49012dc9e1713f`.
