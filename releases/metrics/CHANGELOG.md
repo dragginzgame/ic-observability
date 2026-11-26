@@ -5,6 +5,13 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 [shared historical ledger](../history.md#0230---2026-10-31).
 Metrics and Logging each own their package version and release notes.
 
+## [0.30.23] - Unreleased
+
+### 🛠️ Tooling
+
+- Adopt Toko Tooling 0.46.5. Package inventory now selects the root workspace by default.
+- Keep the qualified IC Build 0.83.0 editor. Defer 0.87.8 to release-editor qualification.
+
 ## [0.30.22] - 2026-11-25
 
 ### 🛠️ Tooling

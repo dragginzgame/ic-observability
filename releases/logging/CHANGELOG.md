@@ -6,6 +6,25 @@ Shared Metrics/Logging release history through 0.23.0 remains once in the
 Logging's independent release series begins at 0.23.1. Future Logging notes
 belong here.
 
+## [0.26.0] - Unreleased
+
+### ⚠️ Breaking
+
+- Exhaustive matches on `AppendError` and `RestoreError` must handle the new
+  `RetainedByteBudgetExceeded` variant. Existing count-and-text limits and
+  checkpoints keep their behavior.
+
+### ➕ Added
+
+- Add one retained-byte budget for `Log`, with a fixed per-row metadata charge,
+  constant-time usage and validated checkpoint restoration.
+  [#141 — Support a single retained-byte budget and constant-time usage for Log](https://github.com/dragginzgame/ic-observability/issues/141)
+
+### 🛠️ Tooling
+
+- Adopt Toko Tooling 0.46.5. Package inventory now selects the root workspace by default.
+- Keep the qualified IC Build 0.83.0 editor. Defer 0.87.8 to release-editor qualification.
+
 ## [0.25.21] - 2026-11-25
 
 ### 🛠️ Tooling

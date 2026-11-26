@@ -3,7 +3,7 @@
 The two libraries remain in one development workspace and share the catalog,
 lockfile, compiler policy and repository-wide CI. They have no dependency
 on one another. [The declared policy](../../ci/cargo-release-groups.json) owns membership;
-`make deps-list` displays every package version and release group:
+`make deps-list` displays the root workspace's package versions and release groups:
 
 | Group | Members | Version owner | Canonical ledger |
 | --- | --- | --- | --- |

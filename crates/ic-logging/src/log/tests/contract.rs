@@ -2,8 +2,8 @@
 
 use super::{input, log, request, sequences};
 use crate::{
-    AppendError, AppendReceipt, EntryInput, Filter, Level, Limits, Log, PageScan, RestoreError,
-    TopicMatch,
+    AppendError, AppendReceipt, EntryInput, Filter, Level, Limits, Log, PageScan,
+    RETAINED_ENTRY_OVERHEAD, RestoreError, RetainedByteLimits, TopicMatch,
 };
 use core::ops::ControlFlow;
 
@@ -20,6 +20,120 @@ fn text(time: u64, message: &str) -> EntryInput<'_> {
         topic: None,
         ..input(time, message)
     }
+}
+
+fn retained(max_retained_bytes: usize) -> Log<RetainedByteLimits> {
+    Log::with_retained_byte_limit(RetainedByteLimits {
+        max_retained_bytes,
+        max_message_bytes: 15,
+        max_label_bytes: 16,
+    })
+}
+
+#[test]
+fn retained_budget_charges_empty_rows_and_evicts_oldest_at_capacity() {
+    let row = RETAINED_ENTRY_OVERHEAD;
+    let mut log = retained(row * 3);
+    for time in 0..3 {
+        assert_eq!(log.append(text(time, "")).unwrap().evicted, 0);
+    }
+    assert_eq!(log.retained_bytes(), row * 3);
+    assert_eq!(log.retained_text_bytes(), 0);
+
+    assert_eq!(log.append(text(3, "")).unwrap().evicted, 1);
+    assert_eq!(sequences(&log), [3, 2, 1]);
+    let page = log.page(Filter::default(), request(None, 2, 2));
+    let older = log.page(Filter::default(), request(page.next_before, 2, 2));
+    assert_eq!(older.entries[0].sequence, 1);
+    assert_eq!(older.next_before, None);
+
+    let mut log = Log::restore_retained_bytes(log.into_snapshot()).unwrap();
+    assert_eq!(log.retained_bytes(), row * 3);
+    assert_eq!(log.prune_expired(4, 0, 2).removed, 2);
+    assert_eq!(log.retained_bytes(), row);
+    assert_eq!(log.prune_expired(4, 0, 1).removed, 1);
+    assert_eq!(log.retained_bytes(), 0);
+    let mut log = Log::restore_retained_bytes(log.snapshot()).unwrap();
+    assert_eq!(log.append(text(4, "")).unwrap().sequence, 4);
+}
+
+#[test]
+fn retained_budget_shares_capacity_between_metadata_and_truncated_utf8() {
+    let row = RETAINED_ENTRY_OVERHEAD;
+    let mut log = retained(row * 3 + 5);
+    log.append(text(1, "")).unwrap();
+    log.append(text(2, "hello")).unwrap();
+    log.append(text(3, "")).unwrap();
+
+    let receipt = log
+        .append(EntryInput {
+            source: "é",
+            topic: Some("🦀"),
+            ..text(4, "🦀🦀🦀🦀")
+        })
+        .unwrap();
+    assert!(receipt.truncated);
+    assert_eq!(receipt.evicted, 2);
+    assert_eq!(sequences(&log), [3, 2]);
+    let checkpoint = log.checkpoint();
+    assert_eq!(checkpoint.limits(), log.limits());
+    assert_eq!(
+        checkpoint.entries().next_back().unwrap().message,
+        "...[truncated]"
+    );
+    assert_eq!(log.retained_text_bytes(), 20);
+    assert_eq!(log.retained_bytes(), row * 2 + 20);
+
+    let mut snapshot = log.snapshot();
+    snapshot.limits.max_retained_bytes = row * 2 + 20;
+    let restored = Log::restore_retained_bytes(snapshot.clone()).unwrap();
+    assert_eq!(restored.retained_bytes(), row * 2 + 20);
+    assert_eq!(restored.into_snapshot(), snapshot);
+    snapshot.limits.max_retained_bytes -= 1;
+    assert_eq!(
+        Log::restore_retained_bytes(snapshot).unwrap_err(),
+        RestoreError::RetainedByteBudgetExceeded
+    );
+}
+
+#[test]
+fn retained_budget_refuses_an_oversized_row_without_eviction_or_watermark_changes() {
+    let row = RETAINED_ENTRY_OVERHEAD;
+    let mut log = retained(row);
+    log.append(text(1, "")).unwrap();
+    let before = log.snapshot();
+    assert_eq!(
+        log.append(text(2, "x")),
+        Err(AppendError::RetainedByteBudgetExceeded {
+            required_bytes: row as u128 + 1,
+            max_bytes: row,
+        })
+    );
+    assert_eq!(log.snapshot(), before);
+    assert_eq!(log.retained_bytes(), row);
+    assert_eq!(log.append(text(1, "")).unwrap().sequence, 1);
+
+    let mut disabled = retained(0);
+    assert_eq!(
+        disabled.append(text(1, "")),
+        Err(AppendError::RetainedByteBudgetExceeded {
+            required_bytes: row as u128,
+            max_bytes: 0,
+        })
+    );
+    assert_eq!(
+        Log::restore_retained_bytes(disabled.snapshot())
+            .unwrap()
+            .retained_bytes(),
+        0
+    );
+    let mut impossible = disabled.into_snapshot();
+    impossible.next_sequence = Some(1);
+    impossible.last_created_at_secs = Some(1);
+    assert_eq!(
+        Log::restore_retained_bytes(impossible).unwrap_err(),
+        RestoreError::RetainedByteBudgetExceeded
+    );
 }
 
 #[test]

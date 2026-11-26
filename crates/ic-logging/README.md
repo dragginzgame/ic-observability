@@ -87,6 +87,39 @@ current payload use. Zero total text bytes still permits empty text and metadata
 Append refusals implement `core::error::Error` and preserve typed label/size/time
 context for callers using `?` or their own error wrappers.
 
+For a single retention budget, construct a `Log<RetainedByteLimits>` with
+`Log::with_retained_byte_limit`:
+
+```rust
+use ic_logging::{EntryInput, Level, Log, RETAINED_ENTRY_OVERHEAD, RetainedByteLimits};
+
+let mut log = Log::with_retained_byte_limit(RetainedByteLimits {
+    max_retained_bytes: 512 * 1024,
+    max_message_bytes: 160,
+    max_label_bytes: 32,
+});
+log.append(EntryInput {
+    created_at_secs: 1,
+    level: Level::Info,
+    source: "worker",
+    topic: None,
+    message: "",
+}).unwrap();
+assert_eq!(log.retained_bytes(), RETAINED_ENTRY_OVERHEAD + "worker".len());
+
+let restored = Log::restore_retained_bytes(log.into_snapshot()).unwrap();
+assert_eq!(restored.retained_bytes(), RETAINED_ENTRY_OVERHEAD + "worker".len());
+```
+
+The budget charges 96 bytes of logical metadata for every row, including empty
+rows, plus the UTF-8 bytes of the source, optional topic and message after
+truncation. The charge is fixed across targets and excludes allocator overhead,
+spare capacity and checkpoint copies. `retained_bytes()` reports the current
+charge in constant time. Labels and messages keep their per-field limits.
+Append evicts oldest rows until the new row fits. A row that exceeds the entire
+budget returns `AppendError::RetainedByteBudgetExceeded` before any eviction or
+watermark change. A zero budget refuses every append.
+
 Sequence IDs start at zero and never repeat within one log, even after all rows
 expire. Timestamps cannot move backwards after retention. Sequence exhaustion
 returns a typed error before eviction. This is an in-memory generation only:
@@ -132,9 +165,11 @@ allocation policy and write cadence. This view is not a serialized format.
 checkpoint without cloning their owned text. Use `Log::snapshot()` to keep the
 original log available: it explicitly copies a complete checkpoint, including limits,
 oldest-first entries and sequence/time watermarks. `Log::restore()` admits that
-checkpoint without replaying entries. It rejects invalid bounds, noncontiguous
+checkpoint without replaying entries. For `LogSnapshot<RetainedByteLimits>`,
+`Log::restore_retained_bytes()` also recomputes current byte usage. Both
+restore methods reject invalid bounds, noncontiguous
 identities, regressed timestamps, contradictory watermarks and inconsistent
-truncation state, including a combined text-budget violation. Fully pruned and sequence-exhausted checkpoints retain their
+truncation state and violations of the selected budget. Fully pruned and sequence-exhausted checkpoints retain their
 append restrictions. Restoration proves internal consistency, not authenticity,
 instance identity or continuity with another checkpoint. Byte decoders must bound
 allocation before constructing it; `LogSnapshot` is not a serialized format.

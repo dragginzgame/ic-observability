@@ -160,7 +160,9 @@ no local exception or temporary policy-reference override is needed.
 Both product members and generated retained consumers inherit root lint policy.
 The root keeps safe-only `unsafe_code = "forbid"`, strict warning-denied Clippy
 and Rustdoc gates, and reviewed pedantic checks without blanket nursery selection.
-`make deps-list` lists actual package versions and release groups using locked metadata.
+`make deps-list` reads Cargo metadata for the root workspace's package versions
+and release groups. An additional workspace requires `DEPENDENCY_MANIFEST`.
+This repository maintains only the root workspace.
 The root retains only dependencies inherited by real members; display-only
 product aliases and their unused-dependency lint allowance are removed.
 The 0.41.0 Cargo/Rustdoc minimum is inherited by both packages. `make clippy`

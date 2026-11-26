@@ -17,6 +17,6 @@ pub use history::{
 
 pub use log::{
     AppendError, AppendReceipt, Entry, EntryInput, Filter, Label, Level, Limits, Log,
-    LogCheckpoint, LogSnapshot, Page, PageRequest, PageScan, RestoreError, RetentionBatch,
-    TopicMatch,
+    LogCheckpoint, LogSnapshot, Page, PageRequest, PageScan, RETAINED_ENTRY_OVERHEAD, RestoreError,
+    RetainedByteLimits, RetentionBatch, TopicMatch,
 };

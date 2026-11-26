@@ -8,6 +8,10 @@ mod tests;
 use alloc::{collections::VecDeque, string::String, vec::Vec};
 use core::{num::NonZeroUsize, ops::ControlFlow};
 
+/// Fixed, target-independent byte charge for each row in a retained-byte log.
+/// This accounts for row metadata and excludes spare capacity and allocator overhead.
+pub const RETAINED_ENTRY_OVERHEAD: usize = 96;
+
 ///
 /// `Level`
 /// Severity ordering used by minimum-level filters.
@@ -43,6 +47,81 @@ pub struct Limits {
     /// Maximum combined retained message/source/topic UTF-8 bytes.
     /// Excludes row metadata, allocator overhead and transient checkpoint copies.
     pub max_text_bytes: usize,
+}
+
+impl Limits {
+    const fn policy(self) -> LogPolicy {
+        LogPolicy {
+            entry_limit: Some(self.max_entries),
+            byte_limit: self.max_text_bytes,
+            label_bytes: self.max_label_bytes,
+            message_bytes: self.max_message_bytes,
+        }
+    }
+}
+
+///
+/// `RetainedByteLimits`
+/// One retention budget for row metadata and UTF-8 text.
+///
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct RetainedByteLimits {
+    /// Maximum combined charge, including [`RETAINED_ENTRY_OVERHEAD`] per row.
+    /// Budgets below that charge refuse every append.
+    pub max_retained_bytes: usize,
+    /// Maximum retained message bytes, including any truncation suffix.
+    pub max_message_bytes: usize,
+    /// Maximum UTF-8 bytes in each source or topic label.
+    pub max_label_bytes: usize,
+}
+
+impl RetainedByteLimits {
+    const fn policy(self) -> LogPolicy {
+        LogPolicy {
+            entry_limit: None,
+            byte_limit: self.max_retained_bytes,
+            label_bytes: self.max_label_bytes,
+            message_bytes: self.max_message_bytes,
+        }
+    }
+}
+
+///
+/// `LogPolicy`
+/// Admission limits shared by append, eviction and restoration.
+///
+
+#[derive(Debug)]
+struct LogPolicy {
+    entry_limit: Option<NonZeroUsize>,
+    byte_limit: usize,
+    label_bytes: usize,
+    message_bytes: usize,
+}
+
+impl LogPolicy {
+    const fn row_overhead(&self) -> usize {
+        if self.entry_limit.is_none() {
+            RETAINED_ENTRY_OVERHEAD
+        } else {
+            0
+        }
+    }
+
+    fn charge_components(
+        &self,
+        source: &str,
+        topic: Option<&str>,
+        message_bytes: usize,
+    ) -> [usize; 4] {
+        [
+            self.row_overhead(),
+            source.len(),
+            topic.map_or(0, str::len),
+            message_bytes,
+        ]
+    }
 }
 
 ///
@@ -132,6 +211,13 @@ pub enum AppendError {
         /// Configured total retained-text ceiling.
         max_bytes: usize,
     },
+    /// This row's metadata and retained text cannot fit in an empty log.
+    RetainedByteBudgetExceeded {
+        /// Required row charge after message truncation.
+        required_bytes: u128,
+        /// Configured total retained-byte ceiling.
+        max_bytes: usize,
+    },
 }
 
 impl core::fmt::Display for AppendError {
@@ -164,6 +250,13 @@ impl core::fmt::Display for AppendError {
                 formatter,
                 "log row requires {required_bytes} text bytes (limit {max_bytes})"
             ),
+            Self::RetainedByteBudgetExceeded {
+                required_bytes,
+                max_bytes,
+            } => write!(
+                formatter,
+                "log row requires {required_bytes} retained bytes (limit {max_bytes})"
+            ),
         }
     }
 }
@@ -172,7 +265,7 @@ impl core::error::Error for AppendError {}
 
 ///
 /// `AppendReceipt`
-/// Receipt for one admitted append; eviction is oldest-first across both ceilings.
+/// Receipt for one admitted append; eviction is oldest-first.
 ///
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -282,17 +375,17 @@ pub struct PageScan {
 ///
 
 #[derive(Clone, Copy, Debug)]
-pub struct LogCheckpoint<'a> {
-    limits: Limits,
+pub struct LogCheckpoint<'a, L = Limits> {
+    limits: L,
     entries: &'a VecDeque<Entry>,
     next_sequence: Option<u64>,
     last_created_at_secs: Option<u64>,
 }
 
-impl<'a> LogCheckpoint<'a> {
+impl<'a, L: Copy> LogCheckpoint<'a, L> {
     /// Fixed retention limits.
     #[must_use]
-    pub const fn limits(&self) -> Limits {
+    pub const fn limits(&self) -> L {
         self.limits
     }
 
@@ -331,14 +424,15 @@ pub struct RetentionBatch {
 /// `LogSnapshot`
 /// Complete passive checkpoint, with rows ordered oldest first.
 ///
-/// This is not a byte format or an instance identity. Restore only through
-/// [`Log::restore`]; consumers own durable encoding, identity and allocation.
+/// Consumers own durable encoding, identity and allocation and must bound
+/// allocation before decoding a checkpoint. Restore through [`Log::restore`] or
+/// [`Log::restore_retained_bytes`], according to the checkpoint's limits.
 ///
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct LogSnapshot {
+pub struct LogSnapshot<L = Limits> {
     /// Fixed bounds of the original log.
-    pub limits: Limits,
+    pub limits: L,
     /// Retained contiguous suffix of issued identities, oldest first.
     pub entries: Vec<Entry>,
     /// Next unissued identity; `None` means permanent sequence exhaustion.
@@ -364,6 +458,8 @@ pub enum RestoreError {
     InvalidEntry,
     /// Combined retained text exceeds the checkpoint's configured ceiling.
     TextBudgetExceeded,
+    /// Combined row metadata and retained text exceed the checkpoint's ceiling.
+    RetainedByteBudgetExceeded,
 }
 
 impl core::fmt::Display for RestoreError {
@@ -374,6 +470,7 @@ impl core::fmt::Display for RestoreError {
             Self::InvalidTimestamp => "invalid log checkpoint timestamp",
             Self::InvalidEntry => "invalid bounded log checkpoint entry",
             Self::TextBudgetExceeded => "log checkpoint exceeds its text budget",
+            Self::RetainedByteBudgetExceeded => "log checkpoint exceeds its retained-byte budget",
         })
     }
 }
@@ -386,22 +483,79 @@ impl core::error::Error for RestoreError {}
 ///
 
 #[derive(Debug)]
-pub struct Log {
-    limits: Limits,
+pub struct Log<L = Limits> {
+    limits: L,
+    policy: LogPolicy,
     entries: VecDeque<Entry>,
-    retained_text_bytes: usize,
+    accounted_bytes: usize,
     next_sequence: Option<u64>,
     last_created_at_secs: Option<u64>,
 }
 
-impl Log {
+impl Log<Limits> {
     /// Construct an empty log without preallocating the configured maximum.
     #[must_use]
     pub const fn new(limits: Limits) -> Self {
+        Self::empty(limits, limits.policy())
+    }
+
+    /// Combined retained text bytes, excluding row metadata and allocator overhead.
+    #[must_use]
+    pub const fn retained_text_bytes(&self) -> usize {
+        self.accounted_bytes
+    }
+
+    /// Admit a count-and-text checkpoint without replaying entries.
+    ///
+    /// # Errors
+    /// Rejects inconsistent bounds, row order, append watermarks or truncation state.
+    pub fn restore(snapshot: LogSnapshot) -> Result<Self, RestoreError> {
+        let policy = snapshot.limits.policy();
+
+        Self::restore_with_policy(snapshot, policy)
+    }
+}
+
+impl Log<RetainedByteLimits> {
+    /// Construct an empty log with a single retained-byte budget and no separate row cap.
+    #[must_use]
+    pub const fn with_retained_byte_limit(limits: RetainedByteLimits) -> Self {
+        Self::empty(limits, limits.policy())
+    }
+
+    /// Return accounted metadata and text bytes in constant time.
+    #[must_use]
+    pub const fn retained_bytes(&self) -> usize {
+        self.accounted_bytes
+    }
+
+    /// Combined retained text bytes, excluding row metadata and allocator overhead.
+    #[must_use]
+    pub fn retained_text_bytes(&self) -> usize {
+        self.accounted_bytes - RETAINED_ENTRY_OVERHEAD * self.entries.len()
+    }
+
+    /// Admit a retained-byte checkpoint and recompute its current byte usage.
+    ///
+    /// # Errors
+    /// Rejects inconsistent bounds, row order, append watermarks or truncation state,
+    /// including rows whose combined charge exceeds the configured budget.
+    pub fn restore_retained_bytes(
+        snapshot: LogSnapshot<RetainedByteLimits>,
+    ) -> Result<Self, RestoreError> {
+        let policy = snapshot.limits.policy();
+
+        Self::restore_with_policy(snapshot, policy)
+    }
+}
+
+impl<L: Copy> Log<L> {
+    const fn empty(limits: L, policy: LogPolicy) -> Self {
         Self {
             limits,
+            policy,
             entries: VecDeque::new(),
-            retained_text_bytes: 0,
+            accounted_bytes: 0,
             next_sequence: Some(0),
             last_created_at_secs: None,
         }
@@ -409,19 +563,13 @@ impl Log {
 
     /// Return the fixed bounds without copying retained messages.
     #[must_use]
-    pub const fn limits(&self) -> Limits {
+    pub const fn limits(&self) -> L {
         self.limits
-    }
-
-    /// Combined retained text bytes; excludes metadata, spare capacity and allocator overhead.
-    #[must_use]
-    pub const fn retained_text_bytes(&self) -> usize {
-        self.retained_text_bytes
     }
 
     /// Borrow rows and append watermarks together, without copying or consuming the log.
     #[must_use]
-    pub const fn checkpoint(&self) -> LogCheckpoint<'_> {
+    pub const fn checkpoint(&self) -> LogCheckpoint<'_, L> {
         LogCheckpoint {
             limits: self.limits,
             entries: &self.entries,
@@ -433,7 +581,7 @@ impl Log {
     /// Copy all retained rows and both append watermarks for explicit checkpointing.
     /// Work and allocation scale with retained history, not a cursor-page limit.
     #[must_use]
-    pub fn snapshot(&self) -> LogSnapshot {
+    pub fn snapshot(&self) -> LogSnapshot<L> {
         LogSnapshot {
             limits: self.limits,
             entries: self.entries.iter().cloned().collect(),
@@ -446,7 +594,7 @@ impl Log {
     /// Fixed limits, row order and both append watermarks are preserved, including
     /// empty histories and permanent sequence exhaustion.
     #[must_use]
-    pub fn into_snapshot(self) -> LogSnapshot {
+    pub fn into_snapshot(self) -> LogSnapshot<L> {
         LogSnapshot {
             limits: self.limits,
             entries: self.entries.into(),
@@ -455,17 +603,11 @@ impl Log {
         }
     }
 
-    /// Admit a complete checkpoint without replaying entries or reissuing identities.
-    ///
-    /// Empty retained history preserves its original append watermarks. Admission
-    /// proves internal consistency, not source authenticity or host continuity.
-    /// Byte decoders must bound allocation before constructing the checkpoint.
-    ///
-    /// # Errors
-    /// Rejects bounds, row ordering, watermarks and truncation states that cannot
-    /// result from this engine's append/retention operations.
-    pub fn restore(snapshot: LogSnapshot) -> Result<Self, RestoreError> {
-        let retained_text_bytes = validate_snapshot(&snapshot)?;
+    fn restore_with_policy(
+        snapshot: LogSnapshot<L>,
+        policy: LogPolicy,
+    ) -> Result<Self, RestoreError> {
+        let accounted_bytes = validate_snapshot(&snapshot, &policy)?;
         let LogSnapshot {
             limits,
             entries,
@@ -475,8 +617,9 @@ impl Log {
 
         Ok(Self {
             limits,
+            policy,
             entries: entries.into(),
-            retained_text_bytes,
+            accounted_bytes,
             next_sequence,
             last_created_at_secs,
         })
@@ -494,13 +637,13 @@ impl Log {
         self.entries.is_empty()
     }
 
-    /// Admit one row, evicting the oldest rows until both count and text ceilings fit.
+    /// Admit one row, evicting the oldest rows until the retention limits fit.
     ///
     /// # Errors
     /// Returns a typed refusal for oversized labels, regressed time or exhausted
-    /// sequence identities, or a row that cannot fit the text budget by itself.
+    /// sequence identities, or a row that cannot fit the byte budget by itself.
     /// Validation completes before any eviction or mutation. Error priority is
-    /// source, topic, regressed time, sequence exhaustion, then total text budget.
+    /// source, topic, regressed time, sequence exhaustion, then the byte budget.
     pub fn append(&mut self, input: EntryInput<'_>) -> Result<AppendReceipt, AppendError> {
         self.validate_label(Label::Source, input.source)?;
         if let Some(topic) = input.topic {
@@ -517,21 +660,32 @@ impl Log {
         }
         let sequence = self.next_sequence.ok_or(AppendError::SequenceExhausted)?;
 
-        let (prefix, suffix) = message_parts(input.message, self.limits.max_message_bytes);
-        // Message parts together fit the configured usize-sized message limit.
-        let required_bytes = text_lengths(input.source, input.topic, prefix.len() + suffix.len())
+        let (prefix, suffix) = message_parts(input.message, self.policy.message_bytes);
+        let required_bytes = self
+            .policy
+            .charge_components(input.source, input.topic, prefix.len() + suffix.len())
             .into_iter()
             .map(|bytes| bytes as u128)
             .sum();
-        let text_bytes = usize::try_from(required_bytes)
+        let max_bytes = self.policy.byte_limit;
+        let row_charge = usize::try_from(required_bytes)
             .ok()
-            .filter(|bytes| *bytes <= self.limits.max_text_bytes)
-            .ok_or(AppendError::TextBudgetExceeded {
-                required_bytes,
-                max_bytes: self.limits.max_text_bytes,
+            .filter(|bytes| *bytes <= max_bytes)
+            .ok_or_else(|| {
+                if self.policy.entry_limit.is_some() {
+                    AppendError::TextBudgetExceeded {
+                        required_bytes,
+                        max_bytes,
+                    }
+                } else {
+                    AppendError::RetainedByteBudgetExceeded {
+                        required_bytes,
+                        max_bytes,
+                    }
+                }
             })?;
 
-        let truncated = input.message.len() > self.limits.max_message_bytes;
+        let truncated = input.message.len() > self.policy.message_bytes;
         let entry = Entry {
             sequence,
             created_at_secs: input.created_at_secs,
@@ -543,15 +697,18 @@ impl Log {
         };
 
         let mut evicted = 0;
-        while (self.entries.len() >= self.limits.max_entries.get()
-            || self.retained_text_bytes > self.limits.max_text_bytes - text_bytes)
+        while (self
+            .policy
+            .entry_limit
+            .is_some_and(|limit| self.entries.len() >= limit.get())
+            || self.accounted_bytes > max_bytes - row_charge)
             && self.remove_oldest()
         {
             evicted += 1;
         }
 
         self.entries.push_back(entry);
-        self.retained_text_bytes += text_bytes;
+        self.accounted_bytes += row_charge;
         self.next_sequence = sequence.checked_add(1);
         self.last_created_at_secs = Some(input.created_at_secs);
 
@@ -657,11 +814,11 @@ impl Log {
     }
 
     const fn validate_label(&self, label: Label, text: &str) -> Result<(), AppendError> {
-        if text.len() > self.limits.max_label_bytes {
+        if text.len() > self.policy.label_bytes {
             return Err(AppendError::LabelTooLong {
                 label,
                 actual_bytes: text.len(),
-                max_bytes: self.limits.max_label_bytes,
+                max_bytes: self.policy.label_bytes,
             });
         }
 
@@ -680,58 +837,78 @@ impl Log {
         };
 
         // Each component was admitted into the cached sum before insertion.
-        for bytes in text_lengths(&entry.source, entry.topic.as_deref(), entry.message.len()) {
-            self.retained_text_bytes -= bytes;
+        for bytes in self.policy.charge_components(
+            &entry.source,
+            entry.topic.as_deref(),
+            entry.message.len(),
+        ) {
+            self.accounted_bytes -= bytes;
         }
 
         true
     }
 }
 
-// One retained-text definition; each caller keeps its own overflow/admission boundary.
-fn text_lengths(source: &str, topic: Option<&str>, message_bytes: usize) -> [usize; 3] {
-    [source.len(), topic.map_or(0, str::len), message_bytes]
-}
-
-fn validate_snapshot(snapshot: &LogSnapshot) -> Result<usize, RestoreError> {
+fn validate_snapshot<L>(
+    snapshot: &LogSnapshot<L>,
+    policy: &LogPolicy,
+) -> Result<usize, RestoreError> {
     let LogSnapshot {
-        limits,
         entries,
         next_sequence,
         last_created_at_secs,
+        ..
     } = snapshot;
     let (next_sequence, last_created_at_secs) = (*next_sequence, *last_created_at_secs);
 
-    if entries.len() > limits.max_entries.get() {
+    if policy
+        .entry_limit
+        .is_some_and(|limit| entries.len() > limit.get())
+    {
         return Err(RestoreError::TooManyEntries);
     }
     if (next_sequence == Some(0)) != last_created_at_secs.is_none() {
         return Err(RestoreError::InvalidTimestamp);
     }
     // The last row cannot expire at the final representable timestamp, and
-    // count eviction always leaves a newer row in this nonzero-capacity log.
+    // eviction always leaves the newly admitted row behind.
     if entries.is_empty() && last_created_at_secs == Some(u64::MAX) {
         return Err(RestoreError::InvalidTimestamp);
     }
 
+    let budget_error = if policy.entry_limit.is_some() {
+        RestoreError::TextBudgetExceeded
+    } else {
+        RestoreError::RetainedByteBudgetExceeded
+    };
+    // A budget that cannot admit an empty row cannot have append watermarks.
+    if entries.is_empty()
+        && last_created_at_secs.is_some()
+        && policy.byte_limit < policy.row_overhead()
+    {
+        return Err(budget_error);
+    }
+
     let mut previous: Option<&Entry> = None;
-    let mut retained_text_bytes = 0_usize;
+    let mut accounted_bytes = 0_usize;
     for entry in entries {
-        if entry.source.len() > limits.max_label_bytes
+        if entry.source.len() > policy.label_bytes
             || entry
                 .topic
                 .as_ref()
-                .is_some_and(|topic| topic.len() > limits.max_label_bytes)
-            || !valid_retained_message(entry, limits.max_message_bytes)
+                .is_some_and(|topic| topic.len() > policy.label_bytes)
+            || !valid_retained_message(entry, policy.message_bytes)
         {
             return Err(RestoreError::InvalidEntry);
         }
 
-        for bytes in text_lengths(&entry.source, entry.topic.as_deref(), entry.message.len()) {
-            retained_text_bytes = retained_text_bytes
+        for bytes in
+            policy.charge_components(&entry.source, entry.topic.as_deref(), entry.message.len())
+        {
+            accounted_bytes = accounted_bytes
                 .checked_add(bytes)
-                .filter(|total| *total <= limits.max_text_bytes)
-                .ok_or(RestoreError::TextBudgetExceeded)?;
+                .filter(|total| *total <= policy.byte_limit)
+                .ok_or(budget_error)?;
         }
 
         if let Some(previous) = previous {
@@ -754,7 +931,7 @@ fn validate_snapshot(snapshot: &LogSnapshot) -> Result<usize, RestoreError> {
         }
     }
 
-    Ok(retained_text_bytes)
+    Ok(accounted_bytes)
 }
 
 const TRUNCATION_SUFFIX: &str = "...[truncated]";

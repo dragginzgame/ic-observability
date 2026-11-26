@@ -36,7 +36,7 @@ fn request(before: Option<u64>, results: usize, scanned: usize) -> PageRequest {
     }
 }
 
-fn sequences(log: &Log) -> Vec<u64> {
+fn sequences<L: Copy>(log: &Log<L>) -> Vec<u64> {
     log.page(Filter::default(), request(None, 100, 100))
         .entries
         .iter()

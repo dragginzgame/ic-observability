@@ -31,6 +31,13 @@ append receipts and explicit topic presence matching. The budget counts text
 payload, not all heap costs; count and byte pressure evict oldest rows.
 `visit_page` provides the same bounded scan without a result collection.
 
+The retained-byte configuration charges each row a fixed 96 bytes for metadata
+plus the retained UTF-8 bytes of labels and truncated messages. It uses one
+retention budget, with no separate row cap, and reports accounted use in constant
+time. Oldest rows are evicted as needed. If the incoming row exceeds the whole
+budget, append refuses before evicting rows or advancing either watermark.
+Allocator overhead, spare capacity and checkpoint copies are outside this budget.
+
 `Log::checkpoint()` borrows all rows, limits and append watermarks without copying
 text or consuming the log. Hosts can encode that immutable view directly within
 their own record/allocation budgets. It introduces no serialization dependency.
@@ -43,7 +50,9 @@ and included in release 0.17.5. Consumers must select a published
 Logging version containing that API before adopting it in their registry graph.
 
 `Log::restore()` independently admits fixed bounds, contiguous sequence order,
-nondecreasing timestamps, watermarks, total text budget and consistent truncated messages. Empty
+nondecreasing timestamps, watermarks, total text budget and consistent truncated messages.
+`Log::restore_retained_bytes()` checks the same row and watermark invariants and
+recomputes metadata and text charges from retained rows under the saved budget. Empty
 retained history preserves sequence/time watermarks and permanent exhaustion.
 A checkpoint is passive state, not a byte format, authenticity proof or globally
 unique instance identity. Decoders must bound allocation before constructing it.
